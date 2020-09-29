@@ -85,7 +85,6 @@ namespace occa {
       ::sycl::queue *q = getCommandQueue();
       if(async){
             q->memcpy(&((char*) dpcppMem)[offset], &((char*) src)[offset], bytes);
-            q->wait();
       }else{
             q->memcpy(&((char*) dpcppMem)[offset], &((char*) src)[offset], bytes);
             q->wait();
@@ -102,7 +101,6 @@ namespace occa {
       ::sycl::queue *q = getCommandQueue();
       if(async){
             q->memcpy(&((char*) dpcppMem)[destOffset], &(src->ptr)[srcOffset], bytes);
-            q->wait();
       }else{
             q->memcpy(&((char*) dpcppMem)[destOffset], &(src->ptr)[srcOffset], bytes);
             q->wait();
@@ -122,7 +120,6 @@ namespace occa {
       }else{
             q->memcpy(&((char*) dest)[offset], &((const char*) dpcppMem)[offset], bytes);
             q->wait();
-
       }
 
     }

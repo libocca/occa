@@ -7,6 +7,7 @@
 #include <occa/lang/modes/hip.hpp>
 #include <occa/lang/modes/opencl.hpp>
 #include <occa/lang/modes/metal.hpp>
+#include <occa/lang/modes/dpcpp.hpp>
 
 using namespace occa;
 
@@ -165,7 +166,11 @@ bool runTranslate(const json &args) {
     parser = new lang::okl::openclParser(kernelProps);
   } else if (mode == "metal") {
     parser = new lang::okl::metalParser(kernelProps);
+  }else if (mode == "dpcpp") {
+    parser = new lang::okl::dpcppParser(kernelProps);
   }
+
+
 
   if (!parser) {
     printError("Unable to translate for mode [" + originalMode + "]");

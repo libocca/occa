@@ -10,7 +10,7 @@ occa::json parseArgs(int argc, const char **argv);
 int main(int argc, const char **argv) {
   occa::json args = parseArgs(argc, argv);
 
-  int entries = 5;
+  int entries = 8;
 
   int *a  = new int[entries];
   int *b  = new int[entries];
@@ -27,7 +27,6 @@ int main(int argc, const char **argv) {
   deviceProps["mode"] = "dpcpp";
   deviceProps["platform_id"] = (int) args["options/platform-id"];
   deviceProps["device_id"] = (int) args["options/device-id"];
-//  occa::device device(deviceProps);
 
   occa::device device(deviceProps);
   // Allocate memory on the device
@@ -35,7 +34,7 @@ int main(int argc, const char **argv) {
   occa::memory o_b = device.malloc<int>(entries);
   occa::memory o_ab = device.malloc<int>(entries);
 
-  // Compile a regular OpenCL kernel at run-time
+  // Compile a regular DPCPP kernel at run-time
   occa::properties kernelProps;
   kernelProps["okl/enabled"] = false;
   kernelProps["compiler"] = "dpcpp";
@@ -45,23 +44,14 @@ int main(int argc, const char **argv) {
                                                "addVectors_it",
                                                kernelProps);
  
- // occa::kernel addVectors(&device, "addvector", kernelProps, addVector_it);
-  //occa::kernel addVectors;//only for testing dpcpp is found by occa
-
   // Copy memory to the device
   o_a.copyFrom(a);
   o_b.copyFrom(b);
   o_ab.copyFrom(ab);
 
-  // Set the kernel dimensions
-  //   setRunDims(
-  //     occa::dim(groupsX, groupsY = 1, groupsZ = 1), <- @outer dims in OKL
-  //     occa::dim(itemsX, itemsY = 1, itemsZ = 1)     <- @inner dims in OKL
-  //   )
-  addVectors.setRunDims(entries, (entries+8)/8);
+  addVectors.setRunDims(entries, 8);
   // Launch device kernel
   addVectors(o_a, o_b, o_ab);
-
   // Copy result to the host
   o_ab.copyTo(ab);
 

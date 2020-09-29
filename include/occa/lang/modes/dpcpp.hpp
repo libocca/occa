@@ -1,59 +1,51 @@
-#ifndef OCCA_LANG_MODES_OPENCL_HEADER
-#define OCCA_LANG_MODES_OPENCL_HEADER
+#ifndef OCCA_LANG_MODES_DPCPP_HEADER
+#define OCCA_LANG_MODES_DPCPP_HEADER
 
-#include <occa/lang/modes/withLauncher.hpp>
+#include <occa/lang/parser.hpp>
+#include <occa/lang/transforms/builtins/finders.hpp>
 
 namespace occa {
   namespace lang {
+    namespace transforms {
+      class smntTreeNode;
+    }
+
     namespace okl {
-      class dpcppParser : public withLauncher {
+      class dpcppParser : public parser_t {
       public:
-        qualifier_t constant;
-        qualifier_t kernel;
-        qualifier_t local;
-        // Hack until code-transformation API is done
-        static qualifier_t global;
+        static const std::string exclusiveIndexName;
 
         dpcppParser(const occa::properties &settings_ = occa::properties());
 
         virtual void onClear();
-        virtual void beforePreprocessing();
 
-        virtual void beforeKernelSplit();
+        virtual void afterParsing();
 
-        virtual void afterKernelSplit();
-
-        virtual std::string getOuterIterator(const int loopIndex);
-
-        virtual std::string getInnerIterator(const int loopIndex);
-
-        void addExtensions();
-
-        void updateConstToConstant();
-
-        void setLocalQualifiers();
-        static bool sharedVariableMatcher(exprNode &expr);
-
-        void setGlobalQualifiers();
-        static bool updateGlobalVariables(statement_t &smnt);
-        static void addGlobalToFunctionArgs(function_t &func);
-        static void addGlobalToVariable(variable_t &var);
-
-        static bool updateScopeStructVariables(statement_t &smnt);
-        static void addStructToVariable(variable_t &var);
-        static void addStructToFunctionArgs(function_t &func);
-
-        void addBarriers();
-
-        void addFunctionPrototypes();
-
-        void addStructQualifiers();
+        void setupHeaders();
 
         void setupKernels();
 
-        void migrateLocalDecls(functionDeclStatement &kernelSmnt);
+        static void setupKernel(functionDeclStatement &kernelSmnt);
 
-        void setKernelQualifiers(function_t &function);
+        void setupExclusives();
+
+        void setupExclusiveDeclarations(statementExprMap &exprMap);
+        void setupExclusiveDeclaration(declarationStatement &declSmnt);
+        bool exclusiveIsDeclared(declarationStatement &declSmnt);
+
+        void setupExclusiveIndices();
+
+        static bool exclusiveVariableMatcher(exprNode &expr);
+
+        static bool exclusiveInnerLoopMatcher(statement_t &smnt);
+
+        void getInnerMostLoops(transforms::smntTreeNode &innerRoot,
+                               statementPtrVector &loopSmnts);
+
+
+        static exprNode* updateExclusiveExprNodes(statement_t &smnt,
+                                                  exprNode &expr,
+                                                  const bool isBeingDeclared);
       };
     }
   }

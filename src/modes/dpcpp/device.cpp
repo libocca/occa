@@ -75,10 +75,39 @@ namespace occa {
       return occa::hash(props["compiler_flags"]);
     }
 
-    lang::okl::withLauncher* device::createParser(const occa::properties &props) const {
-      return new lang::okl::dpcppParser(props);
+/*
+    bool device::parseFile(const std::string &filename,
+                           const std::string &outputFile,
+                           const occa::properties &kernelProps,
+                           lang::sourceMetadata_t &metadata) {
+      lang::okl::serialParser parser(kernelProps);
+      parser.parseFile(filename);
+
+      // Verify if parsing succeeded
+      if (!parser.succeeded()) {
+        OCCA_ERROR("Unable to transform OKL kernel",
+                   kernelProps.get("silent", false));
+        return false;
+      }
+
+      if (!io::isFile(outputFile)) {
+        hash_t hash = occa::hash(outputFile);
+        io::lock_t lock(hash, "serial-parser");
+        if (lock.isMine()) {
+          parser.writeToFile(outputFile);
+        }
+      }
+
+      parser.setSourceMetadata(metadata);
+
+      return true;
     }
 
+*/
+/*    lang::okl::withLauncher* device::createParser(const occa::properties &props) const {
+      return new lang::okl::dpcppParser(props);
+    }
+*/
     //---[ Stream ]---------------------
     modeStream_t* device::createStream(const occa::properties &props) {
       ::sycl::queue* q = new ::sycl::queue();
@@ -370,12 +399,10 @@ namespace occa {
       memory *mem = new memory(this, bytes, props);
 
       if (src == NULL) {
-        mem->dpcppMem = malloc_shared(bytes, q->get_device(), q->get_context());
+        mem->dpcppMem = malloc_device(bytes, q->get_device(), q->get_context());
       } else {
-	mem->dpcppMem = malloc_shared(bytes, q->get_device(), q->get_context());
+	mem->dpcppMem = malloc_device(bytes, q->get_device(), q->get_context());
 	q->memcpy(mem->dpcppMem, src, bytes);
-
-//        mem->ptr = (char*)mem->dpcppMem;
         finish();
       }
       mem->rootDpcppMem = mem->dpcppMem;
