@@ -9,7 +9,7 @@ namespace occa {
                    udim_t size_,
                    const occa::properties &properties_) :
         occa::modeMemory_t(modeDevice_, size_, properties_),
-        rootDpcppMem(&dpcppMem),
+        rootDpcppMem(NULL),
         rootOffset(0),
         mappedPtr(NULL) {}
 
@@ -30,8 +30,7 @@ namespace occa {
       // Is the root cl_mem or the root cl_mem hasn't been freed yet
       if (size && (isOrigin || (rootDpcppMem != NULL))) {
 //        OCCA_OPENCL_ERROR("Mapped Free: free()",
-//                        free(dpcppMem));
-          free(rootDpcppMem);
+//          free(rootDpcppMem);
       }
 
       rootDpcppMem = NULL;
@@ -48,9 +47,8 @@ namespace occa {
 
     kernelArg memory::makeKernelArg() const {
       kernelArgData arg;
-
       arg.modeMemory = const_cast<memory*>(this);
-      arg.data.void_ = (void*) &dpcppMem;
+      arg.data.void_ = (void*) dpcppMem;
       arg.size       = sizeof(void*);
       arg.info       = kArgInfo::usePointer;
 
@@ -74,7 +72,7 @@ namespace occa {
       if (props.get("mapped", false)) {
         return mappedPtr;
       }
-      return ptr;
+      return dpcppMem;
     }
 
     void memory::copyFrom(const void *src,
@@ -85,6 +83,7 @@ namespace occa {
       ::sycl::queue *q = getCommandQueue();
       if(async){
             q->memcpy(&((char*) dpcppMem)[offset], &((char*) src)[offset], bytes);
+            q->wait();
       }else{
             q->memcpy(&((char*) dpcppMem)[offset], &((char*) src)[offset], bytes);
             q->wait();
@@ -100,9 +99,10 @@ namespace occa {
       const bool async = props.get("async", false);
       ::sycl::queue *q = getCommandQueue();
       if(async){
-            q->memcpy(&((char*) dpcppMem)[destOffset], &((char*) src)[srcOffset], bytes);
+            q->memcpy(&((char*) dpcppMem)[destOffset], &(src->ptr)[srcOffset], bytes);
+            q->wait();
       }else{
-            q->memcpy(&((char*) dpcppMem)[destOffset], &((char*) src)[srcOffset], bytes);
+            q->memcpy(&((char*) dpcppMem)[destOffset], &(src->ptr)[srcOffset], bytes);
             q->wait();
       
       }

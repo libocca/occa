@@ -12,9 +12,9 @@ int main(int argc, const char **argv) {
 
   int entries = 5;
 
-  float *a  = new float[entries];
-  float *b  = new float[entries];
-  float *ab = new float[entries];
+  int *a  = new int[entries];
+  int *b  = new int[entries];
+  int *ab = new int[entries];
 
   for (int i = 0; i < entries; ++i) {
     a[i]  = i;
@@ -31,9 +31,9 @@ int main(int argc, const char **argv) {
 
   occa::device device(deviceProps);
   // Allocate memory on the device
-  occa::memory o_a = device.malloc<float>(entries);
-  occa::memory o_b = device.malloc<float>(entries);
-  occa::memory o_ab = device.malloc<float>(entries);
+  occa::memory o_a = device.malloc<int>(entries);
+  occa::memory o_b = device.malloc<int>(entries);
+  occa::memory o_ab = device.malloc<int>(entries);
 
   // Compile a regular OpenCL kernel at run-time
   occa::properties kernelProps;
@@ -58,9 +58,7 @@ int main(int argc, const char **argv) {
   //     occa::dim(groupsX, groupsY = 1, groupsZ = 1), <- @outer dims in OKL
   //     occa::dim(itemsX, itemsY = 1, itemsZ = 1)     <- @inner dims in OKL
   //   )
-  addVectors.setRunDims(16, 16);
-  void* pp = o_a.ptr();
-  std::cout<<"Printing a address: "<<pp<<std::endl;
+  addVectors.setRunDims(entries, (entries+8)/8);
   // Launch device kernel
   addVectors(o_a, o_b, o_ab);
 
