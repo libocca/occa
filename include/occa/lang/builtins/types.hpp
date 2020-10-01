@@ -92,6 +92,10 @@ namespace occa {
     extern const primitive_t double2;
     extern const primitive_t double3;
     extern const primitive_t double4;
+    
+    // DPCPP Primitives
+    extern const primitive_t syclQueuePtr;
+    extern const primitive_t syclNdRangePtr;
   }
 }
 #endif

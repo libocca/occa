@@ -1,319 +1,208 @@
+#include <occa/tools/string.hpp>
 #include <occa/lang/modes/dpcpp.hpp>
 #include <occa/lang/modes/okl.hpp>
+#include <occa/lang/modes/oklForStatement.hpp>
+#include <occa/lang/builtins/attributes.hpp>
 #include <occa/lang/builtins/types.hpp>
 
 namespace occa {
   namespace lang {
     namespace okl {
-      const std::string dpcppParser::exclusiveIndexName = "_occa_exclusive_index";
-
       dpcppParser::dpcppParser(const occa::properties &settings_) :
-        parser_t(settings_) {
+        withLauncherLambda(settings_),
+        constant("__constant__", qualifierType::custom),
+        global("__global__", qualifierType::custom),
+        device("__device__", qualifierType::custom),
+        shared("__shared__", qualifierType::custom) {
 
         okl::addAttributes(*this);
       }
 
-      void dpcppParser::onClear() {}
+      void dpcppParser::onClear() {
+        launcherClear();
+      }
 
-      void dpcppParser::afterParsing() {
+      void dpcppParser::beforePreprocessing() {
+        preprocessor.addCompilerDefine("OCCA_USING_GPU", "1");
+      }
+
+      void dpcppParser::beforeKernelSplit() {
+        updateConstToConstant();
+
         if (!success) return;
-        if (settings.get("okl/validate", true)) {
-          success = checkKernels(root);
-        }
+        setFunctionQualifiers();
+
+        if (!success) return;
+        setSharedQualifiers();
+      }
+
+      void dpcppParser::afterKernelSplit() {
+        addBarriers();
 
         if (!success) return;
         setupKernels();
-
-        if (!success) return;
-        setupExclusives();
       }
 
-      void dpcppParser::setupHeaders() {
-        strVector headers;
-        const bool includingStd = settings.get("serial/include_std", true);
-        headers.push_back("include <occa.hpp>\n");
-        if (includingStd) {
-          headers.push_back("include <stdint.h>");
-          headers.push_back("include <cstdlib>");
-          headers.push_back("include <cstdio>");
-          headers.push_back("include <cmath>");
+      std::string dpcppParser::getOuterIterator(const int loopIndex) {
+        std::string name = "get_global_id(";
+        name +=  loopIndex +"*";
+        return name;
+      }
+
+      std::string dpcppParser::getInnerIterator(const int loopIndex) {
+        std::string name = "threadIdx.";
+        name += 'x' + (char) loopIndex;
+        return name;
+      }
+
+      void dpcppParser::updateConstToConstant() {
+        const int childCount = (int) root.children.size();
+        for (int i = 0; i < childCount; ++i) {
+          statement_t &child = *(root.children[i]);
+          if (child.type() != statementType::declaration) {
+            continue;
+          }
+          declarationStatement &declSmnt = ((declarationStatement&) child);
+          const int declCount = declSmnt.declarations.size();
+          for (int di = 0; di < declCount; ++di) {
+            variable_t &var = *(declSmnt.declarations[di].variable);
+            if (var.has(const_) && !var.has(typedef_)) {
+              var -= const_;
+              var += constant;
+            }
+          }
         }
+      }
+
+      void dpcppParser::setFunctionQualifiers() {
+/*        statementPtrVector funcSmnts;
+        findStatementsByType(statementType::functionDecl,
+                             root,
+                             funcSmnts);
+
+        const int funcCount = (int) funcSmnts.size();
+        for (int i = 0; i < funcCount; ++i) {
+          functionDeclStatement &funcSmnt = (
+            *((functionDeclStatement*) funcSmnts[i])
+          );
+          if (funcSmnt.hasAttribute("kernel")) {
+            continue;
+          }
+          vartype_t &vartype = funcSmnt.function.returnType;
+          vartype.qualifiers.addFirst(vartype.origin(),
+                                      device);
+        }*/
+      }
+
+      void dpcppParser::setSharedQualifiers() {
+        statementExprMap exprMap;
+        findStatements(statementType::declaration,
+                       exprNodeType::variable,
+                       root,
+                       sharedVariableMatcher,
+                       exprMap);
+
+        statementExprMap::iterator it = exprMap.begin();
+        while (it != exprMap.end()) {
+          declarationStatement &declSmnt = *((declarationStatement*) it->first);
+          const int declCount = declSmnt.declarations.size();
+          for (int i = 0; i < declCount; ++i) {
+            variable_t &var = *(declSmnt.declarations[i].variable);
+            if (!var.hasAttribute("shared")) {
+              continue;
+            }
+            var += shared;
+          }
+          ++it;
+        }
+      }
+
+      void dpcppParser::addBarriers() {
+        statementPtrVector statements;
+        findStatementsByAttr(statementType::empty,
+                             "barrier",
+                             root,
+                             statements);
+
+        const int count = (int) statements.size();
+        for (int i = 0; i < count; ++i) {
+          // TODO 1.1: Implement proper barriers
+          emptyStatement &smnt = *((emptyStatement*) statements[i]);
+
+          statement_t &barrierSmnt = (
+            *(new expressionStatement(
+                smnt.up,
+                *(new identifierNode(smnt.source,
+                                     " __syncthreads()"))
+              ))
+          );
+
+          smnt.up->addBefore(smnt,
+                             barrierSmnt);
+
+          smnt.up->remove(smnt);
+          delete &smnt;
+        }
+      }
+
+      void dpcppParser::setupKernels() {
+        statementPtrVector kernelSmnts;
+        findStatementsByAttr(statementType::functionDecl,
+                             "kernel",
+                             root,
+                             kernelSmnts);
+
+
+        const int kernelCount = (int) kernelSmnts.size();
+        for (int i = 0; i < kernelCount; ++i) {
+          functionDeclStatement &kernelSmnt = (
+            *((functionDeclStatement*) kernelSmnts[i])
+          );
+          setKernelQualifiers(kernelSmnt);
+          if (!success) return;
+        }
+	strVector headers;
+        const bool includingStd = settings.get("serial/include_std", true);
+        headers.push_back("include <CL/sycl.hpp>\n");
 
         const int headerCount = (int) headers.size();
         for (int i = 0; i < headerCount; ++i) {
           std::string header = headers[i];
           // TODO 1.1: Remove hack after methods are properly added
-          if (i == 0) {
-            if (includingStd) {
-              header += "\nusing namespace std;";
-            }
-            header += "\nusing namespace occa;";
-          }
           directiveToken token(root.source->origin,
                                header);
           root.addFirst(
             *(new directiveStatement(&root, token))
           );
         }
+
       }
 
-      void dpcppParser::setupKernels() {
-        setupHeaders();
-        if (!success) return;
+      void dpcppParser::setKernelQualifiers(functionDeclStatement &kernelSmnt) {
+        vartype_t &vartype = kernelSmnt.function.returnType;
+        vartype.qualifiers.addFirst(vartype.origin(),
+                                    externC);
 
-        // Get @kernels
-        statementPtrVector kernelSmnts;
-        findStatementsByAttr(statementType::functionDecl,
-                             "kernel",
-                             root,
-                             kernelSmnts);
-        const int kernels = (int) kernelSmnts.size();
-        for (int i = 0; i < kernels; ++i) {
-          setupKernel(*((functionDeclStatement*) kernelSmnts[i]));
-          if (!success) {
-            break;
-          }
-        }
-      }
 
-      void dpcppParser::setupKernel(functionDeclStatement &kernelSmnt) {
-        // @kernel -> extern "C"
         function_t &func = kernelSmnt.function;
-        attributeToken_t &kernelAttr = kernelSmnt.attributes["kernel"];
-        qualifiers_t &qualifiers = func.returnType.qualifiers;
-        // Add extern "C" [__declspec(dllexport)]
-#if OCCA_OS == OCCA_WINDOWS_OS
-        qualifiers.addFirst(kernelAttr.source->origin,
-                            dllexport_);
-#endif
-        qualifiers.addFirst(kernelAttr.source->origin,
-                            externC);
-        // Remove other externs
-        if (qualifiers.has(extern_)) {
-          qualifiers -= extern_;
-        }
-        if (qualifiers.has(externCpp)) {
-          qualifiers -= externCpp;
-        }
-        // Pass non-pointer arguments by reference
+
         const int argCount = (int) func.args.size();
+
+        variable_t queueArg(syclQueuePtr, "q");
+
+        func.addArgument(queueArg);//const identifierToken &typeToken_, const type_t &type_
+        variable_t ndRangeArg(syclNdRangePtr, "ndrange");
+
+        func.addArgument(ndRangeArg);//const identifierToken &typeToken_, const type_t &type_
+
         for (int i = 0; i < argCount; ++i) {
-          variable_t &arg = *(func.args[i]);
-          vartype_t &type = arg.vartype;
-          if ((type.isPointerType() ||
-               type.referenceToken)) {
-            continue;
-          }
-          operatorToken opToken(arg.source->origin,
-                                op::bitAnd);
-          type.setReferenceToken(&opToken);
+                func.addArgument(*func.removeArgument(0));
         }
+
       }
 
-      void dpcppParser::setupExclusives() {
-        // Get @exclusive declarations
-        statementExprMap exprMap;
-        findStatements(exprNodeType::variable,
-                       root,
-                       exclusiveVariableMatcher,
-                       exprMap);
-
-        setupExclusiveDeclarations(exprMap);
-        if (!success) return;
-        setupExclusiveIndices();
-        if (!success) return;
-        transformExprNodes(exprNodeType::variable,
-                           root,
-                           updateExclusiveExprNodes);
-      }
-
-      void dpcppParser::setupExclusiveDeclarations(statementExprMap &exprMap) {
-        statementExprMap::iterator it = exprMap.begin();
-        while (it != exprMap.end()) {
-          statement_t *smnt = it->first;
-          if (smnt->type() == statementType::declaration) {
-            setupExclusiveDeclaration(*((declarationStatement*) smnt));
-          }
-          if (!success) {
-            break;
-          }
-          ++it;
-        }
-      }
-
-      void dpcppParser::setupExclusiveDeclaration(declarationStatement &declSmnt) {
-        // Make sure the @exclusive variable is declared here, not used
-        if (!exclusiveIsDeclared(declSmnt)) {
-          return;
-        }
-
-        // Find inner-most outer loop
-        statement_t *smnt = declSmnt.up;
-        forStatement *innerMostOuterLoop = NULL;
-        while (smnt) {
-          if (smnt->hasAttribute("outer")) {
-            innerMostOuterLoop = (forStatement*) smnt;
-            break;
-          }
-          smnt = smnt->up;
-        }
-
-        // Check if index variable exists and is valid
-        if (innerMostOuterLoop->hasDirectlyInScope(exclusiveIndexName)) {
-          keyword_t &keyword = innerMostOuterLoop->getScopeKeyword(exclusiveIndexName);
-          if (keyword.type() != keywordType::variable) {
-            keyword.printError(exclusiveIndexName
-                               + " is a restricted OCCA keyword");
-            success = false;
-          }
-          return;
-        }
-
-        // Create index variable and its declaration statement
-        const fileOrigin &origin = innerMostOuterLoop->source->origin;
-        identifierToken varSource(origin, exclusiveIndexName);
-        variable_t *indexVar = new variable_t(
-          vartype_t(identifierToken(origin, "int"), int_),
-          &varSource
-        );
-
-        // Create declaration statement for index variable
-        declarationStatement &indexDeclSmnt = *(new declarationStatement(innerMostOuterLoop,
-                                                                         &varSource));
-        innerMostOuterLoop->addFirst(indexDeclSmnt);
-        // Add variable to decl + scope
-        indexDeclSmnt.addDeclaration(*indexVar);
-      }
-
-      bool dpcppParser::exclusiveIsDeclared(declarationStatement &declSmnt) {
-        const int declCount = (int) declSmnt.declarations.size();
-        for (int i = 0; i < declCount; ++i) {
-          variableDeclaration &decl = declSmnt.declarations[i];
-          if (decl.variable->hasAttribute("exclusive")) {
-            return true;
-          }
-        }
-        return false;
-      }
-
-      void dpcppParser::setupExclusiveIndices() {
-        transforms::smntTreeNode innerRoot;
-        findStatementTree(statementType::for_,
-                          root,
-                          exclusiveInnerLoopMatcher,
-                          innerRoot);
-
-        // Get outer-most inner loops
-        statementPtrVector outerMostInnerLoops;
-        const int childCount = (int) innerRoot.size();
-        for (int i = 0; i < childCount; ++i) {
-          outerMostInnerLoops.push_back(innerRoot[i]->smnt);
-        }
-        // Get inner-most inner loops
-        statementPtrVector innerMostInnerLoops;
-        getInnerMostLoops(innerRoot, innerMostInnerLoops);
-
-        // Initialize index variable to 0 before outer-most inner loop
-        const int outerMostInnerCount = (int) outerMostInnerLoops.size();
-        for (int i = 0; i < outerMostInnerCount; ++i) {
-          forStatement &innerSmnt = *((forStatement*) outerMostInnerLoops[i]);
-          keyword_t &keyword = innerSmnt.getScopeKeyword(exclusiveIndexName);
-          variable_t &indexVar = ((variableKeyword&) keyword).variable;
-
-          variableNode indexVarNode(innerSmnt.source,
-                                    indexVar);
-          primitiveNode zeroNode(innerSmnt.source,
-                                 0);
-          binaryOpNode assign(innerSmnt.source,
-                              op::assign,
-                              indexVarNode,
-                              zeroNode);
-
-          innerSmnt.up->addBefore(
-            innerSmnt,
-            *(new expressionStatement(&innerSmnt,
-                                      *(assign.clone())))
-          );
-        }
-
-        // Update index after inner-most inner loop
-        const int innerMostInnerCount = (int) innerMostInnerLoops.size();
-        for (int i = 0; i < innerMostInnerCount; ++i) {
-          forStatement &innerSmnt = *((forStatement*) innerMostInnerLoops[i]);
-          keyword_t &keyword = innerSmnt.getScopeKeyword(exclusiveIndexName);
-          variable_t &indexVar = ((variableKeyword&) keyword).variable;
-
-          variableNode indexVarNode(innerSmnt.source,
-                                    indexVar);
-          leftUnaryOpNode increment(innerSmnt.source,
-                                    op::leftIncrement,
-                                    indexVarNode);
-          innerSmnt.addLast(
-            *(new expressionStatement(&innerSmnt,
-                                      *(increment.clone())))
-          );
-        }
-      }
-
-      bool dpcppParser::exclusiveVariableMatcher(exprNode &expr) {
-        return expr.hasAttribute("exclusive");
-      }
-
-      bool dpcppParser::exclusiveInnerLoopMatcher(statement_t &smnt) {
-        return (
-          smnt.hasAttribute("inner")
-          && smnt.hasInScope(exclusiveIndexName)
-        );
-      }
-
-      void dpcppParser::getInnerMostLoops(transforms::smntTreeNode &innerRoot,
-                                           statementPtrVector &loopSmnts) {
-        const int count = (int) innerRoot.size();
-        if (!count) {
-          if (innerRoot.smnt) {
-            loopSmnts.push_back(innerRoot.smnt);
-          }
-          return;
-        }
-        for (int i = 0; i < count; ++i) {
-          getInnerMostLoops(*(innerRoot.children[i]),
-                            loopSmnts);
-        }
-      }
-
-      exprNode* dpcppParser::updateExclusiveExprNodes(statement_t &smnt,
-                                                       exprNode &expr,
-                                                       const bool isBeingDeclared) {
-        variable_t &var = ((variableNode&) expr).value;
-        if (!var.hasAttribute("exclusive")) {
-          return &expr;
-        }
-
-        if (isBeingDeclared) {
-          operatorToken startToken(var.source->origin,
-                                   op::bracketStart);
-          operatorToken endToken(var.source->origin,
-                                 op::bracketEnd);
-          // Add exclusive array to the beginning
-          var.vartype.arrays.insert(
-            var.vartype.arrays.begin(),
-            array_t(startToken,
-                    endToken,
-                    new primitiveNode(var.source,
-                                      256))
-          );
-          return &expr;
-        }
-
-        keyword_t &keyword = smnt.getScopeKeyword(exclusiveIndexName);
-        variable_t &indexVar = ((variableKeyword&) keyword).variable;
-
-        variableNode indexVarNode(var.source,
-                                  indexVar);
-
-        return new subscriptNode(var.source,
-                                 expr,
-                                 indexVarNode);
+      bool dpcppParser::sharedVariableMatcher(exprNode &expr) {
+        return expr.hasAttribute("shared");
       }
     }
   }

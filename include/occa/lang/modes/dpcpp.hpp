@@ -1,51 +1,45 @@
 #ifndef OCCA_LANG_MODES_DPCPP_HEADER
 #define OCCA_LANG_MODES_DPCPP_HEADER
 
-#include <occa/lang/parser.hpp>
-#include <occa/lang/transforms/builtins/finders.hpp>
+#include <occa/lang/modes/withLauncherLambda.hpp>
 
 namespace occa {
   namespace lang {
-    namespace transforms {
-      class smntTreeNode;
-    }
-
     namespace okl {
-      class dpcppParser : public parser_t {
+      class dpcppParser : public withLauncherLambda {
       public:
-        static const std::string exclusiveIndexName;
+        qualifier_t constant;
+        qualifier_t global;
+        qualifier_t device;
+        qualifier_t shared;
 
         dpcppParser(const occa::properties &settings_ = occa::properties());
 
         virtual void onClear();
 
-        virtual void afterParsing();
+        virtual void beforePreprocessing();
 
-        void setupHeaders();
+        virtual void beforeKernelSplit();
+
+        virtual void afterKernelSplit();
+
+        virtual std::string getOuterIterator(const int loopIndex);
+
+        virtual std::string getInnerIterator(const int loopIndex);
+        
+	void updateConstToConstant();
+
+        void setFunctionQualifiers();
+
+        void setSharedQualifiers();
+
+        void addBarriers();
 
         void setupKernels();
 
-        static void setupKernel(functionDeclStatement &kernelSmnt);
+        void setKernelQualifiers(functionDeclStatement &kernelSmnt);
 
-        void setupExclusives();
-
-        void setupExclusiveDeclarations(statementExprMap &exprMap);
-        void setupExclusiveDeclaration(declarationStatement &declSmnt);
-        bool exclusiveIsDeclared(declarationStatement &declSmnt);
-
-        void setupExclusiveIndices();
-
-        static bool exclusiveVariableMatcher(exprNode &expr);
-
-        static bool exclusiveInnerLoopMatcher(statement_t &smnt);
-
-        void getInnerMostLoops(transforms::smntTreeNode &innerRoot,
-                               statementPtrVector &loopSmnts);
-
-
-        static exprNode* updateExclusiveExprNodes(statement_t &smnt,
-                                                  exprNode &expr,
-                                                  const bool isBeingDeclared);
+        static bool sharedVariableMatcher(exprNode &expr);
       };
     }
   }
