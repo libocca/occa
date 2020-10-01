@@ -51,7 +51,7 @@ int main(int argc, const char **argv) {
 
   addVectors.setRunDims(entries, 8);
   // Launch device kernel
-  addVectors(o_a, o_b, o_ab);
+  addVectors(entries, o_a, o_b, o_ab);
   // Copy result to the host
   o_ab.copyTo(ab);
 
