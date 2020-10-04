@@ -4,27 +4,26 @@
 #include <occa/lang/parser.hpp>
 #include <occa/lang/variable.hpp>
 #include <occa/lang/builtins/attributes.hpp>
-#include <occa/lang/transforms/builtins.hpp>
 #include <occa/lang/builtins/types.hpp>
 #include <occa/tools/hash.hpp>
 
 namespace occa {
   namespace lang {
     parser_t::parser_t(const occa::properties &settings_) :
-      preprocessor(settings_),
-      unknownFilter(true),
-      root(NULL, NULL),
-      smntContext(root),
-      smntPeeker(tokenContext,
-                 smntContext,
-                 *this,
-                 attributeMap),
-      loadingStatementType(0),
-      checkSemicolon(true),
-      defaultRootToken(originSource::builtin),
-      success(true),
-      settings(settings_),
-      restrictQualifier(NULL) {
+        preprocessor(settings_),
+        unknownFilter(true),
+        root(NULL, NULL),
+        smntContext(root),
+        smntPeeker(tokenContext,
+                   smntContext,
+                   *this,
+                   attributeMap),
+        loadingStatementType(0),
+        checkSemicolon(true),
+        defaultRootToken(originSource::builtin),
+        success(true),
+        settings(settings_),
+        restrictQualifier(NULL) {
       // Properly implement `identifier-nondigit` for identifiers
       // Meanwhile, we use the unknownFilter
       stream = (tokenizer
@@ -111,35 +110,28 @@ namespace occa {
       strHashMap &dependencyHashes = sourceMetadata.dependencyHashes;
 
       // Set metadata for all @kernels
-      statementPtrVector kernelSmnts;
-      findStatementsByAttr(statementType::functionDecl,
-                           "kernel",
-                           const_cast<blockStatement&>(root),
-                           kernelSmnts);
+      root.children
+          .forEachKernelStatement([&](functionDeclStatement &kernelSmnt) {
+              function_t &func = kernelSmnt.function();
 
-      const int kernelCount = (int) kernelSmnts.size();
-      for (int i = 0; i < kernelCount; ++i) {
-        functionDeclStatement &declSmnt = *((functionDeclStatement*) kernelSmnts[i]);
-        function_t &func = declSmnt.function;
+              kernelMetadata_t &metadata = metadataMap[func.name()];
+              metadata.name = func.name();
 
-        kernelMetadata_t &metadata = metadataMap[func.name()];
-        metadata.name = func.name();
-
-        int args = (int) func.args.size();
-        for (int ai = 0; ai < args; ++ai) {
-          variable_t &arg = *(func.args[ai]);
-          // Ignore implicit arguments that come from the device
-          if (arg.hasAttribute("implicitArg")) {
-            continue;
-          }
-          metadata += argMetadata_t(
-            arg.has(const_),
-            arg.vartype.isPointerType(),
-            arg.dtype(),
-            arg.name()
-          );
-        }
-      }
+              int args = (int) func.args.size();
+              for (int ai = 0; ai < args; ++ai) {
+                variable_t &arg = *(func.args[ai]);
+                // Ignore implicit arguments that come from the device
+                if (arg.hasAttribute("implicitArg")) {
+                  continue;
+                }
+                metadata += argMetadata_t(
+                  arg.has(const_),
+                  arg.vartype.isPointerType(),
+                  arg.dtype(),
+                  arg.name()
+                );
+              }
+            });
 
       // Set dependencies and their hashes
       strVector dependencies = preprocessor.getDependencyFilenames();
@@ -286,15 +278,14 @@ namespace occa {
       if (!success) return;
 
       if (restrictQualifier) {
-        success &= transforms::applyRestrictTransforms(root,
-                                                       *restrictQualifier);
+        success &= attributes::occaRestrict::applyCodeTransformations(root, *restrictQualifier);
         if (!success) return;
       }
 
-      success &= transforms::applyDimTransforms(root);
+      success &= attributes::dim::applyCodeTransformations(root);
       if (!success) return;
 
-      success &= transforms::applyTileTransforms(root);
+      success &= attributes::tile::applyCodeTransformations(root);
       if (!success) return;
 
       afterParsing();
@@ -346,7 +337,7 @@ namespace occa {
           continue;
         }
 
-        comments.push_back(
+        comments.push(
           new commentStatement(smntContext.up,
                                *((commentToken*) token))
         );
@@ -359,11 +350,11 @@ namespace occa {
     }
 
     void parser_t::pushComments() {
-      const int commentsCount = (int) comments.size();
+      const int commentsCount = (int) comments.length();
       for (int i = 0; i < commentsCount; ++i) {
         statement_t *smnt = comments[i];
         smnt->up = smntContext.up;
-        smntContext.up->children.push_back(smnt);
+        smntContext.up->children.push(smnt);
       }
       comments.clear();
     }
@@ -391,7 +382,7 @@ namespace occa {
       attributeTokenMap::iterator it = attrs.begin();
       while (it != attrs.end()) {
         attributeToken_t &attr = it->second;
-        if (attr.forStatement(sType)) {
+        if (attr.forStatementType(sType)) {
           smnt->addAttribute(attr);
           ++it;
           continue;
@@ -515,10 +506,10 @@ namespace occa {
 
       variable_t var;
       loadVariable(vartype, var);
-      decl.variable = &(var.clone());
+      decl.setVariable(var.clone());
 
       applyDeclarationSmntAttributes(smntAttributes,
-                                     *(decl.variable));
+                                     decl.variable());
 
       loadDeclarationBitfield(decl);
       loadDeclarationAssignment(decl);
@@ -584,7 +575,7 @@ namespace occa {
       if (!success) {
         return;
       }
-      decl.variable->vartype.bitfield = (int) value->evaluate();
+      decl.variable().vartype.bitfield = (int) value->evaluate();
       delete value;
       tokenContext += pos;
     }
@@ -645,11 +636,11 @@ namespace occa {
     }
 
     void parser_t::loadAllStatements() {
-      statementPtrVector &statements = smntContext.up->children;
+      statementArray &statements = smntContext.up->children;
       statement_t *smnt = getNextStatement();
 
       while (smnt) {
-        statements.push_back(smnt);
+        statements.push(smnt);
         smnt = getNextStatement();
       }
 
@@ -714,7 +705,7 @@ namespace occa {
       statement_t *smnt = loadNextStatement();
 
       // It's the end or we don't have comments
-      if (!smnt || !comments.size()) {
+      if (!smnt || !comments.length()) {
         return smnt;
       }
 
@@ -727,13 +718,13 @@ namespace occa {
       // We need to create a block statement to hold these statements
       blockStatement *blockSmnt = new blockStatement(smnt->up,
                                                      smnt->source);
-      statementPtrVector &childStatements = blockSmnt->children;
+      statementArray &childStatements = blockSmnt->children;
 
       // Set the new block statement to load up comments
       childStatements.swap(comments);
-      childStatements.push_back(smnt);
+      childStatements.push(smnt);
 
-      const int childStatementCount = (int) childStatements.size();
+      const int childStatementCount = (int) childStatements.length();
       for (int i = 0; i < childStatementCount; ++i) {
         // Update new parent statement
         childStatements[i]->up = blockSmnt;
@@ -814,14 +805,15 @@ namespace occa {
                                  baseType.typeToken)
       );
       addAttributesTo(smntAttributes, &smnt);
+
       while(success) {
         // TODO: Pass decl as argument to prevent a copy
-        success &= smnt.addDeclaration(
-          loadVariableDeclaration(smnt.attributes, baseType)
-        );
+        auto decl = loadVariableDeclaration(smnt.attributes, baseType);
+        success &= smnt.addDeclaration(decl);
         if (!success) {
           break;
         }
+
         const opType_t opType = token_t::safeOperatorType(tokenContext[0]);
         if (!(opType & operatorType::comma)) {
           if (opType & operatorType::semicolon) {
@@ -834,11 +826,13 @@ namespace occa {
         }
         ++tokenContext;
       }
+
       if (!success) {
         smnt.freeDeclarations();
         delete &smnt;
         return NULL;
       }
+
       return &smnt;
     }
 
@@ -991,7 +985,7 @@ namespace occa {
       }
     }
 
-    void parser_t::loadConditionStatements(statementPtrVector &statements,
+    void parser_t::loadConditionStatements(statementArray &statements,
                                            const int expectedCount) {
       // Load expression/declaration
       token_t *parenBegin = tokenContext[0];
@@ -1042,7 +1036,7 @@ namespace occa {
 
         checkSemicolon = (count < expectedCount);
         statement_t *smnt = getNextStatement();
-        statements.push_back(smnt);
+        statements.push(smnt);
         if (!success) {
           error = true;
           break;
@@ -1062,7 +1056,7 @@ namespace occa {
         return;
       }
 
-      const int smntCount = (int) statements.size();
+      const int smntCount = (int) statements.length();
       if (!success || error) {
         success = false;
         for (int i = 0; i < smntCount; ++i) {
@@ -1086,9 +1080,9 @@ namespace occa {
     }
 
     statement_t* parser_t::loadConditionStatement() {
-      statementPtrVector statements;
+      statementArray statements;
       loadConditionStatements(statements, 1);
-      if (!statements.size()) {
+      if (!statements.length()) {
         return NULL;
       }
       return statements[0];
@@ -1241,7 +1235,7 @@ namespace occa {
 
       token_t *parenEnd = tokenContext.getClosingPairToken();
 
-      statementPtrVector statements;
+      statementArray statements;
       loadConditionStatements(statements, 3);
       if (!success) {
         smntContext.popUp();
@@ -1249,13 +1243,13 @@ namespace occa {
         return NULL;
       }
 
-      int count = (int) statements.size();
+      int count = (int) statements.length();
       // Last statement is optional
       if (count == 2) {
         ++count;
-        statements.push_back(new emptyStatement(smntContext.up,
-                                                parenEnd,
-                                                false));
+        statements.push(new emptyStatement(smntContext.up,
+                                           parenEnd,
+                                           false));
       }
       if (count < 3) {
         std::string message;
@@ -1285,6 +1279,7 @@ namespace occa {
         delete &forSmnt;
         return NULL;
       }
+
       // If the last statement had attributes, we need to pass them now
       addAttributesTo(attributes, &forSmnt);
 

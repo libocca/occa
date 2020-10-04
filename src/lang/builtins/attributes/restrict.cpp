@@ -1,8 +1,12 @@
 #include <occa/lang/statement.hpp>
 #include <occa/lang/builtins/attributes/restrict.hpp>
+#include <occa/lang/qualifier.hpp>
+#include <occa/lang/variable.hpp>
 
 namespace occa {
   namespace lang {
+    class qualifier_t;
+
     namespace attributes {
       occaRestrict::occaRestrict() {}
 
@@ -15,7 +19,7 @@ namespace occa {
         return true;
       }
 
-      bool occaRestrict::forStatement(const int sType) const {
+      bool occaRestrict::forStatementType(const int sType) const {
         return (sType & statementType::declaration);
       }
 
@@ -26,6 +30,48 @@ namespace occa {
           return false;
         }
         return true;
+      }
+
+      bool occaRestrict::applyCodeTransformations(blockStatement &root,
+                                                  const qualifier_t &restrictQualifier) {
+        bool success = true;
+
+        root.children
+            .flatFilterByStatementType(
+              statementType::functionDecl
+              | statementType::function
+            )
+            .forEach([&](statement_t *smnt) {
+                function_t &func = (
+                  (smnt->type() & statementType::function)
+                  ? smnt->to<functionStatement>().function()
+                  : smnt->to<functionDeclStatement>().function()
+                );
+
+                for (auto &arg : func.args) {
+                  if (!arg || !arg->hasAttribute("restrict")) {
+                    continue;
+                  }
+
+                  if (!arg->vartype.isPointerType()) {
+                    arg->attributes["restrict"].printError(
+                      "[@restrict] can only be applied to pointer function arguments"
+                    );
+                    success &= false;
+                    return;
+                  }
+
+                  const int pointerCount = (int) arg->vartype.pointers.size();
+                  if (pointerCount) {
+                    arg->vartype.pointers[pointerCount - 1] += restrictQualifier;
+                  } else {
+                    // Case where the type is a typedef'd pointer type
+                    arg->vartype += restrictQualifier;
+                  }
+                }
+              });
+
+        return success;
       }
     }
   }

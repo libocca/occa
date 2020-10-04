@@ -1,6 +1,7 @@
 #include <occa/lang/statement/statement.hpp>
 #include <occa/lang/statement/blockStatement.hpp>
 #include <occa/lang/token.hpp>
+#include <occa/lang/expr.hpp>
 
 namespace occa {
   namespace lang {
@@ -131,7 +132,7 @@ namespace occa {
         return -1;
       }
       blockStatement &upBlock = *((blockStatement*) up);
-      const int childrenCount = (int) upBlock.children.size();
+      const int childrenCount = (int) upBlock.children.length();
       for (int i = 0; i < childrenCount; ++i) {
         if (upBlock.children[i] == this) {
           return i;
@@ -144,6 +145,155 @@ namespace occa {
       if (up) {
         up->remove(*this);
       }
+    }
+
+    void statement_t::replaceWith(statement_t &other) {
+      if (!up) {
+        return;
+      }
+
+      up->addBefore(*this, other);
+      up->remove(*this);
+    }
+
+    statementArray statement_t::getParentPath() {
+      statementArray arr;
+
+      statement_t *smnt = up;
+      while (smnt) {
+        arr.push(smnt);
+        smnt = smnt->up;
+      }
+
+      return arr.inplaceReverse();
+    }
+
+    statementArray statement_t::getInnerStatements() {
+      return statementArray();
+    }
+
+    exprNodeArray statement_t::getExprNodes() {
+      return exprNodeArray();
+    }
+
+    void statement_t::replaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      // No need to do anything
+      if (currentNode == newNode) {
+        return;
+      }
+
+      safeReplaceExprNode(currentNode, newNode);
+      delete newNode;
+    }
+
+    void statement_t::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      // Nothing to do by default
+    }
+
+    void statement_t::replaceKeyword(const keyword_t &currentKeyword,
+                                     keyword_t &newKeyword) {
+      const int kType = currentKeyword.type();
+
+      if (kType & keywordType::variable) {
+        const variable_t &currentVar = ((const variableKeyword&) currentKeyword).variable;
+        variable_t &newVar = ((variableKeyword&) newKeyword).variable;
+
+        replaceVariable(currentVar, newVar);
+      }
+      else if (kType & keywordType::function) {
+        const function_t &currentFunc = ((const functionKeyword&) currentKeyword).function;
+        function_t &newFunc = ((functionKeyword&) newKeyword).function;
+
+        replaceFunction(currentFunc, newFunc);
+      }
+      else if (kType & keywordType::type) {
+        const type_t &currentType = ((const typeKeyword&) currentKeyword).type_;
+        type_t &newType = ((typeKeyword&) newKeyword).type_;
+
+        replaceType(currentType, newType);
+      }
+    }
+
+    void statement_t::replaceVariable(const variable_t &currentVar, variable_t &newVar) {
+      statementArray::from(*this)
+          .flatFilterByExprType(exprNodeType::variable)
+          .inplaceMap([&](smntExprNode smntExpr) -> exprNode* {
+              variableNode *varNode = (variableNode*) smntExpr.node;
+              variable_t &var = ((variableNode*) smntExpr.node)->value;
+
+              if (&var != &currentVar) {
+                return varNode;
+              }
+
+              return new variableNode(varNode->token, newVar);
+            });
+    }
+
+    void statement_t::replaceFunction(const function_t &currentFunc, function_t &newFunc) {
+      statementArray::from(*this)
+          .flatFilterByExprType(exprNodeType::function)
+          .inplaceMap([&](smntExprNode smntExpr) -> exprNode* {
+              functionNode *funcNode = (functionNode*) smntExpr.node;
+              function_t &func = ((functionNode*) smntExpr.node)->value;
+
+              if (&func != &currentFunc) {
+                return funcNode;
+              }
+
+              return new functionNode(funcNode->token, newFunc);
+            });
+    }
+
+    void statement_t::replaceType(const type_t &currentType, type_t &newType) {
+      statementArray::from(*this)
+          .flatFilterByExprType(exprNodeType::type)
+          .inplaceMap([&](smntExprNode smntExpr) -> exprNode* {
+              typeNode *_typeNode = (typeNode*) smntExpr.node;
+              type_t &type = ((typeNode*) smntExpr.node)->value;
+
+              if (&type != &currentType) {
+                return _typeNode;
+              }
+
+              return new typeNode(_typeNode->token, newType);
+            });
+    }
+
+    void statement_t::updateIdentifierReferences(exprNode *expr) {
+      exprNodeArray::from(this, expr)
+          .flatFilterByExprType(exprNodeType::identifier)
+          .inplaceMap([&](smntExprNode smntExpr) -> exprNode* {
+              statement_t *smnt = smntExpr.smnt;
+              identifierNode &node = (identifierNode&) *smntExpr.node;
+
+              const std::string &name = node.value;
+
+              keyword_t &keyword = smnt->getScopeKeyword(name);
+              const int kType = keyword.type();
+              if (!(kType & (keywordType::type     |
+                             keywordType::variable |
+                             keywordType::function))) {
+                return &node;
+              }
+
+              if (kType & keywordType::variable) {
+                return (
+                  new variableNode(node.token,
+                                   ((variableKeyword&) keyword).variable)
+                );
+              }
+              if (kType & keywordType::function) {
+                return (
+                  new functionNode(node.token,
+                                   ((functionKeyword&) keyword).function)
+                );
+              }
+              // keywordType::type
+              return (
+                new typeNode(node.token,
+                             ((typeKeyword&) keyword).type_)
+              );
+          });
     }
 
     void statement_t::debugPrint() const {

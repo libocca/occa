@@ -157,6 +157,18 @@ namespace occa {
       return vartype.dtype();
     }
 
+    void variable_t::debugPrint() const {
+      printer pout(io::stderr);
+
+      pout << "Declaration:\n";
+      printDeclaration(pout);
+
+      pout << "\nExtra:\n";
+      printExtraDeclaration(pout);
+
+      pout << "\nEnd\n";
+    }
+
     void variable_t::printDeclaration(printer &pout,
                                       const vartypePrintType_t printType) const {
       vartype.printDeclaration(pout, name(), printType);
@@ -183,45 +195,107 @@ namespace occa {
 
     //---[ Variable Declaration ]-------
     variableDeclaration::variableDeclaration() :
-      variable(NULL),
-      value(NULL) {}
+        varNode(NULL),
+        value(NULL) {}
 
     variableDeclaration::variableDeclaration(variable_t &variable_,
                                              exprNode *value_) :
-      variable(&variable_),
-      value(value_) {}
+        varNode(new variableNode(variable_.source,
+                                 variable_)),
+        value(value_) {}
 
     variableDeclaration::variableDeclaration(variable_t &variable_,
                                              exprNode &value_) :
-      variable(&variable_),
-      value(&value_) {}
+        varNode(new variableNode(variable_.source,
+                                 variable_)),
+        value(&value_) {}
 
     variableDeclaration::variableDeclaration(const variableDeclaration &other) :
-      variable(other.variable),
-      value(other.value) {}
-
-    variableDeclaration::~variableDeclaration() {}
-
-    variableDeclaration variableDeclaration::clone() const {
-      if (!variable) {
-        return variableDeclaration();
-      }
-      if (value) {
-        return variableDeclaration(variable->clone(),
-                                   *(value->clone()));
-      }
-      return variableDeclaration(variable->clone());
+        varNode(NULL),
+        value(NULL) {
+      *this = other;
     }
 
-    void variableDeclaration::clear() {
-      // Variable gets deleted in the scope
-      delete value;
-      variable = NULL;
-      value = NULL;
+    variableDeclaration& variableDeclaration::operator = (const variableDeclaration &other) {
+      varNode = (variableNode*) exprNode::clone(other.varNode);
+      value = exprNode::clone(other.value);
+
+      return *this;
+    }
+
+    variableDeclaration::~variableDeclaration() {
+      clear();
+    }
+
+    variableDeclaration variableDeclaration::clone() const {
+      return variableDeclaration(varNode->value.clone(),
+                                 exprNode::clone(value));
+    }
+
+    bool variableDeclaration::hasVariable() const {
+      return varNode;
     }
 
     bool variableDeclaration::hasValue() const {
       return value;
+    }
+
+    variable_t& variableDeclaration::variable() {
+      return varNode->value;
+    }
+
+    const variable_t& variableDeclaration::variable() const {
+      return varNode->value;
+    }
+
+    void variableDeclaration::clear() {
+      delete varNode;
+      delete value;
+      varNode = NULL;
+      value = NULL;
+    }
+
+    void variableDeclaration::setVariable(variableNode *newVarNode) {
+      // No need to update anything
+      if (varNode == newVarNode) {
+        return;
+      }
+
+      delete varNode;
+      varNode = (variableNode*) exprNode::clone(newVarNode);
+    }
+
+    void variableDeclaration::setVariable(variable_t &variable_) {
+      // No need to update anything
+      if (varNode && &(varNode->value) == &variable_) {
+        return;
+      }
+
+      delete varNode;
+      varNode = new variableNode(variable_.source,
+                                 variable_);
+    }
+
+    void variableDeclaration::setValue(exprNode *newValue) {
+      // No need to update anything
+      if (value == newValue) {
+        return;
+      }
+
+      delete value;
+      value = exprNode::clone(newValue);
+    }
+
+    void variableDeclaration::debugPrint() const {
+      printer pout(io::stderr);
+
+      pout << "Declaration:\n";
+      print(pout, true);
+
+      pout << "\nExtra:\n";
+      printAsExtra(pout);
+
+      pout << "\nEnd\n";
     }
 
     void variableDeclaration::print(printer &pout,
@@ -231,25 +305,25 @@ namespace occa {
         ? vartypePrintType_t::typeDeclaration
         : vartypePrintType_t::type
       );
-      variable->printDeclaration(pout, printType);
+      variable().printDeclaration(pout, printType);
       if (value) {
         pout << " = " << *value;
       }
     }
 
     void variableDeclaration::printAsExtra(printer &pout) const {
-      variable->printExtraDeclaration(pout);
+      variable().printExtraDeclaration(pout);
       if (value) {
         pout << " = " << *value;
       }
     }
 
     void variableDeclaration::printWarning(const std::string &message) const {
-      variable->printWarning(message);
+      variable().printWarning(message);
     }
 
     void variableDeclaration::printError(const std::string &message) const {
-      variable->printError(message);
+      variable().printError(message);
     }
     //==================================
   }

@@ -35,7 +35,7 @@ namespace occa {
 
       virtual bool forVariable() const;
       virtual bool forFunction() const;
-      virtual bool forStatement(const int sType) const = 0;
+      virtual bool forStatementType(const int sType) const = 0;
 
       virtual bool isValid(const attributeToken_t &attr) const = 0;
     };
@@ -88,7 +88,7 @@ namespace occa {
 
       bool forVariable() const;
       bool forFunction() const;
-      bool forStatement(const int sType) const;
+      bool forStatementType(const int sType) const;
 
       attributeArg_t* operator [] (const int index);
       attributeArg_t* operator [] (const std::string &arg);

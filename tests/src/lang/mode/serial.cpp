@@ -45,7 +45,7 @@ void testKernel() {
 void testExtern() {
   // @kernel -> extern "C"
 
-#define func (statement->to<functionDeclStatement>().function)
+#define func (statement->to<functionDeclStatement>().function())
 
   statement_t *statement;
   setStatement("@kernel void foo() {}",
@@ -58,7 +58,7 @@ void testExtern() {
 
 void testArgs() {
   // @kernel args -> by reference
-#define func       (statement->to<functionDeclStatement>().function)
+#define func       (statement->to<functionDeclStatement>().function())
 #define arg(N)     (*(args[N]))
 #define argType(N) (arg(N).vartype)
 

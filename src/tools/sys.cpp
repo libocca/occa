@@ -38,6 +38,7 @@
 
 #include <sys/types.h>
 #include <fcntl.h>
+#include <csignal>
 
 #include <occa/core/base.hpp>
 #include <occa/io.hpp>
@@ -175,6 +176,7 @@ namespace occa {
       size_t lineBytes = 512;
       char lineBuffer[512];
 
+      output = "";
       while (fgets(lineBuffer, lineBytes, fp)) {
         output += lineBuffer;
       }

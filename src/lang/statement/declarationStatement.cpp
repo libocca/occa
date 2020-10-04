@@ -2,6 +2,7 @@
 #include <occa/lang/statement/blockStatement.hpp>
 #include <occa/lang/builtins/types.hpp>
 #include <occa/lang/variable.hpp>
+#include <occa/lang/expr.hpp>
 
 namespace occa {
   namespace lang {
@@ -14,13 +15,9 @@ namespace occa {
                                                const declarationStatement &other) :
       statement_t(up_, other),
       declaredType(other.declaredType) {
-      const int count = (int) other.declarations.size();
-      if (!count) {
-        return;
-      }
-      declarations.reserve(count);
-      for (int i = 0; i < count; ++i) {
-        addDeclaration(other.declarations[i].clone());
+
+      for (auto decl : other.declarations) {
+        addDeclaration(decl.clone());
       }
     }
 
@@ -41,17 +38,16 @@ namespace occa {
     }
 
     void declarationStatement::freeDeclarations() {
-      const int count = (int) declarations.size();
-      for (int i = 0; i < count; ++i) {
-        variable_t *var = declarations[i].variable;
+      for (auto decl : declarations) {
+        variable_t &var = decl.variable();
+
         // The scope has its own typedef copy
         // We have to delete the variable-typedef
-        if (up && up->hasDirectlyInScope(var->name())) {
-          up->removeFromScope(var->name());
-          var = NULL;
+        if (up && up->hasDirectlyInScope(var.name())) {
+          up->removeFromScope(var.name());
         }
-        delete var;
-        declarations[i].clear();
+
+        decl.clear();
       }
       declarations.clear();
     }
@@ -68,9 +64,9 @@ namespace occa {
       return "declaration";
     }
 
-    bool declarationStatement::addDeclaration(const variableDeclaration &decl,
+    bool declarationStatement::addDeclaration(variableDeclaration decl,
                                               const bool force) {
-      variable_t &var = *(decl.variable);
+      variable_t &var = decl.variable();
       bool success = true;
       if (!up) {
         delete &var;
@@ -140,6 +136,43 @@ namespace occa {
       return success;
     }
 
+    bool declarationStatement::declaresVariable(variable_t &var) {
+      for (variableDeclaration &decl : declarations) {
+        if (&(decl.varNode->value) == &var) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    exprNodeArray declarationStatement::getExprNodes() {
+      exprNodeArray arr;
+
+      for (variableDeclaration &decl : declarations) {
+        if (decl.varNode) {
+          arr.push({this, (exprNode*) decl.varNode});
+        }
+        if (decl.value) {
+          arr.push({this, decl.value});
+        }
+      }
+
+      return arr;
+    }
+
+    void declarationStatement::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      for (variableDeclaration &decl : declarations) {
+        if ((exprNode*) decl.varNode == currentNode) {
+          decl.setVariable((variableNode*) newNode);
+          return;
+        }
+        if (decl.value == currentNode) {
+          decl.setValue(newNode);
+          return;
+        }
+      }
+    }
+
     void declarationStatement::print(printer &pout) const {
       const int count = (int) declarations.size();
       if (!count) {
@@ -151,7 +184,7 @@ namespace occa {
       // Pretty print newlines around the struct definition
       const bool printNewlines = (
         declaredType
-        && firstDecl.variable->vartype.definesStruct()
+        && firstDecl.variable().vartype.definesStruct()
       );
 
       if (printNewlines) {

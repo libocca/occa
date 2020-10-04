@@ -14,7 +14,7 @@ namespace occa {
         return name_;
       }
 
-      bool outer::forStatement(const int sType) const {
+      bool outer::forStatementType(const int sType) const {
         return (sType & statementType::for_);
       }
 

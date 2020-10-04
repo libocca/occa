@@ -24,8 +24,14 @@ namespace occa {
       virtual int type() const;
       virtual std::string statementName() const;
 
-      bool addDeclaration(const variableDeclaration &decl,
+      bool addDeclaration(variableDeclaration decl,
                           const bool force = false);
+
+      bool declaresVariable(variable_t &var);
+
+      virtual exprNodeArray getExprNodes();
+
+      virtual void safeReplaceExprNode(exprNode *currentNode, exprNode *newNode);
 
       virtual void print(printer &pout) const;
     };

@@ -14,7 +14,7 @@ namespace occa {
         return name_;
       }
 
-      bool barrier::forStatement(const int sType) const {
+      bool barrier::forStatementType(const int sType) const {
         return (sType & statementType::empty);
       }
 

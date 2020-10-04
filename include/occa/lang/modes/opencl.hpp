@@ -35,11 +35,11 @@ namespace occa {
         static bool sharedVariableMatcher(exprNode &expr);
 
         void setGlobalQualifiers();
-        static bool updateGlobalVariables(statement_t &smnt);
+        static void updateGlobalVariables(statement_t *smnt);
         static void addGlobalToFunctionArgs(function_t &func);
         static void addGlobalToVariable(variable_t &var);
 
-        static bool updateScopeStructVariables(statement_t &smnt);
+        static void updateScopeStructVariables(statement_t *smnt);
         static void addStructToVariable(variable_t &var);
         static void addStructToFunctionArgs(function_t &func);
 

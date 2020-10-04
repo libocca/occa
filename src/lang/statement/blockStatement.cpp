@@ -1,7 +1,6 @@
 #include <occa/lang/statement/blockStatement.hpp>
-
-#include <occa/lang/transforms/builtins/fillExprIdentifiers.hpp>
-#include <occa/lang/transforms/builtins/replacer.hpp>
+#include <occa/lang/expr.hpp>
+#include <occa/lang/variable.hpp>
 
 namespace occa {
   namespace lang {
@@ -29,27 +28,35 @@ namespace occa {
       attributes = other.attributes;
 
       // Copy children
-      const int childCount = (int) other.children.size();
+      const int childCount = (int) other.children.length();
       for (int i = 0; i < childCount; ++i) {
         add(other.children[i]->clone(this));
       }
 
-      // Replace keywords
       keywordMap &keywords = scope.keywords;
       const keywordMap &otherKeywords = other.scope.keywords;
 
-      keywordMap::iterator it = keywords.begin();
-      while (it != keywords.end()) {
-        const std::string &name = it->first;
-        keyword_t &keyword = *(it->second);
+      // Replace existing keywords
+      for (auto &it : keywords) {
+        const std::string &name = it.first;
+        keyword_t &keyword = *(it.second);
 
         keywordMap::const_iterator oit = otherKeywords.find(name);
         if (oit != otherKeywords.end()) {
-          replaceKeywords(*this,
-                          *(oit->second),
-                          keyword);
+          replaceKeyword(*(oit->second), keyword);
         }
-        ++it;
+      }
+
+      // Copy missing keywords
+      for (auto &it : otherKeywords) {
+        const std::string &name = it.first;
+        keyword_t &otherKeyword = *(it.second);
+
+        if (keywords.find(name) == keywords.end()) {
+          keyword_t &keyword = *otherKeyword.clone();
+          scope.add(keyword, true);
+          replaceKeyword(otherKeyword, keyword);
+        }
       }
     }
 
@@ -105,31 +112,30 @@ namespace occa {
 
     statement_t* blockStatement::operator [] (const int index) {
       if ((index < 0) ||
-          (index >= (int) children.size())) {
+          (index >= (int) children.length())) {
         return NULL;
       }
       return children[index];
     }
 
     int blockStatement::size() const {
-      return (int) children.size();
+      return (int) children.length();
     }
 
     void blockStatement::add(statement_t &child) {
-      children.push_back(&child);
+      children.push(&child);
       child.up = this;
     }
 
     bool blockStatement::add(statement_t &child,
                              const int index) {
-      const int count = (int) children.size();
+      const int count = (int) children.length();
       if ((index < 0) || (count < index)) {
         child.printError("Unable to add to parent with given index ["
                          + occa::toString(index) + "]");
         return false;
       }
-      children.insert(children.begin() + index,
-                      &child);
+      children.insert(index, &child);
       child.up = this;
       return true;
     }
@@ -139,7 +145,7 @@ namespace occa {
     }
 
     bool blockStatement::addLast(statement_t &child) {
-      return add(child, (int) children.size());
+      return add(child, (int) children.length());
     }
 
     bool blockStatement::addBefore(statement_t &child,
@@ -150,8 +156,7 @@ namespace occa {
         printError("Expected parent of child statement");
         return false;
       }
-      children.insert(children.begin() + index,
-                      &newChild);
+      children.insert(index, &newChild);
       newChild.up = this;
       return true;
     }
@@ -164,18 +169,17 @@ namespace occa {
         printError("Expected parent of child statement");
         return false;
       }
-      children.insert(children.begin() + index + 1,
-                      &newChild);
+      children.insert(index + 1, &newChild);
       newChild.up = this;
       return true;
     }
 
     void blockStatement::remove(statement_t &child) {
-      const int childCount = (int) children.size();
+      const int childCount = (int) children.length();
       for (int i = 0; i < childCount; ++i) {
         if (children[i] == &child) {
           child.up = NULL;
-          children.erase(children.begin() + i);
+          children.remove(i);
           return;
         }
       }
@@ -206,18 +210,16 @@ namespace occa {
     void blockStatement::swapChildren(blockStatement &other) {
       children.swap(other.children);
 
-      const int childCount = (int) children.size();
-      for (int i = 0; i < childCount; ++i) {
-        children[i]->up = this;
+      for (auto child : children) {
+        child->up = this;
       }
-      const int otherChildCount = (int) other.children.size();
-      for (int i = 0; i < otherChildCount; ++i) {
-        other.children[i]->up = &other;
+      for (auto otherChild : other.children) {
+        otherChild->up = &other;
       }
     }
 
     void blockStatement::clear() {
-      const int count = (int) children.size();
+      const int count = (int) children.length();
       for (int i = 0; i < count; ++i) {
         delete children[i];
       }
@@ -225,16 +227,8 @@ namespace occa {
       scope.clear();
     }
 
-    exprNode* blockStatement::replaceIdentifiers(exprNode *expr) {
-      if (!expr) {
-        return NULL;
-      }
-      transforms::fillExprIdentifiers_t replacer(this);
-      return replacer.apply(*expr);
-    }
-
     void blockStatement::print(printer &pout) const {
-      bool hasChildren = children.size();
+      bool hasChildren = children.length();
       if (!hasChildren) {
         if (up) {
           pout.printStartIndentation();
@@ -263,7 +257,7 @@ namespace occa {
     }
 
     void blockStatement::printChildren(printer &pout) const {
-      const int count = (int) children.size();
+      const int count = (int) children.length();
       for (int i = 0; i < count; ++i) {
         pout << *(children[i]);
       }
