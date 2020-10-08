@@ -80,7 +80,7 @@ namespace occa {
                            const std::string &outputFile,
                            const occa::properties &kernelProps,
                            lang::sourceMetadata_t &metadata) {
-      lang::okl::serialParser parser(kernelProps);
+      lang::okl::dpcppParser parser(kernelProps);
       parser.parseFile(filename);
 
       // Verify if parsing succeeded
@@ -152,7 +152,8 @@ namespace occa {
                            const std::string &outputFile,
                            const occa::properties &kernelProps,
                            lang::sourceMetadata_t &metadata) {
-      lang::okl::serialParser parser(kernelProps);
+      std::cout<<"We are using the parser"<<std::endl;
+      lang::okl::dpcppParser parser(kernelProps);
       parser.parseFile(filename);
 
       // Verify if parsing succeeded

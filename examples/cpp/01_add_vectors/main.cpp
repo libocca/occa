@@ -21,13 +21,13 @@ int main(int argc, const char **argv) {
   }
 
   occa::device device;
-  occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
 
   //---[ Device setup with string flags ]-------------------
-  device.setup((std::string) args["options/device"]);
+//  device.setup((std::string) args["options/device"]);
 
   // device.setup("mode: 'Serial'");
+  // device.setup("mode: 'dpcpp'");
 
   // device.setup("mode     : 'OpenMP',"
   //              "schedule : 'compact',"
@@ -36,13 +36,33 @@ int main(int argc, const char **argv) {
   // device.setup("mode      : 'CUDA',"
   //              "device_id : 0");
 
+  device.setup("mode      : 'dpcpp',"
+		  "platform_id : 3,"
+                "device_id : 0");
+
+
   // device.setup("mode        : 'OpenCL',"
   //              "platform_id : 0,"
   //              "device_id   : 1");
 
   // device.setup("mode        : 'Metal',"
   //              "device_id   : 1");
-  //========================================================
+  
+
+ /* occa::properties deviceProps;
+  deviceProps["mode"] = "dpcpp";
+  deviceProps["platform_id"] = (int) args["options/platform-id"];
+  deviceProps["device_id"] = (int) args["options/device-id"];
+*/
+  //occa::device device(deviceProps);
+
+  // Compile a regular DPCPP kernel at run-time
+  occa::properties kernelProps;
+  kernelProps["okl/enabled"] = true;
+  kernelProps["compiler"] = "dpcpp";
+  kernelProps["compiler_linker_flags"] = "-shared -fPIC";
+
+//========================================================
 
   // Allocate memory on the device
   o_a = device.malloc<float>(entries);
@@ -53,8 +73,8 @@ int main(int argc, const char **argv) {
   o_ab = device.malloc(entries * sizeof(float));
 
   // Compile the kernel at run-time
-  addVectors = device.buildKernel("addVectors.okl",
-                                  "addVectors");
+  occa::kernel addVectors = device.buildKernel("addVectors.okl",
+                                  "addVectors", kernelProps);
 
   // Copy memory to the device
   o_a.copyFrom(a);

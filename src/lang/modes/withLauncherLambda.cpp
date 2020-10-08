@@ -5,6 +5,7 @@
 #include <occa/lang/builtins/attributes.hpp>
 #include <occa/lang/builtins/types.hpp>
 #include <occa/lang/transforms/builtins/replacer.hpp>
+#include <occa/lang/statement.hpp>
 
 namespace occa {
   namespace lang {
@@ -264,7 +265,7 @@ namespace occa {
             ))
         );
         // launch kernel
-        std::string kernelCall = "kernel(";
+/*        std::string kernelCall = "kernel(";
         function_t &func = kernelSmnt.function;
         const int argCount = (int) func.args.size();
         for (int i = 0; i < argCount; ++i) {
@@ -275,7 +276,7 @@ namespace occa {
           kernelCall += arg.name();
         }
         kernelCall += ')';
-/*        launchBlock.add(
+*//*        launchBlock.add(
           *(new expressionStatement(
               &launchBlock,
               *(new identifierNode(forSmnt.source,
@@ -283,8 +284,17 @@ namespace occa {
             ))
         );
 */
-        forSmnt.removeFromParent();
 
+	identifierToken *st = new identifierToken(originSource::builtin, "variable");
+        std::string s ="q->submit([&](sycl::handler &h){\n \
+                        h.parallel_for(*ndrange, [=] (sycl::nd_item<3> i){\n \
+                        int ii = i.get_global_linear_id();\n ";
+        identifierNode* strnode = new identifierNode(st, s);
+        expressionStatement* exprSmnt = new expressionStatement(&launchBlock, *strnode);
+//        blockSmnt.addFirst(*exprSmnt);
+	launchBlock.addFirst(*exprSmnt);
+
+        forSmnt.removeFromParent();
         // TODO 1.1: Delete after properly cloning the declaration statement
         // delete &forSmnt;
       }
@@ -316,12 +326,12 @@ namespace occa {
                                                  &kernelVarSource));
         kernelVar += pointer_t();
 
-        func.args.insert(func.args.begin(),
+/*        func.args.insert(func.args.begin(),
                          &kernelVar);
 
         kernelSmnt.addToScope(kernelType);
         kernelSmnt.addToScope(kernelVar);
-      }
+*/      }
 
       void withLauncherLambda::setupLauncherHeaders() {
         // TODO 1.1: Remove hack after methods are properly added
@@ -453,7 +463,7 @@ namespace occa {
         function_t &oldFunction = kernelSmnt.function;
         function_t &newFunction = (function_t&) oldFunction.clone();
         std::stringstream ss;
-        ss << newFunction.name() << "_" << kernelIndex;
+        ss << newFunction.name() ;
         newFunction.source->value = ss.str();
 
         functionDeclStatement &newKernelSmnt = *(
@@ -489,6 +499,7 @@ namespace occa {
           functionDeclStatement &kernelSmnt = (
             *((functionDeclStatement*) kernelSmnts[i])
           );
+
           setupOccaFors(kernelSmnt);
           if (!success) return;
         }
@@ -505,12 +516,7 @@ namespace occa {
                              kernelSmnt,
                              innerSmnts);
 
-        const int outerCount = (int) outerSmnts.size();
-        for (int i = 0; i < outerCount; ++i) {
-          replaceOccaFor(*((forStatement*) outerSmnts[i]));
-        }
-
-        const bool applyBarriers = usesBarriers();
+               const bool applyBarriers = usesBarriers();
 
         const int innerCount = (int) innerSmnts.size();
         for (int i = 0; i < innerCount; ++i) {
@@ -522,7 +528,71 @@ namespace occa {
             if (!success) return;
           }
 
-          replaceOccaFor(innerSmnt);
+
+
+	identifierToken *st = new identifierToken(originSource::builtin, "variable");
+	identifierToken *stsubmit= new identifierToken(originSource::builtin, "submit");
+        std::string s ="q";
+        std::string ssubmit ="submit";
+        /*std::string s ="q->submit([&](sycl::handler &h){\n \
+                        h.parallel_for(*ndrange, [=] (sycl::nd_item<3> ii){\n \
+                        int i = ii.get_global_linear_id();\n ";*/
+        identifierNode* strnode = new identifierNode(st, s);
+        identifierNode* strSubmitNode = new identifierNode(stsubmit, ssubmit);
+
+//	lambdaNode* lnode = 
+
+
+//	std::vector<exprNode*>  lambdaVector;
+//	callNode cnode(stsubmit,
+//               strSubmitNode,
+//               lambdaVector);
+
+//	binaryOpNode* bon = binaryOpNode(operatorType::arrow,
+//                   strnode,
+//                   cnode); 
+	//binaryOpNode q -> callNode
+	//callNode func(a,b,c) for 
+
+	const int childIndex = innerSmnt.childIndex();
+        blockStatement &blockSmnt = *(new blockStatement(innerSmnt.up,
+                                                         innerSmnt.source));
+        blockSmnt.swap(innerSmnt);
+        blockSmnt.up->children[childIndex] = &blockSmnt;
+
+        // Add declaration before block
+        declarationStatement &declSmnt = (
+          *(new declarationStatement(blockSmnt.up,
+                                     innerSmnt.source))
+        );
+        //Commenting the follozing removes the index computation
+        //
+        //
+        //Cedric tests
+        const int childCount = (int) blockSmnt.children.size();
+
+	dpcppStatement* dpcppSmnt = new dpcppStatement(&kernelSmnt, kernelSmnt.source);
+	for (int i = 0; i < childCount; ++i) {
+////          blockSmnt.children.erase(blockSmnt.children.begin());
+	    dpcppSmnt->children.push_back(blockSmnt.children[i]);
+        }
+
+
+	expressionStatement* exprSmnt = new expressionStatement(&kernelSmnt, *strnode);
+
+	
+	dpcppSmnt->addFirst(*exprSmnt);
+        kernelSmnt.addFirst(*dpcppSmnt);
+
+        const int outerCount = (int) outerSmnts.size();
+        for (int i = 0; i < outerCount; ++i) {
+          replaceOccaFor(*((forStatement*) outerSmnts[i]));
+        }
+
+
+ //        replaceOccaFor(innerSmnt);
+
+
           if (!success) return;
         }
       }
@@ -605,7 +675,21 @@ namespace occa {
                                      forSmnt.source))
         );
 	//Commenting the follozing removes the index computation
-     //   declSmnt.declarations.push_back(decl);
+	//
+	//
+	//Cedric tests
+	const int childCount = (int) blockSmnt.children.size();
+        for (int i = 0; i < childCount; ++i) {
+          blockSmnt.children.erase(blockSmnt.children.begin());
+        }
+
+
+	
+
+
+
+	//End Cedric test
+//        declSmnt.declarations.push_back(decl);
 
 //        blockSmnt.addFirst(declSmnt);
         delete &forSmnt;
