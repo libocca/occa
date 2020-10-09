@@ -321,13 +321,13 @@ namespace occa {
                             const occa::properties &props) {
 
       occa::properties allProps;
-      allProps["mode"]        = "OpenCL";
+      allProps["mode"]        = "dpcpp";
       allProps["platform_id"] = -1;
       allProps["device_id"]   = -1;
       allProps["wrapped"]     = true;
       allProps += props;
 
-      opencl::device &dev = *(new opencl::device(allProps));
+      dpcpp::device &dev = *(new dpcpp::device(allProps));
       dev.dontUseRefs();
 
       dev.platformID = (int) allProps["platform_id"];

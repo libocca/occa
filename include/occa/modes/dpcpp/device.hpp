@@ -36,8 +36,8 @@ namespace occa {
 
 
 
-/*      virtual lang::okl::withLauncher* createParser(const occa::properties &props) const;
-*/
+      virtual lang::okl::withLauncherLambda* createParser(const occa::properties &props) const;
+
       //---[ Stream ]-------------------
       virtual modeStream_t* createStream(const occa::properties &props);
 

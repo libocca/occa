@@ -6,6 +6,7 @@
 #include <occa/core/device.hpp>
 #include <occa/lang/kernelMetadata.hpp>
 #include <occa/lang/modes/withLauncher.hpp>
+#include <occa/lang/modes/withLauncherLambda.hpp>
 #include <occa/tools/properties.hpp>
 
 namespace occa {

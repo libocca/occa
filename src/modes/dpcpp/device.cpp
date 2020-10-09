@@ -17,7 +17,6 @@ namespace occa {
   namespace dpcpp {
     device::device(const occa::properties &properties_) :
       occa::modeDevice_t(properties_) {
-
       if (!properties.has("wrapped")) {
         int error;
         OCCA_ERROR("[DPCPP] device not given a [platform_id] integer",
@@ -104,10 +103,10 @@ namespace occa {
     }
 
 */
-/*    lang::okl::withLauncher* device::createParser(const occa::properties &props) const {
+    lang::okl::withLauncherLambda* device::createParser(const occa::properties &props) const {
       return new lang::okl::dpcppParser(props);
     }
-*/
+
     //---[ Stream ]---------------------
     modeStream_t* device::createStream(const occa::properties &props) {
       ::sycl::queue* q = new ::sycl::queue();
@@ -152,7 +151,6 @@ namespace occa {
                            const std::string &outputFile,
                            const occa::properties &kernelProps,
                            lang::sourceMetadata_t &metadata) {
-      std::cout<<"We are using the parser"<<std::endl;
       lang::okl::dpcppParser parser(kernelProps);
       parser.parseFile(filename);
 
@@ -370,6 +368,9 @@ namespace occa {
                                                 const std::string &kernelName,
                                                 const occa::properties &kernelProps,
                                                 lang::kernelMetadata_t &metadata) {
+
+      //Need to set initialized to false to prevent argument number verification
+      metadata.initialized=false;
       kernel &k = *(new kernel(this,
                                kernelName,
                                filename,

@@ -15,7 +15,8 @@ namespace occa {
       occa::modeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       dlHandle(NULL),
       function(NULL),
-      isLauncherKernel(false) {}
+      isLauncherKernel(true) {
+      }
 
 
 
