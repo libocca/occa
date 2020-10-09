@@ -7,15 +7,17 @@
 
 namespace occa {
   namespace lang {
+    enum class capture_t { byReference, byValue };
     class lambda_t : public type_t {
     public:
+      capture_t capture;
       exprNodeVector captureParams;
       exprNodeVector args;
       blockStatement *body;
 
       lambda_t();
 
-      lambda_t(const vartype_t &returnType_,
+      lambda_t(capture_t cap = capture_t::byReference,
                  const std::string &name_ = "");
 
       lambda_t(const lambda_t &other);
