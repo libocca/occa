@@ -44,14 +44,16 @@ namespace occa {
       }
 
       std::string dpcppParser::getOuterIterator(const int loopIndex) {
-        std::string name = "get_global_id(";
-        name +=  loopIndex +"*";
+        std::string name = "i_dpcpp_iterator.get_global_id(";
+        name +=  (char)('1'+loopIndex);
+	name = name.append(")");
         return name;
       }
 
       std::string dpcppParser::getInnerIterator(const int loopIndex) {
-        std::string name = "threadIdx.";
-        name += 'x' + (char) loopIndex;
+        std::string name = "i_dpcpp_iterator.get_global_id(";
+        name += (char)('0'+loopIndex);
+	name = name.append(")");
         return name;
       }
 

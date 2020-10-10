@@ -23,5 +23,5 @@ extern "C" void iso_kernel(sycl::queue* q, sycl::nd_range<3>* ndrange, float* pt
 
 		});
 	});
-	q->wait();
+//	q->wait();
 }
