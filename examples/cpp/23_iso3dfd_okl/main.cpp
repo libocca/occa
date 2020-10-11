@@ -185,6 +185,8 @@ int main(int argc, const char** argv)
 	// Setup the platform and device IDs
 	occa::properties deviceProps;
 	deviceProps["mode"] = "dpcpp";
+	//deviceProps["schedule"] = "compact";
+	//deviceProps["chunck"] = "10";
   	deviceProps["platform_id"] = (int) args["options/platform-id"];
   	deviceProps["device_id"] = (int) args["options/device-id"];
 
@@ -201,8 +203,6 @@ int main(int argc, const char** argv)
   	// Compile a regular DPCPP kernel at run-time
   	occa::properties kernelProps;
   	kernelProps["okl/enabled"] = true;
-  	kernelProps["compiler"] = "dpcpp";
-  	kernelProps["compiler_linker_flags"] = "-shared -fPIC";
 	
 	occa::kernel iso3dfdkernel = device.buildKernel("isokernel.okl",
                                                "iso_kernel",

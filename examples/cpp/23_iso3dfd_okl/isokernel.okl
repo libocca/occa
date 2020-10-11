@@ -5,9 +5,9 @@
                         int& n1,
                         int& n2,
                         int& n3){
-  for (const int iz = 0; iz < n3; ++iz; @tile(16, @outer)) {
-    for (const int iy = 0; iy < n2; ++iy; @tile(16, @outer)) {
-      for (const int ix = 0; ix < n1; ++ix; @tile(16, @outer, @inner)) {
+  for (int iz = 0; iz < n3; ++iz; @tile(16, @outer)) {
+    for (int iy = 0; iy < n2; ++iy; @tile(16, @outer)) {
+      for (int ix = 0; ix < n1; ++ix; @tile(16, @outer, @inner)) {
         const int dimn1n2 = n1 * n2;
         if (
           ix >= 8 && ix < (n1-8)

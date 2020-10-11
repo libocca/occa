@@ -192,8 +192,6 @@ int main(int argc, const char** argv)
   	// Compile a regular DPCPP kernel at run-time
   	occa::properties kernelProps;
   	kernelProps["okl/enabled"] = false;
-  	kernelProps["compiler"] = "dpcpp";
-  	kernelProps["compiler_linker_flags"] = "-shared -fPIC";
 	
 	occa::kernel iso3dfdkernel = device.buildKernel("isokernel.cpp",
                                                "iso_kernel",

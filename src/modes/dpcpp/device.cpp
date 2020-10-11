@@ -47,6 +47,9 @@ namespace occa {
       }
 
       kernelProps["compiler_flags"] = compilerFlags;
+      kernelProps["compiler"] = "dpcpp";
+      kernelProps["compiler_linker_flags"] = "-shared -fPIC";
+
     }
 
     device::~device() {

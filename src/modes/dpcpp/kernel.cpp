@@ -16,6 +16,9 @@ namespace occa {
       dlHandle(NULL),
       function(NULL),
       isLauncherKernel(true) {
+      properties["compiler"] = "dpcpp";
+      properties["compiler_linker_flags"] = "-shared -fPIC";
+
       }
 
 

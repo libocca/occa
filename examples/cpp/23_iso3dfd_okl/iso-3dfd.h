@@ -35,7 +35,6 @@
 
 #include <occa.hpp>
 #include <occa/types/fp.hpp>
-#include <CL/sycl.hpp>
 
 #define HALF_LENGTH 8
 

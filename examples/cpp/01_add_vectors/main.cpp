@@ -20,25 +20,25 @@ int main(int argc, const char **argv) {
     ab[i] = 0;
   }
 
-//  occa::device device;
+  occa::device device;
   occa::memory o_a, o_b, o_ab;
 
   //---[ Device setup with string flags ]-------------------
-//  device.setup((std::string) args["options/device"]);
+  device.setup((std::string) args["options/device"]);
 
- //  device.setup("mode: 'Serial'");
+  //device.setup("mode: 'Serial'");
   // device.setup("mode: 'dpcpp'");
 
-  // device.setup("mode     : 'OpenMP',"
-  //              "schedule : 'compact',"
-  //              "chunk    : 10");
+   //device.setup("mode     : 'OpenMP',"
+   //             "schedule : 'compact',"
+   //             "chunk    : 10");
 
   // device.setup("mode      : 'CUDA',"
   //              "device_id : 0");
 
-  //device.setup("mode      : 'dpcpp',"
-	//	  "platform_id : 3,"
-        //        "device_id : 0");
+  device.setup("mode      : 'dpcpp',"
+		  "platform_id : 3,"
+                "device_id : 0");
 
 
   // device.setup("mode        : 'OpenCL',"
@@ -49,12 +49,12 @@ int main(int argc, const char **argv) {
   //              "device_id   : 1");
   
 
-  occa::properties deviceProps;
-  deviceProps["mode"] = "dpcpp";
-  deviceProps["platform_id"] = (int) args["options/platform-id"];
-  deviceProps["device_id"] = (int) args["options/device-id"];
+//  occa::properties deviceProps;
+//  deviceProps["mode"] = "dpcpp";
+//  deviceProps["platform_id"] = (int) args["options/platform-id"];
+//  deviceProps["device_id"] = (int) args["options/device-id"];
 
-  occa::device device(deviceProps);
+//  occa::device device(deviceProps);
 
   // Compile a regular DPCPP kernel at run-time
   occa::properties kernelProps;
