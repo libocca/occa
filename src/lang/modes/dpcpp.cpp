@@ -94,7 +94,7 @@ namespace occa {
       }
 
       void dpcppParser::setSharedQualifiers() {
-/*        statementExprMap exprMap;
+        /*statementExprMap exprMap;
         findStatements(statementType::declaration,
                        exprNodeType::variable,
                        root,

@@ -10,8 +10,8 @@ extern "C" void iso_kernel(sycl::queue* q,
                                                    int & n3) {
   q->submit([&](sycl::handler &h){
                          h.parallel_for(*ndrange, [=] (sycl::nd_item<3> i_dpcpp_iterator){
-  const int iz = i_dpcpp_iterator.get_global_id(3);
-  const int iy = i_dpcpp_iterator.get_global_id(2);
+  const int iz = i_dpcpp_iterator.get_global_id(2);
+  const int iy = i_dpcpp_iterator.get_global_id(1);
   const int ix = i_dpcpp_iterator.get_global_id(0);
   const int dimn1n2 = n1 * n2;
     int offset = iz * dimn1n2 + iy * n1 + ix;
