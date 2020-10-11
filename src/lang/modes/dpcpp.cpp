@@ -10,10 +10,7 @@ namespace occa {
     namespace okl {
       dpcppParser::dpcppParser(const occa::properties &settings_) :
         withLauncherLambda(settings_),
-        constant("__constant__", qualifierType::custom),
-        global("__global__", qualifierType::custom),
-        device("__device__", qualifierType::custom),
-        shared("__shared__", qualifierType::custom) {
+        device("SYCL_EXTERNAL", qualifierType::custom){
 
         okl::addAttributes(*this);
       }
@@ -58,7 +55,7 @@ namespace occa {
       }
 
       void dpcppParser::updateConstToConstant() {
-        const int childCount = (int) root.children.size();
+/*        const int childCount = (int) root.children.size();
         for (int i = 0; i < childCount; ++i) {
           statement_t &child = *(root.children[i]);
           if (child.type() != statementType::declaration) {
@@ -73,11 +70,11 @@ namespace occa {
               var += constant;
             }
           }
-        }
+        }*/
       }
 
       void dpcppParser::setFunctionQualifiers() {
-/*        statementPtrVector funcSmnts;
+        statementPtrVector funcSmnts;
         findStatementsByType(statementType::functionDecl,
                              root,
                              funcSmnts);
@@ -93,11 +90,11 @@ namespace occa {
           vartype_t &vartype = funcSmnt.function.returnType;
           vartype.qualifiers.addFirst(vartype.origin(),
                                       device);
-        }*/
+        }
       }
 
       void dpcppParser::setSharedQualifiers() {
-        statementExprMap exprMap;
+/*        statementExprMap exprMap;
         findStatements(statementType::declaration,
                        exprNodeType::variable,
                        root,
@@ -116,7 +113,7 @@ namespace occa {
             var += shared;
           }
           ++it;
-        }
+        }*/
       }
 
       void dpcppParser::addBarriers() {
