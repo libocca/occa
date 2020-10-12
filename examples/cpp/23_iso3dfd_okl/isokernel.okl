@@ -7,7 +7,7 @@
                         int& n3){
   for (int iz = 0; iz < n3; ++iz; @tile(16, @outer)) {
     for (int iy = 0; iy < n2; ++iy; @tile(16, @outer)) {
-      for (int ix = 0; ix < n1; ++ix; @tile(16, @outer, @inner)) {
+      for (int ix = 0; ix < n1; ++ix; @inner) {
         const int dimn1n2 = n1 * n2;
         if (
           ix >= 8 && ix < (n1-8)

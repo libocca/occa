@@ -5,8 +5,7 @@
 #include <occa/lang/builtins/attributes.hpp>
 #include <occa/lang/builtins/types.hpp>
 #include <occa/lang/transforms/builtins/replacer.hpp>
-#include <occa/lang/statement.hpp>
-#include <set>
+
 namespace occa {
   namespace lang {
     namespace okl {
@@ -285,6 +284,7 @@ namespace occa {
         );
 
         forSmnt.removeFromParent();
+
         // TODO 1.1: Delete after properly cloning the declaration statement
         // delete &forSmnt;
       }
@@ -489,15 +489,27 @@ namespace occa {
           functionDeclStatement &kernelSmnt = (
             *((functionDeclStatement*) kernelSmnts[i])
           );
-
           setupOccaFors(kernelSmnt);
-          if (!success) return;
+	  identifierToken *stt = new identifierToken(originSource::builtin, "variable");
+          std::string sa ="q->submit([&](sycl::handler &h){\n \
+                        h.parallel_for(*ndrange, [=] (sycl::nd_item<3> i_dpcpp_iterator){\n";
+          identifierNode* strnodea = new identifierNode(stt, sa);
+          expressionStatement* exprSmnta = new expressionStatement(&kernelSmnt, *strnodea);
+          exprSmnta->hasSemicolon = false;
+          kernelSmnt.children.insert(kernelSmnt.children.begin(), exprSmnta);
+          identifierToken *stte = new identifierToken(originSource::builtin, "variable");
+          std::string sae ="});\n});\nq->wait();";
+          identifierNode* strnodeae = new identifierNode(stte, sae);
+          expressionStatement* exprSmntae = new expressionStatement(&kernelSmnt, *strnodeae);
+          exprSmntae->hasSemicolon = false;
+          kernelSmnt.children.push_back(exprSmntae);
+
+	  if (!success) return;
         }
       }
 
       void withLauncherLambda::setupOccaFors(functionDeclStatement &kernelSmnt) {
         statementPtrVector outerSmnts, innerSmnts;
-	std::set<std::string> iteratorSet;
         findStatementsByAttr(statementType::for_,
                              "outer",
                              kernelSmnt,
@@ -507,122 +519,26 @@ namespace occa {
                              kernelSmnt,
                              innerSmnts);
 
+        const int outerCount = (int) outerSmnts.size();
+        for (int i = 0; i < outerCount; ++i) {
+          replaceOccaFor(*((forStatement*) outerSmnts[i]));
+        }
+
         const bool applyBarriers = usesBarriers();
 
-	dpcppStatement* dpcppSmnt = new dpcppStatement(&kernelSmnt, kernelSmnt.source);
-
-	const int innerCount = (int) innerSmnts.size();
-	statementPtrVector forSmntVec = (statementPtrVector)innerSmnts;
-	statementPtrVector newSmnts;
-        for (int i = 0; i < innerSmnts.size(); ++i) {
-	  oklForStatement forSmnt(*((forStatement*) forSmntVec[i]));
-          const int loopIndex = forSmnt.oklLoopIndex();
-	  std::string iteratorName = getInnerIterator(loopIndex);
-	  
-	  //find index name
-	  identifierToken iteratorSource(forSmnt.iterator->source->origin,
-                                       iteratorName);
-          identifierNode* iterator = new identifierNode(&iteratorSource,
-                                iteratorName);
-	  //finding the iteration variable
-	  statement_t &initSmnt = *(((forStatement*)forSmntVec[i])->init);
-          declarationStatement &declSmnttemp = (declarationStatement&) initSmnt;
-          variableDeclaration &decl = declSmnttemp.declarations[0];
-	  std::string newstr = decl.variable->name();
-	  size_t pos = newstr.find("_occa_tiled_");
-    	  if (pos != std::string::npos){
-            // If found then erase it from string
-            newstr.erase(pos, 12);
-    	  }
-	  decl.variable->setName(newstr);
-          decl.value = iterator;
-
-	  iteratorSet.insert(newstr);
-
-	  const int childIndex = innerSmnts[i]->childIndex();
-	
-	  blockStatement &blockSmnt2 = *(new blockStatement(innerSmnts[i]->up,
-                                                         innerSmnts[i]->source));
-	  
-          declarationStatement* declSmnt = new declarationStatement(blockSmnt2.up,
-                                     blockSmnt2.source);
-   	  blockStatement &blockSmnt3 = *(new blockStatement(innerSmnts[i]->up,
-                                                         innerSmnts[i]->source));
-	  //add iterator computation
-	  declSmnt->declarations.push_back(decl);
-	  blockStatement* frs = (forStatement*)innerSmnts[i]->up;
-	  
-	  forStatement* fst = (forStatement*) ((blockStatement*)innerSmnts[i])->children[0];
-	  while(fst->children.size()>0){
-	    statement_t* s = fst->children.back();
-            fst->children.pop_back();
-            newSmnts.insert(newSmnts.begin(),s); 
-	  }
-	  newSmnts.insert(newSmnts.begin(),declSmnt);
-        }
-
-	const int outerCount = (int) outerSmnts.size();
-	forSmntVec = (statementPtrVector)outerSmnts;
-        for (int i = 0; i < outerSmnts.size(); ++i) {
-	  oklForStatement forSmnt(*((forStatement*) forSmntVec[i]));
-          const int loopIndex = forSmnt.oklLoopIndex();
-	  std::string iteratorName = getOuterIterator(loopIndex);
-	  
-	  //find index name
-	  identifierToken iteratorSource(forSmnt.iterator->source->origin,
-                                       iteratorName);
-          identifierNode* iterator = new identifierNode(&iteratorSource,
-                                iteratorName);
-
-	  statement_t &initSmnt = *(((forStatement*)forSmntVec[i])->init);
-          declarationStatement &declSmnttemp = (declarationStatement&) initSmnt;
-          variableDeclaration &decl = declSmnttemp.declarations[0];
-          std::string newstr = decl.variable->name();
-          size_t pos = newstr.find("_occa_tiled_");
-          if (pos != std::string::npos){
-            // If found then erase it from string
-            newstr.erase(pos, 12);
+        const int innerCount = (int) innerSmnts.size();
+        for (int i = 0; i < innerCount; ++i) {
+          forStatement &innerSmnt = *((forStatement*) innerSmnts[i]);
+          // TODO 1.1: Only apply barriers when needed in the last inner-loop
+          if (applyBarriers &&
+              isOuterMostInnerLoop(innerSmnt)) {
+            addBarriersAfterInnerLoop(innerSmnt);
+            if (!success) return;
           }
-       	  decl.variable->setName(newstr);
-	  decl.value = iterator;
 
-	  const int childIndex = outerSmnts[i]->childIndex();
-	
-	  blockStatement &blockSmnt2 = *(new blockStatement(outerSmnts[i]->up,
-                                                         outerSmnts[i]->source));
-	  
-          declarationStatement* declSmnt = new declarationStatement(blockSmnt2.up,
-                                     blockSmnt2.source);
-   	  blockStatement &blockSmnt3 = *(new blockStatement(outerSmnts[i]->up,
-                                                         outerSmnts[i]->source));
-	  if(!iteratorSet.count(newstr))
-		declSmnt->declarations.push_back(decl);
-
-	  blockStatement* frs = (forStatement*)outerSmnts[i]->up->up;
-          	  forStatement* fst = (forStatement*) ((blockStatement*)outerSmnts[i])->children[0];
-	  while(fst->children.size()>1){
-	    statement_t* s = fst->children.back();
-            fst->children.pop_back();
-            newSmnts.insert(newSmnts.begin(),s); 
-	  }
-	  newSmnts.insert(newSmnts.begin(),declSmnt);
-        }
-        identifierToken *stt = new identifierToken(originSource::builtin, "variable");
-        std::string sa ="q->submit([&](sycl::handler &h){\n \
-                        h.parallel_for(*ndrange, [=] (sycl::nd_item<3> i_dpcpp_iterator){\n"; 
-        identifierNode* strnodea = new identifierNode(stt, sa);
-        expressionStatement* exprSmnta = new expressionStatement(&kernelSmnt, *strnodea);
-	exprSmnta->hasSemicolon = false;
-        newSmnts.insert(newSmnts.begin(), exprSmnta);
-        identifierToken *stte = new identifierToken(originSource::builtin, "variable");
-        std::string sae ="});\n});\nq->wait();";
-        identifierNode* strnodeae = new identifierNode(stte, sae);
-        expressionStatement* exprSmntae = new expressionStatement(&kernelSmnt, *strnodeae);
-        exprSmntae->hasSemicolon = false;
-	newSmnts.push_back(exprSmntae);
-        kernelSmnt.children = newSmnts;
-
+          replaceOccaFor(innerSmnt);
           if (!success) return;
+        }
       }
 
       void withLauncherLambda::addBarriersAfterInnerLoop(forStatement &forSmnt) {
@@ -670,6 +586,42 @@ namespace occa {
       }
 
       void withLauncherLambda::replaceOccaFor(forStatement &forSmnt) {
+        oklForStatement oklForSmnt(forSmnt);
+
+        std::string iteratorName;
+        const int loopIndex = oklForSmnt.oklLoopIndex();
+        if (oklForSmnt.isOuterLoop()) {
+          iteratorName = getOuterIterator(loopIndex);
+        } else {
+          iteratorName = getInnerIterator(loopIndex);
+        }
+
+        identifierToken iteratorSource(oklForSmnt.iterator->source->origin,
+                                       iteratorName);
+        identifierNode iterator(&iteratorSource,
+                                iteratorName);
+
+        // Create iterator declaration
+        variableDeclaration decl;
+        decl.variable = oklForSmnt.iterator;
+        decl.value = oklForSmnt.makeDeclarationValue(iterator);
+
+        // Replace for-loops with blocks
+        const int childIndex = forSmnt.childIndex();
+        blockStatement &blockSmnt = *(new blockStatement(forSmnt.up,
+                                                         forSmnt.source));
+        blockSmnt.swap(forSmnt);
+        blockSmnt.up->children[childIndex] = &blockSmnt;
+
+        // Add declaration before block
+        declarationStatement &declSmnt = (
+          *(new declarationStatement(blockSmnt.up,
+                                     forSmnt.source))
+        );
+        declSmnt.declarations.push_back(decl);
+
+        blockSmnt.addFirst(declSmnt);
+        delete &forSmnt;
       }
 
       bool withLauncherLambda::usesBarriers() {
