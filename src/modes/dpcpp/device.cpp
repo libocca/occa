@@ -27,11 +27,10 @@ namespace occa {
                    properties.has("device_id") &&
                    properties["device_id"].isNumber());
 
-      /*  platformID = properties.get<int>("platform_id");
-        deviceID   = properties.get<int>("device_selector");
-*/
-        dpcppDevice = ::sycl::device();
-
+        platformID = properties.get<int>("platform_id");
+        deviceID   = properties.get<int>("device_id");
+        dpcppDevice = ::sycl::device(getDeviceByID(platformID, deviceID));
+	std::cout<<"Target Device is: "<<dpcppDevice.get_info<::sycl::info::device::name>()<<"\n";
 //        dpcppContext = clCreateContext(NULL, 1, &clDevice, NULL, NULL, &error);
 //        OCCA_DPCPP_ERROR("Device: Creating Context", error);
       }
@@ -112,7 +111,7 @@ namespace occa {
 
     //---[ Stream ]---------------------
     modeStream_t* device::createStream(const occa::properties &props) {
-      ::sycl::queue* q = new ::sycl::queue();
+      ::sycl::queue* q = new ::sycl::queue(dpcppDevice);
       return new stream(this, props, q);
     }
 

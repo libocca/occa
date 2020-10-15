@@ -40,7 +40,6 @@ namespace occa {
 
     bool isEnabled();
 
-    //cl_device_type deviceType(int type);
     ::sycl::info::device_type deviceType(int type);
 
     int getPlatformCount();
@@ -51,11 +50,8 @@ namespace occa {
     int getDeviceCount(int type = info::anyType);
     int getDeviceCountInPlatform(int pID, int type = info::anyType);
 
-    //cl_device_id deviceID(int pID, int dID, int type = info::any);
-    ::sycl::device* deviceID(int pID, int dID, int type = info::anyType);
+    ::sycl::device getDeviceByID(int pID, int dID, int type = info::anyType);
 
-   /* std::string deviceStrInfo(cl_device_id clDID,
-                              cl_device_info clInfo);*/
 
     std::string deviceName(int pID, int dID);
 
