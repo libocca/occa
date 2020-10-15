@@ -1,5 +1,6 @@
 ###############################################################################
 # FIND module wrapper around finding OpenCL
+# This Find module is also distributed alongside the occa package config file!
 ###############################################################################
 
 # Look in some default places for OpenCL and set OPENCL_ROOT

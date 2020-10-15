@@ -1,5 +1,6 @@
 ###############################################################################
 # FIND module for DPCPP components
+# This Find module is also distributed alongside the occa package config file!
 ###############################################################################
 
 message(CHECK_START "Looking for DPC++")

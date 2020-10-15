@@ -1,5 +1,6 @@
 ###############################################################################
 # FIND module for METAL components
+# This Find module is also distributed alongside the occa package config file!
 ###############################################################################
 
 find_library(METAL_LIBRARY Metal)

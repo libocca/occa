@@ -287,7 +287,7 @@ set(OCCA_SRC
 
 target_sources(libocca PRIVATE ${OCCA_SRC})
 
-install(TARGETS libocca DESTINATION lib)
+install(TARGETS libocca EXPORT occaExport DESTINATION lib)
 install(DIRECTORY include/ DESTINATION include)
 
 if(ENABLE_TESTS)
@@ -300,3 +300,6 @@ if(ENABLE_EXAMPLES)
 endif(ENABLE_EXAMPLES)
 
 add_subdirectory(bin)
+
+# Create a package config and associated files.
+include(ExportAndPackageConfig)

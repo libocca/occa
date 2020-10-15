@@ -1,5 +1,6 @@
 ###############################################################################
 # FIND: HIP and associated helper binaries
+# This Find module is also distributed alongside the occa package config file!
 ###############################################################################
 # HIP is supported on Linux only
 if(UNIX AND NOT APPLE AND NOT CYGWIN)
