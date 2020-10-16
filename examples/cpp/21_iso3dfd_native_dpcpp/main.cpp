@@ -184,7 +184,7 @@ int main(int argc, const char** argv)
 	//Starting OCCA implementation
 	// Setup the platform and device IDs
 	occa::properties deviceProps;
-	deviceProps["mode"] = "serial";
+	deviceProps["mode"] = "dpcpp";
   	deviceProps["platform_id"] = (int) args["options/platform-id"];
   	deviceProps["device_id"] = (int) args["options/device-id"];
 
@@ -209,7 +209,7 @@ int main(int argc, const char** argv)
 
 	occa::dim inner(p.n1, p.n2, p.n3);
 	occa::dim outer(p.n1_Tblock, p.n2_Tblock, p.n3_Tblock);
-	iso3dfdkernel.setRunDims(inner, outer);
+	iso3dfdkernel.setRunDims(outer, inner);
 
   	wstart = walltime();
   	o_prev.copyFrom(p.prev);

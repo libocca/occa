@@ -37,7 +37,7 @@ int main(int argc, const char **argv) {
   //              "device_id : 0");
 
   device.setup("mode      : 'dpcpp',"
-		  "platform_id : 3,"
+  		  "platform_id : 3,"
                 "device_id : 0");
 
 
@@ -75,7 +75,7 @@ int main(int argc, const char **argv) {
   // Compile the kernel at run-time
   occa::kernel addVectors = device.buildKernel("addVectors.okl",
                                   "addVectors", kernelProps);
-  addVectors.setRunDims(entries, 4);
+  addVectors.setRunDims(4, entries);
 
   // Copy memory to the device
   o_a.copyFrom(a);

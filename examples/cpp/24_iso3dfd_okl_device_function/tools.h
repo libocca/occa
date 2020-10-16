@@ -92,7 +92,7 @@ bool within_epsilon(float* output, float *reference, const int dimx, const int d
       for(int ix=0; ix<dimx; ix++) {
 	if( ix>=radius && ix<(dimx-radius) && iy>=radius && iy<(dimy-radius) && iz>=radius && iz<(dimz-radius+zadjust) ) {
 	  float difference = fabsf( *reference - *output);
-	  if( difference > delta ) {
+	  if( difference > delta) {
 	    retval = false;
 	    printf(" ERROR: (%d,%d,%d)\t%.2f instead of %.2f\n", ix,iy,iz, *output, *reference);
 	    return false;

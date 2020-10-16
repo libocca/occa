@@ -5,8 +5,8 @@
                         int& n1,
                         int& n2,
                         int& n3){
-  for (int iz = 0; iz < n3; ++iz; @tile(16, @outer)) {
-    for (int iy = 0; iy < n2; ++iy; @tile(16, @outer)) {
+  for (int iz = 0; iz < n3; ++iz; @outer) {
+    for (int iy = 0; iy < n2; ++iy; @tile(4, @outer)) {
       for (int ix = 0; ix < n1; ++ix; @inner) {
         const int dimn1n2 = n1 * n2;
         if (
@@ -15,7 +15,7 @@
           && iz >= 8 && iz < (n3-8)
         ){
           int offset = iz*dimn1n2 + iy * n1 + ix;
-          float value = 0.0;
+          float value = 0.0f;
           value += ptr_prev[offset]*coeff[0];
           for (int ir = 1; ir <= 8; ir++) {
             value += coeff[ir] * (ptr_prev[offset + ir] + ptr_prev[offset - ir]);// horizontal

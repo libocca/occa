@@ -40,14 +40,14 @@ occa::json parseArgs(int argc, const char **argv);
 
 
 typedef struct{
-	size_t n1;   	// First dimension
-	size_t n2;   	// Second dimension
-	size_t n3;   	// Third dimension
+	int n1;   	// First dimension
+	int n2;   	// Second dimension
+	int n3;   	// Third dimension
 	int num_threads;
 	int nreps;     	// number of time-steps, over which performance is averaged
-	size_t n1_Tblock;	// Thread blocking on 1st dimension
-	size_t n2_Tblock;	// Thread blocking on 2nd dimension
-	size_t n3_Tblock;	// Thread blocking on 3rd dimension
+	int n1_Tblock;	// Thread blocking on 1st dimension
+	int n2_Tblock;	// Thread blocking on 2nd dimension
+	int n3_Tblock;	// Thread blocking on 3rd dimension
 	float *prev;	
 	float *next;
 	float *vel;
@@ -59,7 +59,7 @@ void initialize(float* ptr_prev, float* ptr_next, float* ptr_vel, Parameters* p,
         memset(ptr_next, 0.0f, nbytes);
         memset(ptr_vel, 2250000.0f*DT*DT, nbytes);
 	//Then we add a source
-        float val = 1.f;
+        float val = 1.1f;
         for(int s=5; s>=0; s--){
                 for(int i=p->n3/2-s; i<p->n3/2+s;i++){
                         for(int j=p->n2/4-s; j<p->n2/4+s;j++){
@@ -68,7 +68,7 @@ void initialize(float* ptr_prev, float* ptr_next, float* ptr_vel, Parameters* p,
                                 }
                         }
                 }
-                val *= 10;
+                val *= 1.2f;
        }
 }
 
@@ -83,9 +83,9 @@ int main(int argc, const char** argv)
   	p.n3 = 300;   // Third dimension
   	p.num_threads = 4;
   	p.nreps = 100;     // number of time-steps, over which performance is averaged
-  	p.n1_Tblock;       // Thread blocking on 1st dimension
-  	p.n2_Tblock;       // Thread blocking on 2nd dimension
-  	p.n3_Tblock;       // Thread blocking on 3rd dimension
+  	p.n1_Tblock=256;       // Thread blocking on 1st dimension
+  	p.n2_Tblock=4;       // Thread blocking on 2nd dimension
+  	p.n3_Tblock=2;       // Thread blocking on 3rd dimension
 # define N2_TBLOCK 1   // Default thread blocking on 2nd dimension: 1
 # define N3_TBLOCK 124 // Default thread blocking on 3rd dimension: 124
   
@@ -210,8 +210,8 @@ int main(int argc, const char** argv)
 	initialize(p.prev, p.next, p.vel, &p, nbytes);
 
 	occa::dim inner(p.n1, p.n2, p.n3);
-	occa::dim outer(8, 2, 2);
-	iso3dfdkernel.setRunDims(inner, outer);
+	occa::dim outer(p.n1_Tblock, p.n2_Tblock, p.n3_Tblock);
+	iso3dfdkernel.setRunDims(outer, inner);
 
   	wstart = walltime();
   	o_prev.copyFrom(p.prev);
@@ -268,12 +268,12 @@ int main(int argc, const char** argv)
         }
 
         initialize(p.prev, p_ref, p.vel, &p, nbytes);
-
-        reference_implementation( p_ref, p.prev, coeff, p.vel, p.n1, p.n2, p.n3, HALF_LENGTH );
-        reference_implementation( p.prev, p_ref, coeff, p.vel, p.n1, p.n2, p.n3, HALF_LENGTH );
-        reference_implementation( p_ref, p.prev, coeff, p.vel, p.n1, p.n2, p.n3, HALF_LENGTH );
-        o_next2.copyTo(p.next);
-        if( within_epsilon( p.next, p_ref, p.n1, p.n2, p.n3, HALF_LENGTH, 0, 0.0001f ) ) {
+        for(int it=0; it<2; it++){
+	        reference_implementation( p_ref, p.prev, coeff, p.vel, p.n1, p.n2, p.n3, HALF_LENGTH );
+	        reference_implementation( p.prev, p_ref, coeff, p.vel, p.n1, p.n2, p.n3, HALF_LENGTH );
+	}
+	o_next2.copyTo(p.next);
+        if( within_epsilon( p.next, p_ref, p.n1, p.n2, p.n3, HALF_LENGTH, 0, 1e-45f ) ) {
                 printf("  Result within epsilon\n");
                 printf("  TEST PASSED!\n");
         } else {

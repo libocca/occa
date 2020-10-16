@@ -211,7 +211,7 @@ int main(int argc, const char** argv)
 
 	occa::dim inner(p.n1, p.n2, p.n3);
 	occa::dim outer(p.n1_Tblock, p.n2_Tblock, p.n3_Tblock);
-	iso3dfdkernel.setRunDims(inner, outer);
+	iso3dfdkernel.setRunDims(outer, inner);
 
   	wstart = walltime();
   	o_prev.copyFrom(p.prev);
@@ -251,11 +251,10 @@ int main(int argc, const char** argv)
         o_coeff.copyFrom(coeff);
 
         //time iteration loop
-	for(int it=0; it<2; it++){
-                iso3dfdkernel(o_next2, o_prev2, o_vel, o_coeff, p.n1, p.n2, p.n3);
-                iso3dfdkernel(o_prev2, o_next2, o_vel, o_coeff, p.n1, p.n2, p.n3);
-        } // time loop
-
+	for(int i=0; i<2; i++){
+        	iso3dfdkernel(o_next2, o_prev2, o_vel, o_coeff, p.n1, p.n2, p.n3);
+        	iso3dfdkernel(o_prev2, o_next2, o_vel, o_coeff, p.n1, p.n2, p.n3);
+	}
 	o_prev2.copyTo(p.prev);
         o_next2.copyTo(p.next);
 
@@ -266,14 +265,22 @@ int main(int argc, const char** argv)
                 printf("  TEST FAILED!\n"); fflush(NULL);
                 exit(-1);
         }
-
-        initialize(p.prev, p_ref, p.vel, &p, nbytes);
-
-        reference_implementation( p_ref, p.prev, coeff, p.vel, p.n1, p.n2, p.n3, HALF_LENGTH );
-        reference_implementation( p.prev, p_ref, coeff, p.vel, p.n1, p.n2, p.n3, HALF_LENGTH );
-        reference_implementation( p_ref, p.prev, coeff, p.vel, p.n1, p.n2, p.n3, HALF_LENGTH );
+	        initialize(p.prev, p_ref, p.vel, &p, nbytes);
+        for(int i=0; i<2; i++){
+		reference_implementation( p_ref, p.prev, coeff, p.vel, p.n1, p.n2, p.n3, HALF_LENGTH );
+        	reference_implementation( p.prev, p_ref, coeff, p.vel, p.n1, p.n2, p.n3, HALF_LENGTH );
+	}
         o_next2.copyTo(p.next);
-        if( within_epsilon( p.next, p_ref, p.n1, p.n2, p.n3, HALF_LENGTH, 0, 0.0001f ) ) {
+/*	for(int i3=0; i3<p.n3; i3++){
+	for(int i2=0; i2<p.n2; i2++){
+ 	for(int i1=0; i1<p.n1; i1++){
+		std::cout<<p.next[i1 + i2*p.n1 + i3*p.n1*p.n2]<<", ";
+	}
+		std::cout<<std::endl;
+	}
+	}
+*/
+       if( within_epsilon( p.next, p_ref, p.n1, p.n2, p.n3, HALF_LENGTH, 0, 1e-45f ) ) {
                 printf("  Result within epsilon\n");
                 printf("  TEST PASSED!\n");
         } else {

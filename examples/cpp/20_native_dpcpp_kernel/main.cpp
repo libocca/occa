@@ -49,7 +49,7 @@ int main(int argc, const char **argv) {
   o_b.copyFrom(b);
   o_ab.copyFrom(ab);
 
-  addVectors.setRunDims(entries, 8);
+  addVectors.setRunDims(8, entries);
   // Launch device kernel
   addVectors(entries, o_a, o_b, o_ab);
   // Copy result to the host

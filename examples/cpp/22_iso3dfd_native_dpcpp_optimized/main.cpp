@@ -200,7 +200,7 @@ int main(int argc, const char** argv)
 
 	occa::dim inner(p.n1 - 2*HALF_LENGTH, p.n2 - 2*HALF_LENGTH, p.n3 - 2*HALF_LENGTH);
 	occa::dim outer(p.n1_Tblock, p.n2_Tblock, p.n3_Tblock);
-	iso3dfdkernel.setRunDims(inner, outer);
+	iso3dfdkernel.setRunDims(outer, inner);
 
   	wstart = walltime();
   	o_prev.copyFrom(p.prev);
