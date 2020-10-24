@@ -1,6 +1,7 @@
 #ifndef OCCA_LANG_EXPR_HEADER
 #define OCCA_LANG_EXPR_HEADER
 
+// Expression Nodes
 #include <occa/lang/expr/binaryOpNode.hpp>
 #include <occa/lang/expr/callNode.hpp>
 #include <occa/lang/expr/charNode.hpp>
@@ -33,6 +34,7 @@
 #include <occa/lang/expr/variableNode.hpp>
 #include <occa/lang/expr/vartypeNode.hpp>
 
-#include <occa/lang/expr/expression.hpp>
+// Helper methods
+#include <occa/lang/expr/expressionParser.hpp>
 
 #endif
