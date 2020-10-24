@@ -4,11 +4,11 @@
 
 #define parseOKLSource(src_)                    \
   parseSource(src_);                            \
-  ASSERT_TRUE(okl::checkKernels(parser.root))
+  ASSERT_TRUE(okl::kernelsAreValid(parser.root))
 
 #define parseBadOKLSource(src_)                 \
   parseSource(src_);                            \
-  ASSERT_FALSE(okl::checkKernels(parser.root))
+  ASSERT_FALSE(okl::kernelsAreValid(parser.root))
 
 
 void testKernel();

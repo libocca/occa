@@ -15,7 +15,7 @@ namespace occa {
         return true;
       }
 
-      bool shared::forStatement(const int sType) const {
+      bool shared::forStatementType(const int sType) const {
         return (sType & statementType::declaration);
       }
 

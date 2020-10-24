@@ -4,7 +4,6 @@
 #include <occa/io.hpp>
 #include <occa/lang/builtins/types.hpp>
 #include <occa/lang/parser.hpp>
-#include <occa/lang/transforms/builtins/finders.hpp>
 #include <occa/tools/sys.hpp>
 #include <occa/tools/uva.hpp>
 

@@ -79,7 +79,7 @@ void testDeclarationLoading() {
 
 #define decl         statement->to<declarationStatement>()
 #define decls        decl.declarations
-#define declVar(N)   (*decls[N].variable)
+#define declVar(N)   (decls[N].variable())
 #define declValue(N) (*(decls[N].value))
 
   setStatement("int foo;",
@@ -205,7 +205,7 @@ void testStructLoading() {
   typedef_t *typedefType = NULL;
 
 #define declSmnt         statement->to<declarationStatement>()
-#define getDeclType      declSmnt.declarations[0].variable->vartype.type
+#define getDeclType      declSmnt.declarations[0].variable().vartype.type
 #define setStructType()  structType = (struct_t*) getDeclType
 #define setTypedefType() typedefType = (typedef_t*) getDeclType
 
@@ -296,8 +296,8 @@ void testFunctionLoading() {
 
 #define funcSmnt     statement->to<functionStatement>()
 #define funcDeclSmnt statement->to<functionDeclStatement>()
-#define func         funcSmnt.function
-#define funcDecl     funcDeclSmnt.function
+#define func         funcSmnt.function()
+#define funcDecl     funcDeclSmnt.function()
 
   setStatement("void foo();",
                statementType::function);
@@ -348,7 +348,7 @@ void testIfLoading() {
 #define condition    (*ifSmnt.condition)
 #define decl         condition.to<declarationStatement>()
 #define decls        decl.declarations
-#define declVar(N)   (*decls[N].variable)
+#define declVar(N)   (decls[N].variable())
 #define declValue(N) (*(decls[N].value))
 
   setStatement("if (true) {}",
@@ -428,7 +428,7 @@ void testForLoading() {
   ASSERT_EQ_BINARY(statementType::empty,
                    update.type());
   ASSERT_EQ(0,
-            (int) forSmnt.children.size());
+            (int) forSmnt.children.length());
 
   setStatement("for (;;);",
                statementType::for_);
@@ -439,7 +439,7 @@ void testForLoading() {
   ASSERT_EQ_BINARY(statementType::empty,
                    update.type());
   ASSERT_EQ(1,
-            (int) forSmnt.children.size());
+            (int) forSmnt.children.length());
 
   // Test declaration in conditional
   setStatement("for (int i = 0; i < 2; ++i) {}",
@@ -677,7 +677,7 @@ void testAttributeLoading() {
 #define smntAttr(N)       statement->attributes[N]->name()
 #define declSmnt          statement->to<declarationStatement>()
 #define decls             declSmnt.declarations
-#define declVar(N)        (*decls[N].variable)
+#define declVar(N)        (decls[N].variable())
 #define declVarAttr(N, A) declVar(N).attributes[A]
 
 #if 0

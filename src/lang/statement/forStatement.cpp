@@ -4,17 +4,17 @@ namespace occa {
   namespace lang {
     forStatement::forStatement(blockStatement *up_,
                                token_t *source_) :
-      blockStatement(up_, source_),
-      init(NULL),
-      check(NULL),
-      update(NULL) {}
+        blockStatement(up_, source_),
+        init(NULL),
+        check(NULL),
+        update(NULL) {}
 
     forStatement::forStatement(blockStatement *up_,
                                const forStatement &other) :
-      blockStatement(up_, other.source),
-      init(statement_t::clone(this, other.init)),
-      check(statement_t::clone(this, other.check)),
-      update(statement_t::clone(this, other.update)) {
+        blockStatement(up_, other.source),
+        init(statement_t::clone(this, other.init)),
+        check(statement_t::clone(this, other.check)),
+        update(statement_t::clone(this, other.update)) {
 
       copyFrom(other);
     }
@@ -54,12 +54,40 @@ namespace occa {
       return "for";
     }
 
+    statementArray forStatement::getInnerStatements() {
+      statementArray arr;
+
+      if (init) {
+        arr.push(init);
+      }
+      if (check) {
+        arr.push(check);
+      }
+      if (update) {
+        arr.push(update);
+      }
+
+      return arr;
+    }
+
     void forStatement::print(printer &pout) const {
       pout.printStartIndentation();
 
       pout << "for (";
       pout.pushInlined(true);
-      pout << *init << *check << *update;
+
+      // When developing or making code transformations, we might
+      // not always have all 3 set
+      if (init) {
+        pout << *init;
+      }
+      if (check) {
+        pout << *check;
+      }
+      if (update) {
+        pout << *update;
+      }
+
       pout << ')';
 
       blockStatement::print(pout);

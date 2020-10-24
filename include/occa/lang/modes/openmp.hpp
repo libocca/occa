@@ -12,7 +12,7 @@ namespace occa {
 
         virtual void afterParsing();
 
-        void findOuterMostLoops(statementPtrVector &outerMostSmnts);
+        bool isOuterForLoop(statement_t *smnt);
       };
     }
   }

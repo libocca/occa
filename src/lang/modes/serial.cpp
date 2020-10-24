@@ -1,6 +1,9 @@
+#include <set>
+
 #include <occa/lang/modes/serial.hpp>
 #include <occa/lang/modes/okl.hpp>
 #include <occa/lang/builtins/types.hpp>
+#include <occa/lang/expr.hpp>
 
 namespace occa {
   namespace lang {
@@ -10,7 +13,7 @@ namespace occa {
       serialParser::serialParser(const occa::properties &settings_) :
         parser_t(settings_) {
 
-        okl::addAttributes(*this);
+        okl::addOklAttributes(*this);
       }
 
       void serialParser::onClear() {}
@@ -18,7 +21,7 @@ namespace occa {
       void serialParser::afterParsing() {
         if (!success) return;
         if (settings.get("okl/validate", true)) {
-          success = checkKernels(root);
+          success = kernelsAreValid(root);
         }
 
         if (!success) return;
@@ -61,33 +64,24 @@ namespace occa {
         setupHeaders();
         if (!success) return;
 
-        // Get @kernels
-        statementPtrVector kernelSmnts;
-        findStatementsByAttr(statementType::functionDecl,
-                             "kernel",
-                             root,
-                             kernelSmnts);
-        const int kernels = (int) kernelSmnts.size();
-        for (int i = 0; i < kernels; ++i) {
-          setupKernel(*((functionDeclStatement*) kernelSmnts[i]));
-          if (!success) {
-            break;
-          }
-        }
+        root.children
+            .forEachKernelStatement(setupKernel);
       }
 
       void serialParser::setupKernel(functionDeclStatement &kernelSmnt) {
         // @kernel -> extern "C"
-        function_t &func = kernelSmnt.function;
+        function_t &func = kernelSmnt.function();
         attributeToken_t &kernelAttr = kernelSmnt.attributes["kernel"];
         qualifiers_t &qualifiers = func.returnType.qualifiers;
-        // Add extern "C" [__declspec(dllexport)]
+
 #if OCCA_OS == OCCA_WINDOWS_OS
+        // Add extern "C" [__declspec(dllexport)]
         qualifiers.addFirst(kernelAttr.source->origin,
                             dllexport_);
 #endif
         qualifiers.addFirst(kernelAttr.source->origin,
                             externC);
+
         // Remove other externs
         if (qualifiers.has(extern_)) {
           qualifiers -= extern_;
@@ -112,41 +106,43 @@ namespace occa {
 
       void serialParser::setupExclusives() {
         // Get @exclusive declarations
-        statementExprMap exprMap;
-        findStatements(exprNodeType::variable,
-                       root,
-                       exclusiveVariableMatcher,
-                       exprMap);
-
-        setupExclusiveDeclarations(exprMap);
+        bool hasExclusiveVariables = false;
+        root.children
+            .nestedForEachDeclaration([&](variableDeclaration &decl, declarationStatement &declSmnt) {
+                if (decl.variable().hasAttribute("exclusive")) {
+                  hasExclusiveVariables = true;
+                  setupExclusiveDeclaration(declSmnt);
+                }
+              });
         if (!success) return;
-        setupExclusiveIndices();
-        if (!success) return;
-        transformExprNodes(exprNodeType::variable,
-                           root,
-                           updateExclusiveExprNodes);
-      }
 
-      void serialParser::setupExclusiveDeclarations(statementExprMap &exprMap) {
-        statementExprMap::iterator it = exprMap.begin();
-        while (it != exprMap.end()) {
-          statement_t *smnt = it->first;
-          if (smnt->type() == statementType::declaration) {
-            setupExclusiveDeclaration(*((declarationStatement*) smnt));
-          }
-          if (!success) {
-            break;
-          }
-          ++it;
-        }
-      }
-
-      void serialParser::setupExclusiveDeclaration(declarationStatement &declSmnt) {
-        // Make sure the @exclusive variable is declared here, not used
-        if (!exclusiveIsDeclared(declSmnt)) {
+        if (!hasExclusiveVariables) {
           return;
         }
 
+        setupExclusiveIndices();
+        if (!success) return;
+
+        root.children
+            .flatFilterByExprType(exprNodeType::variable, "exclusive")
+            .inplaceMap([&](smntExprNode smntExpr) -> exprNode* {
+                statement_t *smnt = smntExpr.smnt;
+                variableNode &varNode = (variableNode&) *smntExpr.node;
+                variable_t &var = varNode.value;
+
+                if (
+                  (smnt->type() & statementType::declaration)
+                  && ((declarationStatement*) smnt)->declaresVariable(var)
+                ) {
+                  defineExclusiveVariableAsArray(var);
+                  return &varNode;
+                }
+
+                return addExclusiveVariableArrayAccessor(*smnt, varNode, var);
+              });
+      }
+
+      void serialParser::setupExclusiveDeclaration(declarationStatement &declSmnt) {
         // Find inner-most outer loop
         statement_t *smnt = declSmnt.up;
         forStatement *innerMostOuterLoop = NULL;
@@ -162,8 +158,7 @@ namespace occa {
         if (innerMostOuterLoop->hasDirectlyInScope(exclusiveIndexName)) {
           keyword_t &keyword = innerMostOuterLoop->getScopeKeyword(exclusiveIndexName);
           if (keyword.type() != keywordType::variable) {
-            keyword.printError(exclusiveIndexName
-                               + " is a restricted OCCA keyword");
+            keyword.printError(exclusiveIndexName + " is a restricted OCCA keyword");
             success = false;
           }
           return;
@@ -185,126 +180,108 @@ namespace occa {
         indexDeclSmnt.addDeclaration(*indexVar);
       }
 
-      bool serialParser::exclusiveIsDeclared(declarationStatement &declSmnt) {
-        const int declCount = (int) declSmnt.declarations.size();
-        for (int i = 0; i < declCount; ++i) {
-          variableDeclaration &decl = declSmnt.declarations[i];
-          if (decl.variable->hasAttribute("exclusive")) {
-            return true;
-          }
-        }
-        return false;
-      }
-
       void serialParser::setupExclusiveIndices() {
-        transforms::smntTreeNode innerRoot;
-        findStatementTree(statementType::for_,
-                          root,
-                          exclusiveInnerLoopMatcher,
-                          innerRoot);
+        // Defines the exclusive index:
+        //   int _occa_exclusive_index = 0;
+        std::set<statement_t*> outerMostInnerLoops;
 
-        // Get outer-most inner loops
-        statementPtrVector outerMostInnerLoops;
-        const int childCount = (int) innerRoot.size();
-        for (int i = 0; i < childCount; ++i) {
-          outerMostInnerLoops.push_back(innerRoot[i]->smnt);
-        }
-        // Get inner-most inner loops
-        statementPtrVector innerMostInnerLoops;
-        getInnerMostLoops(innerRoot, innerMostInnerLoops);
+        // Increments the exlusive index:
+        //   ++_occa_exclusive_index;
+        std::set<statement_t*> innerMostInnerLoops;
 
-        // Initialize index variable to 0 before outer-most inner loop
-        const int outerMostInnerCount = (int) outerMostInnerLoops.size();
-        for (int i = 0; i < outerMostInnerCount; ++i) {
-          forStatement &innerSmnt = *((forStatement*) outerMostInnerLoops[i]);
-          keyword_t &keyword = innerSmnt.getScopeKeyword(exclusiveIndexName);
+        std::set<statement_t*> loopsWithExclusiveUsage;
+        statementArray::from(root)
+            .flatFilterByStatementType(statementType::for_, "inner")
+            .forEach([&](statement_t *smnt) {
+                const statementArray path = smnt->getParentPath();
+                const bool hasExclusiveUsage = smnt->hasInScope(exclusiveIndexName);
+
+                if (hasExclusiveUsage) {
+                  loopsWithExclusiveUsage.insert(smnt);
+
+                  // Get outer-most inner loop
+                  for (auto pathSmnt : path) {
+                    if (pathSmnt->hasAttribute("inner")) {
+                      outerMostInnerLoops.insert(pathSmnt);
+                      break;
+                    }
+                  }
+                }
+
+                // Remove parent "inner" loops from the innerMostInnerLoops set
+                innerMostInnerLoops.insert(smnt);
+                for (auto pathSmnt : path) {
+                  if (pathSmnt->hasAttribute("inner")) {
+                    innerMostInnerLoops.erase(pathSmnt);
+                  }
+                }
+              });
+
+        for (auto smnt : outerMostInnerLoops) {
+          forStatement &forSmnt = (forStatement&) *smnt;
+          keyword_t &keyword = forSmnt.getScopeKeyword(exclusiveIndexName);
           variable_t &indexVar = ((variableKeyword&) keyword).variable;
 
-          variableNode indexVarNode(innerSmnt.source,
+          variableNode indexVarNode(forSmnt.source,
                                     indexVar);
-          primitiveNode zeroNode(innerSmnt.source,
+          primitiveNode zeroNode(forSmnt.source,
                                  0);
-          binaryOpNode assign(innerSmnt.source,
+          binaryOpNode assign(forSmnt.source,
                               op::assign,
                               indexVarNode,
                               zeroNode);
 
-          innerSmnt.up->addBefore(
-            innerSmnt,
-            *(new expressionStatement(&innerSmnt,
+          forSmnt.up->addBefore(
+            forSmnt,
+            *(new expressionStatement(&forSmnt,
                                       *(assign.clone())))
           );
         }
 
-        // Update index after inner-most inner loop
-        const int innerMostInnerCount = (int) innerMostInnerLoops.size();
-        for (int i = 0; i < innerMostInnerCount; ++i) {
-          forStatement &innerSmnt = *((forStatement*) innerMostInnerLoops[i]);
-          keyword_t &keyword = innerSmnt.getScopeKeyword(exclusiveIndexName);
+        for (auto smnt : innerMostInnerLoops) {
+          forStatement &forSmnt = (forStatement&) *smnt;
+          keyword_t &keyword = forSmnt.getScopeKeyword(exclusiveIndexName);
           variable_t &indexVar = ((variableKeyword&) keyword).variable;
 
-          variableNode indexVarNode(innerSmnt.source,
+          variableNode indexVarNode(forSmnt.source,
                                     indexVar);
-          leftUnaryOpNode increment(innerSmnt.source,
+          leftUnaryOpNode increment(forSmnt.source,
                                     op::leftIncrement,
                                     indexVarNode);
-          innerSmnt.addLast(
-            *(new expressionStatement(&innerSmnt,
+          forSmnt.addLast(
+            *(new expressionStatement(&forSmnt,
                                       *(increment.clone())))
           );
         }
       }
 
-      bool serialParser::exclusiveVariableMatcher(exprNode &expr) {
-        return expr.hasAttribute("exclusive");
-      }
-
-      bool serialParser::exclusiveInnerLoopMatcher(statement_t &smnt) {
-        return (
-          smnt.hasAttribute("inner")
-          && smnt.hasInScope(exclusiveIndexName)
+      void serialParser::defineExclusiveVariableAsArray(variable_t &var) {
+        // TODO: Dynamic array sizes
+        // Define the variable as a stack array
+        // For example:
+        //    const int x
+        // -> const int x[256]
+        operatorToken startToken(var.source->origin,
+                                 op::bracketStart);
+        operatorToken endToken(var.source->origin,
+                               op::bracketEnd);
+        // Add exclusive array to the beginning
+        var.vartype.arrays.insert(
+          var.vartype.arrays.begin(),
+          array_t(startToken,
+                  endToken,
+                  new primitiveNode(var.source,
+                                    256))
         );
       }
 
-      void serialParser::getInnerMostLoops(transforms::smntTreeNode &innerRoot,
-                                           statementPtrVector &loopSmnts) {
-        const int count = (int) innerRoot.size();
-        if (!count) {
-          if (innerRoot.smnt) {
-            loopSmnts.push_back(innerRoot.smnt);
-          }
-          return;
-        }
-        for (int i = 0; i < count; ++i) {
-          getInnerMostLoops(*(innerRoot.children[i]),
-                            loopSmnts);
-        }
-      }
-
-      exprNode* serialParser::updateExclusiveExprNodes(statement_t &smnt,
-                                                       exprNode &expr,
-                                                       const bool isBeingDeclared) {
-        variable_t &var = ((variableNode&) expr).value;
-        if (!var.hasAttribute("exclusive")) {
-          return &expr;
-        }
-
-        if (isBeingDeclared) {
-          operatorToken startToken(var.source->origin,
-                                   op::bracketStart);
-          operatorToken endToken(var.source->origin,
-                                 op::bracketEnd);
-          // Add exclusive array to the beginning
-          var.vartype.arrays.insert(
-            var.vartype.arrays.begin(),
-            array_t(startToken,
-                    endToken,
-                    new primitiveNode(var.source,
-                                      256))
-          );
-          return &expr;
-        }
-
+      exprNode* serialParser::addExclusiveVariableArrayAccessor(statement_t &smnt,
+                                                                exprNode &expr,
+                                                                variable_t &var) {
+        // Add the array access to the variable
+        // For example:
+        //    x
+        // -> x[exclusive_index]
         keyword_t &keyword = smnt.getScopeKeyword(exclusiveIndexName);
         variable_t &indexVar = ((variableKeyword&) keyword).variable;
 

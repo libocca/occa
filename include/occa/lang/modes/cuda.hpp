@@ -36,10 +36,6 @@ namespace occa {
         void addBarriers();
 
         void setupKernels();
-
-        void setKernelQualifiers(functionDeclStatement &kernelSmnt);
-
-        static bool sharedVariableMatcher(exprNode &expr);
       };
     }
   }

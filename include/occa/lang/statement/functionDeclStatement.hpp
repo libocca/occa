@@ -5,22 +5,32 @@
 
 namespace occa {
   namespace lang {
+    class functionNode;
+
     class functionDeclStatement : public blockStatement {
     public:
-      function_t &function;
+      functionNode *funcNode;
 
       functionDeclStatement(blockStatement *up_,
                             function_t &function_);
+
       functionDeclStatement(blockStatement *up_,
                             const functionDeclStatement &other);
+
+      ~functionDeclStatement();
 
       virtual statement_t& clone_(blockStatement *up_) const;
 
       virtual int type() const;
       virtual std::string statementName() const;
 
+      function_t& function();
+      const function_t& function() const;
+
       bool addFunctionToParentScope();
       void addArgumentsToScope();
+
+      virtual void safeReplaceExprNode(exprNode *currentNode, exprNode *newNode);
 
       virtual void print(printer &pout) const;
     };

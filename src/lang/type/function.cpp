@@ -89,6 +89,11 @@ namespace occa {
       return true;
     }
 
+    void function_t::debugPrint() const {
+      printer pout(io::stderr);
+      printDeclaration(pout);
+    }
+
     void function_t::printDeclaration(printer &pout) const {
       returnType.printDeclaration(pout, name());
 

@@ -5,9 +5,11 @@
 
 namespace occa {
   namespace lang {
+    class functionNode;
+
     class functionStatement : public statement_t {
     public:
-      function_t &function;
+      functionNode *funcNode;
 
       functionStatement(blockStatement *up_,
                         function_t &function_);
@@ -19,6 +21,13 @@ namespace occa {
 
       virtual int type() const;
       virtual std::string statementName() const;
+
+      function_t& function();
+      const function_t& function() const;
+
+      virtual exprNodeArray getExprNodes();
+
+      virtual void safeReplaceExprNode(exprNode *currentNode, exprNode *newNode);
 
       virtual void print(printer &pout) const;
     };

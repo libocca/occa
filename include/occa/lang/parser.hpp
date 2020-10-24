@@ -11,8 +11,6 @@
 #include <occa/lang/preprocessor.hpp>
 #include <occa/lang/processingStages.hpp>
 #include <occa/lang/statement.hpp>
-#include <occa/lang/transforms/exprTransform.hpp>
-#include <occa/lang/transforms/statementTransform.hpp>
 #include <occa/lang/tokenizer.hpp>
 #include <occa/lang/tokenContext.hpp>
 #include <occa/lang/statementContext.hpp>
@@ -55,7 +53,7 @@ namespace occa {
       bool checkSemicolon;
 
       unknownToken defaultRootToken;
-      statementPtrVector comments;
+      statementArray comments;
       attributeTokenMap attributes;
 
       bool success;
@@ -183,7 +181,7 @@ namespace occa {
       statement_t* loadFunctionStatement(attributeTokenMap &smntAttributes);
 
       void checkIfConditionStatementExists();
-      void loadConditionStatements(statementPtrVector &statements,
+      void loadConditionStatements(statementArray &statements,
                                    const int expectedCount);
       statement_t* loadConditionStatement();
 

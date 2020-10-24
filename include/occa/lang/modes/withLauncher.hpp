@@ -3,7 +3,6 @@
 
 #include <occa/lang/parser.hpp>
 #include <occa/lang/modes/serial.hpp>
-#include <occa/lang/transforms/builtins/finders.hpp>
 
 namespace occa {
   namespace lang {
@@ -28,7 +27,7 @@ namespace occa {
         virtual void beforeKernelSplit();
         virtual void afterKernelSplit();
 
-        void setOKLLoopIndices();
+        void setOklLoopIndices();
 
         void setupLauncherParser();
 

@@ -5,6 +5,9 @@
 
 namespace occa {
   namespace lang {
+    class blockStatement;
+    class callNode;
+
     namespace attributes {
       //---[ @dim ]-----------------------
       class dim : public attribute_t {
@@ -14,9 +17,17 @@ namespace occa {
         virtual const std::string& name() const;
 
         virtual bool forVariable() const;
-        virtual bool forStatement(const int sType) const;
+        virtual bool forStatementType(const int sType) const;
 
         virtual bool isValid(const attributeToken_t &attr) const;
+
+        static bool applyCodeTransformations(blockStatement &root);
+
+        static bool getDimOrder(attributeToken_t &dimAttr,
+                                attributeToken_t &dimOrderAttr,
+                                intVector &order);
+
+        static bool callHasValidIndices(callNode &call, attributeToken_t &dimAttr);
       };
       //==================================
 
@@ -28,7 +39,7 @@ namespace occa {
         virtual const std::string& name() const;
 
         virtual bool forVariable() const;
-        virtual bool forStatement(const int sType) const;
+        virtual bool forStatementType(const int sType) const;
 
         virtual bool isValid(const attributeToken_t &attr) const;
 

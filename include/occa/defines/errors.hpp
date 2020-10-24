@@ -3,8 +3,11 @@
 
 #include <occa/defines/compiledDefines.hpp>
 
-
 //---[ Checks and Info ]----------------
+// #include <csignal>
+#define OCCA_BREAKPOINT \
+  std::raise(SIGINT)
+
 #define OCCA_TEMPLATE_CHECK_(checkFunction, expr, filename, function, line, message) \
   do {                                                                  \
     const bool isOk = (bool) (expr);                                    \

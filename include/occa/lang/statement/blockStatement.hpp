@@ -8,7 +8,7 @@ namespace occa {
   namespace lang {
     class blockStatement : public statement_t {
     public:
-      statementPtrVector children;
+      statementArray children;
       scope_t scope;
 
       blockStatement(blockStatement *up_,
@@ -67,8 +67,6 @@ namespace occa {
       void swapChildren(blockStatement &other);
 
       void clear();
-
-      exprNode* replaceIdentifiers(exprNode *expr);
 
       virtual void print(printer &pout) const;
       void printChildren(printer &pout) const;

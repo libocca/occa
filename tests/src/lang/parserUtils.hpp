@@ -82,7 +82,7 @@ public:
     return true;
   }
 
-  virtual bool forStatement(const int sType) const {
+  virtual bool forStatementType(const int sType) const {
     return true;
   }
 

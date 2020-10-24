@@ -16,6 +16,10 @@
 
 // Comment 3.5
 
+int add(float left, float right) {
+  return left + right;
+}
+
 @kernel void addVectors(const int entries,
                         // Comment 4.1
                         const float *a,
@@ -43,6 +47,6 @@
         ab[j] += A[j][k];
         // Comment 7.2
 
-    ab[i] = a[i] + b[i];
+    ab[i] = add(a[i], b[i]);
   }
 }

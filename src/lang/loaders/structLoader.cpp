@@ -72,7 +72,7 @@ namespace occa {
             smntContext.popUp();
             return false;
           }
-          fields.push_back(*(decl.variable));
+          fields.push_back(decl.variable());
         }
         delete smnt;
         smnt = parser.getNextStatement();
