@@ -109,9 +109,9 @@ namespace occa {
       keyword_t& getKeyword(token_t *token);
       keyword_t& getKeyword(const std::string &name);
 
-      exprNode* getExpression();
-      exprNode* getExpression(const int start,
-                              const int end);
+      exprNode* parseTokenContextExpression();
+      exprNode* parseTokenContextExpression(const int start,
+                                            const int end);
 
       void loadComments();
       void loadComments(const int start,

@@ -113,12 +113,12 @@ namespace occa {
 
       int getNextOperator(const opType_t &opType);
 
-      exprNode* getExpression(statementContext_t &smntContext,
-                              parser_t &parser);
-      exprNode* getExpression(statementContext_t &smntContext,
-                              parser_t &parser,
-                              const int start,
-                              const int end);
+      exprNode* parseExpression(statementContext_t &smntContext,
+                                parser_t &parser);
+      exprNode* parseExpression(statementContext_t &smntContext,
+                                parser_t &parser,
+                                const int start,
+                                const int end);
 
       token_t* replaceIdentifier(statementContext_t &smntContext,
                                  const keywords_t &keywords,

@@ -251,7 +251,7 @@ namespace occa {
 
         exprNode *value = NULL;
         if (tokenContext.size()) {
-          value = tokenContext.getExpression(smntContext, parser);
+          value = tokenContext.parseExpression(smntContext, parser);
           success &= !!value;
           if (!success) {
             return;

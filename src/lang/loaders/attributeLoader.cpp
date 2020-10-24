@@ -103,8 +103,8 @@ namespace occa {
         }
 
         // Get argument
-        arg.expr = tokenContext.getExpression(smntContext,
-                                              parser);
+        arg.expr = tokenContext.parseExpression(smntContext,
+                                                parser);
         if (!success) {
           tokenContext.pop();
           arg.clear();

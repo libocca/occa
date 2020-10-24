@@ -982,7 +982,7 @@ namespace occa {
         delete token;
       }
 
-      exprNode *expr = getExpression(lineTokens);
+      exprNode *expr = expressionParser::parse(lineTokens);
 
       // Errors when expr is NULL are handled
       //   while forming the expression

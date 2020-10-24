@@ -301,17 +301,17 @@ namespace occa {
       return keywords.get(smntContext, name);
     }
 
-    exprNode* parser_t::getExpression() {
-      exprNode *expr = tokenContext.getExpression(smntContext, *this);
+    exprNode* parser_t::parseTokenContextExpression() {
+      exprNode *expr = tokenContext.parseExpression(smntContext, *this);
       success &= !!expr;
       return expr;
     }
 
-    exprNode* parser_t::getExpression(const int start,
-                                      const int end) {
-      exprNode *expr = tokenContext.getExpression(smntContext,
-                                                  *this,
-                                                  start, end);
+    exprNode* parser_t::parseTokenContextExpression(const int start,
+                                                    const int end) {
+      exprNode *expr = tokenContext.parseExpression(smntContext,
+                                                    *this,
+                                                    start, end);
       success &= !!expr;
       return expr;
     }
@@ -571,7 +571,7 @@ namespace occa {
         return;
       }
 
-      exprNode *value = getExpression(1, pos);
+      exprNode *value = parseTokenContextExpression(1, pos);
       if (!success) {
         return;
       }
@@ -595,7 +595,7 @@ namespace occa {
         return;
       }
 
-      decl.value = getExpression(1, pos);
+      decl.value = parseTokenContextExpression(1, pos);
       if (!success) {
         return;
       }
@@ -623,7 +623,7 @@ namespace occa {
       tokenContext.pop();
 
       tokenContext.pushPairRange();
-      decl.value = getExpression();
+      decl.value = parseTokenContextExpression();
       tokenContext.popAndSkip();
     }
     //==================================
@@ -773,7 +773,7 @@ namespace occa {
       }
 
       tokenContext.push(0, end);
-      exprNode *expr = getExpression();
+      exprNode *expr = parseTokenContextExpression();
       tokenContext.pop();
       if (!success) {
         return NULL;
@@ -1470,7 +1470,7 @@ namespace occa {
       // The case where we see 'case:'
       if (0 < pos) {
         // Load the case expression
-        value = getExpression(0, pos);
+        value = parseTokenContextExpression(0, pos);
       }
       if (!value) {
         tokenContext.printError("Expected a constant expression for the [case] statement");
@@ -1550,7 +1550,7 @@ namespace occa {
       // The case where we see 'return;'
       if (0 < pos) {
         // Load the return value
-        value = getExpression(0, pos);
+        value = parseTokenContextExpression(0, pos);
         if (!success) {
           return NULL;
         }

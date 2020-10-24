@@ -432,15 +432,15 @@ namespace occa {
       return -1;
     }
 
-    exprNode* tokenContext_t::getExpression(statementContext_t &smntContext,
-                                            parser_t &parser) {
-      return getExpression(smntContext, parser, 0, size());
+    exprNode* tokenContext_t::parseExpression(statementContext_t &smntContext,
+                                              parser_t &parser) {
+      return parseExpression(smntContext, parser, 0, size());
     }
 
-    exprNode* tokenContext_t::getExpression(statementContext_t &smntContext,
-                                            parser_t &parser,
-                                            const int start,
-                                            const int end) {
+    exprNode* tokenContext_t::parseExpression(statementContext_t &smntContext,
+                                              parser_t &parser,
+                                              const int start,
+                                              const int end) {
       push(start, end);
       const int tokenCount = size();
       tokenVector exprTokens;
@@ -485,7 +485,7 @@ namespace occa {
       }
       pop();
 
-      return occa::lang::getExpression(exprTokens);
+      return expressionParser::parse(exprTokens);
     }
 
     token_t* tokenContext_t::replaceIdentifier(statementContext_t &smntContext,

@@ -1,10 +1,10 @@
-#ifndef OCCA_LANG_EXPR_EXPRESSION_HEADER
-#define OCCA_LANG_EXPR_EXPRESSION_HEADER
+#ifndef OCCA_LANG_EXPR_EXPRESSIONPARSER_HEADER
+#define OCCA_LANG_EXPR_EXPRESSIONPARSER_HEADER
 
 #include <list>
 #include <vector>
 
-#include <occa/lang/expr.hpp>
+#include <occa/lang/expr/exprNodes.hpp>
 
 namespace occa {
   namespace lang {
@@ -15,7 +15,7 @@ namespace occa {
     typedef std::list<exprOpNode*>           operatorList;
     typedef std::list<expressionScopedState> scopedStateList;
 
-    //---[ Expression State ]-----------
+    //---[ Expression Scoped State ]----
     class expressionScopedState {
     public:
       token_t *beforePairToken;
@@ -29,11 +29,12 @@ namespace occa {
 
       void debugPrint();
     };
+    //==================================
 
+
+    //---[ Expression State ]-----------
     class expressionState {
     public:
-      tokenVector &tokens;
-
       // Keep track of the prev/next tokens
       //   to break ++ and -- left/right
       //   unary ambiguity
@@ -51,7 +52,7 @@ namespace occa {
 
       bool hasError;
 
-      expressionState(tokenVector &tokens_);
+      expressionState();
       ~expressionState();
 
       int outputCount();
@@ -76,46 +77,51 @@ namespace occa {
     };
     //==================================
 
-    // Using Shunting-Yard algorithm
-    exprNode* getExpression(tokenVector &tokens);
 
-    namespace expr {
-      void getInitialExpression(tokenVector &tokens,
-                                expressionState &state);
+    //---[ Expression Parser ]----------
+    class expressionParser {
+      // Note: Uses the Shunting-Yard algorithm with customizations
+      // to handle ambiguous operators
+     private:
+      tokenVector &tokens;
+      expressionState state;
 
-      void pushOutputNode(token_t *token,
-                          expressionState &state);
+     public:
+      expressionParser(tokenVector &tokens_);
+      ~expressionParser();
 
-      void closePair(expressionState &state);
+      static exprNode* parse(tokenVector &tokens);
+
+     private:
+      exprNode* parse();
+
+      void getInitialExpression();
+
+      void pushOutputNode(token_t *token);
+
+      void closePair();
 
       void extractArgs(exprNodeVector &args,
-                       exprNode &node,
-                       expressionState &state);
+                       exprNode &node);
 
-      void transformLastPair(operatorToken &opToken,
-                             expressionState &state);
+      void transformLastPair(operatorToken &opToken);
 
-      void attachPair(operatorToken &opToken,
-                      expressionState &state);
+      void attachPair(operatorToken &opToken);
 
-      bool operatorIsLeftUnary(operatorToken &opToken,
-                               expressionState &state);
+      bool operatorIsLeftUnary(operatorToken &opToken);
 
-      void updateOperatorToken(operatorToken &opToken,
-                               expressionState &state);
+      void updateOperatorToken(operatorToken &opToken);
 
-      void applyFasterOperators(operatorToken &opToken,
-                                expressionState &state);
+      void applyFasterOperators(operatorToken &opToken);
 
-      void applyOperator(exprOpNode &opNode,
-                         expressionState &state);
+      void applyOperator(exprOpNode &opNode);
 
       void applyLeftUnaryOperator(exprOpNode &opNode,
-                                  exprNode &value,
-                                  expressionState &state);
+                                  exprNode &value);
 
-      bool applyTernary(expressionState &state);
-    }
+      bool applyTernary();
+    };
+    //==================================
   }
 }
 
