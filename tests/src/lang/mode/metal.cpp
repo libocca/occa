@@ -26,6 +26,7 @@ void testGlobalConst();
 void testKernelAnnotation();
 void testKernelArgs();
 void testSharedAnnotation();
+void testAtomic();
 void testBarriers();
 void testSource();
 
@@ -77,6 +78,12 @@ void testKernelArgs() {
 //---[ Shared ]-------------------------
 void testSharedAnnotation() {
   // @shared -> __local
+}
+//======================================
+
+//---[ @atomic ]------------------------
+void testAtomic() {
+  // TODO(dmed)
 }
 //======================================
 

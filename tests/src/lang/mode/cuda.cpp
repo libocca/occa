@@ -26,6 +26,7 @@ void testKernelAnnotation();
 void testKernelArgs();
 void testSharedAnnotation();
 void testBarriers();
+void testAtomic();
 void testSource();
 
 int main(const int argc, const char **argv) {
@@ -68,6 +69,12 @@ void testKernelArgs() {
 //---[ Shared ]-------------------------
 void testSharedAnnotation() {
   // @shared -> __local
+}
+//======================================
+
+//---[ @atomic ]------------------------
+void testAtomic() {
+  // TODO(dmed)
 }
 //======================================
 

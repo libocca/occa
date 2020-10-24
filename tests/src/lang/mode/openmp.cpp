@@ -3,6 +3,7 @@
 #include <occa/lang/modes/openmp.hpp>
 #include "../parserUtils.hpp"
 
+void testAtomic();
 void testPragma();
 
 int main(const int argc, const char **argv) {
@@ -33,5 +34,11 @@ void testPragma() {
   pragmaStatement &ompPragma = foo[0]->to<pragmaStatement>();
   ASSERT_EQ("omp parallel for",
             ompPragma.value());
+}
+//======================================
+
+//---[ @atomic ]------------------------
+void testAtomic() {
+  // TODO(dmed)
 }
 //======================================
