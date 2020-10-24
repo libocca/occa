@@ -16,20 +16,20 @@ void testSpecialOperators();
 void testCanEvaluate();
 void testEval();
 
-exprNode* makeExpression(const std::string &s) {
+exprNode* parseExpression(const std::string &s) {
   tokenVector tokens = tokenizer_t::tokenize(s);
-  return getExpression(tokens);
+  return expressionParser::parse(tokens);
 }
 
 bool canEvaluate(const std::string &s) {
-  exprNode *expr = makeExpression(s);
+  exprNode *expr = parseExpression(s);
   bool ret = expr->canEvaluate();
   delete expr;
   return ret;
 }
 
 primitive eval(const std::string &s) {
-  exprNode *expr = makeExpression(s);
+  exprNode *expr = parseExpression(s);
   primitive value = expr->evaluate();
   delete expr;
   return value;
@@ -371,17 +371,17 @@ void testDebugPrint() {
 void testTernary() {
   exprNode *expr;
 
-  expr = makeExpression("a = true ? 1 : 2");
+  expr = parseExpression("a = true ? 1 : 2");
   expr->debugPrint();
   delete expr;
 
-  expr = makeExpression("a = true ? (false ? 1 : (false ? 2 : 3)) : 4");
+  expr = parseExpression("a = true ? (false ? 1 : (false ? 2 : 3)) : 4");
   expr->debugPrint();
   delete expr;
 }
 
 void testPairMatching() {
-  exprNode *expr = makeExpression("func(0,1,2,3,4)");
+  exprNode *expr = parseExpression("func(0,1,2,3,4)");
   ASSERT_EQ_BINARY(exprNodeType::call,
                    expr->type());
   callNode &func = expr->to<callNode>();
@@ -394,50 +394,50 @@ void testPairMatching() {
   }
 
   delete expr;
-  expr = makeExpression("(0,1,2,3,4)");
+  expr = parseExpression("(0,1,2,3,4)");
   ASSERT_EQ_BINARY(exprNodeType::parentheses,
                    expr->type());
 
   delete expr;
-  expr = makeExpression("{0,1,2,3,4}");
+  expr = parseExpression("{0,1,2,3,4}");
   ASSERT_EQ_BINARY(exprNodeType::tuple,
                    expr->type());
 
   delete expr;
-  expr = makeExpression("array[0 + 1]");
+  expr = parseExpression("array[0 + 1]");
   ASSERT_EQ_BINARY(exprNodeType::subscript,
                    expr->type());
 
   delete expr;
-  expr = makeExpression("func<<<0,1>>>");
+  expr = parseExpression("func<<<0,1>>>");
   ASSERT_EQ_BINARY(exprNodeType::cudaCall,
                    expr->type());
 
   delete expr;
 
   std::cerr << "\nTesting pair errors:\n";
-  makeExpression("(0,1,2]");
-  makeExpression("[0,1,2}");
-  makeExpression("{0,1,2)");
-  makeExpression("<<<0,1,2)");
+  parseExpression("(0,1,2]");
+  parseExpression("[0,1,2}");
+  parseExpression("{0,1,2)");
+  parseExpression("<<<0,1,2)");
 }
 
 void testSpecialOperators() {
-  exprNode *expr = makeExpression("sizeof(int)");
+  exprNode *expr = parseExpression("sizeof(int)");
   ASSERT_EQ_BINARY(exprNodeType::sizeof_,
                    expr->type());
 
   delete expr;
-  expr = makeExpression("throw 2 + 2");
+  expr = parseExpression("throw 2 + 2");
   ASSERT_EQ_BINARY(exprNodeType::throw_,
                    expr->type());
 
   delete expr;
 
   std::cerr << "\nTesting unsupported new and delete:\n";
-  expr = makeExpression("new int[2]");
-  expr = makeExpression("delete foo");
-  expr = makeExpression("delete [] foo");
+  expr = parseExpression("new int[2]");
+  expr = parseExpression("delete foo");
+  expr = parseExpression("delete [] foo");
 }
 
 void testCanEvaluate() {
