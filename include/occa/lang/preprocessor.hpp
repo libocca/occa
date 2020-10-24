@@ -4,6 +4,7 @@
 #include <ostream>
 #include <vector>
 #include <map>
+#include <set>
 #include <stack>
 
 #include <occa/defines.hpp>
@@ -16,7 +17,7 @@ namespace occa {
   namespace lang {
     class tokenizer_t;
 
-    typedef std::map<std::string, bool> stringSet;
+    typedef std::set<std::string> stringSet;
 
     typedef std::vector<token_t*> tokenVector;
     typedef std::stack<token_t*>  tokenStack;
