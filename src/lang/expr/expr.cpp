@@ -52,21 +52,110 @@ namespace occa {
       }
       return e.node->wrapInParentheses();
     }
-    //==================================
 
-    //---[ Operators ]------------------
-    expr operator + (const expr &left, const expr &right) {
+    expr expr::leftUnaryOpExpr(const unaryOperator_t &op_,
+                               const expr &e) {
+      return new leftUnaryOpNode(e.source(),
+                                 op_,
+                                 *e.node);
+    }
+
+    expr expr::rightUnaryOpExpr(const unaryOperator_t &op_,
+                                const expr &e) {
+      return new rightUnaryOpNode(e.source(),
+                                  op_,
+                                  *e.node);
+    }
+
+    expr expr::binaryOpExpr(const binaryOperator_t &op_,
+                            const expr &left,
+                            const expr &right) {
       return new binaryOpNode(left.source(),
-                              op::add,
+                              op_,
                               *left.node,
                               *right.node);
     }
 
+    // --e
+    expr expr::operator -- () {
+      return leftUnaryOpExpr(op::leftDecrement, *this);
+    }
+
+    // e--
+    expr expr::operator -- (int) {
+      return rightUnaryOpExpr(op::rightDecrement, *this);
+    }
+
+    // ++e
+    expr expr::operator ++ () {
+      return leftUnaryOpExpr(op::leftIncrement, *this);
+    }
+
+    // e++
+    expr expr::operator ++ (int) {
+      return rightUnaryOpExpr(op::rightIncrement, *this);
+    }
+    //==================================
+
+    //---[ Operators ]------------------
+    expr operator + (const expr &left, const expr &right) {
+      return expr::binaryOpExpr(op::add, left, right);
+    }
+
+    expr operator - (const expr &left, const expr &right) {
+      return expr::binaryOpExpr(op::sub, left, right);
+    }
+
     expr operator * (const expr &left, const expr &right) {
-      return new binaryOpNode(left.source(),
-                              op::mult,
-                              *left.node,
-                              *right.node);
+      return expr::binaryOpExpr(op::mult, left, right);
+    }
+
+    expr operator / (const expr &left, const expr &right) {
+      return expr::binaryOpExpr(op::div, left, right);
+    }
+
+    expr operator % (const expr &left, const expr &right) {
+      return expr::binaryOpExpr(op::mod, left, right);
+    }
+
+    expr operator += (const expr &left, const expr &right) {
+      return expr::binaryOpExpr(op::addEq, left, right);
+    }
+
+    expr operator -= (const expr &left, const expr &right) {
+      return expr::binaryOpExpr(op::subEq, left, right);
+    }
+
+    expr operator *= (const expr &left, const expr &right) {
+      return expr::binaryOpExpr(op::multEq, left, right);
+    }
+
+    expr operator /= (const expr &left, const expr &right) {
+      return expr::binaryOpExpr(op::divEq, left, right);
+    }
+
+    expr operator < (const expr &left, const expr &right) {
+      return expr::binaryOpExpr(op::lessThan, left, right);
+    }
+
+    expr operator <= (const expr &left, const expr &right) {
+      return expr::binaryOpExpr(op::lessThanEq, left, right);
+    }
+
+    expr operator == (const expr &left, const expr &right) {
+      return expr::binaryOpExpr(op::equal, left, right);
+    }
+
+    expr operator != (const expr &left, const expr &right) {
+      return expr::binaryOpExpr(op::notEqual, left, right);
+    }
+
+    expr operator > (const expr &left, const expr &right) {
+      return expr::binaryOpExpr(op::greaterThan, left, right);
+    }
+
+    expr operator >= (const expr &left, const expr &right) {
+      return expr::binaryOpExpr(op::greaterThanEq, left, right);
     }
     //==================================
   }
