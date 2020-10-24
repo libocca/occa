@@ -184,14 +184,14 @@ namespace occa {
         opType_t opType = innerUpdateExpr.opType();
 
         expr blockUpdate;
-        if (opType & (operatorType::leftIncrement | operatorType::rightIncrement)) {
+        if (opType & operatorType::increment) {
           //    ++IT (or IT++)
           // -> BLOCK_IT += TILE
           blockUpdate = (
             blockIterator += tileSizeExpr
           );
         }
-        else if (opType & (operatorType::leftDecrement | operatorType::rightDecrement)) {
+        else if (opType & operatorType::decrement) {
           //    --IT (or IT--)
           // -> BLOCK_IT -= TILE
           blockUpdate = (

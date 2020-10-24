@@ -1,4 +1,6 @@
 #include <occa/lang/modes/openmp.hpp>
+#include <occa/lang/expr/expr.hpp>
+#include <occa/lang/builtins/attributes/atomic.hpp>
 
 namespace occa {
   namespace lang {
@@ -9,6 +11,14 @@ namespace occa {
       void openmpParser::afterParsing() {
         serialParser::afterParsing();
 
+        if (!success) return;
+        setupOmpPragmas();
+
+        if (!success) return;
+        setupAtomics();
+      }
+
+      void openmpParser::setupOmpPragmas() {
         statementArray outerSmnts =
             root.children
             .flatFilter([&](statement_t *smnt, const statementArray &path) {
@@ -55,6 +65,38 @@ namespace occa {
           (smnt->type() & statementType::for_)
           && smnt->hasAttribute("outer")
         );
+      }
+
+      void openmpParser::setupAtomics() {
+        attributes::atomic::applyCodeTransformation(
+          root,
+          transformBlockStatement,
+          transformBasicExpressionStatement
+        );
+      }
+
+      void openmpParser::transformBlockStatement(blockStatement &blockSmnt) {
+        blockStatement &parent = *(blockSmnt.up);
+
+        pragmaStatement &atomicPragmaSmnt = *(
+          new pragmaStatement(&parent,
+                              pragmaToken(blockSmnt.source->origin,
+                                          "omp critical"))
+        );
+
+        parent.addBefore(blockSmnt, atomicPragmaSmnt);
+      }
+
+      void openmpParser::transformBasicExpressionStatement(expressionStatement &exprSmnt) {
+        blockStatement &parent = *(exprSmnt.up);
+
+        pragmaStatement &atomicPragmaSmnt = *(
+          new pragmaStatement(&parent,
+                              pragmaToken(exprSmnt.source->origin,
+                                          "omp atomic"))
+        );
+
+        parent.addBefore(exprSmnt, atomicPragmaSmnt);
       }
     }
   }
