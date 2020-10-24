@@ -519,6 +519,7 @@ void testOccaMacros() {
 
   occa::properties preprocessorSettings;
   preprocessorSettings["hash"] = hash.getFullString();
+  preprocessorSettings["mode"] = "CUDA";
 
   preprocessor.setSettings(preprocessorSettings);
 
@@ -528,6 +529,7 @@ void testOccaMacros() {
     "OCCA_PATCH_VERSION\n"
     "OCCA_VERSION\n"
     "OKL_VERSION\n"
+    "OKL_MODE\n"
     "__OKL__\n"
     "__OCCA__\n"
     "OKL_KERNEL_HASH\n"
@@ -543,12 +545,19 @@ void testOccaMacros() {
             (int) nextTokenPrimitiveValue());
   ASSERT_EQ(OKL_VERSION,
             (int) nextTokenPrimitiveValue());
+
+  // OKL_MODE
+  ASSERT_EQ("CUDA",
+            nextTokenStringValue());
+
   // __OKL__
   ASSERT_EQ(1,
             (int) nextTokenPrimitiveValue());
+
   // __OCCA__
   ASSERT_EQ(1,
             (int) nextTokenPrimitiveValue());
+
   // OKL_KERNEL_HASH
   ASSERT_EQ(hash.getString(),
             nextTokenStringValue());

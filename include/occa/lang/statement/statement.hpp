@@ -69,6 +69,8 @@ namespace occa {
 
       extern const int attribute;
 
+      extern const int sourceCode;
+
       extern const int blockStatements;
     }
 

@@ -148,8 +148,9 @@ bool runTranslate(const json &args) {
   }
 
   properties kernelProps = getOptionProperties(options["kernel-props"]);
-  kernelProps["okl/include_paths"] = options["include-path"];
+  kernelProps["mode"] = mode;
   kernelProps["defines"].asObject() += getOptionDefines(options["define"]);
+  kernelProps["okl/include_paths"] = options["include-path"];
 
   lang::parser_t *parser = NULL;
   lang::parser_t *launcherParser = NULL;

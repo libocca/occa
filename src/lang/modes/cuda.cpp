@@ -4,7 +4,6 @@
 #include <occa/lang/modes/oklForStatement.hpp>
 #include <occa/lang/builtins/attributes.hpp>
 #include <occa/lang/builtins/types.hpp>
-#include <occa/lang/expr/identifierNode.hpp>
 
 namespace occa {
   namespace lang {
@@ -107,10 +106,10 @@ namespace occa {
                 emptyStatement &emptySmnt = *((emptyStatement*) smnt);
 
                 statement_t &barrierSmnt = (
-                  *(new expressionStatement(
+                  *(new sourceCodeStatement(
                       emptySmnt.up,
-                      *(new identifierNode(emptySmnt.source,
-                                           " __syncthreads()"))
+                      emptySmnt.source,
+                      " __syncthreads();"
                     ))
                 );
 
