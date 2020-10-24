@@ -26,8 +26,9 @@ namespace occa {
       expr(token_t *source_,
            const primitive &p);
 
-      expr(token_t *source_,
-           variable_t &var);
+      expr(variable_t &var);
+
+      expr(token_t *source_, variable_t &var);
 
       expr(const expr &other);
       ~expr();
@@ -37,6 +38,8 @@ namespace occa {
 
       token_t* source() const;
       const opType_t& opType() const;
+
+      exprNode* cloneExprNode();
 
       exprNode* popExprNode();
 

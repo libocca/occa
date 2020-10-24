@@ -19,8 +19,10 @@ namespace occa {
                const primitive &p) :
         node(new primitiveNode(source_, p)) {}
 
-    expr::expr(token_t *source_,
-               variable_t &var) :
+    expr::expr(variable_t &var) :
+        node(new variableNode(var.source, var)) {}
+
+    expr::expr(token_t *source_, variable_t &var) :
         node(new variableNode(source_, var)) {}
 
     expr::expr(const expr &other) :
@@ -55,6 +57,10 @@ namespace occa {
       return operatorType::none;
     }
 
+    exprNode* expr::cloneExprNode() {
+      return exprNode::clone(node);
+    }
+
     exprNode* expr::popExprNode() {
       exprNode *n = node;
       node = NULL;
@@ -69,7 +75,7 @@ namespace occa {
 
     expressionStatement* expr::createStatement(blockStatement *up,
                                                const bool hasSemicolon) {
-      return new expressionStatement(up, *node, hasSemicolon);
+      return new expressionStatement(up, *node->clone(), hasSemicolon);
     }
 
     expr expr::parens(const expr &e) {

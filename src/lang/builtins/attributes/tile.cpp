@@ -170,6 +170,13 @@ namespace occa {
                                         variable_t &blockIter,
                                         forStatement &blockForSmnt,
                                         forStatement &innerForSmnt) {
+        /*
+          for (x = START; x < END; x += INC)
+          ->
+          for (xTile = START; xTile < END; NULL)
+          ->
+          for (xTile = START; xTile < END; xTile += (TILE * (INC)))
+        */
         expr innerUpdateExpr = ((expressionStatement*) innerForSmnt.update)->expr;
         expr tileSizeExpr = &tileSize;
         expr blockIterator(innerUpdateExpr.source(), blockIter);
@@ -228,56 +235,47 @@ namespace occa {
           ->
           for (x = xTile; x < (xTile + TILE); x += INC)
         */
-        // Init variables
-        variableDeclaration &decl = (((declarationStatement*) blockForSmnt.init)
-                                     ->declarations[0]);
-        token_t *initToken = decl.variable().source;
-        variableNode iterNode(initToken,
-                              *oklForSmnt.iterator);
-        variableNode blockIterNode(initToken, blockIter);
+        auto &blockDecls = ((declarationStatement*) blockForSmnt.init)->declarations;
+        token_t *declVarSource = blockDecls[0].variable().source;
 
         // Check variables
-        binaryOpNode &checkExpr = ((binaryOpNode&)
-                                   *(((expressionStatement*) blockForSmnt.check)->expr));
-        token_t *checkToken = checkExpr.startNode()->token;
+        expressionStatement &checkSmnt = (expressionStatement&) *blockForSmnt.check;
+        binaryOpNode &checkExpr = (binaryOpNode&) *checkSmnt.expr;
 
         // Update variables
-        const operator_t &updateOp = (
-          ((binaryOpNode&)
-           *(((expressionStatement*) blockForSmnt.update)->expr)
-          ).op);
-        const bool addUpdate = (updateOp.opType & operatorType::addEq);
+        expressionStatement &updateSmnt = (expressionStatement&) *blockForSmnt.update;
+        binaryOpNode &updateExpr = (binaryOpNode&) *updateSmnt.expr;
 
-        // Create init
-        innerForSmnt.init = new declarationStatement(&innerForSmnt, initToken);
-        variableDeclarationVector &decls = (
-          ((declarationStatement*) innerForSmnt.init)
-          ->declarations
-        );
+        // Create init statement
+        innerForSmnt.init = new declarationStatement(&innerForSmnt, declVarSource);
+        auto &initDecls = ((declarationStatement*) innerForSmnt.init)->declarations;
 
-        decls.push_back(
+        expr blockIterator(declVarSource, blockIter);
+        expr iterator(*oklForSmnt.iterator);
+        expr tileSizeExpr = &tileSize;
+
+        initDecls.push_back(
           variableDeclaration(*oklForSmnt.iterator,
-                              *(blockIterNode.clone()))
+                              blockIterator.cloneExprNode())
         );
 
-        // Create check
-        binaryOpNode checkValueNode(checkToken,
-                                    addUpdate ? op::add : op::sub,
-                                    blockIterNode,
-                                    tileSize);
-        parenthesesNode checkInParen(checkToken,
-                                     checkValueNode);
+        // Create check statement
+        // Note: At this point, the tile for-loop has an update
+        //       with either an [+=] or [-=] update operator
+        expr bounds = expr::parens(
+          (updateExpr.opType() & operatorType::addEq)
+          ? blockIterator + tileSizeExpr
+          : blockIterator - tileSizeExpr
+        );
 
-        const bool varInLeft = oklForSmnt.checkValueOnRight;
-        binaryOpNode &newCheckNode = *(
-          new binaryOpNode(
-            checkToken,
-            (const binaryOperator_t&) checkExpr.op,
-            varInLeft ? (exprNode&) iterNode : (exprNode&) checkInParen,
-            varInLeft ? (exprNode&) checkInParen : (exprNode&) iterNode
-          ));
-        innerForSmnt.check = new expressionStatement(&innerForSmnt,
-                                                     newCheckNode);
+        const binaryOperator_t &checkOp = (const binaryOperator_t&) checkExpr.op;
+        expr check = (
+          oklForSmnt.checkValueOnRight
+          ? expr::binaryOpExpr(checkOp, iterator, bounds)
+          : expr::binaryOpExpr(checkOp, bounds, iterator)
+        );
+
+        innerForSmnt.check = check.createStatement(&innerForSmnt);
       }
 
       void tile::setupCheckStatement(attributeToken_t &attr,
@@ -285,44 +283,38 @@ namespace occa {
                                      variable_t &blockIter,
                                      forStatement &blockForSmnt,
                                      forStatement &innerForSmnt) {
-        attributeArgMap::iterator it = attr.kwargs.find("check");
-        bool check = true;
+        // Default to adding the check
+        auto it = attr.kwargs.find("check");
+        bool requiresBoundsCheck = true;
         if (it != attr.kwargs.end()) {
-          check = (bool) it->second.expr->evaluate();
+          requiresBoundsCheck = (bool) it->second.expr->evaluate();
         }
-        if (!check) {
+        if (!requiresBoundsCheck) {
           return;
         }
 
         // Check variables
-        binaryOpNode &checkExpr = ((binaryOpNode&)
-                                   *(((expressionStatement*) blockForSmnt.check)->expr));
+        expressionStatement &checkSmnt = (expressionStatement&) *blockForSmnt.check;
+        binaryOpNode &checkExpr = (binaryOpNode&) *checkSmnt.expr;
         token_t *checkToken = checkExpr.startNode()->token;
-        const bool varInLeft = oklForSmnt.checkValueOnRight;
 
-        // Make ifStatement
-        ifStatement &ifSmnt = *(new ifStatement(&innerForSmnt,
-                                                checkToken));
+        // Make if statement
+        ifStatement &ifSmnt = *(new ifStatement(&innerForSmnt, checkToken));
         innerForSmnt.swapChildren(ifSmnt);
         innerForSmnt.add(ifSmnt);
 
-        // Get global check
-        token_t *iterToken = (varInLeft
-                              ? checkExpr.leftValue->token
-                              : checkExpr.rightValue->token);
-        variableNode iterNode(iterToken,
-                              *oklForSmnt.iterator);
-        binaryOpNode &newCheckNode = *(
-          new binaryOpNode(
-            checkExpr.token,
-            (const binaryOperator_t&) checkExpr.op,
-            varInLeft ? (exprNode&) iterNode : *(checkExpr.leftValue),
-            varInLeft ? (exprNode&) *(checkExpr.rightValue) : (exprNode&) iterNode
-          ));
+        expr iterator(*oklForSmnt.iterator);
 
-        ifSmnt.setCondition(new expressionStatement(&ifSmnt,
-                                                    newCheckNode,
-                                                    false));
+        const binaryOperator_t &checkOp = (const binaryOperator_t&) checkExpr.op;
+        expr check = (
+          oklForSmnt.checkValueOnRight
+          ? expr::binaryOpExpr(checkOp, iterator, checkExpr.rightValue)
+          : expr::binaryOpExpr(checkOp, checkExpr.leftValue, iterator)
+        );
+
+        ifSmnt.setCondition(
+          check.createStatement(&ifSmnt, false)
+        );
       }
     }
   }
