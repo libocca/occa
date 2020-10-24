@@ -2,6 +2,7 @@
 #define OCCA_LANG_EXPR_PRIMITIVENODE_HEADER
 
 #include <occa/lang/expr/exprNode.hpp>
+#include <occa/lang/primitive.hpp>
 
 namespace occa {
   namespace lang {

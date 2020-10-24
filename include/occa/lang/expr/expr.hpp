@@ -1,6 +1,9 @@
 #ifndef OCCA_LANG_EXPR_EXPR_HEADER
 #define OCCA_LANG_EXPR_EXPR_HEADER
 
+#include <occa/lang/operator.hpp>
+#include <occa/lang/primitive.hpp>
+
 namespace occa {
   namespace lang {
     class exprNode;
@@ -15,6 +18,8 @@ namespace occa {
 
       expr();
       expr(exprNode *node_);
+      expr(exprNode &node_);
+      expr(const primitive &p);
 
       expr(const expr &other);
       ~expr();
@@ -23,6 +28,7 @@ namespace occa {
       expr& operator = (const expr &other);
 
       token_t* source() const;
+      const opType_t& opType() const;
 
       exprNode* popExprNode();
 

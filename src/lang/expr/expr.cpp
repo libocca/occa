@@ -10,6 +10,12 @@ namespace occa {
     expr::expr(exprNode *node_) :
         node(exprNode::clone(node_)) {}
 
+    expr::expr(exprNode &node_) :
+        node(node_.clone()) {}
+
+    expr::expr(const primitive &p) :
+        node(new primitiveNode(NULL, p)) {}
+
     expr::expr(const expr &other) :
         node(exprNode::clone(other.node)) {}
 
@@ -32,6 +38,14 @@ namespace occa {
 
     token_t* expr::source() const {
       return node ? node->token : NULL;
+    }
+
+    const opType_t& expr::opType() const {
+      exprOpNode *opNode = dynamic_cast<exprOpNode*>(node);
+      if (opNode) {
+        return opNode->op.opType;
+      }
+      return operatorType::none;
     }
 
     exprNode* expr::popExprNode() {
