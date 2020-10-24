@@ -91,6 +91,9 @@ namespace occa {
       addCompilerDefine("__OKL__" , "1");
       addCompilerDefine("__OCCA__" , "1");
 
+      const std::string mode = settings.get<std::string>("mode", "");
+      addCompilerDefine("OKL_MODE", "\"" + mode + "\"");
+
       // Add kernel hash as a define
       std::string hashValue = settings.get<std::string>("hash", "");
       if (hashValue.size()) {
