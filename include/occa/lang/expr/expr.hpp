@@ -11,6 +11,8 @@ namespace occa {
     class unaryOperator_t;
     class binaryOperator_t;
     class variable_t;
+    class blockStatement;
+    class expressionStatement;
 
     //---[ expr ]-----------------------
     class expr {
@@ -39,6 +41,9 @@ namespace occa {
       exprNode* popExprNode();
 
       expr operator [] (const expr &e);
+
+      expressionStatement* createStatement(blockStatement *up,
+                                           const bool hasSemicolon = true);
 
       static expr parens(const expr &e);
 

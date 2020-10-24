@@ -1,5 +1,6 @@
 #include <occa/lang/expr/expr.hpp>
 #include <occa/lang/expr/exprNodes.hpp>
+#include <occa/lang/statement.hpp>
 #include <occa/lang/variable.hpp>
 
 namespace occa {
@@ -64,6 +65,11 @@ namespace occa {
       return new subscriptNode(source(),
                                *node,
                                *e.node);
+    }
+
+    expressionStatement* expr::createStatement(blockStatement *up,
+                                               const bool hasSemicolon) {
+      return new expressionStatement(up, *node, hasSemicolon);
     }
 
     expr expr::parens(const expr &e) {
