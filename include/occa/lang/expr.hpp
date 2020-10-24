@@ -6,5 +6,6 @@
 
 // Helper methods
 #include <occa/lang/expr/expressionParser.hpp>
+#include <occa/lang/expr/expr.hpp>
 
 #endif
