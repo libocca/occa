@@ -76,45 +76,20 @@ namespace occa {
                 }
 
                 // Expand the dimensions:
-                // x
-                // y + (2 * x)
-                exprNode *index = call.args[order[dimCount - 1]];
+                //    (x, y)
+                // -> y + (2 * x)
+                expr index = call.args[order[dimCount - 1]];
                 for (int i = (dimCount - 2); i >= 0; --i) {
-                  const int i2 = order[i];
-                  token_t *source = call.args[i2]->token;
-                  exprNode *indexInParen = index->wrapInParentheses();
+                  const int orderIndex = order[i];
 
-                  // Don't delete the initial call.args[...]
-                  if (i < (dimCount - 2)) {
-                    delete index;
-                  }
+                  expr arg = call.args[orderIndex];
+                  expr dim = dimAttr.args[orderIndex].expr;
 
-                  exprNode *dimInParen = dimAttr.args[i2].expr->wrapInParentheses();
-                  binaryOpNode mult(source,
-                                    op::mult,
-                                    *dimInParen,
-                                    *indexInParen);
-                  delete dimInParen;
-                  delete indexInParen;
-
-                  parenthesesNode multInParen(source,
-                                              mult);
-                  exprNode *argInParen = call.args[i2]->wrapInParentheses();
-
-                  index = new binaryOpNode(source,
-                                           op::add,
-                                           *argInParen,
-                                           multInParen);
-                  delete argInParen;
+                  index = arg + expr::parens(expr::parens(dim) * expr::parens(index));
                 }
 
-                exprNode *newValue = new subscriptNode(call.token,
-                                                       *(call.value),
-                                                       *index);
-                // Don't delete the initial call.args[...]
-                if (dimCount > 1) {
-                  delete index;
-                }
+                expr expansion = expr(call.value)[index];
+                exprNode *newValue = expansion.popExprNode();
 
                 smnt.updateIdentifierReferences(newValue);
 
