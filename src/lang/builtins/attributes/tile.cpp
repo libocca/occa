@@ -170,56 +170,49 @@ namespace occa {
                                         variable_t &blockIter,
                                         forStatement &blockForSmnt,
                                         forStatement &innerForSmnt) {
-        /*
-          for (x = START; x < END; x += INC)
-          ->
-          for (xTile = START; xTile < END; NULL)
-          ->
-          for (xTile = START; xTile < END; xTile += (TILE * (INC)))
-        */
-        exprNode &updateExpr = *(((expressionStatement*) innerForSmnt.update)->expr);
-        opType_t opType = ((exprOpNode&) updateExpr).opType();
+        expr innerUpdateExpr = ((expressionStatement*) innerForSmnt.update)->expr;
+        expr tileSizeExpr = &tileSize;
+        expr blockIterator(innerUpdateExpr.source(), blockIter);
 
-        token_t *updateToken = updateExpr.startNode()->token;
+        opType_t opType = innerUpdateExpr.opType();
 
-        exprNode *updateSizeExpr = &tileSize;
-        const binaryOperator_t *updateOp = &op::addEq;
-        if (opType & (operatorType::leftDecrement |
-                      operatorType::rightDecrement)) {
-          updateOp = &op::subEq;
+        expr blockUpdate;
+        if (opType & (operatorType::leftIncrement | operatorType::rightIncrement)) {
+          //    ++IT (or IT++)
+          // -> BLOCK_IT += TILE
+          blockUpdate = (
+            blockIterator += tileSizeExpr
+          );
         }
-        else if (opType & (operatorType::addEq |
-                           operatorType::subEq)) {
+        else if (opType & (operatorType::leftDecrement | operatorType::rightDecrement)) {
+          //    --IT (or IT--)
+          // -> BLOCK_IT -= TILE
+          blockUpdate = (
+            blockIterator -= tileSizeExpr
+          );
+        }
+        else if (opType & (operatorType::addEq | operatorType::subEq)) {
           // INC
-          exprNode *updateSize = ((binaryOpNode&) updateExpr).rightValue;
-          // (INC)
-          parenthesesNode updateInParen(updateToken,
-                                        *updateSize);
-          // TILE * (INC)
-          binaryOpNode mult(updateToken,
-                            op::mult,
-                            tileSize,
-                            updateInParen);
-          // (TILE * (INC))
-          updateSizeExpr = new parenthesesNode(updateToken,
-                                               mult);
-          if (opType & operatorType::subEq) {
-            updateOp = &op::subEq;
+          expr increment = innerUpdateExpr.node->to<binaryOpNode>().rightValue;
+
+          // ((TILE) * (INC))
+          expr blockIncrement = expr::parens(
+            expr::parens(tileSizeExpr) * expr::parens(increment)
+          );
+
+          if (opType & operatorType::addEq) {
+            blockUpdate = (
+              blockIterator += blockIncrement
+            );
+          } else {
+            blockUpdate = (
+              blockIterator -= blockIncrement
+            );
           }
-        }
-        // VAR += (TILE * (INC))
-        variableNode varNode(updateToken, blockIter);
-        exprNode *newUpdateExpr = new binaryOpNode(updateToken,
-                                                   *updateOp,
-                                                   varNode,
-                                                   *updateSizeExpr);
-        if (updateSizeExpr != &tileSize) {
-          // Delete (TILE * (INC)) if it was created
-          delete updateSizeExpr;
         }
 
         blockForSmnt.update = new expressionStatement(&blockForSmnt,
-                                                      *newUpdateExpr,
+                                                      *blockUpdate.popExprNode(),
                                                       false);
       }
 

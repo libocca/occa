@@ -1,5 +1,6 @@
 #include <occa/lang/expr/expr.hpp>
 #include <occa/lang/expr/exprNodes.hpp>
+#include <occa/lang/variable.hpp>
 
 namespace occa {
   namespace lang {
@@ -13,8 +14,13 @@ namespace occa {
     expr::expr(exprNode &node_) :
         node(node_.clone()) {}
 
-    expr::expr(const primitive &p) :
-        node(new primitiveNode(NULL, p)) {}
+    expr::expr(token_t *source_,
+               const primitive &p) :
+        node(new primitiveNode(source_, p)) {}
+
+    expr::expr(token_t *source_,
+               variable_t &var) :
+        node(new variableNode(source_, var)) {}
 
     expr::expr(const expr &other) :
         node(exprNode::clone(other.node)) {}

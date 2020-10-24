@@ -10,6 +10,7 @@ namespace occa {
     class token_t;
     class unaryOperator_t;
     class binaryOperator_t;
+    class variable_t;
 
     //---[ expr ]-----------------------
     class expr {
@@ -19,7 +20,12 @@ namespace occa {
       expr();
       expr(exprNode *node_);
       expr(exprNode &node_);
-      expr(const primitive &p);
+
+      expr(token_t *source_,
+           const primitive &p);
+
+      expr(token_t *source_,
+           variable_t &var);
 
       expr(const expr &other);
       ~expr();
