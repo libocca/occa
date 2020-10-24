@@ -27,5 +27,6 @@
 #include <occa/lang/statement/ifStatement.hpp>
 #include <occa/lang/statement/returnStatement.hpp>
 #include <occa/lang/statement/whileStatement.hpp>
+#include <occa/lang/statement/sourceCodeStatement.hpp>
 
 #endif

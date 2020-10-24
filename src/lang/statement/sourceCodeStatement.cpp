@@ -1,11 +1,12 @@
 #include <occa/lang/statement/sourceCodeStatement.hpp>
+#include <occa/lang/utils/array.hpp>
 #include <occa/tools/string.hpp>
 
 namespace occa {
   namespace lang {
     sourceCodeStatement::sourceCodeStatement(blockStatement *up_,
-                                           token_t *sourceToken,
-                                           const std::string &sourceCode_) :
+                                             token_t *sourceToken,
+                                             const std::string &sourceCode_) :
         statement_t(up_, sourceToken),
         sourceCode(sourceCode_) {}
 
@@ -29,7 +30,13 @@ namespace occa {
     }
 
     void sourceCodeStatement::print(printer &pout) const {
-      pout << sourceCode;
+      array<std::string> lines = split(sourceCode, '\n');
+
+      lines.forEach([&](std::string line) {
+          pout.printStartIndentation();
+          pout << strip(line);
+          pout.printEndNewline();
+        });
     }
   }
 }

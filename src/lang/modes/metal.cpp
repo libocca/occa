@@ -71,10 +71,10 @@ namespace occa {
                 emptyStatement &emptySmnt = (emptyStatement&) *smnt;
 
                 statement_t &barrierSmnt = (
-                  *(new expressionStatement(
+                  *(new sourceCodeStatement(
                       emptySmnt.up,
-                      *(new identifierNode(emptySmnt.source,
-                                           "threadgroup_barrier(mem_flags::mem_threadgroup)"))
+                      emptySmnt.source,
+                      "threadgroup_barrier(mem_flags::mem_threadgroup);"
                     ))
                 );
 

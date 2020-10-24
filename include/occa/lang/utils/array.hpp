@@ -1,6 +1,7 @@
 #ifndef OCCA_LANG_UTILS_BASEARRAY_HEADER
 #define OCCA_LANG_UTILS_BASEARRAY_HEADER
 
+#include <initializer_list>
 #include <string>
 #include <vector>
 
@@ -15,11 +16,14 @@ namespace occa {
 
       vectorType data;
 
-      inline array(vectorType &data_) :
+      inline array(const vectorType &data_) :
           data(data_) {}
 
       inline array(const array &other) :
           data(other.data) {}
+
+      inline array(std::initializer_list<TM> list) :
+          data(list) {}
 
       // Implement for-loop iterators
       inline vectorIterator begin() noexcept {

@@ -228,10 +228,10 @@ namespace occa {
                 emptyStatement &emptySmnt = (emptyStatement&) *smnt;
 
                 statement_t &barrierSmnt = (
-                  *(new expressionStatement(
+                  *(new sourceCodeStatement(
                       emptySmnt.up,
-                      *(new identifierNode(emptySmnt.source,
-                                           "barrier(CLK_LOCAL_MEM_FENCE)"))
+                      emptySmnt.source,
+                      "barrier(CLK_LOCAL_MEM_FENCE);"
                     ))
                 );
 

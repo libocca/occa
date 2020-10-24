@@ -194,66 +194,43 @@ namespace occa {
           );
         }
 
-        launchBlock.addFirst(
-          *(new expressionStatement(
-              &launchBlock,
-              *(new identifierNode(forSmnt.source,
-                                   "inner.dims = " + occa::toString(innerDims)))
-            ))
-        );
-        launchBlock.addFirst(
-          *(new expressionStatement(
-              &launchBlock,
-              *(new identifierNode(forSmnt.source,
-                                   "outer.dims = " + occa::toString(outerDims)))
-            ))
-        );
-        launchBlock.addFirst(
-          *(new expressionStatement(
-              &launchBlock,
-              *(new identifierNode(forSmnt.source,
-                                   "occa::dim outer, inner"))
-            ))
-        );
-        // Wrap kernel
-        std::stringstream ss;
-        ss << "occa::kernel kernel(deviceKernel["
-           << kernelIndex
-           << "])";
-        launchBlock.add(
-          *(new expressionStatement(
-              &launchBlock,
-              *(new identifierNode(forSmnt.source,
-                                   ss.str()))
-            ))
-        );
-        // Set run dims
-        launchBlock.add(
-          *(new expressionStatement(
-              &launchBlock,
-              *(new identifierNode(forSmnt.source,
-                                   "kernel.setRunDims(outer, inner)"))
-            ))
-        );
-        // launch kernel
-        std::string kernelCall = "kernel(";
+        // Kernel launch
+        std::string kernelLaunch = "kernel(";
         function_t &func = kernelSmnt.function();
         const int argCount = (int) func.args.size();
         for (int i = 0; i < argCount; ++i) {
           variable_t &arg = *(func.args[i]);
           if (i) {
-            kernelCall += ", ";
+            kernelLaunch += ", ";
           }
-          kernelCall += arg.name();
+          kernelLaunch += arg.name();
         }
-        kernelCall += ')';
-        launchBlock.add(
-          *(new expressionStatement(
-              &launchBlock,
-              *(new identifierNode(forSmnt.source,
-                                   kernelCall))
-            ))
-        );
+        kernelLaunch += ");";
+
+        array<std::string> initSource = {
+          "occa::dim outer, inner;",
+          "outer.dims = " + occa::toString(outerDims) + ";",
+          "inner.dims = " + occa::toString(innerDims) + ";"
+        };
+
+        array<std::string> kernelLaunchSource = {
+          "occa::kernel kernel(deviceKernel[" + occa::toString(kernelIndex) + "]);",
+          "kernel.setRunDims(outer, inner);",
+          kernelLaunch
+        };
+
+        // We need to insert them at the top in reverse order
+        initSource.reverse().forEach([&](std::string str) {
+            launchBlock.addFirst(
+              *new sourceCodeStatement(&launchBlock, forSmnt.source, str)
+            );
+          });
+
+        kernelLaunchSource.forEach([&](std::string str) {
+            launchBlock.add(
+              *new sourceCodeStatement(&launchBlock, forSmnt.source, str)
+            );
+          });
 
         forSmnt.removeFromParent();
 
