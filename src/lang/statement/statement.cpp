@@ -48,6 +48,8 @@ namespace occa {
 
       const int attribute    = (1 << 28);
 
+      const int sourceCode   = (1 << 29);
+
       const int blockStatements = (
         block        |
         elif_        |
