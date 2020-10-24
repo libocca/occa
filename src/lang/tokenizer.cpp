@@ -815,35 +815,53 @@ namespace occa {
       return tokenType::none;
     }
 
-    std::string tokenizer_t::getHeader() {
+    bool tokenizer_t::loadingQuotedHeader() {
+      // Assumes we are loading a header
       int type = shallowPeek();
 
-      // Push after in case of whitespace
-      push();
-      if (type & tokenType::op) {
-        ++fp.start; // Skip <
-        push();
-        skipTo(">\n");
-        if (*fp.start == '\n') {
-          printError("Not able to find a closing >");
-          pop();
-          pop();
-          return NULL;
-        }
-        const std::string header = str();
-        pop();
-        ++fp.start; // Skip >
-        return header;
-      }
+      return (type & tokenType::string);
+    }
 
-      if (!(type & tokenType::string)) {
+    bool tokenizer_t::loadingAngleBracketHeader() {
+      // Assumes we are loading a header
+      int type = shallowPeek();
+
+      return (type & tokenType::op);
+    }
+
+    std::string tokenizer_t::getHeader() {
+      bool isQuoted = loadingQuotedHeader();
+      bool isAngleBracket = loadingAngleBracketHeader();
+
+      if (!isQuoted && !isAngleBracket) {
         printError("Not able to parse header");
         return NULL;
       }
 
-      std::string value;
-      getString(value);
-      return value;
+      // Push after in case of whitespace
+      push();
+
+      // (Quoted) #include "..."
+      if (isQuoted) {
+        std::string value;
+        getString(value);
+        return value;
+      }
+
+      // (Angle bracket) #include <...>
+      ++fp.start; // Skip <
+      push();
+      skipTo(">\n");
+      if (*fp.start == '\n') {
+        printError("Not able to find a closing >");
+        pop();
+        pop();
+        return NULL;
+      }
+      const std::string header = str();
+      pop();
+      ++fp.start; // Skip >
+      return header;
     }
 
     void tokenizer_t::setOrigin(const int line,

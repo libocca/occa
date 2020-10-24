@@ -33,6 +33,8 @@ namespace occa {
 
       includePaths = env::OCCA_INCLUDE_PATH;
 
+      strictHeaders = settings.get("okl/strict_headers", true);
+
       json oklIncludePaths = settings["okl/include_paths"];
       if (oklIncludePaths.isArray()) {
         jsonArray pathArray = oklIncludePaths.array();
@@ -1304,15 +1306,32 @@ namespace occa {
       }
 
       // Expand non-absolute path
-      std::string header = io::findInPaths(io::filename(tokenizer->getHeader(), false), includePaths);
+      bool headerIsQuoted = tokenizer->loadingQuotedHeader();
+      std::string header = io::findInPaths(
+        io::filename(tokenizer->getHeader(), false),
+        includePaths
+      );
 
       if (!io::exists(header)) {
-        // Default to standard headers if they exist
-        if (standardHeaders.find(header) != standardHeaders.end()) {
+        const bool isSystemHeader =(
+          standardHeaders.find(header) != standardHeaders.end()
+        );
+        const bool includeRawHeader = (
+          !strictHeaders || isSystemHeader
+        );
+
+        if (strictHeaders && isSystemHeader) {
           warningOn(&directive,
                     "Including standard headers may not be portable for all modes");
-          pushOutput(new directiveToken(directive.origin,
-                                        "include <" + header + ">"));
+        }
+
+        if (includeRawHeader) {
+          const std::string line = (
+            headerIsQuoted
+            ? "include \"" + header + "\""
+            : "include <" + header + ">"
+          );
+          pushOutput(new directiveToken(directive.origin, line));
           return;
         }
 
