@@ -108,6 +108,18 @@ void testPeekMethods() {
   testCharPeek("U'\\''" , encodingType::U);
   testCharPeek("L'\\''" , encodingType::L);
 
+  setStream("<foobar>");
+  ASSERT_TRUE(tokenizer.loadingAngleBracketHeader());
+  ASSERT_FALSE(tokenizer.loadingQuotedHeader());
+
+  setStream("\"foobar\"");
+  ASSERT_FALSE(tokenizer.loadingAngleBracketHeader());
+  ASSERT_TRUE(tokenizer.loadingQuotedHeader());
+
+  setStream("foobar");
+  ASSERT_FALSE(tokenizer.loadingAngleBracketHeader());
+  ASSERT_FALSE(tokenizer.loadingQuotedHeader());
+
   ASSERT_EQ("foobar",
             getHeader("<foobar>"));
   ASSERT_EQ("foobar",

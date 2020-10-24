@@ -658,28 +658,37 @@ void testIncludeStandardHeader() {
   getToken();                                   \
   ASSERT_EQ_BINARY(tokenType::directive,        \
                    token->type());              \
-  ASSERT_EQ("include <" header ">",             \
+  ASSERT_EQ("include " header,                  \
             token->to<directiveToken>().value)
 
-  setStream(
-     "#include \"math.h\"\n"
+  for (int i = 0; i < 2; ++i) {
+    const bool hasStrictHeaders = (bool) i;
+
+    setStream(
+      "#include \"math.h\"\n"
       "#include <math.h>\n"
       "#include \"cmath\"\n"
       "#include <cmath>\n"
       "#include \"iostream\"\n"
       "#include <iostream>\n"
-  );
+    );
 
-  preprocessor_t *pp = (preprocessor_t*) tokenStream.getInput("preprocessor_t");
+    preprocessor_t *pp = (preprocessor_t*) tokenStream.getInput("preprocessor_t");
+    pp->strictHeaders = hasStrictHeaders;
 
-  checkInclude("math.h");
-  checkInclude("math.h");
-  checkInclude("cmath");
-  checkInclude("cmath");
-  checkInclude("iostream");
-  checkInclude("iostream");
+    checkInclude("\"math.h\"");
+    checkInclude("<math.h>");
+    checkInclude("\"cmath\"");
+    checkInclude("<cmath>");
+    checkInclude("\"iostream\"");
+    checkInclude("<iostream>");
 
-  ASSERT_EQ(6, pp->warnings);
+    if (hasStrictHeaders) {
+      ASSERT_EQ(6, pp->warnings);
+    } else {
+      ASSERT_EQ(0, pp->warnings);
+    }
+  }
 }
 
 void testPragma() {

@@ -42,6 +42,10 @@ namespace occa {
       typedef void (preprocessor_t::*processDirective_t)(identifierToken &directive);
       typedef std::map<std::string, processDirective_t> directiveMap;
 
+      //---[ Settings ]-----------------
+      bool strictHeaders;
+      //================================
+
       //---[ Status ]-------------------
       std::vector<int> statusStack;
       int status;
