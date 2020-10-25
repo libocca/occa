@@ -295,7 +295,18 @@ bool runModes(const json &args) {
 }
 
 bool runBashAutocomplete(const json &args) {
-  occaCommand.printBashAutocomplete();
+  const json &arguments = args["arguments"];
+
+  if (!arguments.size() || ((std::string) arguments[0] != "--")) {
+    occaCommand.printBashAutocomplete("occa autocomplete bash");
+  } else {
+    // Remove the "--" argument
+    strVector cmdArgs = arguments.getArray<std::string>();
+    cmdArgs.erase(cmdArgs.begin());
+
+    occaCommand.printBashSuggestions(cmdArgs);
+  }
+
   return true;
 }
 
@@ -419,6 +430,7 @@ int main(const int argc, const char **argv) {
     .addCommand(autocompleteBash);
 
   occaCommand
+    .withName("occa")
     .withDescription("Helpful utilities related to OCCA workflows")
     .requiresCommand()
     .addCommand(versionCommand)

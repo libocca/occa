@@ -87,8 +87,6 @@ namespace occa {
       virtual std::string getPrintName() const;
       virtual std::string toString() const;
 
-      void printBashAutocomplete(const std::string &funcPrefix);
-
       friend bool operator < (const option &l, const option &r);
       friend std::ostream& operator << (std::ostream &out, const option &opt);
     };
@@ -142,6 +140,8 @@ namespace occa {
                           const std::string &description_,
                           const bool isRequired);
 
+      parser& removeArgument(const std::string &name_);
+
       parser& addRepetitiveArgument(const std::string &name_,
                                     const std::string &description_,
                                     const bool isRequired);
@@ -152,7 +152,8 @@ namespace occa {
       strVector splitShortOptionArgs(const strVector &args);
 
       occa::json parseArgs(const int argc, const char **argv);
-      occa::json parseArgs(const strVector &args_);
+      occa::json parseArgs(const strVector &args_,
+                           const bool supressErrors = false);
 
       bool hasCustomHelpOption();
       void addHelpOption();
@@ -172,13 +173,14 @@ namespace occa {
     public:
       typedef bool (*callback_t)(const occa::json &args);
 
+      mutable std::string commandPath;
+
       bool commandIsRequired;
       std::vector<command> commands;
 
       callback_t callback;
       std::string expansionFunction;
 
-      command *runParent;
       strVector runArgs;
 
       command();
@@ -189,9 +191,7 @@ namespace occa {
       command& withCallback(callback_t callback_);
       command& withFunctionExpansion(std::string expansion);
 
-      int getCommandIdx(const std::string &name_) const;
       command* getCommand(const std::string &name_);
-      const command* getCommand(const std::string &name_) const;
 
       void fillProgram(std::string &program);
 
@@ -204,12 +204,24 @@ namespace occa {
 
       command& requiresCommand();
       command& addCommand(const occa::cli::command &command_);
+      void setCommandPath(const std::string &commandPath_) const;
 
       void run(const int argc, const char **argv);
-      void run(const strVector &args,
-               command *parent = NULL);
 
-      void printBashAutocomplete(const std::string &funcPrefix="");
+      void run(const strVector &args);
+
+      bool findCommandAndArguments(const strVector &shellArgs,
+                                   command *&lastCommand,
+                                   std::string &lastCommandName,
+                                   json &lastCommandArgs,
+                                   const bool supressErrors = false);
+
+      void printBashAutocomplete(const std::string &fullBashCommand);
+
+      void printBashSuggestions(const strVector &args);
+
+      void printCommandBashSuggestions(const json &args,
+                                       const std::string &autocompleteArg);
 
       bool operator < (const command &comm) const;
     };
