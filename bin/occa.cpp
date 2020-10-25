@@ -99,17 +99,6 @@ bool runClear(const json &args) {
   }
 
   bool removedSomething = false;
-  if (options["libraries"]) {
-    removedSomething |= safeRmrf(io::libraryPath(), promptCheck);
-  } else {
-    const json &libs = options["lib"];
-    for (int i = 0; i < libs.size(); ++i) {
-      removedSomething |= safeRmrf(io::libraryPath() +
-                                   (std::string) libs[i],
-                                   promptCheck);
-    }
-  }
-
   if (options["kernels"]) {
     removedSomething |= safeRmrf(io::cachePath(), promptCheck);
   }
@@ -315,7 +304,7 @@ int main(const int argc, const char **argv) {
   versionCommand
     .withName("version")
     .withCallback(runVersion)
-    .withDescription("Prints OCCA library version")
+    .withDescription("Prints OCCA version")
     .addOption(cli::option("okl",
                            "Print the OKL language version")
                .stopsExpansion());
@@ -326,17 +315,11 @@ int main(const int argc, const char **argv) {
     .withCallback(runClear)
     .withDescription("Clears cached files and cache locks")
     .addOption(cli::option('a', "all",
-                           "Clear cached kernels, cached libraries, and locks.")
+                           "Clear cached kernels and/or locks.")
                .stopsExpansion())
     .addOption(cli::option("kernels",
                            "Clear cached kernels."))
-    .addOption(cli::option('l', "lib",
-                           "Clear cached library.")
-               .reusable()
-               .expandsFunction("ls ${OCCA_CACHE_DIR:-${HOME}/.occa}/libraries"))
-    .addOption(cli::option("libraries",
-                           "Clear cached libraries."))
-    .addOption(cli::option('o', "locks",
+    .addOption(cli::option('l', "locks",
                            "Clear cache locks"))
     .addOption(cli::option('y', "yes",
                            "Automatically answer everything with [y/yes]"));
