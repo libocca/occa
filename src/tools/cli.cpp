@@ -420,8 +420,9 @@ namespace occa {
       }
 
       occa::json parsedArgs(json::object_);
-      occa::json &jOptions   = parsedArgs["options"].asObject();
-      occa::json &jArguments = parsedArgs["arguments"].asArray();
+      occa::json &jOptions      = parsedArgs["options"].asObject();
+      occa::json &jOptionsOrder = parsedArgs["options_order"].asArray();
+      occa::json &jArguments    = parsedArgs["arguments"].asArray();
       setOptionDefaults(jOptions);
 
       // Make a list of used options to check required options later
@@ -461,6 +462,7 @@ namespace occa {
         }
 
         occa::json &jOpt = jOptions[opt->name];
+        jOptionsOrder += opt->name;
         usedOptions[opt->name] = true;
 
         // True/False option
