@@ -36,6 +36,12 @@ namespace occa {
         void addBarriers();
 
         void setupKernels();
+
+        void setupAtomics();
+
+        static bool transformBlockStatement(blockStatement &blockSmnt);
+
+        static bool transformBasicExpressionStatement(expressionStatement &exprSmnt);
       };
     }
   }

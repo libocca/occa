@@ -90,6 +90,8 @@ namespace occa {
     expr operator != (const expr &left, const expr &right);
     expr operator > (const expr &left, const expr &right);
     expr operator >= (const expr &left, const expr &right);
+
+    printer& operator << (printer &pout, const expr &e);
     //==================================
   }
 }

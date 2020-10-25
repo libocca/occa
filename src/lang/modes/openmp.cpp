@@ -68,14 +68,14 @@ namespace occa {
       }
 
       void openmpParser::setupAtomics() {
-        attributes::atomic::applyCodeTransformation(
+        success &= attributes::atomic::applyCodeTransformation(
           root,
           transformBlockStatement,
           transformBasicExpressionStatement
         );
       }
 
-      void openmpParser::transformBlockStatement(blockStatement &blockSmnt) {
+      bool openmpParser::transformBlockStatement(blockStatement &blockSmnt) {
         blockStatement &parent = *(blockSmnt.up);
 
         pragmaStatement &atomicPragmaSmnt = *(
@@ -85,9 +85,11 @@ namespace occa {
         );
 
         parent.addBefore(blockSmnt, atomicPragmaSmnt);
+
+        return true;
       }
 
-      void openmpParser::transformBasicExpressionStatement(expressionStatement &exprSmnt) {
+      bool openmpParser::transformBasicExpressionStatement(expressionStatement &exprSmnt) {
         blockStatement &parent = *(exprSmnt.up);
 
         pragmaStatement &atomicPragmaSmnt = *(
@@ -97,6 +99,8 @@ namespace occa {
         );
 
         parent.addBefore(exprSmnt, atomicPragmaSmnt);
+
+        return true;
       }
     }
   }

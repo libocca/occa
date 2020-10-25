@@ -11,8 +11,8 @@ namespace occa {
     class blockStatement;
     class expressionStatement;
 
-    typedef std::function<void (blockStatement &blockSmnt)>     blockSmntVoidCallback;
-    typedef std::function<void (expressionStatement &exprSmnt)> exprSmntVoidCallback;
+    typedef std::function<bool (blockStatement &blockSmnt)>     blockSmntBoolCallback;
+    typedef std::function<bool (expressionStatement &exprSmnt)> exprSmntBoolCallback;
 
     namespace attributes {
       class atomic : public attribute_t {
@@ -25,22 +25,22 @@ namespace occa {
 
         virtual bool isValid(const attributeToken_t &attr) const;
 
-        static void applyCodeTransformation(
+        static bool applyCodeTransformation(
           blockStatement &root,
-          blockSmntVoidCallback transformBlockSmnt,
-          exprSmntVoidCallback transformBasicExprSmnt
+          blockSmntBoolCallback transformBlockSmnt,
+          exprSmntBoolCallback transformBasicExprSmnt
         );
 
-        static void applyExpressionCodeTransformation(
+        static bool applyExpressionCodeTransformation(
           expressionStatement &exprSmnt,
-          blockSmntVoidCallback transformBlockSmnt,
-          exprSmntVoidCallback transformBasicExprSmnt
+          blockSmntBoolCallback transformBlockSmnt,
+          exprSmntBoolCallback transformBasicExprSmnt
         );
 
-        static void applyBlockCodeTransformation(
+        static bool applyBlockCodeTransformation(
           blockStatement &blockSmnt,
-          blockSmntVoidCallback transformBlockSmnt,
-          exprSmntVoidCallback transformBasicExprSmnt
+          blockSmntBoolCallback transformBlockSmnt,
+          exprSmntBoolCallback transformBasicExprSmnt
         );
 
         static bool isBasicExpression(expressionStatement &exprSmnt);

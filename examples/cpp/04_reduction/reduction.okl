@@ -1,7 +1,6 @@
-@kernel void reduction(const int entries,
-                       const float *vec,
-                       float *blockSum) {
-
+@kernel void reductionWithSharedMemory(const int entries,
+                                       const float *vec,
+                                       float *blockSum) {
   // Partial reduction of vector using loop tiles of size block (power of 2)
   for (int group = 0; group < ((entries + block - 1) / block); ++group; @outer) {
     @shared float s_vec[block];
@@ -27,5 +26,13 @@
         blockSum[group] = s_vec[0];
       }
     }
+  }
+}
+
+@kernel void reductionWithAtomics(const int entries,
+                                  const float *vec,
+                                  float *sum) {
+  for (int i = 0; i < entries; ++i; @tile(16, @outer, @inner)) {
+    @atomic *sum += vec[i];
   }
 }

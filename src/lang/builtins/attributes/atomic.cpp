@@ -31,11 +31,12 @@ namespace occa {
         return true;
       }
 
-      void atomic::applyCodeTransformation(
+      bool atomic::applyCodeTransformation(
         blockStatement &root,
-        blockSmntVoidCallback transformBlockSmnt,
-        exprSmntVoidCallback transformBasicExprSmnt
+        blockSmntBoolCallback transformBlockSmnt,
+        exprSmntBoolCallback transformBasicExprSmnt
       ) {
+        bool success = true;
         root.children
             .flatFilterByStatementType(
               statementType::expression | statementType::block,
@@ -44,32 +45,32 @@ namespace occa {
             .forEach([&](statement_t *smnt) {
                 if (smnt->type() & statementType::expression) {
                   expressionStatement &exprSmnt = (expressionStatement&) *smnt;
-                  applyExpressionCodeTransformation(
+                  success &= applyExpressionCodeTransformation(
                     exprSmnt,
                     transformBlockSmnt,
                     transformBasicExprSmnt
                   );
                 } else {
                   blockStatement &blockSmnt = (blockStatement&) *smnt;
-                  applyBlockCodeTransformation(
+                  success &= applyBlockCodeTransformation(
                     blockSmnt,
                     transformBlockSmnt,
                     transformBasicExprSmnt
                   );
                 }
               });
+        return success;
       }
 
-      void atomic::applyExpressionCodeTransformation(
+      bool atomic::applyExpressionCodeTransformation(
         expressionStatement &exprSmnt,
-        blockSmntVoidCallback transformBlockSmnt,
-        exprSmntVoidCallback transformBasicExprSmnt
+        blockSmntBoolCallback transformBlockSmnt,
+        exprSmntBoolCallback transformBasicExprSmnt
       ) {
         blockStatement &parent = *(exprSmnt.up);
 
         if (attributes::atomic::isBasicExpression(exprSmnt)) {
-          transformBasicExprSmnt(exprSmnt);
-          return;
+          return transformBasicExprSmnt(exprSmnt);
         }
 
         // Create a block statement and make a critical region around it
@@ -79,13 +80,13 @@ namespace occa {
         exprSmnt.replaceWith(blockSmnt);
         blockSmnt.add(exprSmnt);
 
-        transformBlockSmnt(blockSmnt);
+        return transformBlockSmnt(blockSmnt);
       }
 
-      void atomic::applyBlockCodeTransformation(
+      bool atomic::applyBlockCodeTransformation(
         blockStatement &blockSmnt,
-        blockSmntVoidCallback transformBlockSmnt,
-        exprSmntVoidCallback transformBasicExprSmnt
+        blockSmntBoolCallback transformBlockSmnt,
+        exprSmntBoolCallback transformBasicExprSmnt
       ) {
         if (blockSmnt.size() == 1
             && (blockSmnt[0]->type() & statementType::expression)) {
@@ -96,18 +97,18 @@ namespace occa {
             blockSmnt.replaceWith(exprSmnt);
             delete &blockSmnt;
 
-            transformBasicExprSmnt(exprSmnt);
-            return;
+            return transformBasicExprSmnt(exprSmnt);
           }
         }
 
-        transformBlockSmnt(blockSmnt);
+        return transformBlockSmnt(blockSmnt);
       }
 
       bool atomic::isBasicExpression(expressionStatement &exprSmnt) {
         const opType_t &opType = expr(exprSmnt.expr).opType();
         return opType & (
-          operatorType::assignment
+          operatorType::addEq
+          | operatorType::subEq
           | operatorType::increment
           | operatorType::decrement
         );

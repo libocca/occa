@@ -127,7 +127,7 @@ namespace occa {
     }
 
     io::output& operator << (io::output &out,
-                               const exprNode &node) {
+                             const exprNode &node) {
       printer pout(out);
       node.print(pout);
       return out;

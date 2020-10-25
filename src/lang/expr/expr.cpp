@@ -189,6 +189,13 @@ namespace occa {
     expr operator >= (const expr &left, const expr &right) {
       return expr::binaryOpExpr(op::greaterThanEq, left, right);
     }
+
+    printer& operator << (printer &pout, const expr &e) {
+      if (e.node) {
+        e.node->print(pout);
+      }
+      return pout;
+    }
     //==================================
   }
 }
