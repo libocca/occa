@@ -58,6 +58,7 @@ namespace occa {
 
       getKeywords(keywords);
 
+      addAttribute<attributes::atomic>();
       addAttribute<attributes::dim>();
       addAttribute<attributes::dimOrder>();
       addAttribute<attributes::tile>();

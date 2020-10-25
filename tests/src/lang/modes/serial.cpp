@@ -6,6 +6,7 @@
 void testPreprocessor();
 void testKernel();
 void testExclusives();
+void testAtomic();
 
 int main(const int argc, const char **argv) {
   parser.settings["serial/include_std"] = false;
@@ -125,5 +126,11 @@ void testExclusives() {
     "  }\n"
     "}\n"
   );
+}
+//======================================
+
+//---[ @atomic ]------------------------
+void testAtomic() {
+  // TODO(dmed)
 }
 //======================================

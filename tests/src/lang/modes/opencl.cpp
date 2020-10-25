@@ -1,6 +1,6 @@
-#define OCCA_TEST_PARSER_TYPE okl::metalParser
+#define OCCA_TEST_PARSER_TYPE okl::openclParser
 
-#include <occa/lang/modes/metal.hpp>
+#include <occa/lang/modes/opencl.hpp>
 #include "../parserUtils.hpp"
 
 #undef parseAndPrintSource
@@ -26,6 +26,7 @@ void testGlobalConst();
 void testKernelAnnotation();
 void testKernelArgs();
 void testSharedAnnotation();
+void testAtomic();
 void testBarriers();
 void testSource();
 
@@ -47,6 +48,33 @@ int main(const int argc, const char **argv) {
 
 //---[ Pragma ]-------------------------
 void testPragma() {
+  parseSource("");
+  ASSERT_EQ(1,
+            parser.root.size());
+
+  ASSERT_EQ("OPENCL EXTENSION cl_khr_fp64 : enable\n",
+            parser.root[0]
+            ->to<pragmaStatement>()
+            .value());
+
+  parser.settings["extensions/cl_khr_fp64"] = false;
+  parseSource("");
+  ASSERT_EQ(0,
+            parser.root.size());
+
+
+  parser.settings["extensions/foobar"] = true;
+  parseSource("");
+  ASSERT_EQ(1,
+            parser.root.size());
+
+  ASSERT_EQ("OPENCL EXTENSION foobar : enable\n",
+            parser.root[0]
+            ->to<pragmaStatement>()
+            .value());
+
+  parser.settings["extensions/foobar"] = false;
+  parser.settings["extensions/cl_khr_fp64"] = true;
 }
 //======================================
 
@@ -77,6 +105,12 @@ void testKernelArgs() {
 //---[ Shared ]-------------------------
 void testSharedAnnotation() {
   // @shared -> __local
+}
+//======================================
+
+//---[ @atomic ]------------------------
+void testAtomic() {
+  // TODO(dmed)
 }
 //======================================
 

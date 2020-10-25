@@ -1,6 +1,6 @@
-#define OCCA_TEST_PARSER_TYPE okl::cudaParser
+#define OCCA_TEST_PARSER_TYPE okl::metalParser
 
-#include <occa/lang/modes/cuda.hpp>
+#include <occa/lang/modes/metal.hpp>
 #include "../parserUtils.hpp"
 
 #undef parseAndPrintSource
@@ -20,15 +20,20 @@
     std::cout << "==============================================\n\n";  \
   }
 
+void testPragma();
 void testLoopExtraction();
 void testGlobalConst();
 void testKernelAnnotation();
 void testKernelArgs();
 void testSharedAnnotation();
+void testAtomic();
 void testBarriers();
 void testSource();
 
 int main(const int argc, const char **argv) {
+  parser.settings["okl/validate"] = false;
+  testPragma();
+
   parser.settings["okl/validate"] = true;
   testLoopExtraction();
   testGlobalConst();
@@ -40,6 +45,11 @@ int main(const int argc, const char **argv) {
 
   return 0;
 }
+
+//---[ Pragma ]-------------------------
+void testPragma() {
+}
+//======================================
 
 //---[ Loops ]--------------------------
 void testLoopExtraction() {
@@ -71,6 +81,12 @@ void testSharedAnnotation() {
 }
 //======================================
 
+//---[ @atomic ]------------------------
+void testAtomic() {
+  // TODO(dmed)
+}
+//======================================
+
 //---[ Barriers ]-----------------------
 void testBarriers() {
   // Add barriers barrier(CLK_LOCAL_MEM_FENCE)
@@ -86,7 +102,7 @@ void testSource() {
   parseAndPrintSource(
     "const int var[10];\n"
     "void foo() {}\n"
-    "int bar(int i) {}\n"
+    "int baz(int i) {}\n"
     "@kernel void kernel(@restrict int * arg, const int bar) {\n"
     "  for (int o1 = 0; o1 < O1; ++o1; @outer) {\n"
     "    for (int o0 = 0; o0 < O0; ++o0; @outer) {\n"

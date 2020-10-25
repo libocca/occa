@@ -680,7 +680,6 @@ void testAttributeLoading() {
 #define declVar(N)        (decls[N].variable())
 #define declVarAttr(N, A) declVar(N).attributes[A]
 
-#if 0
   setStatement("const int *x @dim(2, 3), *y;",
                statementType::declaration);
   ASSERT_EQ(0,
@@ -718,7 +717,6 @@ void testAttributeLoading() {
             (int) xDummy["x"]->expr->evaluate());
   ASSERT_EQ(3,
             (int) xDummy["y"]->expr->evaluate());
-  #endif
 
   setStatement("@dim(2 + 2, 10 - 5) const int *x, *y;",
                statementType::declaration);

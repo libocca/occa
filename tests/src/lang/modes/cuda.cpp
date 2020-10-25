@@ -1,6 +1,6 @@
-#define OCCA_TEST_PARSER_TYPE okl::openclParser
+#define OCCA_TEST_PARSER_TYPE okl::cudaParser
 
-#include <occa/lang/modes/opencl.hpp>
+#include <occa/lang/modes/cuda.hpp>
 #include "../parserUtils.hpp"
 
 #undef parseAndPrintSource
@@ -20,19 +20,16 @@
     std::cout << "==============================================\n\n";  \
   }
 
-void testPragma();
 void testLoopExtraction();
 void testGlobalConst();
 void testKernelAnnotation();
 void testKernelArgs();
 void testSharedAnnotation();
 void testBarriers();
+void testAtomic();
 void testSource();
 
 int main(const int argc, const char **argv) {
-  parser.settings["okl/validate"] = false;
-  testPragma();
-
   parser.settings["okl/validate"] = true;
   testLoopExtraction();
   testGlobalConst();
@@ -44,38 +41,6 @@ int main(const int argc, const char **argv) {
 
   return 0;
 }
-
-//---[ Pragma ]-------------------------
-void testPragma() {
-  parseSource("");
-  ASSERT_EQ(1,
-            parser.root.size());
-
-  ASSERT_EQ("OPENCL EXTENSION cl_khr_fp64 : enable\n",
-            parser.root[0]
-            ->to<pragmaStatement>()
-            .value());
-
-  parser.settings["extensions/cl_khr_fp64"] = false;
-  parseSource("");
-  ASSERT_EQ(0,
-            parser.root.size());
-
-
-  parser.settings["extensions/foobar"] = true;
-  parseSource("");
-  ASSERT_EQ(1,
-            parser.root.size());
-
-  ASSERT_EQ("OPENCL EXTENSION foobar : enable\n",
-            parser.root[0]
-            ->to<pragmaStatement>()
-            .value());
-
-  parser.settings["extensions/foobar"] = false;
-  parser.settings["extensions/cl_khr_fp64"] = true;
-}
-//======================================
 
 //---[ Loops ]--------------------------
 void testLoopExtraction() {
@@ -107,6 +72,12 @@ void testSharedAnnotation() {
 }
 //======================================
 
+//---[ @atomic ]------------------------
+void testAtomic() {
+  // TODO(dmed)
+}
+//======================================
+
 //---[ Barriers ]-----------------------
 void testBarriers() {
   // Add barriers barrier(CLK_LOCAL_MEM_FENCE)
@@ -122,7 +93,7 @@ void testSource() {
   parseAndPrintSource(
     "const int var[10];\n"
     "void foo() {}\n"
-    "int baz(int i) {}\n"
+    "int bar(int i) {}\n"
     "@kernel void kernel(@restrict int * arg, const int bar) {\n"
     "  for (int o1 = 0; o1 < O1; ++o1; @outer) {\n"
     "    for (int o0 = 0; o0 < O0; ++o0; @outer) {\n"
