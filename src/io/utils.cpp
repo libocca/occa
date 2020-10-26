@@ -125,8 +125,10 @@ namespace occa {
           ++c;
         }
       }
-      if (slash == '\\')
-        return std::replace(filename.begin(), filename.end(), '\\', '/');
+      if (slash == '\\') {
+        return std::replace(filename.begin(), filename.end(),
+                            '\\', '/');
+      }
 #endif
       return filename;
     }

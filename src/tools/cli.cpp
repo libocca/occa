@@ -517,10 +517,10 @@ namespace occa {
       const int argCount = (int) jArguments.array().size();
       const int reqArgCount = (int) arguments.size() - hasOptionalArg();
       if (argCount < reqArgCount) {
+        if (supressErrors) {
+          return parsedArgs;
+        }
         if (argCount == 0) {
-          if (supressErrors) {
-            return parsedArgs;
-          }
           printUsage(name);
           ::exit(0);
         }
@@ -827,11 +827,11 @@ namespace occa {
       std::cout << autocompleteName << "() {"                        << std::endl
                 << "  local suggestions=$(" << fullBashCommand << " -- \"${COMP_WORDS[@]}\")" << std::endl
                 << "  case \"${suggestions}\" in"                    << std::endl
-                << "    stops-expansion)"                            << std::endl
+                << "    " << BASH_STOPS_EXPANSION << ")"             << std::endl
                 << "      compopt -o nospace"                        << std::endl
                 << "      COMPREPLY=()"                              << std::endl
                 << "      ;;"                                        << std::endl
-                << "    expands-files)"                              << std::endl
+                << "    " << BASH_EXPANDS_FILES << ")"               << std::endl
                 << "      compopt -o nospace"                        << std::endl
                 << "      _cd"                                       << std::endl
                 << "      ;;"                                        << std::endl
@@ -882,8 +882,10 @@ namespace occa {
         )
       );
 
+      std::sort(suggestions.begin(), suggestions.end());
+
       for (auto &suggestion : suggestions) {
-        std::cout << suggestion << std::endl;
+        io::stdout << suggestion << '\n';
       }
     }
 
@@ -968,7 +970,7 @@ namespace occa {
     }
 
     strVector command::stopBashAutocomplete() {
-      return {"stops-expansion"};
+      return {BASH_STOPS_EXPANSION};
     }
 
     strVector command::getBashFileExpansion() {

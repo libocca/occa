@@ -1,303 +1,259 @@
+#include <algorithm>
 #include <iostream>
 #include <sstream>
-#include <occa/defines.hpp>
-#include <occa/tools/cli.hpp>
-#include <occa/tools/testing.hpp>
 
+#include <occa.hpp>
+#include <occa/tools/cli.hpp>
+#include <occa/tools/string.hpp>
+#include <occa/tools/testing.hpp>
+#include <occa/bin/occa.hpp>
+
+std::stringstream ss;
+
+void saveOutput(const char *str) {
+  ss << str;
+}
+
+std::string getAutocompleteOutput(occa::cli::command &occaCommand,
+                                  const std::string &commandLine) {
+  ss.str("");
+
+  occa::strVector commandLineArgs = occa::split(
+    occa::strip(commandLine),
+    ' '
+  );
+
+  // Ending with a space is a simple way to notify
+  // there's an empty arg afterwards
+  if (occa::endsWith(commandLine, " ")) {
+    commandLineArgs.push_back("");
+  }
+
+  occaCommand.printBashSuggestions(commandLineArgs);
+
+  std::string suggestions = ss.str();
+
+  std::replace(suggestions.begin(), suggestions.end(),
+               '\n', ' ');
+
+  return occa::strip(suggestions);
+}
+
+std::string getModes() {
+  occa::strVector modesVec;
+  for (auto &it : occa::getModeMap()) {
+    modesVec.push_back(it.second->name());
+  }
+  std::sort(modesVec.begin(), modesVec.end());
+
+  std::string modes;
+  for (auto &mode : modesVec) {
+    if (modes.size()) {
+      modes += ' ';
+    }
+    modes += mode;
+  }
+
+  return modes;
+}
+
+#define ASSERT_AUTOCOMPLETE_EQ(COMMAND_LINE, EXPECTED_OUTPUT) \
+  ASSERT_EQ(                                                  \
+    getAutocompleteOutput(occaCommand, COMMAND_LINE),         \
+    EXPECTED_OUTPUT                                           \
+  )
 
 int main(const int argc, const char **argv) {
+  occa::cli::command occaCommand = occa::bin::buildOccaCommand();
+
+  occa::io::stdout.setOverride(saveOutput);
+
+  const std::string commands = "autocomplete clear compile env info modes translate version";
+  const std::string helpOptions = "--help -h";
+
+  const std::string modeSuggetions = getModes();
+
   //---[ OCCA ]----------------------------
-  ASSERT_EQ(
-    autocomplete("occa"),
-    "autocomplete clear compile env info modes translate version"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa",
+    commands
   );
 
-  ASSERT_EQ(
-    autocomplete("occa a"),
-    "autocomplete"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa a",
+    commands
   );
 
-  ASSERT_EQ(
-    autocomplete("occa c"),
-    "clear compile"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa c",
+    commands
   );
 
-  ASSERT_EQ(
-    autocomplete("occa cl"),
-    "cl"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa cl",
+    commands
   );
 
-  ASSERT_EQ(
-    autocomplete("occa -"),
-    "--help"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa -",
+    helpOptions
   );
 
-  ASSERT_EQ(
-    autocomplete("occa --"),
-    "--help"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa --",
+    helpOptions
   );
 
   //---[ Autocomplete ]--------------------
-  ASSERT_EQ(
-    autocomplete("occa autocomplete"),
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa autocomplete b",
     "bash"
   );
 
-  ASSERT_EQ(
-    autocomplete("occa autocomplete b"),
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa autocomplete bash",
     "bash"
   );
 
-  ASSERT_EQ(
-    autocomplete("occa autocomplete bash"),
-    ""
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa autocomplete bash  ",
+    occa::cli::BASH_STOPS_EXPANSION
   );
 
   //---[ Clear ]---------------------------
-  ASSERT_EQ(
-    autocomplete("occa clear"),
-    "--all --help --kernels --lib --libraries --locks --yes"
+  const std::string clearOptions = "--all --help --kernels --locks --yes -a -h -l -y";
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa clear -",
+    clearOptions
   );
 
-  ASSERT_EQ(
-    autocomplete("occa clear --a"),
-    "--all"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa clear --a",
+    clearOptions
   );
 
-  ASSERT_EQ(
-    autocomplete("occa clear --all"),
-    ""
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa clear --all",
+    clearOptions
   );
 
-  ASSERT_EQ(
-    autocomplete("occa clear --l"),
-    "--lib --libraries --locks"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa clear --locks",
+    clearOptions
   );
 
-  ASSERT_EQ(
-    autocomplete("occa clear --li"),
-    "--lib --libraries"
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa clear --lib"),
-    "lib1_1 lib1_2 lib2"
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa clear --lib lib1"),
-    "lib1_1 lib1_2"
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa clear --locks"),
-    ""
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa clear --locks --l"),
-    "--lib --libraries"
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa clear --locks --libraries --l"),
-    "--lib"
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa clear --locks --libraries --lib foo --l"),
-    "--lib"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa clear --locks -l",
+    "--all --help --kernels --yes -a -h -y"
   );
 
   //---[ Env ]-----------------------------
-  ASSERT_EQ(
-    autocomplete("occa env"),
-    "--help"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa env -",
+    helpOptions
   );
 
-  ASSERT_EQ(
-    autocomplete("occa env -"),
-    "--help"
-  );
-
-
-  ASSERT_EQ(
-    autocomplete("occa env --help"),
-    ""
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa env --h",
+    helpOptions
   );
 
   //---[ Info ]----------------------------
-  ASSERT_EQ(
-    autocomplete("occa info"),
-    "--help"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa info -",
+    helpOptions
   );
 
-  ASSERT_EQ(
-    autocomplete("occa info -"),
-    "--help"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa info --h",
+    helpOptions
   );
 
-
-  ASSERT_EQ(
-    autocomplete("occa info --help"),
-    ""
+  //---[ Compile ]------------------
+  const std::string compileOptions = (
+    "--define --device-props --help --include-path --kernel-props -D -I -d -h -k"
   );
 
-  //---[ Kernel ]--------------------------
-  ASSERT_EQ(
-    autocomplete("occa kernel"),
-    "compile info translate"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa compile  ",
+    occa::cli::BASH_EXPANDS_FILES
   );
 
-  ASSERT_EQ(
-    autocomplete("occa kernel c"),
-    "compile"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa compile dir1/",
+    occa::cli::BASH_EXPANDS_FILES
   );
 
-  ASSERT_EQ(
-    autocomplete("occa kernel t"),
-    "translate"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa compile file1",
+    occa::cli::BASH_EXPANDS_FILES
   );
 
-  ASSERT_EQ(
-    autocomplete("occa kernel -"),
-    "--help"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa compile file1 -",
+    compileOptions
   );
 
-  ASSERT_EQ(
-    autocomplete("occa kernel --"),
-    "--help"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa compile file1 --",
+    compileOptions
   );
 
-  //---[ Kernel Compile ]------------------
-  ASSERT_EQ(
-    autocomplete("occa kernel compile"),
-    "dir1/ file1 file2"
+  //---[ Translate ]------------------
+  const std::string translateOptions = (
+    "--define --help --include-path --kernel-props --launcher --mode --verbose -D -I -h -k -l -m -v"
   );
 
-  ASSERT_EQ(
-    autocomplete("occa kernel compile dir1/"),
-    "file3 file4"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa translate  ",
+    occa::cli::BASH_EXPANDS_FILES
   );
 
-  ASSERT_EQ(
-    autocomplete("occa kernel compile file1"),
-    "--device-props --help --kernel-props --include-path --define"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa translate dir1/",
+    occa::cli::BASH_EXPANDS_FILES
   );
 
-  ASSERT_EQ(
-    autocomplete("occa kernel compile file1"),
-    "--device-props --help --kernel-props --include-path --define"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa translate file1",
+    occa::cli::BASH_EXPANDS_FILES
   );
 
-  ASSERT_EQ(
-    autocomplete("occa kernel compile file1"),
-    "--device-props --help --kernel-props --include-path --define"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa translate file1 -",
+    translateOptions
   );
 
-  ASSERT_EQ(
-    autocomplete("occa kernel compile file1"),
-    "--device-props --help --kernel-props --include-path --define"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa translate file1 --",
+    translateOptions
   );
 
-  ASSERT_EQ(
-    autocomplete("occa kernel compile --device-props"),
-    "dir1/ file1 file2"
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa kernel compile --kernel-props"),
-    "dir1/ file1 file2"
-  );
-
-  //---[ Kernel Translate ]----------------
-  ASSERT_EQ(
-    autocomplete("occa kernel translate"),
-    "dir1/ file1 file2"
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa kernel translate dir1/"),
-    "file3 file4"
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa kernel translate file1"),
-    "--define --include-path --kernel-props --launcher --mode --verbose"
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa kernel translate file1 --mode"),
-    "Serial"
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa kernel translate file1 --mode S"),
-    "Serial"
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa kernel translate file1 --mode Serial"),
-    "--define --include-path --kernel-props --launcher --verbose"
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa kernel translate file1 --mode Serial --launcher"),
-    "--define --include-path --kernel-props --verbose"
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa kernel translate file1 --mode Serial --launcher --verbose"),
-    "--define --include-path --kernel-props"
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa kernel translate --kernel-props"),
-    "dir1/ file1 file2"
-  );
-
-  //---[ Kernel Translate ]----------------
-  ASSERT_EQ(
-    autocomplete("occa kernel info"),
-    "hash1 hash2 hash3"
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa kernel info hash"),
-    "hash1 hash2 hash3"
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa kernel info hash1"),
-    ""
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa translate file1 --mode ",
+    modeSuggetions
   );
 
   //---[ Modes ]---------------------------
-  ASSERT_EQ(
-    autocomplete("occa modes"),
-    "--help"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa modes -",
+    helpOptions
   );
 
-  ASSERT_EQ(
-    autocomplete("occa modes -"),
-    "--help"
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa modes --h",
+    helpOptions
   );
 
-
-  ASSERT_EQ(
-    autocomplete("occa modes --help"),
-    ""
+  //---[ Version ]-------------------------
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa version -",
+    "--help --okl -h"
   );
 
-  // //---[ Version ]-------------------------
-  ASSERT_EQ(
-    autocomplete("occa version"),
-    "--okl"
-  );
-
-  ASSERT_EQ(
-    autocomplete("occa version --okl"),
-    ""
+  ASSERT_AUTOCOMPLETE_EQ(
+    "occa version --okl",
+    "--help --okl -h"
   );
 
   return 0;

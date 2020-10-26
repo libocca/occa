@@ -10,6 +10,9 @@
 
 namespace occa {
   namespace cli {
+    static const std::string BASH_STOPS_EXPANSION = "stops-expansion";
+    static const std::string BASH_EXPANDS_FILES = "expands-files";
+
     namespace pretty {
       static const int COLUMN_SPACING = 3;
       static const int MAX_NAME_COLUMN_WIDTH = 30;
