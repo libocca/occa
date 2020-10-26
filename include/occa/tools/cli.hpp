@@ -1,6 +1,7 @@
 #ifndef OCCA_TOOLS_CLI_HEADER
 #define OCCA_TOOLS_CLI_HEADER
 
+#include <functional>
 #include <iostream>
 #include <vector>
 
@@ -9,6 +10,9 @@
 
 namespace occa {
   namespace cli {
+    static const std::string BASH_STOPS_EXPANSION = "stops-expansion";
+    static const std::string BASH_EXPANDS_FILES = "expands-files";
+
     namespace pretty {
       static const int COLUMN_SPACING = 3;
       static const int MAX_NAME_COLUMN_WIDTH = 30;
@@ -43,6 +47,8 @@ namespace occa {
     //---[ Option ]---------------------
     class option : public printable {
     public:
+      typedef std::function<strVector (const json &args)> functionExpansionCallback;
+
       class flags_t {
       public:
         static const int isRequired      = (1 << 0);
@@ -56,7 +62,7 @@ namespace occa {
 
       int flags;
       int requiredArgs;
-      std::string expansionFunction;
+      functionExpansionCallback expansionFunction;
       json defaultValue;
 
       option();
@@ -70,7 +76,7 @@ namespace occa {
 
       ~option();
 
-      option isRequired();
+      option isRequired(const bool required = true);
       option reusable();
       option withArg();
       option withArgs(const int requiredArgs_);
@@ -78,16 +84,20 @@ namespace occa {
 
       option stopsExpansion();
       option expandsFiles();
-      option expandsFunction(const std::string &function);
+      option expandsFunction(functionExpansionCallback expansionFunction_);
+
+      std::string getShortnameFlag() const;
+      std::string getNameFlag() const;
 
       bool getIsRequired();
       bool getReusable();
+      bool getStopsExpansion();
+      bool getExpandsFiles();
+      bool getExpandsFunction();
       bool hasDefaultValue();
 
       virtual std::string getPrintName() const;
       virtual std::string toString() const;
-
-      void printBashAutocomplete(const std::string &funcPrefix);
 
       friend bool operator < (const option &l, const option &r);
       friend std::ostream& operator << (std::ostream &out, const option &opt);
@@ -138,13 +148,7 @@ namespace occa {
 
       parser& withDescription(const std::string &description_);
 
-      parser& addArgument(const std::string &name_,
-                          const std::string &description_,
-                          const bool isRequired);
-
-      parser& addRepetitiveArgument(const std::string &name_,
-                                    const std::string &description_,
-                                    const bool isRequired);
+      parser& addArgument(const argument &arg);
 
       parser& addOption(const option &option);
 
@@ -152,7 +156,8 @@ namespace occa {
       strVector splitShortOptionArgs(const strVector &args);
 
       occa::json parseArgs(const int argc, const char **argv);
-      occa::json parseArgs(const strVector &args_);
+      occa::json parseArgs(const strVector &args_,
+                           const bool supressErrors = false);
 
       bool hasCustomHelpOption();
       void addHelpOption();
@@ -170,15 +175,16 @@ namespace occa {
     //---[ Command ]--------------------
     class command : public parser {
     public:
-      typedef bool (*callback_t)(const occa::json &args);
+      typedef std::function<bool (const occa::json &args)> commandCallback;
+
+      mutable std::string commandPath;
 
       bool commandIsRequired;
       std::vector<command> commands;
 
-      callback_t callback;
+      commandCallback callback;
       std::string expansionFunction;
 
-      command *runParent;
       strVector runArgs;
 
       command();
@@ -186,12 +192,10 @@ namespace occa {
 
       command& withName(const std::string &name_);
       command& withDescription(const std::string &description_);
-      command& withCallback(callback_t callback_);
+      command& withCallback(commandCallback callback_);
       command& withFunctionExpansion(std::string expansion);
 
-      int getCommandIdx(const std::string &name_) const;
       command* getCommand(const std::string &name_);
-      const command* getCommand(const std::string &name_) const;
 
       void fillProgram(std::string &program);
 
@@ -204,12 +208,35 @@ namespace occa {
 
       command& requiresCommand();
       command& addCommand(const occa::cli::command &command_);
+      void setCommandPath(const std::string &commandPath_) const;
 
       void run(const int argc, const char **argv);
-      void run(const strVector &args,
-               command *parent = NULL);
 
-      void printBashAutocomplete(const std::string &funcPrefix="");
+      void run(const strVector &args);
+
+      bool findCommandAndArguments(const strVector &shellArgs,
+                                   command *&lastCommand,
+                                   std::string &lastCommandName,
+                                   json &lastCommandArgs,
+                                   const bool supressErrors = false);
+
+      void printBashAutocomplete(const std::string &fullBashCommand);
+
+      void printBashSuggestions(const strVector &args);
+
+      strVector getCommandBashSuggestions(const strVector &shellArgs,
+                                          const json &args,
+                                          const std::string &autocompleteArg);
+
+      strVector stopBashAutocomplete();
+      strVector getBashFileExpansion();
+
+      strVector getCommandSuggestions();
+
+      strVector getOptionFlagSuggestions(const strVector &usedOptions);
+
+      strVector getOptionSuggestions(option &opt,
+                                     const json &optArgs = json());
 
       bool operator < (const command &comm) const;
     };
