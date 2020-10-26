@@ -274,11 +274,8 @@ bool runInfo(const json &args) {
 }
 
 bool runModes(const json &args) {
-  strToModeMap &modeMap = getModeMap();
-  strToModeMap::iterator it = modeMap.begin();
-  while (it != modeMap.end()) {
-    std::cout << it->second->name() << '\n';
-    ++it;
+  for (auto &it : getModeMap()) {
+    std::cout << it.second->name() << '\n';
   }
   return true;
 }
@@ -332,7 +329,13 @@ int main(const int argc, const char **argv) {
     .addOption(cli::option('m', "mode",
                            "Output mode (Default: Serial)")
                .withArg()
-               .expandsFunction("occa modes"))
+               .expandsFunction([&](const json &args) {
+                   strVector suggestions;
+                   for (auto &it : getModeMap()) {
+                     suggestions.push_back(it.second->name());
+                   }
+                   return suggestions;
+                 }))
     .addOption(cli::option('l', "launcher",
                            "Output the launcher source instead"))
     .addOption(cli::option('k', "kernel-props",
@@ -349,9 +352,10 @@ int main(const int argc, const char **argv) {
                .withArg())
     .addOption(cli::option('v', "verbose",
                            "Verbose output"))
-    .addArgument("FILE",
-                 "An .okl file",
-                 true);
+    .addArgument(cli::argument("FILE",
+                               "An .okl file")
+                 .isRequired()
+                 .expandsFiles());
 
   cli::command compileCommand;
   compileCommand
@@ -374,12 +378,13 @@ int main(const int argc, const char **argv) {
                            "Add additional define")
                .reusable()
                .withArg())
-    .addArgument("FILE",
-                 "An .okl file",
-                 true)
-    .addArgument("KERNEL",
-                 "Kernel name",
-                 true);
+    .addArgument(cli::argument("FILE",
+                               "An .okl file")
+                 .isRequired()
+                 .expandsFiles())
+    .addArgument(cli::argument("KERNEL",
+                               "Kernel name")
+                 .isRequired());
 
   cli::command envCommand;
   envCommand

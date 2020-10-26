@@ -64,8 +64,7 @@ namespace occa {
     option::option() :
       shortname('\0'),
       flags(0),
-      requiredArgs(0),
-      expansionFunction("") {
+      requiredArgs(0) {
 
       name="";
       description="";
@@ -76,8 +75,7 @@ namespace occa {
                    const std::string &description_) :
       shortname(shortname_),
       flags(0),
-      requiredArgs(0),
-      expansionFunction("") {
+      requiredArgs(0) {
 
       name = name_;
       description = description_;
@@ -87,8 +85,7 @@ namespace occa {
                    const std::string &description_) :
       shortname('\0'),
       flags(0),
-      requiredArgs(0),
-      expansionFunction("") {
+      requiredArgs(0) {
 
       name = name_;
       description = description_;
@@ -96,7 +93,10 @@ namespace occa {
 
     option::~option() {}
 
-    option option::isRequired() {
+    option option::isRequired(const bool required) {
+      if (!required) {
+        return *this;
+      }
       option opt = *this;
       opt.flags |= flags_t::isRequired;
       return opt;
@@ -138,11 +138,27 @@ namespace occa {
       return opt;
     }
 
-    option option::expandsFunction(const std::string &function) {
+    option option::expandsFunction(functionExpansionCallback expansionFunction_) {
       option opt = *this;
       opt.flags |= flags_t::expandsFunction;
-      opt.expansionFunction = function;
+      opt.expansionFunction = expansionFunction_;
       return opt;
+    }
+
+    std::string option::getShortnameFlag() const {
+      if (!shortname) {
+        return "";
+      }
+      std::string flag = "-";
+      flag += shortname;
+      return flag;
+    }
+
+    std::string option::getNameFlag() const {
+      if (name.size()) {
+        return "--" + name;
+      }
+      return "";
     }
 
     bool option::getIsRequired() {
@@ -153,6 +169,18 @@ namespace occa {
       return (flags & flags_t::reusable);
     }
 
+    bool option::getStopsExpansion() {
+      return (flags & flags_t::stopsExpansion);
+    }
+
+    bool option::getExpandsFiles() {
+      return (flags & flags_t::expandsFiles);
+    }
+
+    bool option::getExpandsFunction() {
+      return (flags & flags_t::expandsFunction);
+    }
+
     bool option::hasDefaultValue() {
       return defaultValue.isInitialized();
     }
@@ -160,33 +188,20 @@ namespace occa {
     std::string option::getPrintName() const {
       std::string ret;
       if (shortname) {
-        ret += '-';
-        ret += shortname;
+        ret += getShortnameFlag();
         if (name.size()) {
-          ret += ", --";
-          ret += name;
+          ret += ", ";
+          ret += getNameFlag();
         }
       } else {
-        ret += "    --";
-        ret += name;
+        ret += "    ";
+        ret += getNameFlag();
       }
       return ret;
     }
 
     std::string option::toString() const {
-      std::string ret;
-      if (shortname) {
-        ret += '-';
-        ret += shortname;
-        if (name.size()) {
-          ret += ", --";
-          ret += name;
-        }
-      } else {
-        ret += "--";
-        ret += name;
-      }
-      return ret;
+      return strip(getPrintName());
     }
 
     bool operator < (const option &l, const option &r) {
@@ -319,29 +334,12 @@ namespace occa {
       return *this;
     }
 
-    parser& parser::addArgument(const std::string &name_,
-                                const std::string &description_,
-                                const bool isRequired_) {
-
+    parser& parser::addArgument(const argument &arg) {
       OCCA_ERROR("Cannot add " << arguments[arguments.size() - 1]
                  << ", an optional argument has already been added\n",
                  !hasOptionalArg());
 
-      argument arg(name_, description_);
-      if (isRequired_) {
-        arg = arg.isRequired();
-      }
       arguments.push_back(arg);
-
-      return *this;
-    }
-
-    parser& parser::addRepetitiveArgument(const std::string &name_,
-                                          const std::string &description_,
-                                          const bool isRequired_) {
-
-      addArgument(name_, description_, isRequired_);
-      hasRepetitiveArg = true;
 
       return *this;
     }
@@ -706,9 +704,9 @@ namespace occa {
       }
 
       if (!hasCommandArgument) {
-        addArgument("COMMAND",
-                    "Command to run",
-                    commandIsRequired);
+        addArgument(argument("COMMAND",
+                             "Command to run")
+                    .isRequired(commandIsRequired));
       }
 
       command_.setCommandPath(
@@ -825,14 +823,28 @@ namespace occa {
 
     void command::printBashAutocomplete(const std::string &fullBashCommand) {
       const std::string autocompleteName = "_occa_bash_autocomplete_" + name;
-      std::cout << autocompleteName << "() {\n"
-                << "  COMPREPLY=($(" << fullBashCommand << " -- \"${COMP_WORDS[@]}\"))\n"
-                << "}\n"
-                << "\n"
-                << "complete -F " << autocompleteName << " " << name << "\n";
+
+      std::cout << autocompleteName << "() {"                        << std::endl
+                << "  local suggestions=$(" << fullBashCommand << " -- \"${COMP_WORDS[@]}\")" << std::endl
+                << "  case \"${suggestions}\" in"                    << std::endl
+                << "    stops-expansion)"                            << std::endl
+                << "      compopt -o nospace"                        << std::endl
+                << "      COMPREPLY=()"                              << std::endl
+                << "      ;;"                                        << std::endl
+                << "    expands-files)"                              << std::endl
+                << "      compopt -o nospace"                        << std::endl
+                << "      _cd"                                       << std::endl
+                << "      ;;"                                        << std::endl
+                << "    *)"                                          << std::endl
+                << "      COMPREPLY=($(compgen -W \"${suggestions}\" -- \"${COMP_WORDS[COMP_CWORD]}\"))" << std::endl
+                << "      ;;"                                        << std::endl
+                << "  esac"                                          << std::endl
+                << "}"                                               << std::endl
+                << ""                                                << std::endl
+                << "complete -F " << autocompleteName << " " << name << std::endl;
     }
 
-    void command::printBashSuggestions(const strVector &args) {
+    void command::printBashSuggestions(const strVector &shellArgs) {
       // Examples:
       //    occa translate -[TAB]
       // -> [occa] [translate] [-]
@@ -840,7 +852,7 @@ namespace occa {
       //    occa translate [TAB]
       // -> [occa] [translate] []
       //
-      strVector fullySetArgs = args;
+      strVector fullySetArgs = shellArgs;
 
       std::string autocompleteArg;
       if (fullySetArgs.size()) {
@@ -862,17 +874,151 @@ namespace occa {
                               lastCommandArgs,
                               supressErrors);
 
-      lastCommand->printCommandBashSuggestions(
-        lastCommandArgs,
-        autocompleteArg
+      strVector suggestions = (
+        lastCommand->getCommandBashSuggestions(
+          fullySetArgs,
+          lastCommandArgs,
+          autocompleteArg
+        )
       );
+
+      for (auto &suggestion : suggestions) {
+        std::cout << suggestion << std::endl;
+      }
     }
 
-    void command::printCommandBashSuggestions(const json &args,
-                                              const std::string &autocompleteArg) {
-      std::cout << "command: " << name << '\n'
-                << "args: " << args.dump(2) << '\n'
-                << "autocompleteArg = " << autocompleteArg << '\n';
+    strVector command::getCommandBashSuggestions(const strVector &shellArgs,
+                                                 const json &args,
+                                                 const std::string &autocompleteArg) {
+      /*
+       * Print commands (getCommandSuggestions)
+       *    [occa] []
+       *    [occa] [tr]
+       *
+       * Print option flags (getOptionFlagSuggestions)
+       *    [occa] [-]
+       *    [occa] [--]
+       *    [occa] [--help]
+       *
+       * Print option suggestions (getOptionSuggestions)
+       *    [occa] [translate] [--mode] []
+       *    [occa] [translate] [--mode] [CU]
+       *    [occa] [translate] [--mode] [CUDA]
+       */
+
+      const int inputArguments = (int) args["arguments"].size();
+      const json &shellOptions = args["options"];
+      const strVector shellOptionsOrder = args["options_order"].getArray<std::string>();
+
+      // Suggest an option since it starts with '-'
+      if (startsWith(autocompleteArg, "-")) {
+        return getOptionFlagSuggestions(shellOptionsOrder);
+      }
+
+      // Commands are only expanded when no options or arguments
+      // have been passed
+      if (!inputArguments && !shellOptionsOrder.size() && commands.size()) {
+        return getCommandSuggestions();
+      }
+
+      const std::string lastShellArg = (
+        shellArgs.size()
+        ? shellArgs.back()
+        : ""
+      );
+
+      // Check if we need to expand an option
+      if (startsWith(lastShellArg, "-")) {
+        option *lastOption = getOption(lastShellArg, false);
+        if (lastOption) {
+          return getOptionSuggestions(*lastOption,
+                                      shellOptions[lastOption->name]);
+        }
+      }
+
+      // Check if we need to suggest a command
+      if (!inputArguments && !shellOptionsOrder.size() && commands.size()) {
+        return getCommandSuggestions();
+      }
+
+      // Check if we need to autocomplete an argument
+      if (inputArguments) {
+        argument arg;
+
+        if (inputArguments >= (int) arguments.size()) {
+          // If we pass the argument count, check if we have a repetitive argument
+          if (!hasRepetitiveArg) {
+            return stopBashAutocomplete();
+          }
+          arg = arguments.back();
+        } else {
+          // Get the indexed argument
+          arg = arguments[inputArguments - 1];
+        }
+
+        return getOptionSuggestions(arg);
+      }
+
+      // Autocomplete arguments
+      if (arguments.size()) {
+        return getOptionSuggestions(arguments[0]);
+      }
+
+      return stopBashAutocomplete();
+    }
+
+    strVector command::stopBashAutocomplete() {
+      return {"stops-expansion"};
+    }
+
+    strVector command::getBashFileExpansion() {
+      return {"expands-files"};
+    }
+
+    strVector command::getCommandSuggestions() {
+      strVector suggestions;
+
+      for (auto &comm : commands) {
+        suggestions.push_back(comm.name);
+      }
+
+      return suggestions;
+    }
+
+    strVector command::getOptionFlagSuggestions(const strVector &usedOptions) {
+      strVector suggestions;
+
+      // Filter out used options unless they are reusable
+      for (auto &opt : options) {
+        const bool addSuggestion = (
+          opt.getReusable()
+          || usedOptions.end() == (
+            std::find(usedOptions.begin(), usedOptions.end(),
+                      opt.name)
+          )
+        );
+        if (!addSuggestion) {
+          continue;
+        }
+
+        if (opt.shortname) {
+          suggestions.push_back(opt.getShortnameFlag());
+        }
+        suggestions.push_back(opt.getNameFlag());
+      }
+
+      return suggestions;
+    }
+
+    strVector command::getOptionSuggestions(option &opt,
+                                            const json &optArgs) {
+      if(opt.getExpandsFiles()) {
+        return getBashFileExpansion();
+      }
+      else if(opt.getExpandsFunction()) {
+        return opt.expansionFunction(optArgs);
+      }
+      return strVector();
     }
 
     bool command::operator < (const command &comm) const {

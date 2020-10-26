@@ -1,6 +1,7 @@
 #ifndef OCCA_TOOLS_CLI_HEADER
 #define OCCA_TOOLS_CLI_HEADER
 
+#include <functional>
 #include <iostream>
 #include <vector>
 
@@ -43,6 +44,8 @@ namespace occa {
     //---[ Option ]---------------------
     class option : public printable {
     public:
+      typedef std::function<strVector (const json &args)> functionExpansionCallback;
+
       class flags_t {
       public:
         static const int isRequired      = (1 << 0);
@@ -56,7 +59,7 @@ namespace occa {
 
       int flags;
       int requiredArgs;
-      std::string expansionFunction;
+      functionExpansionCallback expansionFunction;
       json defaultValue;
 
       option();
@@ -70,7 +73,7 @@ namespace occa {
 
       ~option();
 
-      option isRequired();
+      option isRequired(const bool required = true);
       option reusable();
       option withArg();
       option withArgs(const int requiredArgs_);
@@ -78,10 +81,16 @@ namespace occa {
 
       option stopsExpansion();
       option expandsFiles();
-      option expandsFunction(const std::string &function);
+      option expandsFunction(functionExpansionCallback expansionFunction_);
+
+      std::string getShortnameFlag() const;
+      std::string getNameFlag() const;
 
       bool getIsRequired();
       bool getReusable();
+      bool getStopsExpansion();
+      bool getExpandsFiles();
+      bool getExpandsFunction();
       bool hasDefaultValue();
 
       virtual std::string getPrintName() const;
@@ -136,15 +145,7 @@ namespace occa {
 
       parser& withDescription(const std::string &description_);
 
-      parser& addArgument(const std::string &name_,
-                          const std::string &description_,
-                          const bool isRequired);
-
-      parser& removeArgument(const std::string &name_);
-
-      parser& addRepetitiveArgument(const std::string &name_,
-                                    const std::string &description_,
-                                    const bool isRequired);
+      parser& addArgument(const argument &arg);
 
       parser& addOption(const option &option);
 
@@ -220,8 +221,19 @@ namespace occa {
 
       void printBashSuggestions(const strVector &args);
 
-      void printCommandBashSuggestions(const json &args,
-                                       const std::string &autocompleteArg);
+      strVector getCommandBashSuggestions(const strVector &shellArgs,
+                                          const json &args,
+                                          const std::string &autocompleteArg);
+
+      strVector stopBashAutocomplete();
+      strVector getBashFileExpansion();
+
+      strVector getCommandSuggestions();
+
+      strVector getOptionFlagSuggestions(const strVector &usedOptions);
+
+      strVector getOptionSuggestions(option &opt,
+                                     const json &optArgs = json());
 
       bool operator < (const command &comm) const;
     };
