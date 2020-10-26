@@ -13,7 +13,7 @@ opt
 build
 
 # Bin
-bin/
+bin/*
 !bin/occa.cpp
 
 # Auto-generated code

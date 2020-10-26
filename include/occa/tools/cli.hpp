@@ -172,14 +172,14 @@ namespace occa {
     //---[ Command ]--------------------
     class command : public parser {
     public:
-      typedef bool (*callback_t)(const occa::json &args);
+      typedef std::function<bool (const occa::json &args)> commandCallback;
 
       mutable std::string commandPath;
 
       bool commandIsRequired;
       std::vector<command> commands;
 
-      callback_t callback;
+      commandCallback callback;
       std::string expansionFunction;
 
       strVector runArgs;
@@ -189,7 +189,7 @@ namespace occa {
 
       command& withName(const std::string &name_);
       command& withDescription(const std::string &description_);
-      command& withCallback(callback_t callback_);
+      command& withCallback(commandCallback callback_);
       command& withFunctionExpansion(std::string expansion);
 
       command* getCommand(const std::string &name_);

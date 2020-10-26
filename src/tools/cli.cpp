@@ -643,7 +643,7 @@ namespace occa {
       return *this;
     }
 
-    command& command::withCallback(callback_t callback_) {
+    command& command::withCallback(commandCallback callback_) {
       callback = callback_;
       return *this;
     }
