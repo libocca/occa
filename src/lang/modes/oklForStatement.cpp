@@ -358,8 +358,8 @@ namespace occa {
         return getOklLoopIndex(forSmnt, oklAttr);
       }
 
-      int oklForStatement::getOklLoopIndex(forStatement &forSmnt, const std::string &oklAttr) {
-        attributeToken_t &oklAttrToken = forSmnt.attributes[oklAttr];
+      int oklForStatement::getOklLoopIndex(forStatement &forSmnt_, const std::string &oklAttr_) {
+        attributeToken_t &oklAttrToken = forSmnt_.attributes[oklAttr_];
         if (oklAttrToken.args.size()) {
           // The attribute is either @outer(N) or @inner(N)
           // We need to evaluate the value inside the attribute first though
@@ -369,7 +369,7 @@ namespace occa {
         // Find index by looking at how many for-loops of the same attribute are in it
         int maxInnerCount = 0;
         forOklForLoopStatements(
-          forSmnt,
+          forSmnt_,
           [&](forStatement &innerForSmnt,
               const std::string innerAttr,
               const statementArray &path) {
@@ -378,7 +378,7 @@ namespace occa {
               path
               .filter([&](statement_t *smnt) {
                   return ((smnt->type() & statementType::for_)
-                          && smnt->hasAttribute(oklAttr));
+                          && smnt->hasAttribute(oklAttr_));
                 })
               .length()
             );
@@ -396,9 +396,9 @@ namespace occa {
         return getOklLoopPath(forSmnt);
       }
 
-      statementArray oklForStatement::getOklLoopPath(forStatement &forSmnt) {
+      statementArray oklForStatement::getOklLoopPath(forStatement &forSmnt_) {
         statementArray oklParentPath = (
-          forSmnt
+          forSmnt_
           .getParentPath()
           .filter([&](statement_t *smnt) {
               return (
@@ -410,9 +410,9 @@ namespace occa {
             })
         );
 
-        // forSmnt is not in the getParentPath() list
+        // forSmnt_ is not in the getParentPath() list
         // so we need to push it manually
-        oklParentPath.push(&forSmnt);
+        oklParentPath.push(&forSmnt_);
 
         return oklParentPath;
       }

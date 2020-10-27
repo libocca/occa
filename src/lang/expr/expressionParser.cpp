@@ -171,8 +171,8 @@ namespace occa {
       freeTokenVector(tokens);
     }
 
-    exprNode* expressionParser::parse(tokenVector &tokens) {
-      expressionParser parser(tokens);
+    exprNode* expressionParser::parse(tokenVector &tokens_) {
+      expressionParser parser(tokens_);
       return parser.parse();
     }
 
