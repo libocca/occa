@@ -249,6 +249,7 @@ namespace occa {
                  << "    - OCCA_HIP_ENABLED           : " << envEcho("OCCA_HIP_ENABLED", OCCA_HIP_ENABLED) << "\n"
                  << "    - OCCA_OPENCL_ENABLED        : " << envEcho("OCCA_OPENCL_ENABLED", OCCA_OPENCL_ENABLED) << "\n"
                  << "    - OCCA_METAL_ENABLED         : " << envEcho("OCCA_METAL_ENABLED", OCCA_METAL_ENABLED) << "\n"
+                 << "    - OCCA_MPI_ENABLED           : " << envEcho("OCCA_MPI_ENABLED", OCCA_MPI_ENABLED) << "\n"
 
                  << "  Run-Time Options:\n"
                  << "    - OCCA_CXX                   : " << envEcho("OCCA_CXX") << "\n"
