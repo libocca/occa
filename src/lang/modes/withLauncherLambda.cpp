@@ -550,6 +550,7 @@ namespace occa {
 
                                 //std::cout<<f.value->type()<<std::endl;
                         }
+			e.first->removeFromParent();
                         //std::cout<<"Statement : "<<e.first->toString()<<std::endl;
                         //std::cout<<"StatementName : "<<e.first->statementName()<<std::endl;
                 }
