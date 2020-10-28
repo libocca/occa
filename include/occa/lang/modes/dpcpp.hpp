@@ -13,7 +13,7 @@ namespace occa {
         dpcppParser(const occa::properties &settings_ = occa::properties());
 
         virtual void onClear();
-
+	static bool dumfun(exprNode &smnt){ return true; }
         virtual void beforePreprocessing();
 
         virtual void beforeKernelSplit();

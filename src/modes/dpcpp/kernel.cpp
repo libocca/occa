@@ -70,11 +70,14 @@ namespace occa {
       // Setup kernel dimensions
       occa::dim fullDims = (outerDims * innerDims);
       ::sycl::queue *q = getCommandQueue();
-      int odimx = (innerDims.x % outerDims.x == 0)? innerDims.x : outerDims.x * ((innerDims.x / outerDims.x)+1);
-      int odimy = (innerDims.y % outerDims.y == 0)? innerDims.y : outerDims.y * ((innerDims.y / outerDims.y)+1);
-      int odimz = (innerDims.z % outerDims.z == 0)? innerDims.z : outerDims.z * ((innerDims.z / outerDims.z)+1);
+      //int odimx = (innerDims.x % outerDims.x == 0)? innerDims.x : outerDims.x * ((innerDims.x / outerDims.x)+1);
+      int odimx = outerDims.x ;
+      //int odimy = (innerDims.y % outerDims.y == 0)? innerDims.y : outerDims.y * ((innerDims.y / outerDims.y)+1);
+      int odimy = outerDims.y;
+      //int odimz = (innerDims.z % outerDims.z == 0)? innerDims.z : outerDims.z * ((innerDims.z / outerDims.z)+1);
+      int odimz = outerDims.z;
       auto global_range = ::sycl::range<3>(odimx, odimy, odimz);
-      auto local_range  = ::sycl::range<3>(outerDims.x, outerDims.y, outerDims.z);
+      auto local_range  = ::sycl::range<3>(innerDims.x, innerDims.y, innerDims.z);
       std::vector<void*> args;
       ::sycl::nd_range<3> ndrange = ::sycl::nd_range<3>(global_range, local_range);
       args.push_back(q);

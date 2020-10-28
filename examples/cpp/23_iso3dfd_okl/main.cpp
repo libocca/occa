@@ -119,15 +119,6 @@ int main(int argc, const char** argv)
     		p.n3_Tblock = N3_TBLOCK;
   	}
   
-  	// Make sure n1 and n1_Tblock are multiple of 16 (to support 64B alignment)
-  	if ((p.n1%16)!=0) {
-    		printf("Parameter n1=%d must be a multiple of 16\n",p.n1);
-    		exit(1);
-  	}
-  	if ((p.n1_Tblock%16)!=0) {
-    		printf("Parameter n1_Tblock=%d must be a multiple of 16\n",p.n1_Tblock);
-    		exit(1);
-  	}
   	// Make sure nreps is rouded up to next even number (to support swap)
   	p.nreps = ((p.nreps+1)/2)*2;
 
@@ -187,8 +178,8 @@ int main(int argc, const char** argv)
 	deviceProps["mode"] = "dpcpp";
 	//deviceProps["schedule"] = "compact";
 	//deviceProps["chunck"] = "10";
-  	deviceProps["platform_id"] = (int) args["options/platform-id"];
-  	deviceProps["device_id"] = (int) args["options/device-id"];
+  	deviceProps["platform_id"] = 2;
+  	deviceProps["device_id"] = 0;
 
   	occa::device device(deviceProps);
   	// Allocate memory on the device
@@ -209,8 +200,8 @@ int main(int argc, const char** argv)
                                                kernelProps);
 	initialize(p.prev, p.next, p.vel, &p, nbytes);
 
-	occa::dim inner(p.n1, p.n2, p.n3);
-	occa::dim outer(p.n1_Tblock, p.n2_Tblock, p.n3_Tblock);
+	occa::dim outer(p.n1, p.n2, p.n3);
+	occa::dim inner(p.n1_Tblock, p.n2_Tblock, p.n3_Tblock);
 	iso3dfdkernel.setRunDims(outer, inner);
 
   	wstart = walltime();
@@ -280,7 +271,7 @@ int main(int argc, const char** argv)
 	}
 	}
 */
-       if( within_epsilon( p.next, p_ref, p.n1, p.n2, p.n3, HALF_LENGTH, 0, 1e-45f ) ) {
+       if( within_epsilon( p.next, p_ref, p.n1, p.n2, p.n3, HALF_LENGTH, 0, 1e-40f ) ) {
                 printf("  Result within epsilon\n");
                 printf("  TEST PASSED!\n");
         } else {

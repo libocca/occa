@@ -94,7 +94,7 @@ bool within_epsilon(float* output, float *reference, const int dimx, const int d
 	  float difference = fabsf( *reference - *output);
 	  if( difference > delta ) {
 	    retval = false;
-	    printf(" ERROR: (%d,%d,%d)\t%.8f instead of %.8f\n", ix,iy,iz, *output, *reference);
+	    printf(" ERROR: (%d,%d,%d)\t%.2f instead of %.2f\n", ix,iy,iz, *output, *reference);
 	    return false;
 	  }
 	}

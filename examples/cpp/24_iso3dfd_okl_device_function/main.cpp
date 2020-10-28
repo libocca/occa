@@ -185,8 +185,8 @@ int main(int argc, const char** argv)
 	// Setup the platform and device IDs
 	occa::properties deviceProps;
 	deviceProps["mode"] = "dpcpp";
-  	deviceProps["platform_id"] = (int) args["options/platform-id"];
-  	deviceProps["device_id"] = (int) args["options/device-id"];
+  	deviceProps["platform_id"] = 2;
+  	deviceProps["device_id"] = 0;
 
   	occa::device device(deviceProps);
   	// Allocate memory on the device
@@ -209,8 +209,8 @@ int main(int argc, const char** argv)
                                                kernelProps);
 	initialize(p.prev, p.next, p.vel, &p, nbytes);
 
-	occa::dim inner(p.n1, p.n2, p.n3);
-	occa::dim outer(p.n1_Tblock, p.n2_Tblock, p.n3_Tblock);
+	occa::dim outer(p.n1, p.n2, p.n3);
+	occa::dim inner(p.n1_Tblock, p.n2_Tblock, p.n3_Tblock);
 	iso3dfdkernel.setRunDims(outer, inner);
 
   	wstart = walltime();
@@ -273,7 +273,7 @@ int main(int argc, const char** argv)
 	        reference_implementation( p.prev, p_ref, coeff, p.vel, p.n1, p.n2, p.n3, HALF_LENGTH );
 	}
 	o_next2.copyTo(p.next);
-        if( within_epsilon( p.next, p_ref, p.n1, p.n2, p.n3, HALF_LENGTH, 0, 1e-45f ) ) {
+        if( within_epsilon( p.next, p_ref, p.n1, p.n2, p.n3, HALF_LENGTH, 0, 1e-40f ) ) {
                 printf("  Result within epsilon\n");
                 printf("  TEST PASSED!\n");
         } else {

@@ -119,15 +119,6 @@ int main(int argc, const char** argv)
     		p.n3_Tblock = N3_TBLOCK;
   	}
   
-  	// Make sure n1 and n1_Tblock are multiple of 16 (to support 64B alignment)
-  	if ((p.n1%16)!=0) {
-    		printf("Parameter n1=%d must be a multiple of 16\n",p.n1);
-    		exit(1);
-  	}
-  	if ((p.n1_Tblock%16)!=0) {
-    		printf("Parameter n1_Tblock=%d must be a multiple of 16\n",p.n1_Tblock);
-    		exit(1);
-  	}
   	// Make sure nreps is rouded up to next even number (to support swap)
   	p.nreps = ((p.nreps+1)/2)*2;
 
@@ -207,8 +198,12 @@ int main(int argc, const char** argv)
                                                kernelProps);
 	initialize(p.prev, p.next, p.vel, &p, nbytes);
 
-	occa::dim outer(p.n1, p.n2, p.n3);
+	//occa::dim inner(p.n1, p.n2, p.n3);
+	//occa::dim inner(1, 1, 64);
 	occa::dim inner(p.n1_Tblock, p.n2_Tblock, p.n3_Tblock);
+	//occa::dim outer(p.n1_Tblock, p.n2_Tblock, p.n3_Tblock);
+	occa::dim outer(p.n1/p.n1_Tblock, p.n2/(p.n2_Tblock), p.n3/p.n3_Tblock);
+	//occa::dim outer(64, 64, 1);
 	iso3dfdkernel.setRunDims(outer, inner);
 
   	wstart = walltime();

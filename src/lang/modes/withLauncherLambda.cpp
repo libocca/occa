@@ -45,8 +45,28 @@ namespace occa {
           memoryType = new typedef_t(vartype_t(),
                                      memoryTypeSource);
         }
-
+/*
         root.addToScope(*memoryType);
+	std::cout<<"DOING SOME TESTS"<<std::endl;
+//	std::cout<<root.toString()<<std::endl;
+        statementExprMap exprMap;
+        findStatements(statementType::declaration,
+                       root,
+                       sharedVariableMatcher,
+                       exprMap);
+
+        //handle shared variables
+        for(auto e : exprMap){
+        for(auto *v : e.second){
+                std::cout<<"ExpressionNode : "<<v->toString()<<std::endl;
+                variable_t *var = v->getVariable();
+                if(var->hasAttribute("shared")){
+                        std::cout<<"Variable has statement Shared : "<<var->name()<<std::endl;
+                }
+        }
+        }
+*/
+
 
         if (!success) return;
         setOKLLoopIndices();
@@ -285,6 +305,10 @@ namespace occa {
 
         forSmnt.removeFromParent();
 
+
+
+	
+
         // TODO 1.1: Delete after properly cloning the declaration statement
         // delete &forSmnt;
       }
@@ -321,6 +345,8 @@ namespace occa {
 
         kernelSmnt.addToScope(kernelType);
         kernelSmnt.addToScope(kernelVar);
+	
+	//handle shared variables
       }
 
       void withLauncherLambda::setupLauncherHeaders() {
@@ -478,6 +504,35 @@ namespace occa {
       }
 
       void withLauncherLambda::setupKernels() {
+	      statementExprMap exprMap;
+        findStatements(statementType::all,
+                       root,
+                       writesToShared,
+                       exprMap);
+
+        //handle shared variables
+        //td::map<statement_t*, exprNodeVector>
+        for(auto e : exprMap){
+                if(e.first->type()==statementType::declaration){
+                        //At this stage we know that we handle a shared local variable declaration
+                        //So we need to extract the type, the number of elements and the name.
+                        declarationStatement* decVariable = (declarationStatement*)e.first;
+                        variableDeclarationVector decVector = decVariable->declarations;
+                        for(auto f : decVector){
+                                std::cout<<f.variable->name()<<std::endl;//Variable name
+                                std::cout<<f.variable->vartype.name()<<std::endl;//Variable type
+                                std::cout<<f.variable->vartype.arrays[0].size->toString()<<std::endl;//Variable type
+                                std::cout<<f.variable->vartype.arrays[1].size->toString()<<std::endl;//Variable type
+
+
+                                //std::cout<<f.value->type()<<std::endl;
+                        }
+                        //std::cout<<"Statement : "<<e.first->toString()<<std::endl;
+                        //std::cout<<"StatementName : "<<e.first->statementName()<<std::endl;
+                }
+
+        }
+
         statementPtrVector kernelSmnts;
         findStatementsByAttr(statementType::functionDecl,
                              "kernel",
@@ -491,7 +546,13 @@ namespace occa {
           );
           setupOccaFors(kernelSmnt);
 	  identifierToken *stt = new identifierToken(originSource::builtin, "variable");
-          std::string sa ="q->submit([&](sycl::handler &h){\n \
+	  //Modify this string
+	  //Plan B: Add the buffer creation before
+	  //Plan A: 1- Extract a map<string, {string(type), std::vector<string>(dimension sizes)}> 
+	  //2-  For each variable in 1) add the accessor (generate a name) after the q->submit
+	  //3 - For each accessor, we need to cast the pointer to create the shared object with original name and correct index access
+	  //4- Modify the addBarrier method to make sure we synchronized
+	  std::string sa ="q->submit([&](sycl::handler &h){\n \
                         h.parallel_for(*ndrange, [=] (sycl::nd_item<3> i_dpcpp_iterator){\n";
           identifierNode* strnodea = new identifierNode(stt, sa);
           expressionStatement* exprSmnta = new expressionStatement(&kernelSmnt, *strnodea);
@@ -514,6 +575,27 @@ namespace occa {
                              "outer",
                              kernelSmnt,
                              outerSmnts);
+/*        for(auto* fstmnt : outerSmnts){
+	std::cout<<"DOING SOME TESTS"<<std::endl;
+	statementExprMap exprMap;
+        findStatements(exprNodeType::op,
+                       *fstmnt,
+                       writesToShared,
+                       exprMap);
+
+        //handle shared variables
+        for(auto e : exprMap){
+        for(auto *v : e.second){
+		std::cout<<"ExpressionNode : "<<v->toString()<<std::endl;
+                variable_t *var = v->getVariable();
+                if(var->hasAttribute("shared")){
+                        std::cout<<"Variable has statement Shared : "<<var->name()<<std::endl;
+                }
+        }
+        }
+	}
+
+*/
         findStatementsByAttr(statementType::for_,
                              "inner",
                              kernelSmnt,
@@ -548,7 +630,7 @@ namespace occa {
                        writesToShared,
                        exprMap);
 
-        // No need to add barriers
+	        // No need to add barriers
         if (!exprMap.size()) {
           return;
         }

@@ -38,6 +38,32 @@ namespace occa {
 
         if (!success) return;
         setupKernels();
+
+
+
+
+/*
+	root.addToScope(*memoryType);
+        std::cout<<"DOING SOME TESTS"<<std::endl;
+        std::cout<<root.toString()<<std::endl;
+        std::cout<<"ENDING SOME TESTS"<<std::endl;
+        statementExprMap exprMap;
+        findStatements(statementType::declaration,
+                       root,
+                       sharedVariableMatcher,
+                       exprMap);
+
+        //handle shared variables
+        for(auto e : exprMap){
+        for(auto *v : e.second){
+                std::cout<<"ExpressionNode : "<<v->toString()<<std::endl;
+                variable_t *var = v->getVariable();
+                if(var->hasAttribute("shared")){
+                        std::cout<<"Variable has statement Shared : "<<var->name()<<std::endl;
+                }
+        }
+        }
+*/
       }
 
       std::string dpcppParser::getOuterIterator(const int loopIndex) {
@@ -71,6 +97,10 @@ namespace occa {
             }
           }
         }*/
+
+
+
+
       }
 
       void dpcppParser::setFunctionQualifiers() {
@@ -114,6 +144,62 @@ namespace occa {
           }
           ++it;
         }*/
+
+/*	      root.addToScope(*memoryType);
+        std::cout<<"DOING SOME TESTS"<<std::endl;
+        std::cout<<root.toString()<<std::endl;
+        std::cout<<"ENDING SOME TESTS"<<std::endl;
+        statementExprMap exprMap;
+        findStatements(statementType::declaration,
+                       root,
+                       sharedVariableMatcher,
+                       exprMap);
+
+        //handle shared variables
+        for(auto e : exprMap){
+        for(auto *v : e.second){
+                std::cout<<"ExpressionNode : "<<v->toString()<<std::endl;
+                variable_t *var = v->getVariable();
+                if(var->hasAttribute("shared")){
+                        std::cout<<"Variable has statement Shared : "<<var->name()<<std::endl;
+                }
+        }
+        }
+*/
+/*	                     root.addToScope(*memoryType);
+        std::cout<<"DOING SOME TESTS"<<std::endl;
+//        std::cout<<root.toString()<<std::endl;
+        std::cout<<"ENDING SOME TESTS"<<std::endl;
+
+        statementExprMap exprMap;
+        findStatements(statementType::all,
+                       root,
+                       sharedVariableMatcher,
+                       exprMap);
+
+        //handle shared variables
+        //td::map<statement_t*, exprNodeVector>
+        for(auto e : exprMap){
+		if(e.first->type()==statementType::declaration){
+			//At this stage we know that we handle a shared local variable declaration
+			//So we need to extract the type, the number of elements and the name.
+			declarationStatement* decVariable = (declarationStatement*)e.first;
+			variableDeclarationVector decVector = decVariable->declarations;
+			for(auto f : decVector){
+				std::cout<<f.variable->name()<<std::endl;//Variable name
+				std::cout<<f.variable->vartype.name()<<std::endl;//Variable type
+				std::cout<<f.variable->vartype.arrays[0].size->toString()<<std::endl;//Variable type
+				std::cout<<f.variable->vartype.arrays[1].size->toString()<<std::endl;//Variable type
+
+				
+				//std::cout<<f.value->type()<<std::endl;
+			}	
+                	//std::cout<<"Statement : "<<e.first->toString()<<std::endl;
+                	//std::cout<<"StatementName : "<<e.first->statementName()<<std::endl;
+		}
+		
+        }
+*/
       }
 
       void dpcppParser::addBarriers() {
@@ -132,7 +218,7 @@ namespace occa {
             *(new expressionStatement(
                 smnt.up,
                 *(new identifierNode(smnt.source,
-                                     " __syncthreads()"))
+                                     "i_dpcpp_iterator.barrier()"))
               ))
           );
 

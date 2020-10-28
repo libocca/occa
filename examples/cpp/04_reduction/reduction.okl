@@ -3,9 +3,8 @@
                        float *blockSum) {
 
   // Partial reduction of vector using loop tiles of size block (power of 2)
-  for (int group = 0; group < ((entries + block - 1) / block); ++group; @outer) {
-    @shared float s_vec[block];
-
+  for (int group = 0; group < ((entries + block - 1) / block); ++group; @tile(16,@outer)) {
+    @shared float s_vec[block][block];
     for (int item = 0; item < block; ++item; @inner) {
       if ((group * block + item) < entries) {
         s_vec[item] = vec[group * block + item];
@@ -13,7 +12,6 @@
         s_vec[item] = 0;
       }
     }
-
     for (int alive = ((block + 1) / 2); 0 < alive; alive /= 2) {
       for (int item = 0; item < block; ++item; @inner) {
         if (item < alive) {
