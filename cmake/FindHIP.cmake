@@ -149,3 +149,14 @@ find_package_handle_standard_args(
     HIP_COMPILER
     VERSION_VAR HIP_VERSION
     )
+
+if(HIP_FOUND and NOT TARGET OCCA::depends::HIP)
+  # Create our wrapper imported target
+  # Put it in the OCCA namespace to make it clear that we created it.
+  add_library(OCCA::depends::HIP INTERFACE IMPORTED)
+  set_target_properties(OCCA::depends::HIP PROPERTIES
+    INTERFACE_COMPILE_DEFINITIONS "-D${HIP_RUNTIME_DEFINE}"
+    INTERFACE_INCLUDE_DIRECTORIES "${HIP_INCLUDE_DIRS}"
+    INTERFACE_LINK_LIBRARIES "${HIP_LIBRARIES}"
+  )
+endif()

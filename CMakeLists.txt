@@ -90,8 +90,9 @@ set_target_properties(libocca PROPERTIES
 # Find needed and requested packages
 find_package(Threads REQUIRED)
 
+# Use the provided imported target Threads::Threads, to make our package relocatable
 target_link_libraries(libocca PRIVATE
-  ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+  Threads::Threads ${CMAKE_DL_LIBS})
 
 target_include_directories(libocca PUBLIC
   $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/include>
@@ -114,8 +115,9 @@ if(ENABLE_OPENMP)
     message("-- OpenMP include dirs: ${OpenMP_CXX_INCLUDE_DIRS}")
     message("-- OpenMP libraries:    ${OpenMP_CXX_LIBRARIES}")
 
-    target_include_directories(libocca PRIVATE ${OpenMP_CXX_INCLUDE_DIRS})
-    target_link_libraries(libocca PRIVATE ${OpenMP_CXX_LIBRARIES})
+    # Use the provided imported target OpenMP::OpenMP_CXX,
+    # (which wraps the CXX_INCLUDE_DIRS and CXX_LIBRARIES,) to make our package relocatable
+    target_link_libraries(libocca PRIVATE OpenMP::OpenMP_CXX)
   else(OPENMP_CXX_FOUND)
     set(OCCA_OPENMP_ENABLED 0)
   endif(OPENMP_CXX_FOUND)
@@ -132,6 +134,7 @@ if(ENABLE_CUDA)
     message("-- CUDA include dirs: ${CUDAToolkit_INCLUDE_DIRS}")
     message("-- CUDA driver library: ${CUDAToolkit_LIBRARY_DIR}")
 
+    # Use the provided imported target CUDA::cuda_driver, to make our package relocatable
     target_link_libraries(libocca PRIVATE CUDA::cuda_driver)
 
   else (CUDAToolkit_FOUND)
@@ -150,8 +153,9 @@ if(ENABLE_OPENCL)
     message("-- OpenCL include dirs: ${OpenCL_INCLUDE_DIRS}")
     message("-- OpenCL libraries:    ${OpenCL_LIBRARIES}")
 
-    target_include_directories(libocca PRIVATE ${OpenCL_INCLUDE_DIRS})
-    target_link_libraries(libocca PRIVATE ${OpenCL_LIBRARIES})
+    # Use the provided imported target OpenCL::OpenCL,
+    # (which wraps the _INCLUDE_DIRS and _LIBRARIES,) to make our package relocatable
+    target_link_libraries(libocca PRIVATE OpenCL::OpenCL)
   else (OpenCL_FOUND)
     set(OCCA_OPENCL_ENABLED 0)
   endif(OpenCL_FOUND)
@@ -168,8 +172,9 @@ if(ENABLE_DPCPP)
     message("-- DPCPP include dirs: ${SYCL_INCLUDE_DIRS}")
     message("-- DPCPP libraries:    ${SYCL_LIBRARIES}")
 
-    target_include_directories(libocca PRIVATE ${SYCL_INCLUDE_DIRS})
-    target_link_libraries(libocca PRIVATE ${SYCL_LIBRARIES})
+    # Use our wrapper imported target OCCA::depends::DPCPP,
+    # (which wraps the _INCLUDE_DIRS and _LIBRARIES,) to make our package relocatable
+    target_link_libraries(libocca PRIVATE OCCA::depends::DPCPP)
   else()
     set(OCCA_DPCPP_ENABLED 0)
   endif()
@@ -188,9 +193,9 @@ if(ENABLE_HIP)
     message("-- HIP include dirs: ${HIP_INCLUDE_DIRS}")
     message("-- HIP libraries:    ${HIP_LIBRARIES}")
 
-    target_compile_definitions(libocca PRIVATE -D${HIP_RUNTIME_DEFINE})
-    target_include_directories(libocca PRIVATE ${HIP_INCLUDE_DIRS})
-    target_link_libraries(libocca PRIVATE ${HIP_LIBRARIES})
+    # Use our wrapper imported target OCCA::depends::DPCPP,
+    # (which wraps the _COMPILE_DEFINITIONS, _INCLUDE_DIRS and _LIBRARIES,) to make our package relocatable
+    target_link_libraries(libocca PRIVATE OCCA::depends::HIP)
   else (HIP_FOUND)
     set(OCCA_HIP_ENABLED 0)
   endif(HIP_FOUND)
@@ -208,7 +213,9 @@ if(ENABLE_METAL AND APPLE)
     message("-- METAL core services: ${CORE_SERVICES}")
     message("-- METAL app kit:       ${APP_KIT}")
 
-    target_link_libraries(libocca PRIVATE ${METAL_LIBRARY} ${CORE_SERVICES} ${APP_KIT})
+    # Use our wrapper imported target OCCA::depends::DPCPP,
+    # (which wraps the three libraries variables,) to make our package relocatable
+    target_link_libraries(libocca PRIVATE OCCA::depends::METAL)
   else()
     set(OCCA_METAL_ENABLED 0)
   endif()
@@ -228,8 +235,9 @@ if(ENABLE_MPI)
     message("-- MPI executable:   ${MPIEXEC_EXECUTABLE}")
     message("-- MPI numproc flag: ${MPIEXEC_NUMPROC_FLAG}")
 
-    target_include_directories(libocca PUBLIC ${MPI_CXX_INCLUDE_DIRS})
-    target_link_libraries(libocca PUBLIC ${MPI_CXX_LIBRARIES})
+    # Use the provided imported target MPI::MPI_CXX,
+    # (which wraps the _INCLUDE_DIRS and _LIBRARIES,) to make our package relocatable
+    target_link_libraries(libocca PUBLIC MPI::MPI_CXX)
   else(MPI_FOUND)
     set(OCCA_MPI_ENABLED 0)
   endif(MPI_FOUND)
