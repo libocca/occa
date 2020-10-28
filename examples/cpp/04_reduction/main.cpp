@@ -12,8 +12,9 @@ int main(int argc, const char **argv) {
   // occa::setDevice("mode: 'OpenMP'");
   // occa::setDevice("mode: 'CUDA'  , device_id: 0");
   // occa::setDevice("mode: 'OpenCL', platform_id: 0, device_id: 0");
+   occa::setDevice("mode: 'dpcpp', platform_id: 2, device_id: 0");
   // occa::setDevice("mode: 'Metal', device_id: 0");
-  occa::setDevice((std::string) args["options/device"]);
+ // occa::setDevice((std::string) args["options/device"]);
 
   // Choosing something not divisible by 256
   int entries = 10000;
@@ -49,7 +50,7 @@ int main(int argc, const char **argv) {
 
   // Host -> Device
   o_vec.copyFrom(vec);
-
+  reduction.setRunDims(blocks, 1);
   reduction(entries, o_vec, o_blockSum);
 
   // Host <- Device

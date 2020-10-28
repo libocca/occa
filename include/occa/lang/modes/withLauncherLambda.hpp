@@ -12,6 +12,7 @@ namespace occa {
       public:
         serialParser launcherParser;
         type_t *memoryType;
+        std::map<std::string, std::pair<std::string, std::vector<std::string>>> sharedVariables;
 
         withLauncherLambda(const occa::properties &settings_ = occa::properties());
 

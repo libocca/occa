@@ -519,11 +519,16 @@ namespace occa {
                         declarationStatement* decVariable = (declarationStatement*)e.first;
                         variableDeclarationVector decVector = decVariable->declarations;
                         for(auto f : decVector){
-                                std::cout<<f.variable->name()<<std::endl;//Variable name
-                                std::cout<<f.variable->vartype.name()<<std::endl;//Variable type
-                                std::cout<<f.variable->vartype.arrays[0].size->toString()<<std::endl;//Variable type
-                                std::cout<<f.variable->vartype.arrays[1].size->toString()<<std::endl;//Variable type
+                                //std::cout<<f.variable->name()<<std::endl;//Variable name
+                                //std::cout<<f.variable->vartype.name()<<std::endl;//Variable type
+				std::string vname = f.variable->name();
+				std::string vtype = f.variable->vartype.name();
+				std::vector<std::string> vindexes;
+				for(auto index : f.variable->vartype.arrays)
+					vindexes.push_back(index.size->toString());
 
+                                //std::cout<<f.variable->vartype.arrays[0].size->toString()<<std::endl;//Variable type
+				sharedVariables[vname] = std::pair<std::string, std::vector<std::string>>(vtype, vindexes);
 
                                 //std::cout<<f.value->type()<<std::endl;
                         }
@@ -552,8 +557,18 @@ namespace occa {
 	  //2-  For each variable in 1) add the accessor (generate a name) after the q->submit
 	  //3 - For each accessor, we need to cast the pointer to create the shared object with original name and correct index access
 	  //4- Modify the addBarrier method to make sure we synchronized
-	  std::string sa ="q->submit([&](sycl::handler &h){\n \
-                        h.parallel_for(*ndrange, [=] (sycl::nd_item<3> i_dpcpp_iterator){\n";
+	  std::string sa ="q->submit([&](sycl::handler &h){\n";
+	  for(auto e : sharedVariables){
+		sa += "      auto _occa_accessor_"+e.first+" = sycl::accessor<char, 1, sycl::access::mode::read_write, sycl::access::target::local>(sizeof("+e.second.first+")*";
+		for(auto f : e.second.second)
+			sa += f +"*";	
+		sa += "1, h);\n";
+	  }
+
+          sa += "      h.parallel_for(*ndrange, [=] (sycl::nd_item<3> i_dpcpp_iterator){\n";
+	  for(auto e : sharedVariables){
+	  	sa += "          "+e.second.first+" "+e.first+" = *((_occa_accessor_"+e.first+".get_pointer()));\n";
+	  }
           identifierNode* strnodea = new identifierNode(stt, sa);
           expressionStatement* exprSmnta = new expressionStatement(&kernelSmnt, *strnodea);
           exprSmnta->hasSemicolon = false;
