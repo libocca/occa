@@ -27,7 +27,7 @@ namespace occa {
       //================================
 
       void withLauncherLambda::launcherClear() {
-        launcherParser.onClear();
+      	      launcherParser.onClear();
 
         // Will get deleted by the parser
         memoryType = NULL;
@@ -45,9 +45,9 @@ namespace occa {
           memoryType = new typedef_t(vartype_t(),
                                      memoryTypeSource);
         }
-/*
+
         root.addToScope(*memoryType);
-	std::cout<<"DOING SOME TESTS"<<std::endl;
+/*	std::cout<<"DOING SOME TESTS"<<std::endl;
 //	std::cout<<root.toString()<<std::endl;
         statementExprMap exprMap;
         findStatements(statementType::declaration,
@@ -476,6 +476,22 @@ namespace occa {
                                                      forStatement &forSmnt,
                                                      const int kernelIndex) {
 
+
+ /*       function_t &oldFunction = kernelSmnt.function;
+        function_t &newFunction = (function_t&) oldFunction.clone();
+        std::stringstream ss;
+        ss << +"_occa_" << newFunction.name() << "_" << kernelIndex;
+        newFunction.source->value = ss.str();
+
+        functionDeclStatement &newKernelSmnt = *(
+          new functionDeclStatement(&root,
+                                    newFunction)
+        );
+        newKernelSmnt.attributes = kernelSmnt.attributes;
+        newKernelSmnt.addFunctionToParentScope();
+*/
+
+
         function_t &oldFunction = kernelSmnt.function;
         function_t &newFunction = (function_t&) oldFunction.clone();
         std::stringstream ss;
@@ -528,14 +544,16 @@ namespace occa {
 					vindexes.push_back(index.size->toString());
 
                                 //std::cout<<f.variable->vartype.arrays[0].size->toString()<<std::endl;//Variable type
-				sharedVariables[vname] = std::pair<std::string, std::vector<std::string>>(vtype, vindexes);
+				sharedVariables.insert(make_pair(vname, make_pair(vtype, vindexes)));
+				//sharedVariables.insert(std::pair<std::string,std::pair<std::string, std::vector<std::string>>>(vname, std::pair<std::string, std::vector<std::string>>(vtype, vindexes)));
+				//sharedVariables[vname] = std::pair<std::string, std::vector<std::string>>(vtype, vindexes);
 
                                 //std::cout<<f.value->type()<<std::endl;
                         }
                         //std::cout<<"Statement : "<<e.first->toString()<<std::endl;
                         //std::cout<<"StatementName : "<<e.first->statementName()<<std::endl;
                 }
-
+	//e.first->removeFromParent();
         }
 
         statementPtrVector kernelSmnts;
@@ -559,15 +577,15 @@ namespace occa {
 	  //4- Modify the addBarrier method to make sure we synchronized
 	  std::string sa ="q->submit([&](sycl::handler &h){\n";
 	  for(auto e : sharedVariables){
-		sa += "      auto _occa_accessor_"+e.first+" = sycl::accessor<char, 1, sycl::access::mode::read_write, sycl::access::target::local>(sizeof("+e.second.first+")*";
+		sa += "      auto _occa_accessor_"+e.first+" = sycl::accessor<"+e.second.first+", 1, sycl::access::mode::read_write, sycl::access::target::local>(sizeof("+e.second.first+")*(";
 		for(auto f : e.second.second)
 			sa += f +"*";	
-		sa += "1, h);\n";
+		sa += "1), h);\n";
 	  }
 
           sa += "      h.parallel_for(*ndrange, [=] (sycl::nd_item<3> i_dpcpp_iterator){\n";
 	  for(auto e : sharedVariables){
-	  	sa += "          "+e.second.first+" "+e.first+" = *((_occa_accessor_"+e.first+".get_pointer()));\n";
+	  	sa += "          "+e.second.first+"* "+e.first+" = ((_occa_accessor_"+e.first+".get_pointer()));\n";
 	  }
           identifierNode* strnodea = new identifierNode(stt, sa);
           expressionStatement* exprSmnta = new expressionStatement(&kernelSmnt, *strnodea);
@@ -590,27 +608,6 @@ namespace occa {
                              "outer",
                              kernelSmnt,
                              outerSmnts);
-/*        for(auto* fstmnt : outerSmnts){
-	std::cout<<"DOING SOME TESTS"<<std::endl;
-	statementExprMap exprMap;
-        findStatements(exprNodeType::op,
-                       *fstmnt,
-                       writesToShared,
-                       exprMap);
-
-        //handle shared variables
-        for(auto e : exprMap){
-        for(auto *v : e.second){
-		std::cout<<"ExpressionNode : "<<v->toString()<<std::endl;
-                variable_t *var = v->getVariable();
-                if(var->hasAttribute("shared")){
-                        std::cout<<"Variable has statement Shared : "<<var->name()<<std::endl;
-                }
-        }
-        }
-	}
-
-*/
         findStatementsByAttr(statementType::for_,
                              "inner",
                              kernelSmnt,
@@ -665,6 +662,39 @@ namespace occa {
 
         forSmnt.up->addAfter(forSmnt,
                              barrierSmnt);
+
+
+
+	statementExprMap exprMap2;
+        findStatements(statementType::all,
+                       root,
+                       writesToShared,
+                       exprMap2);
+
+        //handle shared variables
+        //td::map<statement_t*, exprNodeVector>
+        for(auto e : exprMap2){
+		if(e.first->type()==statementType::declaration)
+        		e.first->removeFromParent();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       }
 
       bool withLauncherLambda::writesToShared(exprNode &expr) {

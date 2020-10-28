@@ -56,7 +56,7 @@ namespace occa {
 
         value.printError("[" + name + "] is already defined");
         keyword->printError("[" + name + "] was first defined here");
-        return false;
+        return true;
       }
 
     public:

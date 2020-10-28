@@ -9,6 +9,8 @@ namespace occa {
       class dpcppParser : public withLauncherLambda {
       public:
         qualifier_t device;
+	        qualifier_t shared;
+
         dpcppParser(const occa::properties &settings_ = occa::properties());
 
         virtual void onClear();

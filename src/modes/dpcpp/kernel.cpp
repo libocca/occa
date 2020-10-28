@@ -76,8 +76,8 @@ namespace occa {
       int odimy = outerDims.y;
       //int odimz = (innerDims.z % outerDims.z == 0)? innerDims.z : outerDims.z * ((innerDims.z / outerDims.z)+1);
       int odimz = outerDims.z;
-      auto global_range = ::sycl::range<3>(odimx, odimy, odimz);
-      auto local_range  = ::sycl::range<3>(innerDims.x, innerDims.y, innerDims.z);
+      auto global_range = ::sycl::range<3>(odimz, odimy, odimx);
+      auto local_range  = ::sycl::range<3>(innerDims.z, innerDims.y, innerDims.x);
       std::vector<void*> args;
       ::sycl::nd_range<3> ndrange = ::sycl::nd_range<3>(global_range, local_range);
       args.push_back(q);

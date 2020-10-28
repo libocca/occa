@@ -12,10 +12,10 @@ sources = $(wildcard $(srcPath)/*.cpp)
 objects = $(subst $(srcPath)/,$(objPath)/,$(sources:.cpp=.o))
 
 ${PROJ_DIR}/main: $(objects) $(headers) ${PROJ_DIR}/main.cpp
-	$(compiler) $(compilerFlags) -DVERIFY_RESULTS -DDT=0.002f -DDXYZ=50.0f -DHALF_LENGTH=8 -O3 -o ${PROJ_DIR}/main $(flags) $(objects) ${PROJ_DIR}/main.cpp $(paths) $(linkerFlags)
+	$(compiler) $(compilerFlags) -g  -DVERIFY_RESULTS -DDT=0.002f -DDXYZ=50.0f -DHALF_LENGTH=8 -O3 -o ${PROJ_DIR}/main $(flags) $(objects) ${PROJ_DIR}/main.cpp $(paths) $(linkerFlags)
 
 $(objPath)/%.o:$(srcPath)/%.cpp $(wildcard $(subst $(srcPath)/,$(incPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(srcPath)/,$(incPath)/,$(<:.cpp=.tpp)))
-	$(compiler) $(compilerFlags) -DVERIFY_RESULTS -DDT=0.002f -DDXYZ=50.0f -DHALF_LENGTH=8 -O3  -o $@ $(flags) -c $(paths) $<
+	$(compiler) $(compilerFlags) -g -DVERIFY_RESULTS -DDT=0.002f -DDXYZ=50.0f -DHALF_LENGTH=8 -O3  -o $@ $(flags) -c $(paths) $<
 
 clean:
 	rm -f $(objPath)/*;

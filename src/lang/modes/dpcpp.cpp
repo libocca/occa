@@ -9,14 +9,14 @@ namespace occa {
   namespace lang {
     namespace okl {
       dpcppParser::dpcppParser(const occa::properties &settings_) :
-        withLauncherLambda(settings_),
+        withLauncherLambda(settings_), shared("__shared__", qualifierType::custom),
         device("SYCL_EXTERNAL", qualifierType::custom){
 
         okl::addAttributes(*this);
       }
 
       void dpcppParser::onClear() {
-        launcherClear();
+      	      launcherClear();
       }
 
       void dpcppParser::beforePreprocessing() {
@@ -39,43 +39,20 @@ namespace occa {
         if (!success) return;
         setupKernels();
 
-
-
-
-/*
-	root.addToScope(*memoryType);
-        std::cout<<"DOING SOME TESTS"<<std::endl;
-        std::cout<<root.toString()<<std::endl;
-        std::cout<<"ENDING SOME TESTS"<<std::endl;
-        statementExprMap exprMap;
-        findStatements(statementType::declaration,
-                       root,
-                       sharedVariableMatcher,
-                       exprMap);
-
-        //handle shared variables
-        for(auto e : exprMap){
-        for(auto *v : e.second){
-                std::cout<<"ExpressionNode : "<<v->toString()<<std::endl;
-                variable_t *var = v->getVariable();
-                if(var->hasAttribute("shared")){
-                        std::cout<<"Variable has statement Shared : "<<var->name()<<std::endl;
-                }
-        }
-        }
-*/
       }
 
       std::string dpcppParser::getOuterIterator(const int loopIndex) {
         std::string name = "i_dpcpp_iterator.get_global_id(";
-        name +=  (char)('1'+loopIndex);
+        //name +=  (char)('1'+loopIndex);
+        name +=  (char)('1'-loopIndex);
 	name = name.append(")");
         return name;
       }
 
       std::string dpcppParser::getInnerIterator(const int loopIndex) {
         std::string name = "i_dpcpp_iterator.get_global_id(";
-        name += (char)('0'+loopIndex);
+        //name += (char)('0'+loopIndex);
+        name += (char)('2'-loopIndex);
 	name = name.append(")");
         return name;
       }
@@ -124,7 +101,7 @@ namespace occa {
       }
 
       void dpcppParser::setSharedQualifiers() {
-        /*statementExprMap exprMap;
+/*        statementExprMap exprMap;
         findStatements(statementType::declaration,
                        exprNodeType::variable,
                        root,
@@ -143,8 +120,8 @@ namespace occa {
             var += shared;
           }
           ++it;
-        }*/
-
+        }
+*/
 /*	      root.addToScope(*memoryType);
         std::cout<<"DOING SOME TESTS"<<std::endl;
         std::cout<<root.toString()<<std::endl;
@@ -203,6 +180,7 @@ namespace occa {
       }
 
       void dpcppParser::addBarriers() {
+
         statementPtrVector statements;
         findStatementsByAttr(statementType::empty,
                              "barrier",
@@ -218,7 +196,7 @@ namespace occa {
             *(new expressionStatement(
                 smnt.up,
                 *(new identifierNode(smnt.source,
-                                     "i_dpcpp_iterator.barrier()"))
+                                     "i_dpcpp_iterator.barrier(sycl::access::fence_space::local_space)"))
               ))
           );
 
