@@ -39,7 +39,7 @@ namespace occa {
       return value->startNode();
     }
 
-    void rightUnaryOpNode::setChildren(exprNodeRefVector &children) {
+    void rightUnaryOpNode::pushChildNodes(exprNodeRefVector &children) {
       children.push_back(&value);
     }
 

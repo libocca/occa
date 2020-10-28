@@ -57,7 +57,7 @@ namespace occa {
       return rightValue->endNode();
     }
 
-    void binaryOpNode::setChildren(exprNodeRefVector &children) {
+    void binaryOpNode::pushChildNodes(exprNodeRefVector &children) {
       children.push_back(&leftValue);
       children.push_back(&rightValue);
     }

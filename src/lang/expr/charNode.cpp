@@ -21,8 +21,6 @@ namespace occa {
       return new charNode(token, value);
     }
 
-    void charNode::setChildren(exprNodeRefVector &children) {}
-
     void charNode::print(printer &pout) const {
       pout << '\'' << escape(value, '\'') << '\'';
     }

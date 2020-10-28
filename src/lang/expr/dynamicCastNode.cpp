@@ -30,7 +30,7 @@ namespace occa {
       return new dynamicCastNode(token, valueType, *value);
     }
 
-    void dynamicCastNode::setChildren(exprNodeRefVector &children) {
+    void dynamicCastNode::pushChildNodes(exprNodeRefVector &children) {
       children.push_back(&value);
     }
 

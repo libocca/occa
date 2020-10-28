@@ -49,7 +49,7 @@ namespace occa {
       } else {
         // Replacing child node
         exprNodeRefVector children;
-        expr->setChildren(children);
+        expr->pushChildNodes(children);
 
         for (exprNode **child : children) {
           if (*child == currentNode) {

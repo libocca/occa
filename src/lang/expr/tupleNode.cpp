@@ -35,7 +35,7 @@ namespace occa {
       return new tupleNode(token, args);
     }
 
-    void tupleNode::setChildren(exprNodeRefVector &children) {
+    void tupleNode::pushChildNodes(exprNodeRefVector &children) {
       const int argCount = (int) args.size();
       if (!argCount) {
         return;

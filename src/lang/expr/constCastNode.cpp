@@ -30,7 +30,7 @@ namespace occa {
       return new constCastNode(token, valueType, *value);
     }
 
-    void constCastNode::setChildren(exprNodeRefVector &children) {
+    void constCastNode::pushChildNodes(exprNodeRefVector &children) {
       children.push_back(&value);
     }
 

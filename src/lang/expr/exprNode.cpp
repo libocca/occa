@@ -91,6 +91,8 @@ namespace occa {
       return this;
     }
 
+    void exprNode::pushChildNodes(exprNodeRefVector &children) {}
+
     bool exprNode::hasAttribute(const std::string &attr) const {
       return false;
     }

@@ -24,8 +24,6 @@ namespace occa {
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
 
-      virtual void setChildren(exprNodeRefVector &children);
-
       virtual void print(printer &pout) const;
 
       virtual void debugPrint(const std::string &prefix) const;

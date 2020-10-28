@@ -42,7 +42,7 @@ namespace occa {
                               *threads);
     }
 
-    void cudaCallNode::setChildren(exprNodeRefVector &children) {
+    void cudaCallNode::pushChildNodes(exprNodeRefVector &children) {
       children.push_back(&value);
       children.push_back(&blocks);
       children.push_back(&threads);

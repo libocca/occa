@@ -91,7 +91,7 @@ namespace occa {
 
         // Apply transform to the node children
         exprNodeRefVector children;
-        node->setChildren(children);
+        node->pushChildNodes(children);
 
         for (exprNode **child : children) {
           func({smnt, *child, node}, child);

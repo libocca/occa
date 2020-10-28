@@ -42,7 +42,7 @@ namespace occa {
       return (size ? size : value)->endNode();
     }
 
-    void newNode::setChildren(exprNodeRefVector &children) {
+    void newNode::pushChildNodes(exprNodeRefVector &children) {
       children.push_back(&value);
       children.push_back(&size);
     }

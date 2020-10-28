@@ -48,7 +48,7 @@ namespace occa {
       return primitive();
     }
 
-    void pairNode::setChildren(exprNodeRefVector &children) {
+    void pairNode::pushChildNodes(exprNodeRefVector &children) {
       children.push_back(&value);
     }
 

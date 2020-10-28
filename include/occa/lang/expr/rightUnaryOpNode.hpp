@@ -29,7 +29,7 @@ namespace occa {
 
       virtual exprNode* startNode();
 
-      virtual void setChildren(exprNodeRefVector &children);
+      virtual void pushChildNodes(exprNodeRefVector &children);
 
       virtual variable_t* getVariable();
 

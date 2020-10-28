@@ -14,8 +14,6 @@ namespace occa {
 
       virtual exprNode* clone() const;
 
-      virtual void setChildren(exprNodeRefVector &children);
-
       virtual void print(printer &pout) const;
 
       virtual void debugPrint(const std::string &prefix) const;

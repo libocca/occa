@@ -34,7 +34,7 @@ namespace occa {
       return new parenCastNode(token, valueType, *value);
     }
 
-    void parenCastNode::setChildren(exprNodeRefVector &children) {
+    void parenCastNode::pushChildNodes(exprNodeRefVector &children) {
       children.push_back(&value);
     }
 

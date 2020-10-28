@@ -34,7 +34,7 @@ namespace occa {
       return new funcCastNode(token, valueType, *value);
     }
 
-    void funcCastNode::setChildren(exprNodeRefVector &children) {
+    void funcCastNode::pushChildNodes(exprNodeRefVector &children) {
       children.push_back(&value);
     }
 

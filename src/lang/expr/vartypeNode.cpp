@@ -21,8 +21,6 @@ namespace occa {
       return new vartypeNode(token, value);
     }
 
-    void vartypeNode::setChildren(exprNodeRefVector &children) {}
-
     bool vartypeNode::hasAttribute(const std::string &attr) const {
       return value.hasAttribute(attr);
     }

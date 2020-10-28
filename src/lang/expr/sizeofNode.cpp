@@ -35,7 +35,7 @@ namespace occa {
       return value->evaluate().sizeof_();
     }
 
-    void sizeofNode::setChildren(exprNodeRefVector &children) {
+    void sizeofNode::pushChildNodes(exprNodeRefVector &children) {
       children.push_back(&value);
     }
 

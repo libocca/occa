@@ -30,7 +30,7 @@ namespace occa {
       return new reinterpretCastNode(token, valueType, *value);
     }
 
-    void reinterpretCastNode::setChildren(exprNodeRefVector &children) {
+    void reinterpretCastNode::pushChildNodes(exprNodeRefVector &children) {
       children.push_back(&value);
     }
 

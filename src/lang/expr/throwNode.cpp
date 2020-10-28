@@ -27,7 +27,7 @@ namespace occa {
       return value->endNode();
     }
 
-    void throwNode::setChildren(exprNodeRefVector &children) {
+    void throwNode::pushChildNodes(exprNodeRefVector &children) {
       children.push_back(&value);
     }
 

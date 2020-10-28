@@ -116,7 +116,7 @@ namespace occa {
       virtual exprNode* startNode();
       virtual exprNode* endNode();
 
-      virtual void setChildren(exprNodeRefVector &children) = 0;
+      virtual void pushChildNodes(exprNodeRefVector &children);
 
       virtual bool hasAttribute(const std::string &attr) const;
 

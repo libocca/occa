@@ -41,7 +41,7 @@ namespace occa {
       return args[argCount - 1]->endNode();
     }
 
-    void callNode::setChildren(exprNodeRefVector &children) {
+    void callNode::pushChildNodes(exprNodeRefVector &children) {
       const int argCount = (int) args.size();
       children.reserve(1 + argCount);
 

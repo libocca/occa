@@ -21,8 +21,6 @@ namespace occa {
       return new functionNode(token, value);
     }
 
-    void functionNode::setChildren(exprNodeRefVector &children) {}
-
     bool functionNode::hasAttribute(const std::string &attr) const {
       return value.hasAttribute(attr);
     }

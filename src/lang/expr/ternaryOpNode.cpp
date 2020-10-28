@@ -57,7 +57,7 @@ namespace occa {
       return falseValue->endNode();
     }
 
-    void ternaryOpNode::setChildren(exprNodeRefVector &children) {
+    void ternaryOpNode::pushChildNodes(exprNodeRefVector &children) {
       children.push_back(&checkValue);
       children.push_back(&trueValue);
       children.push_back(&falseValue);

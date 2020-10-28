@@ -39,7 +39,7 @@ namespace occa {
       return value->evaluate();
     }
 
-    void parenthesesNode::setChildren(exprNodeRefVector &children) {
+    void parenthesesNode::pushChildNodes(exprNodeRefVector &children) {
       children.push_back(&value);
     }
 

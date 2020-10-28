@@ -35,7 +35,7 @@ namespace occa {
       return index->endNode();
     }
 
-    void subscriptNode::setChildren(exprNodeRefVector &children) {
+    void subscriptNode::pushChildNodes(exprNodeRefVector &children) {
       children.push_back(&value);
       children.push_back(&index);
     }
