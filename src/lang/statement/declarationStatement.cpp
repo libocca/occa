@@ -162,13 +162,26 @@ namespace occa {
 
     void declarationStatement::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
       for (variableDeclaration &decl : declarations) {
-        if ((exprNode*) decl.varNode == currentNode) {
-          decl.setVariable((variableNode*) newNode);
-          return;
+        if (decl.varNode) {
+          if ((exprNode*) decl.varNode == currentNode) {
+            decl.setVariable((variableNode*) newNode);
+            return;
+          }
+
+          if (decl.varNode->replaceExprNode(currentNode, newNode)) {
+            return;
+          }
         }
-        if (decl.value == currentNode) {
-          decl.setValue(newNode);
-          return;
+
+        if (decl.value) {
+          if (decl.value == currentNode) {
+            decl.setValue(newNode);
+            return;
+          }
+
+          if (decl.value->replaceExprNode(currentNode, newNode)) {
+            return;
+          }
         }
       }
     }

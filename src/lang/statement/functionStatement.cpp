@@ -47,8 +47,10 @@ namespace occa {
     }
 
     void functionStatement::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
-      delete funcNode;
-      funcNode = (functionNode*) exprNode::clone(newNode);
+      if (funcNode == currentNode) {
+        delete funcNode;
+        funcNode = (functionNode*) exprNode::clone(newNode);
+      }
     }
 
     void functionStatement::print(printer &pout) const {
