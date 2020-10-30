@@ -25,7 +25,7 @@ namespace occa {
       function_t& function();
       const function_t& function() const;
 
-      virtual exprNodeArray getExprNodes();
+      virtual exprNodeArray getDirectExprNodes();
 
       virtual void safeReplaceExprNode(exprNode *currentNode, exprNode *newNode);
 

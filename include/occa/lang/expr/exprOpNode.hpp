@@ -21,8 +21,6 @@ namespace occa {
 
       virtual exprNode* clone() const;
 
-      virtual void setChildren(exprNodeRefVector &children);
-
       virtual exprNode* wrapInParentheses();
 
       virtual void print(printer &pout) const;

@@ -22,7 +22,7 @@ namespace occa {
       virtual int type() const;
       virtual std::string statementName() const;
 
-      virtual exprNodeArray getExprNodes();
+      virtual exprNodeArray getDirectExprNodes();
 
       virtual void safeReplaceExprNode(exprNode *currentNode, exprNode *newNode);
 

@@ -29,8 +29,6 @@ namespace occa {
       return value;
     }
 
-    void primitiveNode::setChildren(exprNodeRefVector &children) {}
-
     void primitiveNode::print(printer &pout) const {
       pout << value.toString();
     }

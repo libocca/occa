@@ -113,7 +113,8 @@ MAKE_COMPILED_DEFINES := $(shell rm $(NEW_COMPILED_DEFINES))
 all: $(objects) $(outputs)
 	@(. $(OCCA_DIR)/include/occa/scripts/shellTools.sh && installOcca)
 	@echo "> occa info"
-	@$(OCCA_DIR)/bin/occa info
+  # Don't break the build if [occa info] fails
+	@$(OCCA_DIR)/bin/occa info; true
 
 $(COMPILED_DEFINES_CHANGED):
 #=================================================

@@ -30,6 +30,8 @@ namespace occa {
       bool addFunctionToParentScope();
       void addArgumentsToScope();
 
+      exprNodeArray getDirectExprNodes();
+
       virtual void safeReplaceExprNode(exprNode *currentNode, exprNode *newNode);
 
       virtual void print(printer &pout) const;

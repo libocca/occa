@@ -91,6 +91,45 @@ namespace occa {
       return this;
     }
 
+    exprNodeVector exprNode::getNestedChildren() {
+      exprNodeVector children;
+      pushNestedChildNodes(children);
+      return children;
+    }
+
+    void exprNode::pushNestedChildNodes(exprNodeVector &children) {
+      exprNodeVector directChildren;
+      pushChildNodes(directChildren);
+
+      for (exprNode *child : directChildren) {
+        child->pushNestedChildNodes(children);
+        children.push_back(child);
+      }
+    }
+
+    void exprNode::pushChildNodes(exprNodeVector &children) {}
+
+    bool exprNode::replaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      exprNodeVector directChildren;
+      pushChildNodes(directChildren);
+
+      for (exprNode *child : directChildren) {
+        if (child == currentNode) {
+          return safeReplaceExprNode(currentNode, newNode);
+        }
+        if (child->replaceExprNode(currentNode, newNode)) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    bool exprNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      // Shouldn't get here
+      return false;
+    }
+
     bool exprNode::hasAttribute(const std::string &attr) const {
       return false;
     }

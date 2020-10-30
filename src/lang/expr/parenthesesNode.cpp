@@ -39,8 +39,18 @@ namespace occa {
       return value->evaluate();
     }
 
-    void parenthesesNode::setChildren(exprNodeRefVector &children) {
-      children.push_back(&value);
+    void parenthesesNode::pushChildNodes(exprNodeVector &children) {
+      children.push_back(value);
+    }
+
+    bool parenthesesNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      if (currentNode == value) {
+        delete value;
+        value = exprNode::clone(newNode);
+        return true;
+      }
+
+      return false;
     }
 
     variable_t* parenthesesNode::getVariable() {

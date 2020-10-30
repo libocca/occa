@@ -42,7 +42,7 @@ namespace occa {
 
       iterateExprNodes([&](smntExprNode smntExpr) {
           exprNode *node = func(smntExpr);
-          arr.push({smntExpr.smnt, node, smntExpr.rootNode});
+          arr.push({smntExpr.smnt, node});
         });
 
       return arr;
@@ -213,7 +213,7 @@ namespace occa {
     void statementArray::iterateExprNodes(smntExprVoidCallback func) const {
       iterateStatements([&](statement_t *smnt) {
           smnt->getExprNodes()
-              .nestedForEach([&](smntExprNode node) {
+              .forEach([&](smntExprNode node) {
                   func(node);
                 });
 

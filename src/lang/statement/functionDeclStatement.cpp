@@ -58,6 +58,16 @@ namespace occa {
       }
     }
 
+    exprNodeArray functionDeclStatement::getDirectExprNodes() {
+      exprNodeArray arr;
+
+      if (funcNode) {
+        arr.push({this, (exprNode*) funcNode});
+      }
+
+      return arr;
+    }
+
     void functionDeclStatement::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
       if (funcNode == currentNode) {
         delete funcNode;

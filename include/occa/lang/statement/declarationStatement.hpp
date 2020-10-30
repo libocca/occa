@@ -29,7 +29,7 @@ namespace occa {
 
       bool declaresVariable(variable_t &var);
 
-      virtual exprNodeArray getExprNodes();
+      virtual exprNodeArray getDirectExprNodes();
 
       virtual void safeReplaceExprNode(exprNode *currentNode, exprNode *newNode);
 

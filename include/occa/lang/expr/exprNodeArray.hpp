@@ -1,6 +1,8 @@
 #ifndef OCCA_LANG_EXPRNODE_EXPRNODEARRAY_HEADER
 #define OCCA_LANG_EXPRNODE_EXPRNODEARRAY_HEADER
 
+#include <functional>
+
 #include <occa/lang/utils/array.hpp>
 
 namespace occa {
@@ -12,31 +14,20 @@ namespace occa {
     typedef std::function<exprNode* (smntExprNode smntExpr)> smntExprMapCallback;
     typedef std::function<bool (smntExprNode smntExpr)> smntExprFilterCallback;
     typedef std::function<void (smntExprNode smntExpr)> smntExprVoidCallback;
-    typedef std::function<void (smntExprNode smntExpr, exprNode **nodeRef)> smntExprWithRefVoidCallback;
 
     class smntExprNode {
      public:
       statement_t *smnt;
       exprNode *node;
-      exprNode *rootNode;
 
       inline smntExprNode() :
           smnt(NULL),
-          node(NULL),
-          rootNode(NULL) {}
+          node(NULL) {}
 
       inline smntExprNode(statement_t *_smnt,
                           exprNode *_node) :
           smnt(_smnt),
-          node(_node),
-          rootNode(_node) {}
-
-      inline smntExprNode(statement_t *_smnt,
-                          exprNode *_node,
-                          exprNode *_rootNode) :
-          smnt(_smnt),
-          node(_node),
-          rootNode(_rootNode) {}
+          node(_node) {}
     };
 
     class exprNodeArray : public array<smntExprNode> {
@@ -51,11 +42,8 @@ namespace occa {
 
       exprNodeArray flatFilter(smntExprFilterCallback func) const;
 
+      void forEach(smntExprVoidCallback func) const;
       void nestedForEach(smntExprVoidCallback func) const;
-
-     private:
-      void forEachWithRef(smntExprWithRefVoidCallback func) const;
-      void nestedForEachWithRef(smntExprWithRefVoidCallback func) const;
 
      public:
       // Filter helper functions

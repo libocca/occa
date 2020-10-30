@@ -85,6 +85,10 @@ namespace occa {
         data.insert(data.begin() + index, value);
       }
 
+      inline void append(const array &other) {
+        data.insert(data.end(), other.data.begin(), other.data.end());
+      }
+
       inline void remove(const size_t index) {
         data.erase(data.begin() + index);
       }

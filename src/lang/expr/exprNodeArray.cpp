@@ -14,39 +14,26 @@ namespace occa {
     }
 
     void exprNodeArray::inplaceMap(smntExprMapCallback func) const {
-      forEachWithRef([&](smntExprNode smntExpr, exprNode **nodeRef) {
+      forEach([&](smntExprNode smntExpr) {
           exprNode *mappedNode = func(smntExpr);
 
           if (mappedNode == smntExpr.node) {
             return;
           }
 
-          if (smntExpr.node == smntExpr.rootNode) {
-            smntExpr.smnt->replaceExprNode(smntExpr.node, mappedNode);
-          } else {
-            // Needs to change at the exprNode level
-            delete smntExpr.node;
-            *nodeRef = mappedNode;
-          }
+          smntExpr.smnt->replaceExprNode(smntExpr.node, mappedNode);
         });
     }
 
     void exprNodeArray::flatInplaceMap(smntExprMapCallback func) const {
-      nestedForEachWithRef([&](smntExprNode smntExpr, exprNode **nodeRef) {
+      nestedForEach([&](smntExprNode smntExpr) {
           exprNode *mappedNode = func(smntExpr);
 
           if (mappedNode == smntExpr.node) {
             return;
           }
 
-          if (smntExpr.node == smntExpr.rootNode) {
-            // Needs to change at the statement level
-            smntExpr.smnt->replaceExprNode(smntExpr.node, mappedNode);
-          } else {
-            // Needs to change at the exprNode level
-            delete smntExpr.node;
-            *nodeRef = mappedNode;
-          }
+          smntExpr.smnt->replaceExprNode(smntExpr.node, mappedNode);
         });
     }
 
@@ -62,25 +49,16 @@ namespace occa {
       return arr;
     }
 
-    void exprNodeArray::nestedForEach(smntExprVoidCallback func) const {
-      nestedForEachWithRef([&](smntExprNode node, exprNode **nodeRef) {
-          func(node);
-        });
-    }
-
-    void exprNodeArray::forEachWithRef(smntExprWithRefVoidCallback func) const {
+    void exprNodeArray::forEach(smntExprVoidCallback func) const {
       for (auto &smntExpr : data) {
-        statement_t *smnt = smntExpr.smnt;
-        exprNode *node = smntExpr.node;
-
         // Apply transform node
-        if (node) {
-          func({smnt, node, node}, NULL);
+        if (smntExpr.node) {
+          func(smntExpr);
         }
       }
     }
 
-    void exprNodeArray::nestedForEachWithRef(smntExprWithRefVoidCallback func) const {
+    void exprNodeArray::nestedForEach(smntExprVoidCallback func) const {
       for (auto &smntExpr : data) {
         statement_t *smnt = smntExpr.smnt;
         exprNode *node = smntExpr.node;
@@ -90,15 +68,12 @@ namespace occa {
         }
 
         // Apply transform to the node children
-        exprNodeRefVector children;
-        node->setChildren(children);
-
-        for (exprNode **child : children) {
-          func({smnt, *child, node}, child);
+        for (exprNode *child : node->getNestedChildren()) {
+          func({smnt, child});
         }
 
         // Apply transform node
-        func({smnt, node, node}, NULL);
+        func(smntExpr);
       }
     }
 
