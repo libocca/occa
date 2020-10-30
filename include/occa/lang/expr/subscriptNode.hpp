@@ -24,7 +24,9 @@ namespace occa {
       virtual exprNode* startNode();
       virtual exprNode* endNode();
 
-      virtual void pushChildNodes(exprNodeRefVector &children);
+      virtual void pushChildNodes(exprNodeVector &children);
+
+      virtual bool safeReplaceExprNode(exprNode *currentNode, exprNode *newNode);
 
       virtual variable_t* getVariable();
 

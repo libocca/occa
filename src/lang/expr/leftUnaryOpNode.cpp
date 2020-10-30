@@ -43,8 +43,18 @@ namespace occa {
       return value->endNode();
     }
 
-    void leftUnaryOpNode::pushChildNodes(exprNodeRefVector &children) {
-      children.push_back(&value);
+    void leftUnaryOpNode::pushChildNodes(exprNodeVector &children) {
+      children.push_back(value);
+    }
+
+    bool leftUnaryOpNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      if (currentNode == value) {
+        delete value;
+        value = exprNode::clone(newNode);
+        return true;
+      }
+
+      return false;
     }
 
     variable_t* leftUnaryOpNode::getVariable() {

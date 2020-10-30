@@ -48,8 +48,18 @@ namespace occa {
       return primitive();
     }
 
-    void pairNode::pushChildNodes(exprNodeRefVector &children) {
-      children.push_back(&value);
+    void pairNode::pushChildNodes(exprNodeVector &children) {
+      children.push_back(value);
+    }
+
+    bool pairNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      if (currentNode == value) {
+        delete value;
+        value = exprNode::clone(newNode);
+        return true;
+      }
+
+      return false;
     }
 
     void pairNode::print(printer &pout) const {

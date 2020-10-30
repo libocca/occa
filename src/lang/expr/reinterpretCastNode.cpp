@@ -30,8 +30,18 @@ namespace occa {
       return new reinterpretCastNode(token, valueType, *value);
     }
 
-    void reinterpretCastNode::pushChildNodes(exprNodeRefVector &children) {
-      children.push_back(&value);
+    void reinterpretCastNode::pushChildNodes(exprNodeVector &children) {
+      children.push_back(value);
+    }
+
+    bool reinterpretCastNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      if (currentNode == value) {
+        delete value;
+        value = exprNode::clone(newNode);
+        return true;
+      }
+
+      return false;
     }
 
     void reinterpretCastNode::print(printer &pout) const {

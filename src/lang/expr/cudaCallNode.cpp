@@ -42,10 +42,32 @@ namespace occa {
                               *threads);
     }
 
-    void cudaCallNode::pushChildNodes(exprNodeRefVector &children) {
-      children.push_back(&value);
-      children.push_back(&blocks);
-      children.push_back(&threads);
+    void cudaCallNode::pushChildNodes(exprNodeVector &children) {
+      children.push_back(value);
+      children.push_back(blocks);
+      children.push_back(threads);
+    }
+
+    bool cudaCallNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      if (currentNode == value) {
+        delete value;
+        value = exprNode::clone(newNode);
+        return true;
+      }
+
+      if (currentNode == blocks) {
+        delete blocks;
+        blocks = exprNode::clone(newNode);
+        return true;
+      }
+
+      if (currentNode == threads) {
+        delete threads;
+        threads = exprNode::clone(newNode);
+        return true;
+      }
+
+      return false;
     }
 
     void cudaCallNode::print(printer &pout) const {

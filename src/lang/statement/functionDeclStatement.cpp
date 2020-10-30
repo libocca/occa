@@ -58,7 +58,7 @@ namespace occa {
       }
     }
 
-    exprNodeArray functionDeclStatement::getExprNodes() {
+    exprNodeArray functionDeclStatement::getDirectExprNodes() {
       exprNodeArray arr;
 
       if (funcNode) {

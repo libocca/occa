@@ -34,8 +34,18 @@ namespace occa {
       return new funcCastNode(token, valueType, *value);
     }
 
-    void funcCastNode::pushChildNodes(exprNodeRefVector &children) {
-      children.push_back(&value);
+    void funcCastNode::pushChildNodes(exprNodeVector &children) {
+      children.push_back(value);
+    }
+
+    bool funcCastNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      if (currentNode == value) {
+        delete value;
+        value = exprNode::clone(newNode);
+        return true;
+      }
+
+      return false;
     }
 
     void funcCastNode::print(printer &pout) const {

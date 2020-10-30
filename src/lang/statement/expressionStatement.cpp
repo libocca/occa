@@ -32,7 +32,7 @@ namespace occa {
       return "expression";
     }
 
-    exprNodeArray expressionStatement::getExprNodes() {
+    exprNodeArray expressionStatement::getDirectExprNodes() {
       exprNodeArray arr;
 
       arr.push({this, expr});
@@ -41,28 +41,17 @@ namespace occa {
     }
 
     void expressionStatement::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
-      exprNode **currentNodeRef = NULL;
+      if (!expr) {
+        return;
+      }
 
       if (expr == currentNode) {
-        // Replacing root node
-        currentNodeRef = &expr;
-      } else {
-        // Replacing child node
-        exprNodeRefVector children;
-        expr->pushChildNodes(children);
-
-        for (exprNode **child : children) {
-          if (*child == currentNode) {
-            currentNodeRef = child;
-            break;
-          }
-        }
+        delete expr;
+        expr = exprNode::clone(newNode);
+        return;
       }
 
-      if (currentNodeRef) {
-        delete *currentNodeRef;
-        *currentNodeRef = exprNode::clone(newNode);
-      }
+      expr->replaceExprNode(currentNode, newNode);
     }
 
     void expressionStatement::print(printer &pout) const {

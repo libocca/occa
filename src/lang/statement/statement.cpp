@@ -175,22 +175,29 @@ namespace occa {
     }
 
     exprNodeArray statement_t::getExprNodes() {
+      exprNodeArray nodes;
+
+      for (smntExprNode &smntExpr : getDirectExprNodes()) {
+        for (exprNode *childNode : smntExpr.node->getNestedChildren()) {
+          nodes.push({this, childNode});
+        }
+        nodes.push(smntExpr);
+      }
+
+      return nodes;
+    }
+
+    exprNodeArray statement_t::getDirectExprNodes() {
       return exprNodeArray();
     }
 
     void statement_t::replaceExprNode(exprNode *currentNode, exprNode *newNode) {
-      // No need to do anything
-      if (currentNode == newNode) {
-        return;
+      if (currentNode != newNode) {
+        safeReplaceExprNode(currentNode, newNode);
       }
-
-      safeReplaceExprNode(currentNode, newNode);
-      delete newNode;
     }
 
-    void statement_t::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
-      // Nothing to do by default
-    }
+    void statement_t::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {}
 
     void statement_t::replaceKeyword(const keyword_t &currentKeyword,
                                      keyword_t &newKeyword) {

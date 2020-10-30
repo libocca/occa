@@ -134,7 +134,9 @@ namespace occa {
 
       virtual statementArray getInnerStatements();
 
-      virtual exprNodeArray getExprNodes();
+      exprNodeArray getExprNodes();
+
+      virtual exprNodeArray getDirectExprNodes();
 
       void replaceExprNode(exprNode *currentNode, exprNode *newNode);
       virtual void safeReplaceExprNode(exprNode *currentNode, exprNode *newNode);

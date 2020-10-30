@@ -35,16 +35,22 @@ namespace occa {
       return new tupleNode(token, args);
     }
 
-    void tupleNode::pushChildNodes(exprNodeRefVector &children) {
-      const int argCount = (int) args.size();
-      if (!argCount) {
-        return;
+    void tupleNode::pushChildNodes(exprNodeVector &children) {
+      for (exprNode *arg : args) {
+        children.push_back(arg);
+      }
+    }
+
+    bool tupleNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      for (exprNode *arg : args) {
+        if (currentNode == arg) {
+          delete arg;
+          arg = exprNode::clone(newNode);
+          return true;
+        }
       }
 
-      children.reserve(argCount);
-      for (int i = 0; i < argCount; ++i) {
-        children.push_back(&(args[i]));
-      }
+      return false;
     }
 
     void tupleNode::print(printer &pout) const {

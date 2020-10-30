@@ -8,6 +8,7 @@
 #include <occa/lang/primitive.hpp>
 #include <occa/lang/printer.hpp>
 #include <occa/lang/token.hpp>
+#include <occa/lang/expr/exprNodeArray.hpp>
 
 namespace occa {
   namespace lang {
@@ -16,10 +17,9 @@ namespace occa {
     class variable_t;
     class function_t;
 
-    typedef std::vector<exprNode*>  exprNodeVector;
-    typedef std::vector<exprNode**> exprNodeRefVector;
-    typedef std::stack<exprNode*>   exprNodeStack;
-    typedef std::vector<token_t*>   tokenVector;
+    typedef std::vector<exprNode*> exprNodeVector;
+    typedef std::stack<exprNode*>  exprNodeStack;
+    typedef std::vector<token_t*>  tokenVector;
 
     // Variables to help make output prettier
     static const int PRETTIER_MAX_VAR_WIDTH  = 30;
@@ -116,7 +116,15 @@ namespace occa {
       virtual exprNode* startNode();
       virtual exprNode* endNode();
 
-      virtual void pushChildNodes(exprNodeRefVector &children);
+      exprNodeVector getNestedChildren();
+
+      void pushNestedChildNodes(exprNodeVector &children);
+
+      virtual void pushChildNodes(exprNodeVector &children);
+
+      bool replaceExprNode(exprNode *currentNode, exprNode *newNode);
+
+      virtual bool safeReplaceExprNode(exprNode *currentNode, exprNode *newNode);
 
       virtual bool hasAttribute(const std::string &attr) const;
 

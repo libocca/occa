@@ -34,8 +34,18 @@ namespace occa {
       return new parenCastNode(token, valueType, *value);
     }
 
-    void parenCastNode::pushChildNodes(exprNodeRefVector &children) {
-      children.push_back(&value);
+    void parenCastNode::pushChildNodes(exprNodeVector &children) {
+      children.push_back(value);
+    }
+
+    bool parenCastNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      if (currentNode == value) {
+        delete value;
+        value = exprNode::clone(newNode);
+        return true;
+      }
+
+      return false;
     }
 
     exprNode* parenCastNode::wrapInParentheses() {

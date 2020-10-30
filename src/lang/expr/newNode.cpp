@@ -42,9 +42,25 @@ namespace occa {
       return (size ? size : value)->endNode();
     }
 
-    void newNode::pushChildNodes(exprNodeRefVector &children) {
-      children.push_back(&value);
-      children.push_back(&size);
+    void newNode::pushChildNodes(exprNodeVector &children) {
+      children.push_back(value);
+      children.push_back(size);
+    }
+
+    bool newNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode_) {
+      if (currentNode == value) {
+        delete value;
+        value = exprNode::clone(newNode_);
+        return true;
+      }
+
+      if (currentNode == size) {
+        delete size;
+        size = exprNode::clone(newNode_);
+        return true;
+      }
+
+      return false;
     }
 
     exprNode* newNode::wrapInParentheses() {

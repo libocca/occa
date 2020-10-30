@@ -38,7 +38,7 @@ namespace occa {
       return funcNode->value;
     }
 
-    exprNodeArray functionStatement::getExprNodes() {
+    exprNodeArray functionStatement::getDirectExprNodes() {
       exprNodeArray arr;
 
       arr.push({this, funcNode});

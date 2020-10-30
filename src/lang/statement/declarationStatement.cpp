@@ -145,7 +145,7 @@ namespace occa {
       return false;
     }
 
-    exprNodeArray declarationStatement::getExprNodes() {
+    exprNodeArray declarationStatement::getDirectExprNodes() {
       exprNodeArray arr;
 
       for (variableDeclaration &decl : declarations) {
