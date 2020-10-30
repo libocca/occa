@@ -13,9 +13,9 @@ namespace occa {
     const char *c = s.c_str();
     *this = load(c);
   }
-
   primitive primitive::load(const char *&c,
                             const bool includeSign) {
+    bool loadedFormattedValue = false;
     bool unsigned_ = false;
     bool negative  = false;
     bool decimal   = false;
@@ -28,18 +28,22 @@ namespace occa {
 
     if (strncmp(c, "true", 4) == 0) {
       p = true;
+      p.source = "true";
+
       c += 4;
       return p;
     }
     if (strncmp(c, "false", 5) == 0) {
       p = false;
+      p.source = "false";
+
       c += 5;
       return p;
     }
 
     if ((*c == '+') || (*c == '-')) {
       if (!includeSign) {
-        return p;
+        return primitive();
       }
       negative = (*c == '-');
       ++c;
@@ -51,34 +55,39 @@ namespace occa {
       ++c;
       const char C = uppercase(*c);
       if ((C == 'B') || (C == 'X')) {
+        loadedFormattedValue = true;
+
         if (C == 'B') {
           p = primitive::loadBinary(++c, negative);
         } else if (C == 'X') {
           p = primitive::loadHex(++c, negative);
         }
+
         if (p.type & primitiveType::none) {
           c = c0;
           return primitive();
         }
-        return p;
       } else {
         --c;
       }
     }
 
-    while(true) {
-      if (('0' <= *c) && (*c <= '9')) {
-        ++digits;
-      } else if (*c == '.') {
-        decimal = true;
-      } else {
-        break;
+    if (!loadedFormattedValue) {
+      while (true) {
+        if (('0' <= *c) && (*c <= '9')) {
+          ++digits;
+        } else if (*c == '.') {
+          decimal = true;
+        } else {
+          break;
+        }
+        ++c;
       }
-      ++c;
     }
 
-    if (!digits) {
+    if (!loadedFormattedValue && !digits) {
       c = c0;
+      p.source = std::string(c0, c - c0);
       return p;
     }
 
@@ -90,43 +99,66 @@ namespace occa {
       } else if (C == 'U') {
         unsigned_ = true;
         ++c;
-      } else if (C == 'E') {
-        primitive exp = primitive::load(++c);
-        // Check if there was an 'F' in exp
-        decimal = true;
-        float_ = (exp.type & primitiveType::isFloat);
-        break;
-      } else if (C == 'F') {
-        float_ = true;
-        ++c;
+      } else if (!loadedFormattedValue) {
+        if (C == 'E') {
+          primitive exp = primitive::load(++c);
+          // Check if there was an 'F' in exp
+          decimal = true;
+          float_ = (exp.type & primitiveType::isFloat);
+          break;
+        } else if (C == 'F') {
+          float_ = true;
+          ++c;
+        } else {
+          break;
+        }
       } else {
         break;
       }
     }
 
-    if (decimal || float_) {
-      if (float_) {
-        p = (float) occa::atof(std::string(c0, c - c0));
-      } else {
-        p = (double) occa::atod(std::string(c0, c - c0));
-      }
-    } else {
-      uint64_t value_ = occa::atoi(std::string(c0, c - c0));
+    if (loadedFormattedValue) {
+      // Hex and binary only handle U, L, and LL
       if (longs == 0) {
         if (unsigned_) {
-          p = (uint32_t) value_;
+          p = p.to<uint32_t>();
         } else {
-          p = (int32_t) value_;
+          p = p.to<int32_t>();
         }
       } else if (longs >= 1) {
         if (unsigned_) {
-          p = (uint64_t) value_;
+          p = p.to<uint64_t>();
         } else {
-          p = (int64_t) value_;
+          p = p.to<int64_t>();
+        }
+      }
+    } else {
+      // Handle the multiple other formats with normal digits
+      if (decimal || float_) {
+        if (float_) {
+          p = (float) occa::atof(std::string(c0, c - c0));
+        } else {
+          p = (double) occa::atod(std::string(c0, c - c0));
+        }
+      } else {
+        uint64_t value_ = occa::atoi(std::string(c0, c - c0));
+        if (longs == 0) {
+          if (unsigned_) {
+            p = (uint32_t) value_;
+          } else {
+            p = (int32_t) value_;
+          }
+        } else if (longs >= 1) {
+          if (unsigned_) {
+            p = (uint64_t) value_;
+          } else {
+            p = (int64_t) value_;
+          }
         }
       }
     }
 
+    p.source = std::string(c0, c - c0);
     return p;
   }
 
@@ -154,8 +186,9 @@ namespace occa {
       return isNegative ? primitive((int16_t) -value_) : primitive((uint16_t) value_);
     } else if (bits < 32) {
       return isNegative ? primitive((int32_t) -value_) : primitive((uint32_t) value_);
+    } else {
+      return isNegative ? primitive((int64_t) -value_) : primitive((uint64_t) value_);
     }
-    return isNegative ? primitive((int64_t) -value_) : primitive((uint64_t) value_);
   }
 
   primitive primitive::loadHex(const char *&c, const bool isNegative) {
@@ -172,6 +205,7 @@ namespace occa {
       }
       ++c;
     }
+
     if (c == c0) {
       return primitive();
     }
@@ -183,13 +217,18 @@ namespace occa {
       return isNegative ? primitive((int16_t) -value_) : primitive((uint16_t) value_);
     } else if (bits < 32) {
       return isNegative ? primitive((int32_t) -value_) : primitive((uint32_t) value_);
+    } else {
+      return isNegative ? primitive((int64_t) -value_) : primitive((uint64_t) value_);
     }
-    return isNegative ? primitive((int64_t) -value_) : primitive((uint64_t) value_);
   }
 
   std::string primitive::toString() const {
+    if (source.size()) {
+      return source;
+    }
+
     std::string str;
-    switch(type) {
+    switch (type) {
     case primitiveType::bool_   : str = (value.bool_ ? "true" : "false");         break;
     case primitiveType::uint8_  : str = occa::toString((uint64_t) value.uint8_);  break;
     case primitiveType::uint16_ : str = occa::toString((uint64_t) value.uint16_); break;
