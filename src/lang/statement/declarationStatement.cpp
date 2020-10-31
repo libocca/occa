@@ -30,26 +30,37 @@ namespace occa {
     }
 
     void declarationStatement::clearDeclarations() {
-      const int count = (int) declarations.size();
-      for (int i = 0; i < count; ++i) {
-        declarations[i].clear();
+      for (auto &decl : declarations) {
+        freeTypedefVariable(decl.variable());
+        decl.clear();
       }
-      declarations.clear();
     }
 
     void declarationStatement::freeDeclarations() {
-      for (auto decl : declarations) {
+      for (auto &decl : declarations) {
         variable_t &var = decl.variable();
+        const std::string name = var.name();
+
+        freeTypedefVariable(var);
 
         // The scope has its own typedef copy
         // We have to delete the variable-typedef
-        if (up && up->hasDirectlyInScope(var.name())) {
-          up->removeFromScope(var.name());
+        if (up && up->hasDirectlyInScope(name)) {
+          up->removeFromScope(name);
         }
 
         decl.clear();
       }
       declarations.clear();
+    }
+
+    void declarationStatement::freeTypedefVariable(variable_t &var) {
+      // We create a typedef_t which is stored in the scope
+      // This means the origin variable never gets freed
+      // TODO: Free typedef properly
+      // if (var.vartype.has(typedef_)) {
+      //   delete &var;
+      // }
     }
 
     statement_t& declarationStatement::clone_(blockStatement *up_) const {

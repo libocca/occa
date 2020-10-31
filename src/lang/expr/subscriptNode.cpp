@@ -43,13 +43,13 @@ namespace occa {
     bool subscriptNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
       if (currentNode == value) {
         delete value;
-        value = exprNode::clone(newNode);
+        value = newNode;
         return true;
       }
 
       if (currentNode == index) {
         delete index;
-        index = exprNode::clone(newNode);
+        index = newNode;
         return true;
       }
 

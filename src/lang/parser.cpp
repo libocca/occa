@@ -73,10 +73,8 @@ namespace occa {
       keywords.free();
       delete restrictQualifier;
 
-      nameToAttributeMap::iterator it = attributeMap.begin();
-      while (it != attributeMap.end()) {
-        delete it->second;
-        ++it;
+      for (auto it : attributeMap) {
+        delete it.second;
       }
       attributeMap.clear();
     }
@@ -453,7 +451,7 @@ namespace occa {
                                     var);
     }
 
-    variable_t parser_t:: loadVariable() {
+    variable_t parser_t::loadVariable() {
       variable_t var;
       loadVariable(var);
       return var;
@@ -808,9 +806,9 @@ namespace occa {
       addAttributesTo(smntAttributes, &smnt);
 
       while(success) {
-        // TODO: Pass decl as argument to prevent a copy
-        auto decl = loadVariableDeclaration(smnt.attributes, baseType);
-        success &= smnt.addDeclaration(decl);
+        success &= smnt.addDeclaration(
+          loadVariableDeclaration(smnt.attributes, baseType)
+        );
         if (!success) {
           break;
         }
@@ -942,16 +940,16 @@ namespace occa {
                                      func);
       }
 
-      // func() {...} <-- function declaration
-      functionDeclStatement &funcSmnt = *(new functionDeclStatement(smntContext.up,
-                                                                    func));
-      success &= funcSmnt.addFunctionToParentScope();
-      if (!success) {
-        delete &funcSmnt;
-        // Function wasn't added to scope, free it manually
+      // Duplicate function declared
+      if (smntContext.up->hasDirectlyInScope(func.name())) {
+        success = false;
         delete &func;
         return NULL;
       }
+
+      // func() {...} <-- function declaration
+      functionDeclStatement &funcSmnt = *(new functionDeclStatement(smntContext.up,
+                                                                    func));
       addAttributesTo(smntAttributes, &funcSmnt);
 
       smntContext.pushUp(funcSmnt);

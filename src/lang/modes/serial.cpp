@@ -64,8 +64,7 @@ namespace occa {
         setupHeaders();
         if (!success) return;
 
-        root.children
-            .forEachKernelStatement(setupKernel);
+        root.children.forEachKernelStatement(setupKernel);
       }
 
       void serialParser::setupKernel(functionDeclStatement &kernelSmnt) {
@@ -107,7 +106,7 @@ namespace occa {
       void serialParser::setupExclusives() {
         // Get @exclusive declarations
         bool hasExclusiveVariables = false;
-        root.children
+        statementArray::from(root)
             .nestedForEachDeclaration([&](variableDeclaration &decl, declarationStatement &declSmnt) {
                 if (decl.variable().hasAttribute("exclusive")) {
                   hasExclusiveVariables = true;
@@ -123,7 +122,7 @@ namespace occa {
         setupExclusiveIndices();
         if (!success) return;
 
-        root.children
+        statementArray::from(root)
             .flatFilterByExprType(exprNodeType::variable, "exclusive")
             .inplaceMap([&](smntExprNode smntExpr) -> exprNode* {
                 statement_t *smnt = smntExpr.smnt;

@@ -17,13 +17,14 @@ namespace occa {
 
     variable_t::variable_t(const vartype_t &vartype_,
                            identifierToken *source_) :
-      vartype(vartype_),
-      source((identifierToken*) token_t::clone(source_)) {}
+        vartype(vartype_),
+        source((identifierToken*) token_t::clone(source_)) {}
 
     variable_t::variable_t(const variable_t &other) :
-      vartype(other.vartype),
-      source((identifierToken*) token_t::clone(other.source)),
-      attributes(other.attributes) {}
+        vartype(other.vartype),
+        source((identifierToken*) token_t::clone(other.source)),
+        attributes(other.attributes),
+        nameOverride(other.nameOverride) {}
 
     variable_t& variable_t::operator = (const variable_t &other) {
       if (this == &other) {
@@ -32,6 +33,7 @@ namespace occa {
 
       vartype = other.vartype;
       attributes = other.attributes;
+      nameOverride = other.nameOverride;
 
       if (source != other.source) {
         delete source;
@@ -43,6 +45,7 @@ namespace occa {
 
     variable_t::~variable_t() {
       delete source;
+      source = NULL;
     }
 
     bool variable_t::isNamed() const {
@@ -262,7 +265,7 @@ namespace occa {
       }
 
       delete varNode;
-      varNode = (variableNode*) exprNode::clone(newVarNode);
+      varNode = newVarNode;
     }
 
     void variableDeclaration::setVariable(variable_t &variable_) {
@@ -283,7 +286,7 @@ namespace occa {
       }
 
       delete value;
-      value = exprNode::clone(newValue);
+      value = newValue;
     }
 
     void variableDeclaration::debugPrint() const {

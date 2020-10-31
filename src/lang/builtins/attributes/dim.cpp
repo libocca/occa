@@ -37,7 +37,7 @@ namespace occa {
       bool dim::applyCodeTransformations(blockStatement &root) {
         bool success = true;
 
-        root.children
+        statementArray::from(root)
             .flatFilterByExprType(exprNodeType::call)
             .inplaceMap([&](smntExprNode smntNode) -> exprNode* {
                 statement_t &smnt = *smntNode.smnt;

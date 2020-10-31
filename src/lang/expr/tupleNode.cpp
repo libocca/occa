@@ -45,7 +45,7 @@ namespace occa {
       for (exprNode *arg : args) {
         if (currentNode == arg) {
           delete arg;
-          arg = exprNode::clone(newNode);
+          arg = newNode;
           return true;
         }
       }

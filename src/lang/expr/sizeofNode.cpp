@@ -42,7 +42,7 @@ namespace occa {
     bool sizeofNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
       if (currentNode == value) {
         delete value;
-        value = exprNode::clone(newNode);
+        value = newNode;
         return true;
       }
 

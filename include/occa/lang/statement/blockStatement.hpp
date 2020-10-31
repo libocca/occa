@@ -26,6 +26,7 @@ namespace occa {
 
       virtual bool hasInScope(const std::string &name);
       virtual keyword_t& getScopeKeyword(const std::string &name);
+      type_t* getScopeType(const std::string &name);
 
       bool addToScope(type_t &type,
                       const bool force = false);

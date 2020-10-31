@@ -51,19 +51,19 @@ namespace occa {
     bool cudaCallNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
       if (currentNode == value) {
         delete value;
-        value = exprNode::clone(newNode);
+        value = newNode;
         return true;
       }
 
       if (currentNode == blocks) {
         delete blocks;
-        blocks = exprNode::clone(newNode);
+        blocks = newNode;
         return true;
       }
 
       if (currentNode == threads) {
         delete threads;
-        threads = exprNode::clone(newNode);
+        threads = newNode;
         return true;
       }
 

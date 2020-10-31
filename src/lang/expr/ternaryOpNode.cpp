@@ -66,19 +66,19 @@ namespace occa {
     bool ternaryOpNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
       if (currentNode == checkValue) {
         delete checkValue;
-        checkValue = exprNode::clone(newNode);
+        checkValue = newNode;
         return true;
       }
 
       if (currentNode == trueValue) {
         delete trueValue;
-        trueValue = exprNode::clone(newNode);
+        trueValue = newNode;
         return true;
       }
 
       if (currentNode == falseValue) {
         delete falseValue;
-        falseValue = exprNode::clone(newNode);
+        falseValue = newNode;
         return true;
       }
 

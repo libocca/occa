@@ -54,7 +54,7 @@ namespace occa {
       }
 
       void metalParser::setSharedQualifiers() {
-        root.children
+        statementArray::from(root)
             .nestedForEachDeclaration([&](variableDeclaration &decl) {
                 variable_t &var = decl.variable();
                 if (var.hasAttribute("shared")) {
@@ -64,7 +64,7 @@ namespace occa {
       }
 
       void metalParser::addBarriers() {
-        root.children
+        statementArray::from(root)
             .flatFilterByStatementType(statementType::empty, "barrier")
             .forEach([&](statement_t *smnt) {
                 // TODO 1.1: Implement proper barriers

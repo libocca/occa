@@ -51,14 +51,14 @@ namespace occa {
     bool callNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
       if (currentNode == value) {
         delete value;
-        value = exprNode::clone(newNode);
+        value = newNode;
         return true;
       }
 
       for (exprNode *&arg : args) {
         if (currentNode == arg) {
           delete arg;
-          arg = exprNode::clone(newNode);
+          arg = newNode;
           return true;
         }
       }

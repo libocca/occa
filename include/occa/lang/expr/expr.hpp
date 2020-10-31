@@ -36,6 +36,8 @@ namespace occa {
       expr& operator = (exprNode *node_);
       expr& operator = (const expr &other);
 
+      static expr usingExprNode(exprNode *node_);
+
       token_t* source() const;
       const opType_t& opType() const;
 

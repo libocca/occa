@@ -9,10 +9,12 @@
 namespace occa {
   namespace lang {
     namespace okl {
+      static const std::string modeMemoryTypeName = "occa::modeMemory_t";
+      static const std::string modeKernelTypeName = "occa::modeKernel_t";
+
       withLauncher::withLauncher(const occa::properties &settings_) :
         parser_t(settings_),
-        launcherParser(settings["launcher"]),
-        memoryType(NULL) {
+        launcherParser(settings["launcher"]) {
         launcherParser.settings["okl/validate"] = false;
       }
 
@@ -27,10 +29,7 @@ namespace occa {
       //================================
 
       void withLauncher::launcherClear() {
-        launcherParser.onClear();
-
-        // Will get deleted by the parser
-        memoryType = NULL;
+        launcherParser.clear();
       }
 
       void withLauncher::afterParsing() {
@@ -38,15 +37,6 @@ namespace occa {
         if (settings.get("okl/validate", true)) {
           success = kernelsAreValid(root);
         }
-
-        if (!memoryType) {
-          identifierToken memoryTypeSource(originSource::builtin,
-                                           "occa::modeMemory_t");
-          memoryType = new typedef_t(vartype_t(),
-                                     memoryTypeSource);
-        }
-
-        root.addToScope(*memoryType);
 
         if (!success) return;
         setOklLoopIndices();
@@ -71,6 +61,14 @@ namespace occa {
 
       void withLauncher::afterKernelSplit() {}
 
+      type_t& withLauncher::getMemoryModeType() {
+        return *launcherParser.root.getScopeType(modeMemoryTypeName);
+      }
+
+      type_t& withLauncher::getKernelModeType() {
+        return *launcherParser.root.getScopeType(modeKernelTypeName);
+      }
+
       void withLauncher::setOklLoopIndices() {
         root.children
             .forEachKernelStatement(okl::setOklLoopIndices);
@@ -82,6 +80,24 @@ namespace occa {
 
         launcherParser.root.swap(rootClone);
         delete &rootClone;
+
+        // Add occa::mode* types
+        identifierToken memoryTypeSource(originSource::builtin,
+                                         modeMemoryTypeName);
+
+        launcherParser.root.addToScope(
+          *(new typedef_t(vartype_t(),
+                          memoryTypeSource))
+        );
+
+        identifierToken kernelTypeSource(originSource::builtin,
+                                         modeKernelTypeName);
+
+        launcherParser.root.addToScope(
+          *(new typedef_t(vartype_t(),
+                          kernelTypeSource))
+        );
+
         launcherParser.setupKernels();
 
         // Remove outer loops
@@ -97,17 +113,20 @@ namespace occa {
       void withLauncher::removeLauncherOuterLoops(functionDeclStatement &kernelSmnt) {
         int kernelIndex = 0;
 
-        kernelSmnt.children
+        statementArray::from(kernelSmnt)
             .flatFilterByAttribute("outer")
             .filterByStatementType(statementType::for_)
+            .filter([&](statement_t *smnt) {
+                return isOuterMostOuterLoop((forStatement&) *smnt);
+              })
             .forEach([&](statement_t *smnt) {
-                forStatement &forSmnt = (forStatement&) *smnt;
-                if (isOuterMostOuterLoop(forSmnt)) {
-                  setKernelLaunch(kernelSmnt,
-                                  forSmnt,
-                                  kernelIndex++);
-                }
+                setKernelLaunch(kernelSmnt,
+                                (forStatement&) *smnt,
+                                kernelIndex++);
               });
+
+        kernelSmnt.updateIdentifierReferences();
+        kernelSmnt.updateVariableReferences();
       }
 
       bool withLauncher::isOuterMostOuterLoop(forStatement &forSmnt) {
@@ -147,7 +166,7 @@ namespace occa {
         blockStatement &launchBlock = (
           *new blockStatement(forSmnt.up, forSmnt.source)
         );
-        forSmnt.up->addBefore(forSmnt, launchBlock);
+        forSmnt.replaceWith(launchBlock);
 
         // Get max count
         int outerCount = 0;
@@ -185,6 +204,7 @@ namespace occa {
           const std::string &name = (isOuter
                                      ? "outer"
                                      : "inner");
+
           launchBlock.add(
             *(new expressionStatement(
                 &launchBlock,
@@ -232,20 +252,17 @@ namespace occa {
             );
           });
 
-        forSmnt.removeFromParent();
+        launchBlock.updateIdentifierReferences();
+        launchBlock.updateVariableReferences();
 
-        // TODO 1.1: Delete after properly cloning the declaration statement
+        // TODO: Figure out which variables are being deleted
         // delete &forSmnt;
       }
 
       void withLauncher::setupLauncherKernelArgs(functionDeclStatement &kernelSmnt) {
         function_t &func = kernelSmnt.function();
 
-        // Create new types
-        identifierToken kernelTypeSource(kernelSmnt.source->origin,
-                                         "occa::modeKernel_t");
-        type_t &kernelType = *(new typedef_t(vartype_t(),
-                                             kernelTypeSource));
+        type_t &memoryType = getMemoryModeType();
 
         // Convert pointer arguments to modeMemory_t
         int argCount = (int) func.args.size();
@@ -253,23 +270,25 @@ namespace occa {
           variable_t &arg = *(func.args[i]);
           arg.vartype = arg.vartype.flatten();
           if (arg.vartype.isPointerType()) {
-            arg.vartype = *memoryType;
+            arg.vartype = memoryType;
             arg += pointer_t();
           }
         }
 
         // Add kernel array as the first argument
         identifierToken kernelVarSource(kernelSmnt.source->origin,
-                                        "*deviceKernel");
-        variable_t &kernelVar = *(new variable_t(kernelType,
+                                        "deviceKernel");
+        variable_t &kernelVar = *(new variable_t(getKernelModeType(),
                                                  &kernelVarSource));
+        kernelVar += pointer_t();
         kernelVar += pointer_t();
 
         func.args.insert(func.args.begin(),
                          &kernelVar);
 
-        kernelSmnt.addToScope(kernelType);
         kernelSmnt.addToScope(kernelVar);
+
+        kernelSmnt.updateVariableReferences();
       }
 
       void withLauncher::setupLauncherHeaders() {
@@ -306,7 +325,7 @@ namespace occa {
         int maxLevel = -1;
         forStatement *innerMostInnerLoop = NULL;
 
-        forSmnt.children
+        statementArray::from(forSmnt)
             .flatFilterByAttribute("inner")
             .filterByStatementType(statementType::for_)
             .forEach([&](statement_t *smnt) {
@@ -349,7 +368,7 @@ namespace occa {
         statementArray newKernelSmnts;
         int kernelIndex = 0;
 
-        kernelSmnt.children
+        statementArray::from(kernelSmnt)
             .flatFilterByAttribute("outer")
             .filterByStatementType(statementType::for_)
             .forEach([&](statement_t *smnt) {
@@ -373,7 +392,10 @@ namespace occa {
         root.remove(kernelSmnt);
         root.removeFromScope(kernelSmnt.function().name(), true);
 
-        // TODO 1.1: Find out what causes segfault here
+        root.updateVariableReferences();
+        launcherParser.root.updateVariableReferences();
+
+        // TODO: Figure out which variables are being deleted
         // delete &kernelSmnt;
       }
 
@@ -392,7 +414,6 @@ namespace occa {
                                     newFunction)
         );
         newKernelSmnt.attributes = kernelSmnt.attributes;
-        newKernelSmnt.addFunctionToParentScope();
 
         // Clone for-loop and replace argument variables
         forStatement &newForSmnt = (forStatement&) forSmnt.clone();
@@ -417,7 +438,7 @@ namespace occa {
       }
 
       void withLauncher::setupOccaFors(functionDeclStatement &kernelSmnt) {
-        kernelSmnt.children
+        statementArray::from(kernelSmnt)
             .flatFilterByAttribute("outer")
             .filterByStatementType(statementType::for_)
             .forEach([&](statement_t *smnt) {
@@ -427,7 +448,7 @@ namespace occa {
 
         const bool applyBarriers = usesBarriers();
 
-        kernelSmnt.children
+        statementArray::from(kernelSmnt)
             .flatFilterByAttribute("inner")
             .filterByStatementType(statementType::for_)
             .forEach([&](statement_t *smnt) {
@@ -445,7 +466,7 @@ namespace occa {
 
       void withLauncher::addBarriersAfterInnerLoop(forStatement &forSmnt) {
         const bool noSharedWrites = (
-          forSmnt.children
+          statementArray::from(forSmnt)
           .flatFilter([&](smntExprNode smntExpr) {
               return writesToShared(*smntExpr.node);
             })
