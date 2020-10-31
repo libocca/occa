@@ -193,19 +193,27 @@ namespace occa {
         statementArray::from(root)
             .flatFilterByStatementType(statementType::for_, "inner")
             .forEach([&](statement_t *smnt) {
-                const statementArray path = smnt->getParentPath();
                 const bool hasExclusiveUsage = smnt->hasInScope(exclusiveIndexName);
+                if (!hasExclusiveUsage) {
+                  return;
+                }
 
-                if (hasExclusiveUsage) {
-                  loopsWithExclusiveUsage.insert(smnt);
+                loopsWithExclusiveUsage.insert(smnt);
 
-                  // Get outer-most inner loop
-                  for (auto pathSmnt : path) {
-                    if (pathSmnt->hasAttribute("inner")) {
-                      outerMostInnerLoops.insert(pathSmnt);
-                      break;
-                    }
+                statementArray path = smnt->getParentPath();
+
+                // Get outer-most inner loop
+                bool isInnerMostInnerLoop = true;
+                for (auto pathSmnt : path) {
+                  if (pathSmnt->hasAttribute("inner")) {
+                    outerMostInnerLoops.insert(pathSmnt);
+                    isInnerMostInnerLoop = false;
+                    break;
                   }
+                }
+
+                if (isInnerMostInnerLoop) {
+                  outerMostInnerLoops.insert(smnt);
                 }
 
                 // Remove parent "inner" loops from the innerMostInnerLoops set
@@ -217,6 +225,7 @@ namespace occa {
                 }
               });
 
+        // Initialize the exclusive index to 0 before the outer-most inner loop
         for (auto smnt : outerMostInnerLoops) {
           forStatement &forSmnt = (forStatement&) *smnt;
           keyword_t &keyword = forSmnt.getScopeKeyword(exclusiveIndexName);
@@ -238,6 +247,7 @@ namespace occa {
           );
         }
 
+        // Increment the exclusive index in the inner-most inner loop
         for (auto smnt : innerMostInnerLoops) {
           forStatement &forSmnt = (forStatement&) *smnt;
           keyword_t &keyword = forSmnt.getScopeKeyword(exclusiveIndexName);
