@@ -828,12 +828,11 @@ namespace occa {
                 << "  local suggestions=$(" << fullBashCommand << " -- \"${COMP_WORDS[@]}\")" << std::endl
                 << "  case \"${suggestions}\" in"                    << std::endl
                 << "    " << BASH_STOPS_EXPANSION << ")"             << std::endl
-                << "      compopt -o nospace"                        << std::endl
-                << "      COMPREPLY=()"                              << std::endl
+                << "      compopt -o default -o nospace"             << std::endl
+                << "      COMPREPLY=''"                              << std::endl
                 << "      ;;"                                        << std::endl
                 << "    " << BASH_EXPANDS_FILES << ")"               << std::endl
-                << "      compopt -o nospace"                        << std::endl
-                << "      _cd"                                       << std::endl
+                << "      # Rely on the default options"             << std::endl
                 << "      ;;"                                        << std::endl
                 << "    *)"                                          << std::endl
                 << "      COMPREPLY=($(compgen -W \"${suggestions}\" -- \"${COMP_WORDS[COMP_CWORD]}\"))" << std::endl
@@ -841,7 +840,7 @@ namespace occa {
                 << "  esac"                                          << std::endl
                 << "}"                                               << std::endl
                 << ""                                                << std::endl
-                << "complete -F " << autocompleteName << " " << name << std::endl;
+                << "complete -o bashdefault -o default -F " << autocompleteName << " " << name << std::endl;
     }
 
     void command::printBashSuggestions(const strVector &shellArgs) {
