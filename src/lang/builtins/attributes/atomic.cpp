@@ -37,7 +37,7 @@ namespace occa {
         exprSmntBoolCallback transformBasicExprSmnt
       ) {
         bool success = true;
-        root.children
+        statementArray::from(root)
             .flatFilterByStatementType(
               statementType::expression | statementType::block,
               "atomic"

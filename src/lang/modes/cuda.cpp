@@ -90,7 +90,7 @@ namespace occa {
       }
 
       void cudaParser::setSharedQualifiers() {
-        root.children
+        statementArray::from(root)
             .flatFilterByStatementType(statementType::declaration)
             .forEach([&](statement_t *smnt) {
                 declarationStatement &declSmnt = *((declarationStatement*) smnt);
@@ -104,7 +104,7 @@ namespace occa {
       }
 
       void cudaParser::addBarriers() {
-        root.children
+        statementArray::from(root)
             .flatFilterByStatementType(statementType::empty, "barrier")
             .forEach([&](statement_t *smnt) {
                 // TODO: Implement proper barriers

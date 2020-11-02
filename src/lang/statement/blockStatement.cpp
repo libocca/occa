@@ -86,6 +86,20 @@ namespace occa {
       return keyword;
     }
 
+    type_t* blockStatement::getScopeType(const std::string &name) {
+      keyword_t &keyword = scope.get(name);
+
+      if (keyword.type() & keywordType::type) {
+        return &(keyword.to<typeKeyword>().type_);
+      }
+
+      if (up) {
+        return up->getScopeType(name);
+      }
+
+      return NULL;
+    }
+
     bool blockStatement::addToScope(type_t &type,
                                     const bool force) {
       return scope.add(type, force);
@@ -219,9 +233,8 @@ namespace occa {
     }
 
     void blockStatement::clear() {
-      const int count = (int) children.length();
-      for (int i = 0; i < count; ++i) {
-        delete children[i];
+      for (auto smnt : children) {
+        delete smnt;
       }
       children.clear();
       scope.clear();

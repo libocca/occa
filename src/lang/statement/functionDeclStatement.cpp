@@ -9,6 +9,8 @@ namespace occa {
       blockStatement(up_, function_.source),
       funcNode(new functionNode(function_.source,
                                 function_)) {
+
+      addFunctionToParentScope();
       addArgumentsToScope();
     }
 
@@ -17,7 +19,13 @@ namespace occa {
         blockStatement(up_, other.source),
         funcNode(new functionNode(other.function().source,
                                   (function_t&) other.function().clone())) {
+      // Add our cloned variables to scope before copying from other
+      // This way the keywords won't be copied first
+      addFunctionToParentScope();
+      addArgumentsToScope();
+
       copyFrom(other);
+
       replaceFunction(other.function(), function());
     }
 

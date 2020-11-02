@@ -44,6 +44,11 @@ namespace occa {
       return *this;
     }
 
+    expr expr::usingExprNode(exprNode *node_) {
+      expr e;
+      e.node = node_;
+      return e;
+    }
 
     token_t* expr::source() const {
       return node ? node->token : NULL;
@@ -68,9 +73,11 @@ namespace occa {
     }
 
     expr expr::operator [] (const expr &e) {
-      return new subscriptNode(source(),
-                               *node,
-                               *e.node);
+      return usingExprNode(
+        new subscriptNode(source(),
+                          *node,
+                          *e.node)
+      );
     }
 
     expressionStatement* expr::createStatement(blockStatement *up,
@@ -82,30 +89,38 @@ namespace occa {
       if (!e.node) {
         return expr();
       }
-      return e.node->wrapInParentheses();
+      return usingExprNode(
+        e.node->wrapInParentheses()
+      );
     }
 
     expr expr::leftUnaryOpExpr(const unaryOperator_t &op_,
                                const expr &e) {
-      return new leftUnaryOpNode(e.source(),
-                                 op_,
-                                 *e.node);
+      return usingExprNode(
+        new leftUnaryOpNode(e.source(),
+                            op_,
+                            *e.node)
+      );
     }
 
     expr expr::rightUnaryOpExpr(const unaryOperator_t &op_,
                                 const expr &e) {
-      return new rightUnaryOpNode(e.source(),
-                                  op_,
-                                  *e.node);
+      return usingExprNode(
+        new rightUnaryOpNode(e.source(),
+                             op_,
+                             *e.node)
+      );
     }
 
     expr expr::binaryOpExpr(const binaryOperator_t &op_,
                             const expr &left,
                             const expr &right) {
-      return new binaryOpNode(left.source(),
-                              op_,
-                              *left.node,
-                              *right.node);
+      return usingExprNode(
+        new binaryOpNode(left.source(),
+                         op_,
+                         *left.node,
+                         *right.node)
+      );
     }
 
     // --e

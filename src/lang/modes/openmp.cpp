@@ -19,23 +19,24 @@ namespace occa {
       }
 
       void openmpParser::setupOmpPragmas() {
-        statementArray outerSmnts =
-            root.children
-            .flatFilter([&](statement_t *smnt, const statementArray &path) {
-                // Needs to be a @outer for-loop
-                if (!isOuterForLoop(smnt)) {
+        statementArray outerSmnts = (
+          statementArray::from(root)
+          .flatFilter([&](statement_t *smnt, const statementArray &path) {
+              // Needs to be a @outer for-loop
+              if (!isOuterForLoop(smnt)) {
+                return false;
+              }
+
+              // Cannot have a parent @outer for-loop
+              for (auto pathSmnt : path) {
+                if (isOuterForLoop(pathSmnt)) {
                   return false;
                 }
+              }
 
-                // Cannot have a parent @outer for-loop
-                for (auto pathSmnt : path) {
-                  if (isOuterForLoop(pathSmnt)) {
-                    return false;
-                  }
-                }
-
-                return true;
-              });
+              return true;
+            })
+        );
 
         const int count = (int) outerSmnts.length();
         for (int i = 0; i < count; ++i) {

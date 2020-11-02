@@ -114,7 +114,7 @@ namespace occa {
       }
 
       void openclParser::setLocalQualifiers() {
-        root.children
+        statementArray::from(root)
             .nestedForEachDeclaration([&](variableDeclaration &decl) {
                 variable_t &var = decl.variable();
                 if (var.hasAttribute("shared")) {
@@ -221,7 +221,7 @@ namespace occa {
       }
 
       void openclParser::addBarriers() {
-        root.children
+        statementArray::from(root)
             .flatFilterByStatementType(statementType::empty, "barrier")
             .forEach([&](statement_t *smnt) {
                 // TODO 1.1: Implement proper barriers
@@ -242,7 +242,7 @@ namespace occa {
       }
 
       void openclParser::addFunctionPrototypes() {
-        root.children
+        statementArray::from(root)
             .flatFilterByStatementType(statementType::functionDecl)
             .forEach([&](statement_t *smnt) {
                 function_t &func = ((functionDeclStatement&) *smnt).function();
@@ -257,7 +257,7 @@ namespace occa {
       }
 
       void openclParser::addStructQualifiers() {
-        root.children
+        statementArray::from(root)
             .flatFilterByStatementType(
               statementType::blockStatements
               | statementType::function
@@ -266,7 +266,7 @@ namespace occa {
       }
 
       void openclParser::setupKernels() {
-        root.children
+        statementArray::from(root)
             .flatFilterByStatementType(
               statementType::functionDecl | statementType::function,
               "kernel"

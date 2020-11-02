@@ -19,7 +19,8 @@ int main(const int argc, const char **argv) {
 #define ASSERT_PRAGMA_EXISTS(PRAGMA_SOURCE, COUNT)                      \
   do {                                                                  \
     statementArray pragmaStatements = (                                 \
-      parser.root.children.flatFilterByStatementType(statementType::pragma) \
+      parser.root.children                                              \
+      .flatFilterByStatementType(statementType::pragma)                 \
     );                                                                  \
                                                                         \
     ASSERT_EQ(COUNT,                                                    \

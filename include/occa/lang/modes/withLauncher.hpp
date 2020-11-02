@@ -10,7 +10,6 @@ namespace occa {
       class withLauncher : public parser_t {
       public:
         serialParser launcherParser;
-        type_t *memoryType;
 
         withLauncher(const occa::properties &settings_ = occa::properties());
 
@@ -26,6 +25,9 @@ namespace occa {
 
         virtual void beforeKernelSplit();
         virtual void afterKernelSplit();
+
+        type_t& getMemoryModeType();
+        type_t& getKernelModeType();
 
         void setOklLoopIndices();
 

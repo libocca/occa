@@ -149,7 +149,11 @@ namespace occa {
 
       void replaceType(const type_t &currentType, type_t &newType);
 
+      void updateVariableReferences();
+
+      void updateIdentifierReferences();
       void updateIdentifierReferences(exprNode *expr);
+      void updateIdentifierReferences(exprNodeArray &arr);
 
       void debugPrint() const;
       virtual void print(printer &pout) const = 0;

@@ -65,13 +65,13 @@ namespace occa {
     bool binaryOpNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
       if (currentNode == leftValue) {
         delete leftValue;
-        leftValue = exprNode::clone(newNode);
+        leftValue = newNode;
         return true;
       }
 
       if (currentNode == rightValue) {
         delete rightValue;
-        rightValue = exprNode::clone(newNode);
+        rightValue = newNode;
         return true;
       }
 

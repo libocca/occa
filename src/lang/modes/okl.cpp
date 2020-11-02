@@ -13,7 +13,9 @@ namespace occa {
   namespace lang {
     namespace okl {
       bool kernelsAreValid(blockStatement &root) {
-        statementArray kernelSmnts = root.children.getKernelStatements();
+        statementArray kernelSmnts = (
+          root.children.getKernelStatements()
+        );
 
         if (!kernelSmnts.length()) {
           occa::printError("No [@kernel] functions found");

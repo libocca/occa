@@ -36,7 +36,7 @@ namespace occa {
                                                   const qualifier_t &restrictQualifier) {
         bool success = true;
 
-        root.children
+        statementArray::from(root)
             .flatFilterByStatementType(
               statementType::functionDecl
               | statementType::function

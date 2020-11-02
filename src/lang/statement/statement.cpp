@@ -1,5 +1,7 @@
 #include <occa/lang/statement/statement.hpp>
 #include <occa/lang/statement/blockStatement.hpp>
+#include <occa/lang/statement/declarationStatement.hpp>
+#include <occa/lang/variable.hpp>
 #include <occa/lang/token.hpp>
 #include <occa/lang/expr.hpp>
 
@@ -156,6 +158,7 @@ namespace occa {
 
       up->addBefore(*this, other);
       up->remove(*this);
+      up = NULL;
     }
 
     statementArray statement_t::getParentPath() {
@@ -268,41 +271,95 @@ namespace occa {
             });
     }
 
-    void statement_t::updateIdentifierReferences(exprNode *expr) {
-      exprNodeArray::from(this, expr)
-          .flatFilterByExprType(exprNodeType::identifier)
-          .inplaceMap([&](smntExprNode smntExpr) -> exprNode* {
+    void statement_t::updateVariableReferences() {
+      std::map<variable_t*, variable_t*> variablesToReplace;
+
+      statementArray::from(*this)
+          .flatFilterByExprType(exprNodeType::variable)
+          .forEach([&](smntExprNode smntExpr) {
               statement_t *smnt = smntExpr.smnt;
-              identifierNode &node = (identifierNode&) *smntExpr.node;
+              variable_t &var = ((variableNode*) smntExpr.node)->value;
+              const std::string &name = var.name();
 
-              const std::string &name = node.value;
-
-              keyword_t &keyword = smnt->getScopeKeyword(name);
-              const int kType = keyword.type();
-              if (!(kType & (keywordType::type     |
-                             keywordType::variable |
-                             keywordType::function))) {
-                return &node;
+              if (!name.size()) {
+                return;
               }
 
-              if (kType & keywordType::variable) {
-                return (
-                  new variableNode(node.token,
-                                   ((variableKeyword&) keyword).variable)
-                );
+              // No need to replace the variable defined in the statement
+              if ((smnt->type() & statementType::declaration)
+                  && ((declarationStatement*) smnt)->declaresVariable(var)) {
+                return;
               }
-              if (kType & keywordType::function) {
-                return (
-                  new functionNode(node.token,
-                                   ((functionKeyword&) keyword).function)
-                );
+
+              keyword_t &keyword = smntExpr.smnt->getScopeKeyword(name);
+              if (!(keyword.type() & keywordType::variable)) {
+                smntExpr.node->printError("Variable not defined in this scope");
+                return;
               }
-              // keywordType::type
-              return (
-                new typeNode(node.token,
-                             ((typeKeyword&) keyword).type_)
-              );
+
+              variable_t &scopedVar = keyword.to<variableKeyword>().variable;
+
+              if (&scopedVar != &var) {
+                variablesToReplace.insert({&var, &scopedVar});
+              }
           });
+
+      for (auto it : variablesToReplace) {
+        replaceVariable(*it.first, *it.second);
+      }
+    }
+
+    void statement_t::updateIdentifierReferences() {
+      exprNodeArray arr = (
+        statementArray::from(*this)
+        .flatFilterByExprType(exprNodeType::identifier)
+      );
+
+      updateIdentifierReferences(arr);
+    }
+
+    void statement_t::updateIdentifierReferences(exprNode *expr) {
+      exprNodeArray arr = (
+        exprNodeArray::from(this, expr)
+        .flatFilterByExprType(exprNodeType::identifier)
+      );
+
+      updateIdentifierReferences(arr);
+    }
+
+    void statement_t::updateIdentifierReferences(exprNodeArray &arr) {
+      arr.inplaceMap([&](smntExprNode smntExpr) -> exprNode* {
+          statement_t *smnt = smntExpr.smnt;
+          identifierNode &node = (identifierNode&) *smntExpr.node;
+
+          const std::string &name = node.value;
+
+          keyword_t &keyword = smnt->getScopeKeyword(name);
+          const int kType = keyword.type();
+          if (!(kType & (keywordType::type     |
+                         keywordType::variable |
+                         keywordType::function))) {
+            return &node;
+          }
+
+          if (kType & keywordType::variable) {
+            return (
+              new variableNode(node.token,
+                               ((variableKeyword&) keyword).variable)
+            );
+          }
+          if (kType & keywordType::function) {
+            return (
+              new functionNode(node.token,
+                               ((functionKeyword&) keyword).function)
+            );
+          }
+          // keywordType::type
+          return (
+            new typeNode(node.token,
+                         ((typeKeyword&) keyword).type_)
+          );
+        });
     }
 
     void statement_t::debugPrint() const {

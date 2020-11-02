@@ -102,7 +102,7 @@ namespace occa {
                 // Rename the block interator
                 variable_t &iter = *(oklForSmnt.iterator);
                 variable_t &blockIter = iter.clone();
-                blockIter.name() = "_occa_tiled_" + iter.name();
+                blockIter.setName("_occa_tiled_" + iter.name());
                 blockForSmnt.addToScope(blockIter);
 
                 setupNewForStatements(attr,
@@ -218,9 +218,7 @@ namespace occa {
           }
         }
 
-        blockForSmnt.update = new expressionStatement(&blockForSmnt,
-                                                      *blockUpdate.popExprNode(),
-                                                      false);
+        blockForSmnt.update = blockUpdate.createStatement(&blockForSmnt, false);
       }
 
       void tile::setupInnerForStatement(okl::oklForStatement &oklForSmnt,

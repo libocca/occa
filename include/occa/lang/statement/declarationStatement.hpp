@@ -18,6 +18,7 @@ namespace occa {
 
       void clearDeclarations();
       void freeDeclarations();
+      void freeTypedefVariable(variable_t &var);
 
       virtual statement_t& clone_(blockStatement *up_) const;
 
