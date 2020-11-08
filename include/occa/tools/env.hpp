@@ -34,6 +34,8 @@ namespace occa {
       return fromString<TM>(value);
     }
 
+    void setOccaCacheDir(const std::string &path);
+
     class envInitializer_t {
     public:
       envInitializer_t();
@@ -42,15 +44,17 @@ namespace occa {
     private:
       bool isInitialized;
 
-      void initSettings();
-      void initEnvironment();
-      void loadConfig();
+      static void initSettings();
+      static void initEnvironment();
+      static void loadConfig();
 
-      void setupCachePath();
-      void setupIncludePath();
-      void registerFileOpeners();
+      static void setupCachePath();
+      static void setupIncludePath();
+      static void registerFileOpeners();
 
-      void cleanFileOpeners();
+      static void cleanFileOpeners();
+
+      friend void setOccaCacheDir(const std::string &path);
     };
 
     extern envInitializer_t envInitializer;

@@ -41,6 +41,11 @@ namespace occa {
       return "";
     }
 
+    void setOccaCacheDir(const std::string &path) {
+      OCCA_CACHE_DIR = path;
+      envInitializer_t::setupCachePath();
+    }
+
     envInitializer_t::envInitializer_t() :
       isInitialized(false) {
       if (isInitialized) {
@@ -139,6 +144,7 @@ namespace occa {
     }
 
     void envInitializer_t::setupCachePath() {
+      // Set defaults if needed
       if (env::OCCA_CACHE_DIR.size() == 0) {
         std::stringstream ss;
 
@@ -155,6 +161,7 @@ namespace occa {
 #endif
         env::OCCA_CACHE_DIR = ss.str();
       }
+
       env::OCCA_CACHE_DIR = io::filename(env::OCCA_CACHE_DIR);
       io::endWithSlash(env::OCCA_CACHE_DIR);
 
