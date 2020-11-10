@@ -338,7 +338,7 @@ ifdef OCCA_HIP_ENABLED
     ifeq ($(hipPlatform),nvcc)
       linkerFlags += -lcuda
       linkerFlags += -lcudart
-    else ifeq ($(hipPlatform),hcc)
+    else ifeq ($(hipPlatform),$(filter $(hipPlatform),hcc amd))
       #set HIP_COMPILER if not supplied by user
       ifeq (,$(HIP_COMPILER))
         hipCompiler = $(shell $(HIP_PATH)/bin/hipconfig --compiler)
@@ -374,7 +374,7 @@ else
     ifeq ($(hipPlatform),nvcc)
       hipLibFlags  = $(call libraryFlagsFor,cuda)
       hipLibFlags += $(call libraryFlagsFor,cudart)
-    else ifeq ($(hipPlatform),hcc)
+    else ifeq ($(hipPlatform),$(filter $(hipPlatform),hcc amd))
       #set HIP_COMPILER if not supplied by user
       ifeq (,$(HIP_COMPILER))
         hipCompiler = $(shell $(HIP_PATH)/bin/hipconfig --compiler)
