@@ -100,7 +100,7 @@ if(UNIX AND NOT APPLE AND NOT CYGWIN)
   endif()
 
   if(HIP_PLATFORM)
-    if(${HIP_PLATFORM} STREQUAL "hcc")
+    if(${HIP_PLATFORM} STREQUAL "hcc" OR ${HIP_PLATFORM} STREQUAL "amd")
       if(${HIP_COMPILER} STREQUAL "hcc")
         set(HIP_INCLUDE_DIRS "${HIP_ROOT_DIR}/include;${HIP_ROOT_DIR}/hcc/include")
         set(HIP_LIBRARIES "${HIP_ROOT_DIR}/lib/libhip_hcc.so")
