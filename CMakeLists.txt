@@ -17,7 +17,7 @@ if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
 endif()
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -28,7 +28,7 @@ option(ENABLE_CUDA   "Build with CUDA if available" ON)
 option(ENABLE_OPENCL "Build with OpenCL if available" ON)
 option(ENABLE_HIP    "Build with HIP if available" ON)
 option(ENABLE_METAL  "Build with Metal if available" ON)
-#option(ENABLE_ONEAPI "Build with OneAPI if available" ON)
+option(ENABLE_DPCPP "Build with SYCL/DPCPP if available" ON)
 option(ENABLE_MPI    "Build with MPI if available" ON)
 
 option(ENABLE_TESTS    "Build tests" OFF)
@@ -180,6 +180,34 @@ if (ENABLE_OPENCL)
 endif(ENABLE_OPENCL)
 
 ##############################
+# SYCL/DPCPP
+##############################
+if(ENABLE_DPCPP)
+  find_path(
+    SYCL_INCLUDE_DIRS
+    NAMES
+      CL/sycl.hpp
+  )
+
+  find_library(
+    SYCL_LIBRARIES 
+    NAMES 
+      sycl libsycl 
+  )
+  set(SYCL_CXX_FLAGS "-fsycl")
+
+  set(OCCA_DPCPP_ENABLED 1)
+
+  message("-- SYCL include dirs: ${SYCL_INCLUDE_DIRS}")
+  message("-- SYCL libraries: ${SYCL_LIBRARIES}")
+  message("-- SYCL CXX flags: ${SYCL_CXX_FLAGS}")
+
+  target_include_directories(libocca PRIVATE ${SYCL_INCLUDE_DIRS})
+  target_link_libraries(libocca PRIVATE ${SYCL_LIBRARIES})
+  target_compile_options(libocca BEFORE PRIVATE "${SYCL_CXX_FLAGS}")
+endif(ENABLE_DPCPP)
+
+##############################
 # HIP
 ##############################
 if (ENABLE_HIP)
@@ -249,6 +277,10 @@ list(REMOVE_ITEM OCCA_SRC_cpp src/core/kernelOperators.cpp src/tools/runFunction
 
 if (OCCA_OPENMP_ENABLED)
   set_source_files_properties(${OCCA_SRC_cpp} PROPERTIES COMPILE_FLAGS ${OpenMP_CXX_FLAGS})
+endif()
+
+if(OCCA_DPCPP_ENABLED)
+  set_source_files_properties(${OCCA_SRC_cpp} PROPERTIES COMPILE_FLAGS ${SYCL_CXX_FLAGS})
 endif()
 
 if (ENABLE_FORTRAN)

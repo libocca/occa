@@ -4,9 +4,12 @@
 #include <occa/lang/statement/blockStatement.hpp>
 #include <occa/lang/scope.hpp>
 
-namespace occa {
-  namespace lang {
-    class dpcppStatement : public blockStatement {
+namespace occa
+{
+  namespace lang
+  {
+    class dpcppStatement : public blockStatement
+    {
     public:
       statementPtrVector children;
       scope_t scope;
@@ -17,17 +20,17 @@ namespace occa {
                      const dpcppStatement &other);
       virtual ~dpcppStatement();
 
-//      void copyFrom(const dpcppStatement &other);
-
-      virtual statement_t& clone_(dpcppStatement *up_) const;
+      //      void copyFrom(const dpcppStatement &other);
+      using statement_t::clone_;
+      virtual statement_t &clone_(dpcppStatement *up_) const;
 
       virtual int type() const;
       virtual std::string statementName() const;
 
       virtual bool hasInScope(const std::string &name);
-      virtual keyword_t& getScopeKeyword(const std::string &name);
+      virtual keyword_t &getScopeKeyword(const std::string &name);
 
-/*      bool addToScope(type_t &type,
+      /*      bool addToScope(type_t &type,
                       const bool force = false);
       bool addToScope(function_t &func,
                       const bool force = false);
@@ -73,7 +76,7 @@ namespace occa {
       virtual void print(printer &pout) const;
       void printChildren(printer &pout) const;
     };
-  }
-}
+  } // namespace lang
+} // namespace occa
 
 #endif

@@ -5,60 +5,73 @@
 #include <occa/lang/builtins/attributes.hpp>
 #include <occa/lang/builtins/types.hpp>
 
-namespace occa {
-  namespace lang {
-    namespace okl {
-      dpcppParser::dpcppParser(const occa::properties &settings_) :
-        withLauncherLambda(settings_), shared("__shared__", qualifierType::custom),
-        device("SYCL_EXTERNAL", qualifierType::custom){
-
+namespace occa
+{
+  namespace lang
+  {
+    namespace okl
+    {
+      dpcppParser::dpcppParser(const occa::properties &settings_)
+          : withLauncherLambda(settings_),
+            device("SYCL_EXTERNAL", qualifierType::custom),
+            shared("__shared__", qualifierType::custom)
+      {
         okl::addAttributes(*this);
       }
 
-      void dpcppParser::onClear() {
-      	      launcherClear();
+      void dpcppParser::onClear()
+      {
+        launcherClear();
       }
 
-      void dpcppParser::beforePreprocessing() {
+      void dpcppParser::beforePreprocessing()
+      {
         preprocessor.addCompilerDefine("OCCA_USING_GPU", "1");
       }
 
-      void dpcppParser::beforeKernelSplit() {
+      void dpcppParser::beforeKernelSplit()
+      {
         updateConstToConstant();
 
-        if (!success) return;
+        if (!success)
+          return;
         setFunctionQualifiers();
 
-        if (!success) return;
+        if (!success)
+          return;
         setSharedQualifiers();
       }
 
-      void dpcppParser::afterKernelSplit() {
+      void dpcppParser::afterKernelSplit()
+      {
         addBarriers();
 
-        if (!success) return;
+        if (!success)
+          return;
         setupKernels();
-
       }
 
-      std::string dpcppParser::getOuterIterator(const int loopIndex) {
-        std::string name = "i_dpcpp_iterator.get_global_id(";
-        //name +=  (char)('1'+loopIndex);
-        name +=  (char)('1'-loopIndex);
-	name = name.append(")");
+      std::string dpcppParser::getOuterIterator(const int loopIndex)
+      {
+        std::string name = "i_dpcpp_iterator.get_group(";
+        name += (char)('2' - loopIndex);
+        // name +=  (char)('1'-loopIndex);
+        name = name.append(")");
         return name;
       }
 
-      std::string dpcppParser::getInnerIterator(const int loopIndex) {
-        std::string name = "i_dpcpp_iterator.get_global_id(";
+      std::string dpcppParser::getInnerIterator(const int loopIndex)
+      {
+        std::string name = "i_dpcpp_iterator.get_local_id(";
         //name += (char)('0'+loopIndex);
-        name += (char)('2'-loopIndex);
-	name = name.append(")");
+        name += (char)('2' - loopIndex);
+        name = name.append(")");
         return name;
       }
 
-      void dpcppParser::updateConstToConstant() {
-/*        const int childCount = (int) root.children.size();
+      void dpcppParser::updateConstToConstant()
+      {
+        /*        const int childCount = (int) root.children.size();
         for (int i = 0; i < childCount; ++i) {
           statement_t &child = *(root.children[i]);
           if (child.type() != statementType::declaration) {
@@ -74,24 +87,21 @@ namespace occa {
             }
           }
         }*/
-
-
-
-
       }
 
-      void dpcppParser::setFunctionQualifiers() {
+      void dpcppParser::setFunctionQualifiers()
+      {
         statementPtrVector funcSmnts;
         findStatementsByType(statementType::functionDecl,
                              root,
                              funcSmnts);
 
-        const int funcCount = (int) funcSmnts.size();
-        for (int i = 0; i < funcCount; ++i) {
-          functionDeclStatement &funcSmnt = (
-            *((functionDeclStatement*) funcSmnts[i])
-          );
-          if (funcSmnt.hasAttribute("kernel")) {
+        const int funcCount = (int)funcSmnts.size();
+        for (int i = 0; i < funcCount; ++i)
+        {
+          functionDeclStatement &funcSmnt = (*((functionDeclStatement *)funcSmnts[i]));
+          if (funcSmnt.hasAttribute("kernel"))
+          {
             continue;
           }
           vartype_t &vartype = funcSmnt.function.returnType;
@@ -100,8 +110,9 @@ namespace occa {
         }
       }
 
-      void dpcppParser::setSharedQualifiers() {
-/*        statementExprMap exprMap;
+      void dpcppParser::setSharedQualifiers()
+      {
+        /*        statementExprMap exprMap;
         findStatements(statementType::declaration,
                        exprNodeType::variable,
                        root,
@@ -122,7 +133,7 @@ namespace occa {
           ++it;
         }
 */
-/*	      root.addToScope(*memoryType);
+        /*	      root.addToScope(*memoryType);
         std::cout<<"DOING SOME TESTS"<<std::endl;
         std::cout<<root.toString()<<std::endl;
         std::cout<<"ENDING SOME TESTS"<<std::endl;
@@ -143,7 +154,7 @@ namespace occa {
         }
         }
 */
-/*	                     root.addToScope(*memoryType);
+        /*	                     root.addToScope(*memoryType);
         std::cout<<"DOING SOME TESTS"<<std::endl;
 //        std::cout<<root.toString()<<std::endl;
         std::cout<<"ENDING SOME TESTS"<<std::endl;
@@ -179,7 +190,8 @@ namespace occa {
 */
       }
 
-      void dpcppParser::addBarriers() {
+      void dpcppParser::addBarriers()
+      {
 
         statementPtrVector statements;
         findStatementsByAttr(statementType::empty,
@@ -187,18 +199,16 @@ namespace occa {
                              root,
                              statements);
 
-        const int count = (int) statements.size();
-        for (int i = 0; i < count; ++i) {
+        const int count = (int)statements.size();
+        for (int i = 0; i < count; ++i)
+        {
           // TODO 1.1: Implement proper barriers
-          emptyStatement &smnt = *((emptyStatement*) statements[i]);
+          emptyStatement &smnt = *((emptyStatement *)statements[i]);
 
-          statement_t &barrierSmnt = (
-            *(new expressionStatement(
-                smnt.up,
-                *(new identifierNode(smnt.source,
-                                     "i_dpcpp_iterator.barrier(sycl::access::fence_space::local_space)"))
-              ))
-          );
+          statement_t &barrierSmnt = (*(new expressionStatement(
+              smnt.up,
+              *(new identifierNode(smnt.source,
+                                   "i_dpcpp_iterator.barrier(sycl::access::fence_space::local_space)")))));
 
           smnt.up->addBefore(smnt,
                              barrierSmnt);
@@ -208,65 +218,75 @@ namespace occa {
         }
       }
 
-      void dpcppParser::setupKernels() {
+      void dpcppParser::setupKernels()
+      {
         statementPtrVector kernelSmnts;
         findStatementsByAttr(statementType::functionDecl,
                              "kernel",
                              root,
                              kernelSmnts);
 
-
-        const int kernelCount = (int) kernelSmnts.size();
-        for (int i = 0; i < kernelCount; ++i) {
-          functionDeclStatement &kernelSmnt = (
-            *((functionDeclStatement*) kernelSmnts[i])
-          );
+        const int kernelCount = (int)kernelSmnts.size();
+        for (int i = 0; i < kernelCount; ++i)
+        {
+          functionDeclStatement &kernelSmnt = (*((functionDeclStatement *)kernelSmnts[i]));
           setKernelQualifiers(kernelSmnt);
-          if (!success) return;
+          if (!success)
+            return;
         }
-	strVector headers;
-        const bool includingStd = settings.get("serial/include_std", true);
+        // const bool includingStd = settings.get("serial/include_std", true);
+        strVector headers;
         headers.push_back("include <CL/sycl.hpp>\n");
 
-        const int headerCount = (int) headers.size();
-        for (int i = 0; i < headerCount; ++i) {
+        const int headerCount = (int)headers.size();
+        for (int i = 0; i < headerCount; ++i)
+        {
           std::string header = headers[i];
           // TODO 1.1: Remove hack after methods are properly added
-          directiveToken token(root.source->origin,
-                               header);
-          root.addFirst(
-            *(new directiveStatement(&root, token))
-          );
-        }
+          if (0 == i)
+          {
+            header += "\nusing namespace cl::sycl;";
+          }
+          directiveToken token(root.source->origin, header);
 
+          root.addFirst(*(new directiveStatement(&root, token)));
+        }
       }
 
-      void dpcppParser::setKernelQualifiers(functionDeclStatement &kernelSmnt) {
+      void dpcppParser::setKernelQualifiers(functionDeclStatement &kernelSmnt)
+      {
         vartype_t &vartype = kernelSmnt.function.returnType;
         vartype.qualifiers.addFirst(vartype.origin(),
                                     externC);
 
-
         function_t &func = kernelSmnt.function;
 
-        const int argCount = (int) func.args.size();
+        const int argCount = (int)func.args.size();
 
-        variable_t queueArg(syclQueuePtr, "q");
+        variable_t queueArg(syclQueuePtr, "q_");
 
-        func.addArgument(queueArg);//const identifierToken &typeToken_, const type_t &type_
+        func.addArgument(queueArg); //const identifierToken &typeToken_, const type_t &type_
         variable_t ndRangeArg(syclNdRangePtr, "ndrange");
 
-        func.addArgument(ndRangeArg);//const identifierToken &typeToken_, const type_t &type_
+        func.addArgument(ndRangeArg); //const identifierToken &typeToken_, const type_t &type_
 
-        for (int i = 0; i < argCount; ++i) {
-                func.addArgument(*func.removeArgument(0));
+        for (int i = 0; i < argCount; ++i)
+        {
+          variable_t arg(*func.removeArgument(0));
+          vartype_t &type = arg.vartype;
+          if (!(type.isPointerType() || type.referenceToken))
+          {
+            operatorToken opToken(arg.source->origin, op::bitAnd);
+            type.setReferenceToken(&opToken);
+          }
+          func.addArgument(arg);
         }
-
       }
 
-      bool dpcppParser::sharedVariableMatcher(exprNode &expr) {
+      bool dpcppParser::sharedVariableMatcher(exprNode &expr)
+      {
         return expr.hasAttribute("shared");
       }
-    }
-  }
-}
+    } // namespace okl
+  }   // namespace lang
+} // namespace occa

@@ -6,58 +6,66 @@
 #include <occa/modes/dpcpp/device.hpp>
 #include <occa/modes/dpcpp/utils.hpp>
 
-namespace occa {
-  namespace dpcpp {
-      kernel::kernel(modeDevice_t *modeDevice_,
+namespace occa
+{
+  namespace dpcpp
+  {
+    kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
-                   const occa::properties &properties_) :
-      occa::modeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
-      dlHandle(NULL),
-      function(NULL),
-      isLauncherKernel(true) {
+                   const occa::properties &properties_) : occa::modeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
+                                                          dlHandle(NULL),
+                                                          function(NULL),
+                                                          isLauncherKernel(true)
+    {
       properties["compiler"] = "dpcpp";
       properties["compiler_linker_flags"] = "-shared -fPIC";
-
-      }
-
-
-
-    kernel::~kernel() {
     }
 
-    ::sycl::queue* kernel::getCommandQueue() const {
-      return ((device*) modeDevice)->getCommandQueue();
+    kernel::~kernel()
+    {
     }
 
-    int kernel::maxDims() const {
+    ::sycl::queue *kernel::getCommandQueue() const
+    {
+      return ((device *)modeDevice)->getCommandQueue();
+    }
+
+    int kernel::maxDims() const
+    {
       static cl_uint dims_ = 0;
       dims_ = getCommandQueue()->get_device().get_info<::sycl::info::device::max_work_item_dimensions>();
-      return (int) dims_;
+      return (int)dims_;
     }
 
-    const lang::kernelMetadata_t& kernel::getMetadata() const {
+    const lang::kernelMetadata_t &kernel::getMetadata() const
+    {
       return metadata;
     }
 
-    dim kernel::maxOuterDims() const {
+    dim kernel::maxOuterDims() const
+    {
       // TODO 1.1: This should be in the device, not the kernel
       static occa::dim maxOuterDims_(0);
-      if (maxOuterDims_.x == 0) {
+      if (maxOuterDims_.x == 0)
+      {
         int dims_ = maxDims();
-        ::sycl::id<3> od=getCommandQueue()->get_device().get_info<::sycl::info::device::max_work_item_sizes>();
-        for (int i = 0; i < dims_; ++i) {
+        ::sycl::id<3> od = getCommandQueue()->get_device().get_info<::sycl::info::device::max_work_item_sizes>();
+        for (int i = 0; i < dims_; ++i)
+        {
           maxOuterDims_[i] = (size_t)od[i];
         }
       }
       return maxOuterDims_;
     }
 
-    dim kernel::maxInnerDims() const {
+    dim kernel::maxInnerDims() const
+    {
       // TODO 1.1: This should be in the device, not the kernel
       static cl_uint dims_ = 0;
       static occa::dim maxInnerDims_(0);
-      if (maxInnerDims_.x == 0) {
+      if (maxInnerDims_.x == 0)
+      {
         dims_ = getCommandQueue()->get_device().get_info<::sycl::info::device::max_work_group_size>();
         maxInnerDims_.x = dims_;
         maxInnerDims_.y = dims_;
@@ -66,26 +74,24 @@ namespace occa {
       return maxInnerDims_;
     }
 
-    void kernel::run() const {
+    void kernel::run() const
+    {
       // Setup kernel dimensions
       occa::dim fullDims = (outerDims * innerDims);
+      ::sycl::range<3> global_range(fullDims.z, fullDims.y, fullDims.x);
+      ::sycl::range<3> local_range(innerDims.z, innerDims.y, innerDims.x);
+      ::sycl::nd_range<3> ndrange(global_range, local_range);
+
+      std::vector<void *> args;
+
       ::sycl::queue *q = getCommandQueue();
-      //int odimx = (innerDims.x % outerDims.x == 0)? innerDims.x : outerDims.x * ((innerDims.x / outerDims.x)+1);
-      int odimx = outerDims.x ;
-      //int odimy = (innerDims.y % outerDims.y == 0)? innerDims.y : outerDims.y * ((innerDims.y / outerDims.y)+1);
-      int odimy = outerDims.y;
-      //int odimz = (innerDims.z % outerDims.z == 0)? innerDims.z : outerDims.z * ((innerDims.z / outerDims.z)+1);
-      int odimz = outerDims.z;
-      auto global_range = ::sycl::range<3>(odimz, odimy, odimx);
-      auto local_range  = ::sycl::range<3>(innerDims.z, innerDims.y, innerDims.x);
-      std::vector<void*> args;
-      ::sycl::nd_range<3> ndrange = ::sycl::nd_range<3>(global_range, local_range);
       args.push_back(q);
       args.push_back(&ndrange);
-      for(int i=0; i<arguments.size(); i++){
-	args.push_back(arguments[i].ptr());
+      for (size_t i = 0; i < arguments.size(); ++i)
+      {
+        args.push_back(arguments[i].ptr());
       }
       sys::runFunction(function, args.size(), &(args[0]));
     }
-  }
-}
+  } // namespace dpcpp
+} // namespace occa
