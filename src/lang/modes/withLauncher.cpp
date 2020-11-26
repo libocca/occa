@@ -150,6 +150,17 @@ namespace occa {
         return true;
       }
 
+      bool withLauncher::isLastInnerLoop(forStatement &forSmnt) {
+        blockStatement &parent = *(forSmnt.up);
+        for(int smntIndex = forSmnt.childIndex()+1; smntIndex<parent.size(); smntIndex++) {
+          if ((parent[smntIndex]->type() & statementType::for_)
+              && parent[smntIndex]->hasAttribute("inner")) {
+            return false;
+          }
+        }
+        return true;
+      }
+
       void withLauncher::setKernelLaunch(functionDeclStatement &kernelSmnt,
                                          forStatement &forSmnt,
                                          const int kernelIndex) {
@@ -453,8 +464,8 @@ namespace occa {
               .forEach([&](statement_t *smnt) {
                   forStatement &innerSmnt = (forStatement&) *smnt;
 
-                  // TODO 1.1: Only apply barriers when needed in the last inner-loop
-                  if (isOuterMostInnerLoop(innerSmnt) )
+                  //Only apply barriers when needed in the last inner-loop
+                  if (isOuterMostInnerLoop(innerSmnt) && !isLastInnerLoop(innerSmnt))
                     addBarriersAfterInnerLoop(innerSmnt);
                 });
         }
