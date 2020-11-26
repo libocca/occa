@@ -446,20 +446,24 @@ namespace occa {
                 replaceOccaFor(outerSmnt);
               });
 
-        const bool applyBarriers = usesBarriers();
+        if (usesBarriers()) {
+          statementArray::from(kernelSmnt)
+              .flatFilterByAttribute("inner")
+              .filterByStatementType(statementType::for_)
+              .forEach([&](statement_t *smnt) {
+                  forStatement &innerSmnt = (forStatement&) *smnt;
+
+                  // TODO 1.1: Only apply barriers when needed in the last inner-loop
+                  if (isOuterMostInnerLoop(innerSmnt) )
+                    addBarriersAfterInnerLoop(innerSmnt);
+                });
+        }
 
         statementArray::from(kernelSmnt)
             .flatFilterByAttribute("inner")
             .filterByStatementType(statementType::for_)
             .forEach([&](statement_t *smnt) {
                 forStatement &innerSmnt = (forStatement&) *smnt;
-
-                // TODO 1.1: Only apply barriers when needed in the last inner-loop
-                if (applyBarriers &&
-                    isOuterMostInnerLoop(innerSmnt)) {
-                  addBarriersAfterInnerLoop(innerSmnt);
-                }
-
                 replaceOccaFor(innerSmnt);
               });
       }
