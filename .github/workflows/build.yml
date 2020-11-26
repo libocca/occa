@@ -114,7 +114,9 @@ jobs:
       if: ${{ !matrix.useCMake }}
 
     - name: Run CTests
-      run: make test
+      run: |
+        cd ${{runner.workspace}}/occa/build
+        make test
       if: ${{ matrix.useCMake }}
 
     - name: Upload code coverage
