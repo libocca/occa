@@ -28,10 +28,10 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
   set(CMAKE_CXX_FLAGS_RELEASE "-O1 -DNDEBUG")
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SUPPORTED_WARN_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${SUPPORTED_WARN_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
 
 set_optional_cxx_flag(SUPPORTED_WERROR_CXX_FLAGS "-Werror")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${SUPPORTED_WERROR_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS_DEBUG "${SUPPORTED_WERROR_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
 
 include(CheckCCompilerFlag)
 
@@ -56,10 +56,10 @@ set_optional_c_flag(SUPPORTED_WARN_C_FLAGS "-Wno-c++11-long-long")
 set_optional_c_flag(SUPPORTED_WARN_C_FLAGS "-diag-disable 11074 -diag-disable 11076")   # Disable warnings about inline limits reached
 set_optional_c_flag(SUPPORTED_WARN_C_FLAGS "--display_error_number")  # Show PGI error numbers
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SUPPORTED_WARN_C_FLAGS}")
+set(CMAKE_C_FLAGS "${SUPPORTED_WARN_C_FLAGS} ${CMAKE_C_FLAGS}")
 
 set_optional_c_flag(SUPPORTED_WERROR_C_FLAGS "-Werror")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${SUPPORTED_WERROR_C_FLAGS}")
+set(CMAKE_C_FLAGS_DEBUG "${SUPPORTED_WERROR_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG}")
 
 if (ENABLE_FORTRAN)
   include(CheckFortranCompilerFlag)

@@ -25,7 +25,7 @@ jobs:
             os: ubuntu-18.04
             CC: gcc-8
             CXX: g++-8
-            CXXFLAGS: -Wno-maybe-uninitialized
+            CXXFLAGS: -Wno-maybe-uninitialized -Wno-cpp
             GCOV: gcov-8
             OCCA_COVERAGE: 1
             useCMake: true
