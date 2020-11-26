@@ -57,9 +57,25 @@ namespace occa {
       return rightValue->endNode();
     }
 
-    void binaryOpNode::setChildren(exprNodeRefVector &children) {
-      children.push_back(&leftValue);
-      children.push_back(&rightValue);
+    void binaryOpNode::pushChildNodes(exprNodeVector &children) {
+      children.push_back(leftValue);
+      children.push_back(rightValue);
+    }
+
+    bool binaryOpNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      if (currentNode == leftValue) {
+        delete leftValue;
+        leftValue = newNode;
+        return true;
+      }
+
+      if (currentNode == rightValue) {
+        delete rightValue;
+        rightValue = newNode;
+        return true;
+      }
+
+      return false;
     }
 
     variable_t* binaryOpNode::getVariable() {

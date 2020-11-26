@@ -2,6 +2,7 @@
 #include <occa/lang/modes/opencl.hpp>
 #include <occa/lang/modes/okl.hpp>
 #include <occa/lang/modes/oklForStatement.hpp>
+#include <occa/lang/expr.hpp>
 #include <occa/lang/builtins/attributes.hpp>
 #include <occa/lang/builtins/types.hpp>
 
@@ -16,7 +17,7 @@ namespace occa {
         kernel("__kernel", qualifierType::custom),
         local("__local", qualifierType::custom) {
 
-        okl::addAttributes(*this);
+        okl::addOklAttributes(*this);
 
         if (!settings.has("okl/restrict")) {
           settings["okl/restrict"] = "restrict";
@@ -102,45 +103,24 @@ namespace occa {
       }
 
       void openclParser::updateConstToConstant() {
-        const int childCount = (int) root.children.size();
-        for (int i = 0; i < childCount; ++i) {
-          statement_t &child = *(root.children[i]);
-          if (child.type() != statementType::declaration) {
-            continue;
-          }
-          declarationStatement &declSmnt = ((declarationStatement&) child);
-          const int declCount = declSmnt.declarations.size();
-          for (int di = 0; di < declCount; ++di) {
-            variable_t &var = *(declSmnt.declarations[di].variable);
-            if (var.has(const_) && !var.has(typedef_)) {
-              var -= const_;
-              var.add(0, constant);
-            }
-          }
-        }
+        root.children
+            .forEachDeclaration([&](variableDeclaration &decl) {
+                variable_t &var = decl.variable();
+                if (var.has(const_) && !var.has(typedef_)) {
+                  var -= const_;
+                  var.add(0, constant);
+                }
+              });
       }
 
       void openclParser::setLocalQualifiers() {
-        statementExprMap exprMap;
-        findStatements(statementType::declaration,
-                       exprNodeType::variable,
-                       root,
-                       sharedVariableMatcher,
-                       exprMap);
-
-        statementExprMap::iterator it = exprMap.begin();
-        while (it != exprMap.end()) {
-          declarationStatement &declSmnt = *((declarationStatement*) it->first);
-          const int declCount = declSmnt.declarations.size();
-          for (int i = 0; i < declCount; ++i) {
-            variable_t &var = *(declSmnt.declarations[i].variable);
-            if (!var.hasAttribute("shared")) {
-              continue;
-            }
-            var.add(0, local);
-          }
-          ++it;
-        }
+        statementArray::from(root)
+            .nestedForEachDeclaration([&](variableDeclaration &decl) {
+                variable_t &var = decl.variable();
+                if (var.hasAttribute("shared")) {
+                  var.add(0, local);
+                }
+              });
       }
 
       bool openclParser::sharedVariableMatcher(exprNode &expr) {
@@ -148,42 +128,35 @@ namespace occa {
       }
 
       void openclParser::setGlobalQualifiers() {
-        statementPtrVector statements;
-        findStatements((statementType::declaration |
-                        statementType::struct_ |
-                        statementType::functionDecl |
-                        statementType::function),
-                       root,
-                       updateGlobalVariables,
-                       statements);
+        root.children
+            .flatFilterByStatementType(
+              statementType::declaration
+              | statementType::functionDecl
+              | statementType::function
+            )
+            .forEach(updateGlobalVariables);
       }
 
-      bool openclParser::updateGlobalVariables(statement_t &smnt) {
-        if (smnt.type() & statementType::function) {
+      void openclParser::updateGlobalVariables(statement_t *smnt) {
+        if (smnt->type() & statementType::function) {
           addGlobalToFunctionArgs(
-            smnt.to<functionStatement>().function
+            smnt->to<functionStatement>().function()
           );
         }
-        else if (smnt.type() & statementType::functionDecl) {
+        else if (smnt->type() & statementType::functionDecl) {
           addGlobalToFunctionArgs(
-            smnt.to<functionDeclStatement>().function
-          );
-        }
-        else if (smnt.type() & statementType::struct_) {
-          addGlobalToStruct(
-            smnt.to<structStatement>().struct_
+            smnt->to<functionDeclStatement>().function()
           );
         }
         else {
-          declarationStatement &declSmnt = smnt.to<declarationStatement>();
+          declarationStatement &declSmnt = smnt->to<declarationStatement>();
           const int declCount = declSmnt.declarations.size();
           for (int i = 0; i < declCount; ++i) {
             addGlobalToVariable(
-              *(declSmnt.declarations[i].variable)
+              declSmnt.declarations[i].variable()
             );
           }
         }
-        return false;
       }
 
       void openclParser::addGlobalToFunctionArgs(function_t &func) {
@@ -196,28 +169,21 @@ namespace occa {
         }
       }
 
-      void openclParser::addGlobalToStruct(struct_t &struct__) {
-        const int fieldCount = (int) struct__.fields.size();
-        for (int i = 0; i < fieldCount; ++i) {
-          addGlobalToVariable(struct__.fields[i]);
-        }
-      }
-
       void openclParser::addGlobalToVariable(variable_t &var) {
         if (var.hasAttribute("globalPtr")) {
           var.add(0, global);
         }
       }
 
-      bool openclParser::updateScopeStructVariables(statement_t &smnt) {
-        if (smnt.type() & statementType::function) {
+      void openclParser::updateScopeStructVariables(statement_t *smnt) {
+        if (smnt->type() & statementType::function) {
           addStructToFunctionArgs(
-            smnt.to<functionStatement>().function
+            smnt->to<functionStatement>().function()
           );
-          return false;
+          return;
         }
 
-        scope_t &scope = smnt.to<blockStatement>().scope;
+        scope_t &scope = smnt->to<blockStatement>().scope;
 
         keywordMap::iterator it = scope.keywords.begin();
         while (it != scope.keywords.end()) {
@@ -226,13 +192,13 @@ namespace occa {
           if (keyword.type() & keywordType::variable) {
             addStructToVariable(keyword.to<variableKeyword>().variable);
           } else if (keyword.type() & keywordType::function) {
-            addStructToFunctionArgs(keyword.to<functionKeyword>().function);
+            addStructToFunctionArgs(
+              keyword.to<functionKeyword>().function
+            );
           }
 
           ++it;
         }
-
-        return false;
       }
 
       void openclParser::addStructToVariable(variable_t &var) {
@@ -255,106 +221,81 @@ namespace occa {
       }
 
       void openclParser::addBarriers() {
-        statementPtrVector statements;
-        findStatementsByAttr(statementType::empty,
-                             "barrier",
-                             root,
-                             statements);
+        statementArray::from(root)
+            .flatFilterByStatementType(statementType::empty, "barrier")
+            .forEach([&](statement_t *smnt) {
+                // TODO 1.1: Implement proper barriers
+                emptyStatement &emptySmnt = (emptyStatement&) *smnt;
 
-        const int count = (int) statements.size();
-        for (int i = 0; i < count; ++i) {
-          // TODO 1.1: Implement proper barriers
-          emptyStatement &smnt = *((emptyStatement*) statements[i]);
+                statement_t &barrierSmnt = (
+                  *(new sourceCodeStatement(
+                      emptySmnt.up,
+                      emptySmnt.source,
+                      "barrier(CLK_LOCAL_MEM_FENCE);"
+                    ))
+                );
 
-          statement_t &barrierSmnt = (
-            *(new expressionStatement(
-                smnt.up,
-                *(new identifierNode(smnt.source,
-                                     "barrier(CLK_LOCAL_MEM_FENCE)"))
-              ))
-          );
+                emptySmnt.replaceWith(barrierSmnt);
 
-          smnt.up->addBefore(smnt,
-                             barrierSmnt);
-
-          smnt.up->remove(smnt);
-          delete &smnt;
-        }
+                delete &emptySmnt;
+              });
       }
 
       void openclParser::addFunctionPrototypes() {
-        const int childCount = (int) root.children.size();
-        int index = 0;
-        for (int i = 0; i < childCount; ++i) {
-          statement_t &child = *(root.children[index]);
-          ++index;
-          if (child.type() != statementType::functionDecl) {
-            continue;
-          }
-          function_t &func = ((functionDeclStatement&) child).function;
-          functionStatement *funcSmnt = (
-            new functionStatement(&root,
-                                  (function_t&) func.clone())
-          );
-          funcSmnt->attributes = child.attributes;
+        statementArray::from(root)
+            .flatFilterByStatementType(statementType::functionDecl)
+            .forEach([&](statement_t *smnt) {
+                function_t &func = ((functionDeclStatement&) *smnt).function();
+                functionStatement *funcSmnt = (
+                  new functionStatement(&root,
+                                        (function_t&) func.clone())
+                );
+                funcSmnt->attributes = smnt->attributes;
 
-          root.add(*funcSmnt, index - 1);
-          ++index;
-        }
+                root.addBefore(*smnt, *funcSmnt);
+              });
       }
 
       void openclParser::addStructQualifiers() {
-        statementPtrVector statements;
-        findStatements(statementType::blockStatements |
-                       statementType::function,
-                       root,
-                       updateScopeStructVariables,
-                       statements);
+        statementArray::from(root)
+            .flatFilterByStatementType(
+              statementType::blockStatements
+              | statementType::function
+            )
+            .forEach(updateScopeStructVariables);
       }
 
       void openclParser::setupKernels() {
-        statementPtrVector kernelSmnts;
-        findStatementsByAttr((statementType::functionDecl |
-                              statementType::function),
-                             "kernel",
-                             root,
-                             kernelSmnts);
+        statementArray::from(root)
+            .flatFilterByStatementType(
+              statementType::functionDecl | statementType::function,
+              "kernel"
+            )
+            .forEach([&](statement_t *smnt) {
+                function_t *function;
 
-        const int kernelCount = (int) kernelSmnts.size();
-        for (int i = 0; i < kernelCount; ++i) {
-          function_t *function;
-          if (kernelSmnts[i]->type() & statementType::functionDecl) {
-            function = &(((functionDeclStatement*) kernelSmnts[i])->function);
+                if (smnt->type() & statementType::functionDecl) {
+                  function = &(((functionDeclStatement*) smnt)->function());
 
-            migrateLocalDecls(*((functionDeclStatement*) kernelSmnts[i]));
-            if (!success) return;
-          } else {
-            function = &(((functionStatement*) kernelSmnts[i])->function);
-          }
-          setKernelQualifiers(*function);
-          if (!success) return;
-        }
+                  migrateLocalDecls((functionDeclStatement&) *smnt);
+                  if (!success) return;
+                } else {
+                  function = &(((functionStatement*) smnt)->function());
+                }
+
+                setKernelQualifiers(*function);
+            });
       }
 
       void openclParser::migrateLocalDecls(functionDeclStatement &kernelSmnt) {
-        statementExprMap exprMap;
-        findStatements(statementType::declaration,
-                       exprNodeType::variable,
-                       kernelSmnt,
-                       sharedVariableMatcher,
-                       exprMap);
-
-        statementExprMap::iterator it = exprMap.begin();
-        while (it != exprMap.end()) {
-          declarationStatement &declSmnt = *((declarationStatement*) it->first);
-          variable_t *var = declSmnt.declarations[0].variable;
-
-          if (var->hasAttribute("shared")) {
-            declSmnt.removeFromParent();
-            kernelSmnt.addFirst(declSmnt);
-          }
-          ++it;
-        }
+        statementArray::from(kernelSmnt)
+            .nestedForEachDeclaration([&](variableDeclaration &decl, declarationStatement &declSmnt) {
+                variable_t &var = decl.variable();
+                if (var.hasAttribute("shared")) {
+                  declSmnt.removeFromParent();
+                  kernelSmnt.addFirst(declSmnt);
+                }
+              });
       }
 
       void openclParser::setKernelQualifiers(function_t &function) {

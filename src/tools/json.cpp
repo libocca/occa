@@ -533,7 +533,7 @@ namespace occa {
     OCCA_ERROR("Can only apply operator [] with JSON arrays",
                type == array_);
     const int arraySize = (int) value_.array.size();
-    if (arraySize < n) {
+    if (arraySize <= n) {
       value_.array.resize(n + 1);
       for (int i = arraySize; i < n; ++i) {
         value_.array[i].asNull();

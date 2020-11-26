@@ -37,6 +37,16 @@ namespace occa {
       return isDoWhile ? "do while" : "while";
     }
 
+    statementArray whileStatement::getInnerStatements() {
+      statementArray arr;
+
+      if (condition) {
+        arr.push(condition);
+      }
+
+      return arr;
+    }
+
     void whileStatement::print(printer &pout) const {
       pout.printStartIndentation();
       if (!isDoWhile) {

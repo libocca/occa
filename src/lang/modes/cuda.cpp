@@ -2,8 +2,10 @@
 #include <occa/lang/modes/cuda.hpp>
 #include <occa/lang/modes/okl.hpp>
 #include <occa/lang/modes/oklForStatement.hpp>
+#include <occa/lang/expr.hpp>
 #include <occa/lang/builtins/attributes.hpp>
 #include <occa/lang/builtins/types.hpp>
+#include <occa/lang/builtins/attributes/atomic.hpp>
 
 namespace occa {
   namespace lang {
@@ -15,7 +17,7 @@ namespace occa {
         device("__device__", qualifierType::custom),
         shared("__shared__", qualifierType::custom) {
 
-        okl::addAttributes(*this);
+        okl::addOklAttributes(*this);
       }
 
       void cudaParser::onClear() {
@@ -41,6 +43,9 @@ namespace occa {
 
         if (!success) return;
         setupKernels();
+
+        if (!success) return;
+        setupAtomics();
       }
 
       std::string cudaParser::getOuterIterator(const int loopIndex) {
@@ -56,122 +61,150 @@ namespace occa {
       }
 
       void cudaParser::updateConstToConstant() {
-        const int childCount = (int) root.children.size();
-        for (int i = 0; i < childCount; ++i) {
-          statement_t &child = *(root.children[i]);
-          if (child.type() != statementType::declaration) {
-            continue;
-          }
-          declarationStatement &declSmnt = ((declarationStatement&) child);
-          const int declCount = declSmnt.declarations.size();
-          for (int di = 0; di < declCount; ++di) {
-            variable_t &var = *(declSmnt.declarations[di].variable);
-            if (var.has(const_) && !var.has(typedef_)) {
-              var -= const_;
-              var += constant;
-            }
-          }
-        }
+        root.children
+            .forEachDeclaration([&](variableDeclaration &decl) {
+                variable_t &var = decl.variable();
+
+                if (var.has(const_) && !var.has(typedef_)) {
+                  var -= const_;
+                  var += constant;
+                }
+              });
       }
 
       void cudaParser::setFunctionQualifiers() {
-        statementPtrVector funcSmnts;
-        findStatementsByType(statementType::functionDecl,
-                             root,
-                             funcSmnts);
+        root.children
+            .filterByStatementType(statementType::functionDecl)
+            .forEach([&](statement_t *smnt) {
+                functionDeclStatement &funcDeclSmnt = (functionDeclStatement&) *smnt;
 
-        const int funcCount = (int) funcSmnts.size();
-        for (int i = 0; i < funcCount; ++i) {
-          functionDeclStatement &funcSmnt = (
-            *((functionDeclStatement*) funcSmnts[i])
-          );
-          if (funcSmnt.hasAttribute("kernel")) {
-            continue;
-          }
-          vartype_t &vartype = funcSmnt.function.returnType;
-          vartype.qualifiers.addFirst(vartype.origin(),
-                                      device);
-        }
+                // Only add __device__ to non-kernel functions
+                if (funcDeclSmnt.hasAttribute("kernel")) {
+                  return;
+                }
+
+                vartype_t &vartype = funcDeclSmnt.function().returnType;
+                vartype.qualifiers.addFirst(vartype.origin(),
+                                            device);
+              });
       }
 
       void cudaParser::setSharedQualifiers() {
-        statementExprMap exprMap;
-        findStatements(statementType::declaration,
-                       exprNodeType::variable,
-                       root,
-                       sharedVariableMatcher,
-                       exprMap);
-
-        statementExprMap::iterator it = exprMap.begin();
-        while (it != exprMap.end()) {
-          declarationStatement &declSmnt = *((declarationStatement*) it->first);
-          const int declCount = declSmnt.declarations.size();
-          for (int i = 0; i < declCount; ++i) {
-            variable_t &var = *(declSmnt.declarations[i].variable);
-            if (!var.hasAttribute("shared")) {
-              continue;
-            }
-            var += shared;
-          }
-          ++it;
-        }
+        statementArray::from(root)
+            .flatFilterByStatementType(statementType::declaration)
+            .forEach([&](statement_t *smnt) {
+                declarationStatement &declSmnt = *((declarationStatement*) smnt);
+                for (variableDeclaration &varDecl : declSmnt.declarations) {
+                  variable_t &var = varDecl.variable();
+                  if (var.hasAttribute("shared")) {
+                    var += shared;
+                  }
+                }
+              });
       }
 
       void cudaParser::addBarriers() {
-        statementPtrVector statements;
-        findStatementsByAttr(statementType::empty,
-                             "barrier",
-                             root,
-                             statements);
+        statementArray::from(root)
+            .flatFilterByStatementType(statementType::empty, "barrier")
+            .forEach([&](statement_t *smnt) {
+                // TODO: Implement proper barriers
+                emptyStatement &emptySmnt = *((emptyStatement*) smnt);
 
-        const int count = (int) statements.size();
-        for (int i = 0; i < count; ++i) {
-          // TODO 1.1: Implement proper barriers
-          emptyStatement &smnt = *((emptyStatement*) statements[i]);
+                statement_t &barrierSmnt = (
+                  *(new sourceCodeStatement(
+                      emptySmnt.up,
+                      emptySmnt.source,
+                      " __syncthreads();"
+                    ))
+                );
 
-          statement_t &barrierSmnt = (
-            *(new expressionStatement(
-                smnt.up,
-                *(new identifierNode(smnt.source,
-                                     " __syncthreads()"))
-              ))
-          );
-
-          smnt.up->addBefore(smnt,
-                             barrierSmnt);
-
-          smnt.up->remove(smnt);
-          delete &smnt;
-        }
+                emptySmnt.replaceWith(barrierSmnt);
+                delete &emptySmnt;
+              });
       }
 
       void cudaParser::setupKernels() {
-        statementPtrVector kernelSmnts;
-        findStatementsByAttr(statementType::functionDecl,
-                             "kernel",
-                             root,
-                             kernelSmnts);
+        root.children
+            .forEachKernelStatement([&](functionDeclStatement &kernelSmnt) {
+                // Set kernel qualifiers
+                vartype_t &vartype = kernelSmnt.function().returnType;
+                vartype.qualifiers.addFirst(vartype.origin(),
+                                            global);
+                vartype.qualifiers.addFirst(vartype.origin(),
+                                            externC);
+              });
+      }
 
-        const int kernelCount = (int) kernelSmnts.size();
-        for (int i = 0; i < kernelCount; ++i) {
-          functionDeclStatement &kernelSmnt = (
-            *((functionDeclStatement*) kernelSmnts[i])
-          );
-          setKernelQualifiers(kernelSmnt);
-          if (!success) return;
+      void cudaParser::setupAtomics() {
+        success &= attributes::atomic::applyCodeTransformation(
+          root,
+          transformBlockStatement,
+          transformBasicExpressionStatement
+        );
+      }
+
+      bool cudaParser::transformBlockStatement(blockStatement &blockSmnt) {
+        blockSmnt.printError("Unable to transform general @atomic code");
+        return false;
+      }
+
+      bool cudaParser::transformBasicExpressionStatement(expressionStatement &exprSmnt) {
+        // TODO: Create actual statements + expressions, don't just shove strings in
+        const opType_t &opType = expr(exprSmnt.expr).opType();
+
+        printer pout;
+        if (opType & operatorType::unary) {
+          // Cases:
+          //   @atomic --i;
+          //   @atomic i--;
+          //   @atomic ++i;
+          //   @atomic i++;
+          expr variable;
+          if (opType & operatorType::leftUnary) {
+            variable = ((leftUnaryOpNode*) exprSmnt.expr)->value;
+          }
+          else if (opType & operatorType::rightUnary) {
+            variable = ((rightUnaryOpNode*) exprSmnt.expr)->value;
+          }
+          // Build source code
+          if (opType & operatorType::increment) {
+            pout << "atomicInc(&" << expr::parens(variable) << ");";
+          } else if (opType & operatorType::decrement) {
+            pout << "atomicDec(&" << expr::parens(variable) << ");";
+          } else {
+            exprSmnt.printError("Unable to transform @atomic code");
+            return false;
+          }
         }
-      }
+        else if (opType & operatorType::binary) {
+          // Cases:
+          //   @atomic i += 1;
+          //   @atomic i -= 1;
+          binaryOpNode &binaryNode = (binaryOpNode&) *exprSmnt.expr;
+          expr variable = binaryNode.leftValue;
+          expr value = binaryNode.rightValue;
+          if (opType & operatorType::addEq) {
+            pout << "atomicAdd(&" << expr::parens(variable) << ", " << value << ");";
+          } else if (opType & operatorType::subEq) {
+            pout << "atomicSub(&" << expr::parens(variable) << ", " << value << ");";
+          } else {
+            exprSmnt.printError("Unable to transform @atomic code");
+            return false;
+          }
+        }
 
-      void cudaParser::setKernelQualifiers(functionDeclStatement &kernelSmnt) {
-        vartype_t &vartype = kernelSmnt.function.returnType;
-        vartype.qualifiers.addFirst(vartype.origin(),
-                                    global);
-        vartype.qualifiers.addFirst(vartype.origin(),
-                                    externC);
-      }
+        statement_t &atomicSmnt = (
+          *(new sourceCodeStatement(
+              exprSmnt.up,
+              exprSmnt.source,
+              pout.str()
+            ))
+        );
 
-      bool cudaParser::sharedVariableMatcher(exprNode &expr) {
-        return expr.hasAttribute("shared");
+        exprSmnt.replaceWith(atomicSmnt);
+        delete &exprSmnt;
+
+        return true;
       }
     }
   }

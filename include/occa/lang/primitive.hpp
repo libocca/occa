@@ -53,6 +53,7 @@ namespace occa {
   class primitive {
   public:
     int type;
+    std::string source;
 
     union {
       bool bool_;
@@ -79,8 +80,16 @@ namespace occa {
     }
 
     inline primitive(const primitive &p) :
-      type(p.type) {
+        type(p.type),
+        source(p.source) {
       value.ptr = p.value.ptr;
+    }
+
+    inline primitive& operator = (const primitive &p) {
+      type = p.type;
+      source = p.source;
+      value.ptr = p.value.ptr;
+      return *this;
     }
 
     primitive(const char *c);
@@ -321,6 +330,8 @@ namespace occa {
     }
 
     std::string toString() const;
+    std::string toBinaryString() const;
+    std::string toHexString() const;
 
     friend io::output& operator << (io::output &out,
                                     const primitive &p);

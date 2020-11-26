@@ -37,9 +37,11 @@ namespace occa {
 
         void setupKernels();
 
-        void setKernelQualifiers(functionDeclStatement &kernelSmnt);
+        void setupAtomics();
 
-        static bool sharedVariableMatcher(exprNode &expr);
+        static bool transformBlockStatement(blockStatement &blockSmnt);
+
+        static bool transformBasicExpressionStatement(expressionStatement &exprSmnt);
       };
     }
   }

@@ -7,19 +7,19 @@ namespace occa {
   namespace lang {
     class tokenContext_t;
     class statementContext_t;
-    class keywords_t;
+    class parser_t;
 
     class variableLoader_t {
     private:
       tokenContext_t &tokenContext;
       statementContext_t &smntContext;
-      const keywords_t &keywords;
+      parser_t &parser;
       nameToAttributeMap &attributeMap;
       bool success;
 
       variableLoader_t(tokenContext_t &tokenContext_,
                        statementContext_t &smntContext_,
-                       const keywords_t &keywords_,
+                       parser_t &parser_,
                        nameToAttributeMap &attributeMap_);
 
       bool loadVariable(variable_t &var);
@@ -50,36 +50,36 @@ namespace occa {
 
       friend bool loadVariable(tokenContext_t &tokenContext,
                                statementContext_t &smntContext,
-                               const keywords_t &keywords,
+                               parser_t &parser,
                                nameToAttributeMap &attributeMap,
                                variable_t &var);
 
       friend bool loadVariable(tokenContext_t &tokenContext,
                                statementContext_t &smntContext,
-                               const keywords_t &keywords,
+                               parser_t &parser,
                                nameToAttributeMap &attributeMap,
                                vartype_t &vartype,
                                variable_t &var);
 
       friend bool loadFunction(tokenContext_t &tokenContext,
                                statementContext_t &smntContext,
-                               const keywords_t &keywords,
+                               parser_t &parser,
                                nameToAttributeMap &attributeMap,
                                function_t &func);
 
       friend bool isLoadingVariable(tokenContext_t &tokenContext,
                                     statementContext_t &smntContext,
-                                    const keywords_t &keywords,
+                                    parser_t &parser,
                                     nameToAttributeMap &attributeMap);
 
       friend bool isLoadingFunction(tokenContext_t &tokenContext,
                                     statementContext_t &smntContext,
-                                    const keywords_t &keywords,
+                                    parser_t &parser,
                                     nameToAttributeMap &attributeMap);
 
       friend bool isLoadingFunctionPointer(tokenContext_t &tokenContext,
                                            statementContext_t &smntContext,
-                                           const keywords_t &keywords,
+                                           parser_t &parser,
                                            nameToAttributeMap &attributeMap);
     };
 
@@ -88,36 +88,36 @@ namespace occa {
 
     bool loadVariable(tokenContext_t &tokenContext,
                       statementContext_t &smntContext,
-                      const keywords_t &keywords,
+                      parser_t &parser,
                       nameToAttributeMap &attributeMap,
                       variable_t &var);
 
     bool loadVariable(tokenContext_t &tokenContext,
                       statementContext_t &smntContext,
-                      const keywords_t &keywords,
+                      parser_t &parser,
                       nameToAttributeMap &attributeMap,
                       vartype_t &vartype,
                       variable_t &var);
 
     bool loadFunction(tokenContext_t &tokenContext,
                       statementContext_t &smntContext,
-                      const keywords_t &keywords,
+                      parser_t &parser,
                       nameToAttributeMap &attributeMap,
                       function_t &func);
 
     bool isLoadingVariable(tokenContext_t &tokenContext,
                            statementContext_t &smntContext,
-                           const keywords_t &keywords,
+                           parser_t &parser,
                            nameToAttributeMap &attributeMap);
 
     bool isLoadingFunction(tokenContext_t &tokenContext,
                            statementContext_t &smntContext,
-                           const keywords_t &keywords,
+                           parser_t &parser,
                            nameToAttributeMap &attributeMap);
 
     bool isLoadingFunctionPointer(tokenContext_t &tokenContext,
                                   statementContext_t &smntContext,
-                                  const keywords_t &keywords,
+                                  parser_t &parser,
                                   nameToAttributeMap &attributeMap);
   }
 }

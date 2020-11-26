@@ -17,8 +17,6 @@ namespace occa {
       return new emptyNode();
     }
 
-    void emptyNode::setChildren(exprNodeRefVector &children) {}
-
     void emptyNode::print(printer &pout) const {}
 
     void emptyNode::debugPrint(const std::string &prefix) const {

@@ -18,7 +18,7 @@ namespace occa {
         return true;
       }
 
-      bool exclusive::forStatement(const int sType) const {
+      bool exclusive::forStatementType(const int sType) const {
         return (sType & statementType::declaration);
       }
 

@@ -8,16 +8,18 @@
 
 namespace occa {
   namespace openmp {
-    class modeInfo : public modeInfo_v {
+    class openmpMode : public mode_t {
     public:
-      modeInfo();
+      openmpMode();
 
       bool init();
+
       void setupProperties();
+
+      modeDevice_t* newDevice(const occa::properties &props);
     };
 
-    extern occa::mode<openmp::modeInfo,
-                      openmp::device> mode;
+    extern openmpMode mode;
   }
 }
 

@@ -24,16 +24,17 @@ namespace occa {
       bool has(const std::string &name);
       keyword_t& get(const std::string &name);
 
-      bool add(type_t &type,
-               const bool force = false);
-      bool add(function_t &func,
-               const bool force = false);
-      bool add(variable_t &var,
-               const bool force = false);
+      bool add(keyword_t &keyword, const bool force = false);
+
+      bool add(type_t &type, const bool force = false);
+
+      bool add(function_t &func, const bool force = false);
+
+      bool add(variable_t &var, const bool force = false);
+
     private:
       template <class keywordType_, class valueType>
-      bool add(valueType &value,
-               const bool force) {
+      bool genericAdd(valueType &value, const bool force) {
         // TODO: Use unique name
         const std::string &name = value.name();
         if (!name.size()) {
@@ -56,6 +57,7 @@ namespace occa {
 
         value.printError("[" + name + "] is already defined");
         keyword->printError("[" + name + "] was first defined here");
+
         return false;
       }
 

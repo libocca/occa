@@ -7,7 +7,8 @@
 #define OCCA_HP_VENDOR           6
 #define OCCA_VISUALSTUDIO_VENDOR 7
 #define OCCA_CRAY_VENDOR         8
-#define OCCA_NOT_FOUND           9
+#define OCCA_PPC_VENDOR          9
+#define OCCA_NOT_FOUND           10
 
 int main(int argc, char **argv) {
 
@@ -36,6 +37,9 @@ int main(int argc, char **argv) {
 
 #elif defined(__clang__)
   return OCCA_LLVM_VENDOR;
+
+#elif defined(__powerpc__)
+  return OCCA_PPC_VENDOR;
 
 // Clang also defines __GNUC__, so check for it after __clang__
 #elif defined(__GNUC__) || defined(__GNUG__)

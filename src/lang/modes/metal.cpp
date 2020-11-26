@@ -4,6 +4,7 @@
 #include <occa/lang/modes/oklForStatement.hpp>
 #include <occa/lang/builtins/attributes.hpp>
 #include <occa/lang/builtins/types.hpp>
+#include <occa/lang/expr.hpp>
 
 namespace occa {
   namespace lang {
@@ -14,7 +15,8 @@ namespace occa {
           device_q("device", qualifierType::custom),
           threadgroup_q("threadgroup", qualifierType::custom),
           constant_q("constant", qualifierType::custom) {
-        okl::addAttributes(*this);
+
+        okl::addOklAttributes(*this);
       }
 
       void metalParser::onClear() {
@@ -52,58 +54,34 @@ namespace occa {
       }
 
       void metalParser::setSharedQualifiers() {
-        statementExprMap exprMap;
-        findStatements(statementType::declaration,
-                       exprNodeType::variable,
-                       root,
-                       sharedVariableMatcher,
-                       exprMap);
-
-        statementExprMap::iterator it = exprMap.begin();
-        while (it != exprMap.end()) {
-          declarationStatement &declSmnt = *((declarationStatement*) it->first);
-          const int declCount = declSmnt.declarations.size();
-          for (int i = 0; i < declCount; ++i) {
-            variable_t &var = *(declSmnt.declarations[i].variable);
-            if (!var.hasAttribute("shared")) {
-              continue;
-            }
-            var.add(0, threadgroup_q);
-          }
-          ++it;
-        }
-      }
-
-      bool metalParser::sharedVariableMatcher(exprNode &expr) {
-        return expr.hasAttribute("shared");
+        statementArray::from(root)
+            .nestedForEachDeclaration([&](variableDeclaration &decl) {
+                variable_t &var = decl.variable();
+                if (var.hasAttribute("shared")) {
+                  var.add(0, threadgroup_q);
+                }
+              });
       }
 
       void metalParser::addBarriers() {
-        statementPtrVector statements;
-        findStatementsByAttr(statementType::empty,
-                             "barrier",
-                             root,
-                             statements);
+        statementArray::from(root)
+            .flatFilterByStatementType(statementType::empty, "barrier")
+            .forEach([&](statement_t *smnt) {
+                // TODO 1.1: Implement proper barriers
+                emptyStatement &emptySmnt = (emptyStatement&) *smnt;
 
-        const int count = (int) statements.size();
-        for (int i = 0; i < count; ++i) {
-          // TODO 1.1: Implement proper barriers
-          emptyStatement &smnt = *((emptyStatement*) statements[i]);
+                statement_t &barrierSmnt = (
+                  *(new sourceCodeStatement(
+                      emptySmnt.up,
+                      emptySmnt.source,
+                      "threadgroup_barrier(mem_flags::mem_threadgroup);"
+                    ))
+                );
 
-          statement_t &barrierSmnt = (
-            *(new expressionStatement(
-                smnt.up,
-                *(new identifierNode(smnt.source,
-                                     "threadgroup_barrier(mem_flags::mem_threadgroup)"))
-              ))
-          );
+                emptySmnt.replaceWith(barrierSmnt);
 
-          smnt.up->addBefore(smnt,
-                             barrierSmnt);
-
-          smnt.up->remove(smnt);
-          delete &smnt;
-        }
+                delete &emptySmnt;
+              });
       }
 
       void metalParser::setupHeaders() {
@@ -127,52 +105,36 @@ namespace occa {
       }
 
       void metalParser::setupKernels() {
-        setupHeaders();
-        if (!success) return;
+        root.children
+            .filterByStatementType(
+              statementType::functionDecl | statementType::function,
+              "kernel"
+            )
+            .forEach([&](statement_t *smnt) {
+                function_t *function;
 
-        statementPtrVector kernelSmnts;
-        findStatementsByAttr((statementType::functionDecl |
-                              statementType::function),
-                             "kernel",
-                             root,
-                             kernelSmnts);
+                if (smnt->type() & statementType::functionDecl) {
+                  function = &(((functionDeclStatement*) smnt)->function());
 
-        const int kernelCount = (int) kernelSmnts.size();
-        for (int i = 0; i < kernelCount; ++i) {
-          function_t *function;
-          statement_t &kernelSmnt = *(kernelSmnts[i]);
+                  migrateLocalDecls((functionDeclStatement&) *smnt);
+                  if (!success) return;
+                } else {
+                  function = &(((functionStatement*) smnt)->function());
+                }
 
-          if (kernelSmnt.type() & statementType::functionDecl) {
-            function = &(((functionDeclStatement&) kernelSmnt).function);
-            migrateLocalDecls((functionDeclStatement&) kernelSmnt);
-            if (!success) return;
-          } else {
-            function = &(((functionStatement&) kernelSmnt).function);
-          }
-          setKernelQualifiers(*function);
-          if (!success) return;
-        }
+                setKernelQualifiers(*function);
+            });
       }
 
       void metalParser::migrateLocalDecls(functionDeclStatement &kernelSmnt) {
-        statementExprMap exprMap;
-        findStatements(statementType::declaration,
-                       exprNodeType::variable,
-                       kernelSmnt,
-                       sharedVariableMatcher,
-                       exprMap);
-
-        statementExprMap::iterator it = exprMap.begin();
-        while (it != exprMap.end()) {
-          declarationStatement &declSmnt = *((declarationStatement*) it->first);
-          variable_t *var = declSmnt.declarations[0].variable;
-
-          if (var->hasAttribute("shared")) {
-            declSmnt.removeFromParent();
-            kernelSmnt.addFirst(declSmnt);
-          }
-          ++it;
-        }
+        statementArray::from(kernelSmnt)
+            .nestedForEachDeclaration([&](variableDeclaration &decl, declarationStatement &declSmnt) {
+                variable_t &var = decl.variable();
+                if (var.hasAttribute("shared")) {
+                  declSmnt.removeFromParent();
+                  kernelSmnt.addFirst(declSmnt);
+                }
+              });
       }
 
       void metalParser::setKernelQualifiers(function_t &function) {

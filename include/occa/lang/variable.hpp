@@ -7,6 +7,7 @@
 namespace occa {
   namespace lang {
     class attribute_t;
+    class variableNode;
 
     //---[ Variable ]-------------------
     class variable_t {
@@ -72,7 +73,10 @@ namespace occa {
 
       dtype_t dtype() const;
 
-      void printDeclaration(printer &pout) const;
+      void debugPrint() const;
+
+      void printDeclaration(printer &pout,
+                            const vartypePrintType_t printType = vartypePrintType_t::type) const;
       void printExtraDeclaration(printer &pout) const;
 
       void printWarning(const std::string &message) const;
@@ -85,10 +89,10 @@ namespace occa {
 
     //---[ Variable Declaration ]-------
     class variableDeclaration {
-      // Note: Feeing of variable and value are delegated
-      //         to the declarationStatement
+      // Note: Freeing of variable and value are delegated
+      //       to the declarationStatement
     public:
-      variable_t *variable;
+      variableNode *varNode;
       exprNode *value;
 
       variableDeclaration();
@@ -101,15 +105,32 @@ namespace occa {
 
       variableDeclaration(const variableDeclaration &other);
 
+      variableDeclaration& operator = (const variableDeclaration &other);
+
       ~variableDeclaration();
 
       variableDeclaration clone() const;
 
-      void clear();
+      bool hasVariable() const;
 
       bool hasValue() const;
 
-      void print(printer &pout) const;
+      variable_t& variable();
+
+      const variable_t& variable() const;
+
+      void setVariable(variable_t &variable_);
+
+      void setVariable(variableNode *newVarNode);
+
+      void setValue(exprNode *newValue);
+
+      void clear();
+
+      void debugPrint() const;
+
+      void print(printer &pout,
+                 const bool typeDeclared) const;
       void printAsExtra(printer &pout) const;
 
       void printWarning(const std::string &message) const;

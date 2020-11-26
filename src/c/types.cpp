@@ -31,6 +31,10 @@ namespace occa {
     }
 
     occaType newOccaType(void *value) {
+      return newOccaType((const void*) value);
+    }
+
+    occaType newOccaType(const void *value) {
       occaType oType;
       oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
       oType.type  = typeType::ptr;
@@ -81,6 +85,7 @@ namespace occa {
       oType.type  = typeType::bool_;
       oType.bytes = sizeof(int8_t);
       oType.value.int8_ = value;
+      oType.needsFree = false;
       return oType;
     }
 
@@ -91,6 +96,7 @@ namespace occa {
       oType.type  = typeType::int8_;
       oType.bytes = sizeof(int8_t);
       oType.value.int8_ = value;
+      oType.needsFree = false;
       return oType;
     }
 
@@ -101,6 +107,7 @@ namespace occa {
       oType.type  = typeType::uint8_;
       oType.bytes = sizeof(uint8_t);
       oType.value.uint8_ = value;
+      oType.needsFree = false;
       return oType;
     }
 
@@ -111,6 +118,7 @@ namespace occa {
       oType.type  = typeType::int16_;
       oType.bytes = sizeof(int16_t);
       oType.value.int16_ = value;
+      oType.needsFree = false;
       return oType;
     }
 
@@ -121,6 +129,7 @@ namespace occa {
       oType.type  = typeType::uint16_;
       oType.bytes = sizeof(uint16_t);
       oType.value.uint16_ = value;
+      oType.needsFree = false;
       return oType;
     }
 
@@ -131,6 +140,7 @@ namespace occa {
       oType.type  = typeType::int32_;
       oType.bytes = sizeof(int32_t);
       oType.value.int32_ = value;
+      oType.needsFree = false;
       return oType;
     }
 
@@ -141,6 +151,7 @@ namespace occa {
       oType.type  = typeType::uint32_;
       oType.bytes = sizeof(uint32_t);
       oType.value.uint32_ = value;
+      oType.needsFree = false;
       return oType;
     }
 
@@ -151,6 +162,7 @@ namespace occa {
       oType.type  = typeType::int64_;
       oType.bytes = sizeof(int64_t);
       oType.value.int64_ = value;
+      oType.needsFree = false;
       return oType;
     }
 
@@ -161,6 +173,7 @@ namespace occa {
       oType.type  = typeType::uint64_;
       oType.bytes = sizeof(uint64_t);
       oType.value.uint64_ = value;
+      oType.needsFree = false;
       return oType;
     }
 
@@ -171,6 +184,7 @@ namespace occa {
       oType.type  = typeType::float_;
       oType.bytes = sizeof(float);
       oType.value.float_ = value;
+      oType.needsFree = false;
       return oType;
     }
 
@@ -181,6 +195,7 @@ namespace occa {
       oType.type  = typeType::double_;
       oType.bytes = sizeof(double);
       oType.value.double_ = value;
+      oType.needsFree = false;
       return oType;
     }
 
@@ -670,7 +685,7 @@ OCCA_LFUNC bool OCCA_RFUNC occaIsDefault(occaType value) {
   return (value.type == occa::c::typeType::default_);
 }
 
-OCCA_LFUNC occaType OCCA_RFUNC occaPtr(void *value) {
+OCCA_LFUNC occaType OCCA_RFUNC occaPtr(const void *value) {
   return occa::c::newOccaType(value);
 }
 

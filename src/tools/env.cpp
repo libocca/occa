@@ -20,10 +20,12 @@ namespace occa {
     std::string HOME, CWD;
     std::string PATH, LD_LIBRARY_PATH;
 
-    std::string OCCA_DIR, OCCA_CACHE_DIR;
+    std::string OCCA_DIR, OCCA_INSTALL_DIR, OCCA_CACHE_DIR;
     size_t      OCCA_MEM_BYTE_ALIGN;
     strVector   OCCA_INCLUDE_PATH;
     strVector   OCCA_LIBRARY_PATH;
+    strVector   OCCA_KERNEL_PATH;
+    bool        OCCA_VERBOSE;
     bool        OCCA_COLOR_ENABLED;
 
     properties& baseSettings() {
@@ -37,6 +39,11 @@ namespace occa {
         return std::string(c_varName);
       }
       return "";
+    }
+
+    void setOccaCacheDir(const std::string &path) {
+      OCCA_CACHE_DIR = path;
+      envInitializer_t::setupCachePath();
     }
 
     envInitializer_t::envInitializer_t() :
@@ -60,8 +67,8 @@ namespace occa {
       settings_["version"]     = OCCA_VERSION_STR;
       settings_["okl_version"] = OKL_VERSION_STR;
 
-      const bool isVerbose = env::get<bool>("OCCA_VERBOSE", false);
-      if (isVerbose) {
+      OCCA_VERBOSE = env::get<bool>("OCCA_VERBOSE", false);
+      if (OCCA_VERBOSE) {
         settings_["device/verbose"] = true;
         settings_["kernel/verbose"] = true;
         settings_["memory/verbose"] = true;
@@ -81,6 +88,7 @@ namespace occa {
 
       OCCA_INCLUDE_PATH = split(env::var("OCCA_INCLUDE_PATH"), ':', '\\');
       OCCA_LIBRARY_PATH = split(env::var("OCCA_LIBRARY_PATH"), ':', '\\');
+      OCCA_KERNEL_PATH  = split(env::var("OCCA_KERNEL_PATH"), ':', '\\');
 
       io::endWithSlash(HOME);
       io::endWithSlash(CWD);
@@ -88,13 +96,22 @@ namespace occa {
 #endif
 
       // OCCA environment variables
-      OCCA_DIR = env::var("OCCA_DIR");
+       OCCA_DIR = env::var("OCCA_DIR");
       if (OCCA_DIR.size() == 0) {
+#ifdef OCCA_SOURCE_DIR
+        OCCA_DIR = OCCA_SOURCE_DIR;
+#else
         OCCA_DIR = OCCA_BUILD_DIR;
+#endif
+      }
+      OCCA_INSTALL_DIR = env::var("OCCA_INSTALL_DIR");
+      if (OCCA_INSTALL_DIR.size() == 0) {
+        OCCA_INSTALL_DIR = OCCA_BUILD_DIR;
       }
       OCCA_COLOR_ENABLED = env::get<bool>("OCCA_COLOR_ENABLED", true);
 
       io::endWithSlash(OCCA_DIR);
+      io::endWithSlash(OCCA_INSTALL_DIR);
       io::endWithSlash(OCCA_CACHE_DIR);
 
       OCCA_MEM_BYTE_ALIGN = OCCA_DEFAULT_MEM_BYTE_ALIGN;
@@ -127,6 +144,7 @@ namespace occa {
     }
 
     void envInitializer_t::setupCachePath() {
+      // Set defaults if needed
       if (env::OCCA_CACHE_DIR.size() == 0) {
         std::stringstream ss;
 
@@ -143,6 +161,7 @@ namespace occa {
 #endif
         env::OCCA_CACHE_DIR = ss.str();
       }
+
       env::OCCA_CACHE_DIR = io::filename(env::OCCA_CACHE_DIR);
       io::endWithSlash(env::OCCA_CACHE_DIR);
 

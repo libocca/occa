@@ -1,72 +1,57 @@
 #ifndef OCCA_LANG_MODES_OKL_HEADER
 #define OCCA_LANG_MODES_OKL_HEADER
 
+#include <functional>
 #include <vector>
 
 #include <occa/lang/statement.hpp>
 
 namespace occa {
   namespace lang {
-    class leftUnaryOpNode;
-    class rightUnaryOpNode;
-    class binaryOpNode;
-
-    namespace transforms {
-      class smntTreeNode;
-    }
+    class forStatement;
 
     namespace okl {
-      bool checkKernels(statement_t &root);
+      typedef std::vector<statementArray> statementArrayVector;
 
-      bool checkKernel(functionDeclStatement &kernelSmnt);
+      typedef std::function<void (forStatement &forSmnt, const std::string &attr, const statementArray &path)> oklForVoidCallback;
 
-      //---[ Declaration ]--------------
-      bool checkLoops(functionDeclStatement &kernelSmnt);
+      bool kernelsAreValid(blockStatement &root);
 
-      bool checkForDoubleLoops(statementPtrVector &loopSmnts,
-                               const std::string &badAttr);
+      bool kernelIsValid(functionDeclStatement &kernelSmnt);
 
-      bool checkOklForStatements(functionDeclStatement &kernelSmnt,
-                                 statementPtrVector &forSmnts,
-                                 const std::string &attrName);
-      //================================
+      bool kernelHasValidReturnType(functionDeclStatement &kernelSmnt);
 
-      //---[ Loop Logic ]---------------
-      bool oklLoopMatcher(statement_t &smnt);
-      bool oklDeclAttrMatcher(statement_t &smnt,
-                              const std::string &attr);
-      bool oklAttrMatcher(statement_t &smnt,
-                          const std::string &attr);
-      bool oklSharedMatcher(statement_t &smnt);
-      bool oklExclusiveMatcher(statement_t &smnt);
+      bool kernelHasValidOklLoops(functionDeclStatement &kernelSmnt);
 
-      bool checkLoopOrders(functionDeclStatement &kernelSmnt);
+      bool outerLoopHasValidOklLoopOrdering(forStatement &outerMostForSmnt,
+                                            statementArrayVector &loopPaths);
 
-      bool checkLoopOrder(transforms::smntTreeNode &root);
-      bool checkLoopType(transforms::smntTreeNode &node,
-                         int &outerCount,
-                         int &innerCount);
-      //================================
+      bool pathHasValidOklLoopOrdering(statementArray &loopPath,
+                                       int &outerLoopCount,
+                                       int &innerLoopCount);
 
-      //---[ Type Logic ]---------------
-      bool checkSharedOrder(transforms::smntTreeNode &root);
-      bool checkExclusiveOrder(transforms::smntTreeNode &root);
-      bool checkOKLTypeInstance(statement_t &typeSmnt,
-                                const std::string &attr);
-      bool checkValidSharedArray(statement_t &smnt);
-      //================================
+      bool kernelHasValidSharedAndExclusiveDeclarations(functionDeclStatement &kernelSmnt);
 
-      //---[ Skip Logic ]---------------
-      bool checkBreakAndContinue(functionDeclStatement &kernelSmnt);
+      bool hasProperSharedArrayDeclaration(variable_t &var);
+
+      bool hasProperSharedOrExclusiveUsage(statement_t *smnt,
+                                           const std::string &attrName,
+                                           bool varIsBeingDeclared);
+
+      bool kernelHasValidLoopBreakAndContinue(functionDeclStatement &kernelSmnt);
+
+      //---[ Helper Methods ]-----------
+      bool isOklForLoop(statement_t *smnt);
+
+      bool isOklForLoop(statement_t *smnt, std::string &oklAttr);
+
+      void forOklForLoopStatements(statement_t &root, oklForVoidCallback func);
       //================================
 
       //---[ Transformations ]----------
-      void addAttributes(parser_t &parser);
+      void addOklAttributes(parser_t &parser);
 
-      void setLoopIndices(functionDeclStatement &kernelSmnt);
-
-      void setForLoopIndex(forStatement &forSmnt,
-                           const std::string &attr);
+      void setOklLoopIndices(functionDeclStatement &kernelSmnt);
       //================================
     }
   }

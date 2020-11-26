@@ -141,6 +141,8 @@ namespace occa {
                              const qualifier_t &qualifier);
 
       qualifiers_t& addFirst(const qualifierWithSource &qualifier);
+
+      void swap(qualifiers_t &other);
     };
 
     printer& operator << (printer &pout,

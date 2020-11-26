@@ -26,7 +26,9 @@ namespace occa {
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
 
-      virtual void setChildren(exprNodeRefVector &children);
+      virtual void pushChildNodes(exprNodeVector &children);
+
+      virtual bool safeReplaceExprNode(exprNode *currentNode, exprNode *newNode);
 
       virtual variable_t* getVariable();
 

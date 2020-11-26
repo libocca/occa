@@ -22,8 +22,6 @@ namespace occa {
       return new variableNode(token, value);
     }
 
-    void variableNode::setChildren(exprNodeRefVector &children) {}
-
     bool variableNode::hasAttribute(const std::string &attr) const {
       return value.hasAttribute(attr);
     }
@@ -39,7 +37,7 @@ namespace occa {
     void variableNode::debugPrint(const std::string &prefix) const {
       printer pout(io::stderr);
       io::stderr << prefix << "|\n"
-                << prefix << "|---[";
+                 << prefix << "|---[";
       pout << (*this);
       io::stderr << "] (variable)\n";
     }

@@ -10,16 +10,18 @@
 
 namespace occa {
   namespace opencl {
-    class modeInfo : public modeInfo_v {
+    class openclMode : public mode_t {
     public:
-      modeInfo();
+      openclMode();
 
       bool init();
+
       styling::section& getDescription();
+
+      modeDevice_t* newDevice(const occa::properties &props);
     };
 
-    extern occa::mode<opencl::modeInfo,
-                      opencl::device> mode;
+    extern openclMode mode;
   }
 }
 

@@ -15,7 +15,7 @@ namespace occa {
         return true;
       }
 
-      bool implicitArg::forStatement(const int sType) const {
+      bool implicitArg::forStatementType(const int sType) const {
         return (sType & statementType::declaration);
       }
 

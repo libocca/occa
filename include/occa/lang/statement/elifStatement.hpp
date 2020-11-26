@@ -22,6 +22,8 @@ namespace occa {
       virtual int type() const;
       virtual std::string statementName() const;
 
+      virtual statementArray getInnerStatements();
+
       virtual void print(printer &pout) const;
     };
   }

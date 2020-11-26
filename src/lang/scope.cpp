@@ -45,19 +45,36 @@ namespace occa {
       return noKeyword;
     }
 
+    bool scope_t::add(keyword_t &keyword,
+                      const bool force) {
+      const int kType = keyword.type();
+
+      if (kType & keywordType::variable) {
+        return add(((const variableKeyword&) keyword).variable, force);
+      }
+      else if (kType & keywordType::function) {
+        return add(((const functionKeyword&) keyword).function, force);
+      }
+      else if (kType & keywordType::type) {
+        return add(((const typeKeyword&) keyword).type_, force);
+      }
+
+      return false;
+    }
+
     bool scope_t::add(type_t &type,
                       const bool force) {
-      return add<typeKeyword>(type, force);
+      return genericAdd<typeKeyword>(type, force);
     }
 
     bool scope_t::add(function_t &func,
                       const bool force) {
-      return add<functionKeyword>(func, force);
+      return genericAdd<functionKeyword>(func, force);
     }
 
     bool scope_t::add(variable_t &var,
                       const bool force) {
-      return add<variableKeyword>(var, force);
+      return genericAdd<variableKeyword>(var, force);
     }
 
     void scope_t::remove(const std::string &name,

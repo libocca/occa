@@ -2,22 +2,42 @@
 
 #include <occa/modes.hpp>
 
-void testMode();
+void testModeByName();
+void testModeByProps();
 
 int main(const int argc, const char **argv) {
-  testMode();
+  testModeByName();
+  testModeByProps();
 
   return 0;
 }
 
-void testMode() {
-  occa::mode_v *serialMode = occa::getMode("mode: 'Serial'");
+void testModeByName() {
+  occa::mode_t *serialMode = occa::getMode("Serial");
   ASSERT_NEQ((void*) serialMode,
              (void*) NULL);
 
-  ASSERT_EQ(occa::getMode(""),
+  ASSERT_EQ((void*) serialMode,
+            (void*) occa::getMode("serial"));
+
+  ASSERT_EQ((void*) occa::getMode(""),
+            (void*) NULL);
+
+  ASSERT_EQ((void*) occa::getMode("Foo"),
+            (void*) NULL);
+}
+
+void testModeByProps() {
+  occa::mode_t *serialMode = occa::getModeFromProps("mode: 'Serial'");
+  ASSERT_NEQ((void*) serialMode,
+             (void*) NULL);
+
+  ASSERT_EQ((void*) serialMode,
+            (void*) occa::getModeFromProps("mode: 'serial'"));
+
+  ASSERT_EQ(occa::getModeFromProps(""),
             serialMode);
 
-  ASSERT_EQ(occa::getMode("mode: 'Foo'"),
+  ASSERT_EQ(occa::getModeFromProps("mode: 'Foo'"),
             serialMode);
 }

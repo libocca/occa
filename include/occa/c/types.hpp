@@ -49,6 +49,7 @@ namespace occa {
     occaType newOccaType(const TM &value);
 
     occaType newOccaType(void *value);
+    occaType newOccaType(const void *value);
 
     template <>
     occaType newOccaType(const occa::primitive &value);

@@ -110,6 +110,14 @@ void testLoad() {
             (double) occa::primitive("150.1E-1"));
   ASSERT_EQ(-15.01,
             (double) occa::primitive("-150.1E-1"));
+
+  ASSERT_TRUE(!!(occa::primitive("0x7f800000U").type & occa::primitiveType::isUnsigned));
+
+  ASSERT_TRUE(!!(occa::primitive("0x7f800000L").type & occa::primitiveType::int64_));
+  ASSERT_TRUE(!!(occa::primitive("0x7f800000LL").type & occa::primitiveType::int64_));
+
+  ASSERT_TRUE(!!(occa::primitive("0x7f800000UL").type & occa::primitiveType::uint64_));
+  ASSERT_TRUE(!!(occa::primitive("0x7f800000LLU").type & occa::primitiveType::uint64_));
 }
 
 void testBadParsing() {
@@ -145,8 +153,17 @@ void testBadParsing() {
 }
 
 void testToString() {
-  ASSERT_EQ("68719476735L",
+  ASSERT_EQ("0xFFFFFFFFF",
             occa::primitive("0xFFFFFFFFF").toString());
+
+  ASSERT_EQ("0x7f800000U",
+            occa::primitive("0x7f800000U").toString());
+
+  ASSERT_EQ("0x7f800000L",
+            occa::primitive("0x7f800000L").toString());
+
+  ASSERT_EQ("0x7f800000LL",
+            occa::primitive("0x7f800000LL").toString());
 
   ASSERT_EQ("NaN",
             occa::primitive("").toString());

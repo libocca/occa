@@ -2,13 +2,13 @@ struct myFloat {
   float value;
 };
 
-struct myFloat2 {
+typedef struct myFloat2_t {
   float x, y;
-};
+} myFloat2;
 
-struct myFloat4 {
+typedef struct {
   float values[4];
-};
+} myFloat4;
 
 @kernel void addVectors(const int entries,
                         const myFloat *a,

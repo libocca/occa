@@ -13,10 +13,12 @@ namespace occa {
     extern std::string HOME, CWD;
     extern std::string PATH, LD_LIBRARY_PATH;
 
-    extern std::string OCCA_DIR, OCCA_CACHE_DIR;
+    extern std::string OCCA_DIR, OCCA_INSTALL_DIR, OCCA_CACHE_DIR;
     extern size_t      OCCA_MEM_BYTE_ALIGN;
     extern strVector   OCCA_INCLUDE_PATH;
     extern strVector   OCCA_LIBRARY_PATH;
+    extern strVector   OCCA_KERNEL_PATH;
+    extern bool        OCCA_VERBOSE;
     extern bool        OCCA_COLOR_ENABLED;
 
     properties& baseSettings();
@@ -32,6 +34,8 @@ namespace occa {
       return fromString<TM>(value);
     }
 
+    void setOccaCacheDir(const std::string &path);
+
     class envInitializer_t {
     public:
       envInitializer_t();
@@ -40,15 +44,17 @@ namespace occa {
     private:
       bool isInitialized;
 
-      void initSettings();
-      void initEnvironment();
-      void loadConfig();
+      static void initSettings();
+      static void initEnvironment();
+      static void loadConfig();
 
-      void setupCachePath();
-      void setupIncludePath();
-      void registerFileOpeners();
+      static void setupCachePath();
+      static void setupIncludePath();
+      static void registerFileOpeners();
 
-      void cleanFileOpeners();
+      static void cleanFileOpeners();
+
+      friend void setOccaCacheDir(const std::string &path);
     };
 
     extern envInitializer_t envInitializer;

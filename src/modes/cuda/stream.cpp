@@ -10,8 +10,10 @@ namespace occa {
       cuStream(cuStream_) {}
 
     stream::~stream() {
-      OCCA_CUDA_ERROR("Device: freeStream",
-                      cuStreamDestroy(cuStream));
+      OCCA_CUDA_DESTRUCTOR_ERROR(
+        "Device: freeStream",
+        cuStreamDestroy(cuStream)
+      );
     }
   }
 }

@@ -7,13 +7,14 @@
 lib/
 obj/
 main
-opt/
+opt
 
 # CMake
-build/
+build
 
 # Bin
-bin/
+bin/*
+tests/bin
 !bin/occa.cpp
 
 # Auto-generated code

@@ -23,6 +23,8 @@ namespace occa {
 
         event_t(const event_t &other);
 
+        event_t& operator = (const event_t &other);
+
         void free();
         void freeCommandBuffer();
 

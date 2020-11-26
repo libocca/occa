@@ -83,8 +83,7 @@ namespace occa {
     externTokenMerger::externTokenMerger() {}
 
     externTokenMerger::externTokenMerger(const externTokenMerger &other) :
-      tokenInputCacheMap(other),
-      tokenOutputCacheMap(other) {}
+      tokenCacheMap(other) {}
 
     tokenMap& externTokenMerger::clone_() const {
       return *(new externTokenMerger(*this));

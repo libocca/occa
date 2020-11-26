@@ -1,5 +1,6 @@
 #include <occa/lang/modes/openmp.hpp>
-#include <occa/lang/transforms/builtins/finders.hpp>
+#include <occa/lang/expr/expr.hpp>
+#include <occa/lang/builtins/attributes/atomic.hpp>
 
 namespace occa {
   namespace lang {
@@ -10,10 +11,34 @@ namespace occa {
       void openmpParser::afterParsing() {
         serialParser::afterParsing();
 
-        statementPtrVector outerSmnts;
-        findOuterMostLoops(outerSmnts);
+        if (!success) return;
+        setupOmpPragmas();
 
-        const int count = (int) outerSmnts.size();
+        if (!success) return;
+        setupAtomics();
+      }
+
+      void openmpParser::setupOmpPragmas() {
+        statementArray outerSmnts = (
+          statementArray::from(root)
+          .flatFilter([&](statement_t *smnt, const statementArray &path) {
+              // Needs to be a @outer for-loop
+              if (!isOuterForLoop(smnt)) {
+                return false;
+              }
+
+              // Cannot have a parent @outer for-loop
+              for (auto pathSmnt : path) {
+                if (isOuterForLoop(pathSmnt)) {
+                  return false;
+                }
+              }
+
+              return true;
+            })
+        );
+
+        const int count = (int) outerSmnts.length();
         for (int i = 0; i < count; ++i) {
           statement_t &outerSmnt = *(outerSmnts[i]);
           statement_t *parent = outerSmnt.up;
@@ -36,27 +61,47 @@ namespace occa {
         }
       }
 
-      void openmpParser::findOuterMostLoops(statementPtrVector &outerMostSmnts) {
-        statementPtrVector outerSmnts;
-        findStatementsByAttr(statementType::for_,
-                             "outer",
-                             root,
-                             outerSmnts);
+      bool openmpParser::isOuterForLoop(statement_t *smnt) {
+        return (
+          (smnt->type() & statementType::for_)
+          && smnt->hasAttribute("outer")
+        );
+      }
 
-        const int count = (int) outerSmnts.size();
-        for (int i = 0; i < count; ++i) {
-          statement_t *outerSmnt = outerSmnts[i];
-          statement_t *smnt = outerSmnt->up;
-          while (smnt) {
-            if (smnt->hasAttribute("outer")) {
-              break;
-            }
-            smnt = smnt->up;
-          }
-          if (!smnt) {
-            outerMostSmnts.push_back(outerSmnt);
-          }
-        }
+      void openmpParser::setupAtomics() {
+        success &= attributes::atomic::applyCodeTransformation(
+          root,
+          transformBlockStatement,
+          transformBasicExpressionStatement
+        );
+      }
+
+      bool openmpParser::transformBlockStatement(blockStatement &blockSmnt) {
+        blockStatement &parent = *(blockSmnt.up);
+
+        pragmaStatement &atomicPragmaSmnt = *(
+          new pragmaStatement(&parent,
+                              pragmaToken(blockSmnt.source->origin,
+                                          "omp critical"))
+        );
+
+        parent.addBefore(blockSmnt, atomicPragmaSmnt);
+
+        return true;
+      }
+
+      bool openmpParser::transformBasicExpressionStatement(expressionStatement &exprSmnt) {
+        blockStatement &parent = *(exprSmnt.up);
+
+        pragmaStatement &atomicPragmaSmnt = *(
+          new pragmaStatement(&parent,
+                              pragmaToken(exprSmnt.source->origin,
+                                          "omp atomic"))
+        );
+
+        parent.addBefore(exprSmnt, atomicPragmaSmnt);
+
+        return true;
       }
     }
   }

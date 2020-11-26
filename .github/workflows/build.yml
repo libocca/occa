@@ -2,9 +2,9 @@ name: Build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   run:
@@ -15,7 +15,9 @@ jobs:
             os: ubuntu-18.04
             CC: gcc-8
             CXX: g++-8
+            CXXFLAGS: -Wno-maybe-uninitialized
             FC: gfortran-8
+            GCOV: gcov-8
             OCCA_COVERAGE: 1
             OCCA_FORTRAN_ENABLED: 1
 
@@ -23,6 +25,7 @@ jobs:
             os: ubuntu-18.04
             CC: gcc-8
             CXX: g++-8
+            GCOV: gcov-8
             OCCA_COVERAGE: 1
             useCMake: true
 
@@ -30,7 +33,9 @@ jobs:
             os: ubuntu-18.04
             CC: gcc-9
             CXX: g++-9
+            CXXFLAGS: -Wno-maybe-uninitialized
             FC: gfortran-9
+            GCOV: gcov-9
             OCCA_COVERAGE: 1
             OCCA_FORTRAN_ENABLED: 1
 
@@ -38,24 +43,29 @@ jobs:
             os: ubuntu-18.04
             CC: clang-6.0
             CXX: clang++-6.0
+            CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
 
           - name: (Ubuntu) clang-9
             os: ubuntu-18.04
             CC: clang-9
             CXX: clang++-9
+            CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
 
           - name: (MacOS) gcc-9
             os: macos-10.15
             CC: gcc-9
             CXX: g++-9
+            CXXFLAGS: -Wno-maybe-uninitialized
+            GCOV: gcov-9
             OCCA_COVERAGE: 1
 
           - name: (MacOS) clang
             os: macos-10.15
             CC: clang
             CXX: clang++
+            CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
 
     runs-on: ${{ matrix.os }}
@@ -64,45 +74,48 @@ jobs:
     env:
       CC: ${{ matrix.CC }}
       CXX: ${{ matrix.CXX }}
+      CXXFLAGS: -O3 -Wall -pedantic -Wshadow -Wsign-compare -Wuninitialized -Wtype-limits -Wignored-qualifiers -Wempty-body -Wextra -Wno-unused-parameter -Werror -Wno-strict-aliasing ${{ matrix.CXXFLAGS }}
       FC: ${{ matrix.FC }}
+      GCOV: ${{ matrix.GCOV }}
       OCCA_COVERAGE: ${{ matrix.OCCA_COVERAGE }}
       OCCA_FORTRAN_ENABLED: ${{ matrix.OCCA_FORTRAN_ENABLED }}
+      OCCA_CXXFLAGS: -O3
       FORTRAN_EXAMPLES: ${{ matrix.OCCA_FORTRAN_ENABLED }}
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Compiler info
-      run: make -j info
+      run: make -j 16 info
       if: ${{ !matrix.useCMake }}
+
+      name: Configure CMake build
+      run: |
+        cmake -E make_directory ${{runner.workspace}}/build
+        cd ${{runner.workspace}}/build
+        cmake -DENABLE_TESTS=On -DENABLE_EXAMPLES=On ..
+      if: ${{ matrix.useCMake }}
+
 
     - name: Compile library
-      run: make -j
-      if: ${{ !matrix.useCMake }}
+      run: make -j 16
 
     - name: Compile tests
-      run: make -j tests
+      run: make -j 16 tests
       if: ${{ !matrix.useCMake }}
-
-    - name: Compile library (CMake)
-      run: |
-        # cmake -E make_directory ${{runner.workspace}}/build
-        # cd ${{runner.workspace}}/build
-        cmake $GITHUB_WORKSPACE -DALLOW_OPENMP:BOOL=ON
-        make -j
-      if: ${{ matrix.useCMake }}
-
-    - name: Compile tests (CMake)
-      run: |
-        cmake $GITHUB_WORKSPACE -DENABLE_TESTS:BOOL=ON -DALLOW_OPENMP:BOOL=ON
-        make -j
-      if: ${{ matrix.useCMake }}
 
     - name: Run unit tests
       run: ./tests/run_tests
+      if: ${{ !matrix.useCMake }}
 
     - name: Run examples
       run: ./tests/run_examples
+      if: ${{ !matrix.useCMake }}
+
+    - name: Run CTests
+      run: make test
+      if: ${{ matrix.useCMake }}
 
     - name: Upload code coverage
-      uses: codecov/codecov-action@v1
+      run: bash <(curl --no-buffer -s https://codecov.io/bash) -x "${GCOV}"
+      if: ${{ matrix.OCCA_COVERAGE }}

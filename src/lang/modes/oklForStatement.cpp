@@ -3,7 +3,7 @@
 #include <occa/lang/variable.hpp>
 #include <occa/lang/builtins/types.hpp>
 #include <occa/lang/modes/oklForStatement.hpp>
-#include <occa/lang/transforms/builtins/finders.hpp>
+#include <occa/lang/modes/okl.hpp>
 
 namespace occa {
   namespace lang {
@@ -21,6 +21,23 @@ namespace occa {
         updateOp(NULL),
         updateValue(NULL),
         valid(false) {
+
+        const bool hasInner = forSmnt.hasAttribute("inner");
+        const bool hasOuter = forSmnt.hasAttribute("outer");
+
+        if (hasInner && hasOuter) {
+          if (printErrors) {
+            forSmnt.printError(sourceStr() + "Cannot have @inner and @outer");
+          }
+        } else if (!hasInner && !hasOuter) {
+          if (printErrors) {
+            forSmnt.printError(sourceStr() + "Missing @inner or @outer");
+          }
+        } else if (hasInner) {
+          oklAttr = "inner";
+        } else if (hasOuter) {
+          oklAttr = "outer";
+        }
 
         valid = (
           hasValidInit()
@@ -64,7 +81,7 @@ namespace occa {
         }
         // Get iterator and value
         variableDeclaration &decl = declSmnt.declarations[0];
-        iterator  = decl.variable;
+        iterator  = &decl.variable();
         initValue = decl.value;
         // Valid types: {char, short, int, long}
         const type_t *type = iterator->vartype.flatten().type;
@@ -330,81 +347,74 @@ namespace occa {
       }
 
       bool oklForStatement::isInnerLoop() {
-        return forSmnt.hasAttribute("inner");
+        return oklAttr == "inner";
       }
 
       bool oklForStatement::isOuterLoop() {
-        return forSmnt.hasAttribute("outer");
+        return oklAttr == "outer";
       }
 
       int oklForStatement::oklLoopIndex() {
-        return oklLoopIndex(forSmnt);
+        return getOklLoopIndex(forSmnt, oklAttr);
       }
 
-      int oklForStatement::oklLoopIndex(forStatement &forSmnt_) {
-        std::string attr;
-        if (forSmnt_.hasAttribute("inner")) {
-          attr = "inner";
-        } else if (forSmnt_.hasAttribute("outer")) {
-          attr = "outer";
-        } else {
-          return -1;
+      int oklForStatement::getOklLoopIndex(forStatement &forSmnt_, const std::string &oklAttr_) {
+        attributeToken_t &oklAttrToken = forSmnt_.attributes[oklAttr_];
+        if (oklAttrToken.args.size()) {
+          // The attribute is either @outer(N) or @inner(N)
+          // We need to evaluate the value inside the attribute first though
+          return (int) oklAttrToken.args[0].expr->evaluate();
         }
 
-        attributeToken_t &oklAttr = forSmnt_.attributes[attr];
-        if (oklAttr.args.size()) {
-          return (int) oklAttr.args[0].expr->evaluate();
-        }
+        // Find index by looking at how many for-loops of the same attribute are in it
+        int maxInnerCount = 0;
+        forOklForLoopStatements(
+          forSmnt_,
+          [&](forStatement &innerForSmnt,
+              const std::string innerAttr,
+              const statementArray &path) {
 
-        statementPtrVector smnts;
-        findStatementsByAttr(statementType::for_,
-                             attr,
-                             forSmnt_,
-                             smnts);
-        int smntCount = (int) smnts.size();
-        int maxIndex = 0;
-        for (int i = 0; i < smntCount; ++i) {
-          forStatement &iSmnt = *((forStatement*) smnts[i]);
-          if (&iSmnt == &forSmnt_) {
-            continue;
-          }
+            const int innerCount = (
+              path
+              .filter([&](statement_t *smnt) {
+                  return ((smnt->type() & statementType::for_)
+                          && smnt->hasAttribute(oklAttr_));
+                })
+              .length()
+            );
 
-          int index = 1;
-          statement_t *up = iSmnt.up;
-          while (up != &forSmnt_) {
-            index += up->hasAttribute(attr);
-            up = up->up;
-          }
-          if (index > maxIndex) {
-            maxIndex = index;
-          }
-        }
-        return maxIndex;
+            if (innerCount > maxInnerCount) {
+              maxInnerCount = innerCount;
+            }
+          });
+
+        // Index is 1 less than count
+        return maxInnerCount ? maxInnerCount - 1 : 0;
       }
 
-      void oklForStatement::getOKLLoopPath(statementPtrVector &path) {
-        getOKLLoopPath(forSmnt, path);
+      statementArray oklForStatement::getOklLoopPath() {
+        return getOklLoopPath(forSmnt);
       }
 
-      void oklForStatement::getOKLLoopPath(forStatement &forSmnt_,
-                                           statementPtrVector &path) {
-        // Fill in path
-        statement_t *smnt = &forSmnt_;
-        while (smnt) {
-          if ((smnt->type() & statementType::for_)
-              && (smnt->hasAttribute("inner")
-                  || smnt->hasAttribute("outer"))) {
-            path.push_back(smnt);
-          }
-          smnt = smnt->up;
-        }
-        // Reverse
-        const int pathCount = (int) path.size();
-        for (int i = 0; i < (pathCount / 2); ++i) {
-          statement_t *pi = path[i];
-          path[i] = path[pathCount - i - 1];
-          path[pathCount - i - 1] = pi;
-        }
+      statementArray oklForStatement::getOklLoopPath(forStatement &forSmnt_) {
+        statementArray oklParentPath = (
+          forSmnt_
+          .getParentPath()
+          .filter([&](statement_t *smnt) {
+              return (
+                (smnt->type() & statementType::for_)
+                && (
+                  smnt->hasAttribute("inner")
+                  || smnt->hasAttribute("outer")
+                ));
+            })
+        );
+
+        // forSmnt_ is not in the getParentPath() list
+        // so we need to push it manually
+        oklParentPath.push(&forSmnt_);
+
+        return oklParentPath;
       }
 
       std::string oklForStatement::sourceStr() {

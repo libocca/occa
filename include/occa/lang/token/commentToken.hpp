@@ -9,7 +9,7 @@ namespace occa {
       static const int none  = 0;
       static const int left  = (1 << 0);
       static const int right = (1 << 1);
-    };
+    }
 
     class commentToken : public token_t {
     public:

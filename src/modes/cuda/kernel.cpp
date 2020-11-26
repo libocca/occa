@@ -27,8 +27,10 @@ namespace occa {
 
     kernel::~kernel() {
       if (cuModule) {
-        OCCA_CUDA_ERROR("Kernel (" + name + ") : Unloading Module",
-                        cuModuleUnload(cuModule));
+        OCCA_CUDA_DESTRUCTOR_ERROR(
+          "Kernel (" + name + ") : Unloading Module",
+          cuModuleUnload(cuModule)
+        );
         cuModule = NULL;
       }
     }
@@ -54,12 +56,14 @@ namespace occa {
                                            CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK,
                                            cuFunction));
 
-        maxInnerDims_.x = maxSize;
+        maxInnerDims_.x = (udim_t) maxSize;
       }
       return maxInnerDims_;
     }
 
     void kernel::deviceRun() const {
+      device *devicePtr = (device*) modeDevice;
+
       const int args = (int) arguments.size();
       if (!args) {
         vArgs.resize(1);
@@ -72,9 +76,11 @@ namespace occa {
         vArgs[i] = arguments[i].ptr();
         // Set a proper NULL pointer
         if (!vArgs[i]) {
-          vArgs[i] = ((device*) modeDevice)->getNullPtr();
+          vArgs[i] = devicePtr->getNullPtr();
         }
       }
+
+      devicePtr->setCudaContext();
 
       OCCA_CUDA_ERROR("Launching Kernel",
                       cuLaunchKernel(cuFunction,

@@ -31,8 +31,18 @@ namespace occa {
       return value->endNode();
     }
 
-    void deleteNode::setChildren(exprNodeRefVector &children) {
-      children.push_back(&value);
+    void deleteNode::pushChildNodes(exprNodeVector &children) {
+      children.push_back(value);
+    }
+
+    bool deleteNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      if (currentNode == value) {
+        delete value;
+        value = newNode;
+        return true;
+      }
+
+      return false;
     }
 
     exprNode* deleteNode::wrapInParentheses() {

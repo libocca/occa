@@ -17,7 +17,7 @@ namespace occa {
         return true;
       }
 
-      bool globalPtr::forStatement(const int sType) const {
+      bool globalPtr::forStatementType(const int sType) const {
         return (sType & statementType::declaration);
       }
 

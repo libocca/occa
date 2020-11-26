@@ -11,6 +11,7 @@ namespace occa {
     typedef streamMap<token_t*, token_t*>       tokenMap;
     typedef withInputCache<token_t*, token_t*>  tokenInputCacheMap;
     typedef withOutputCache<token_t*, token_t*> tokenOutputCacheMap;
+    typedef withCache<token_t*, token_t*>       tokenCacheMap;
 
     class newlineTokenFilter : public tokenFilter {
     public:
@@ -29,8 +30,7 @@ namespace occa {
       virtual void fetchNext();
     };
 
-    class externTokenMerger : public tokenInputCacheMap,
-                              public tokenOutputCacheMap {
+    class externTokenMerger : public tokenCacheMap {
     public:
       externTokenMerger();
       externTokenMerger(const externTokenMerger &other);

@@ -24,8 +24,6 @@ namespace occa {
       return new exprOpNode(token, op);
     }
 
-    void exprOpNode::setChildren(exprNodeRefVector &children) {}
-
     exprNode* exprOpNode::wrapInParentheses() {
       return new parenthesesNode(token, *this);
     }

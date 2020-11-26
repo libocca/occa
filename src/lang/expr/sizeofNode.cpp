@@ -35,8 +35,18 @@ namespace occa {
       return value->evaluate().sizeof_();
     }
 
-    void sizeofNode::setChildren(exprNodeRefVector &children) {
-      children.push_back(&value);
+    void sizeofNode::pushChildNodes(exprNodeVector &children) {
+      children.push_back(value);
+    }
+
+    bool sizeofNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      if (currentNode == value) {
+        delete value;
+        value = newNode;
+        return true;
+      }
+
+      return false;
     }
 
     void sizeofNode::print(printer &pout) const {

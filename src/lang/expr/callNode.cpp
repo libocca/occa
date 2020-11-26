@@ -41,14 +41,29 @@ namespace occa {
       return args[argCount - 1]->endNode();
     }
 
-    void callNode::setChildren(exprNodeRefVector &children) {
-      const int argCount = (int) args.size();
-      children.reserve(1 + argCount);
-
-      children.push_back(&value);
-      for (int i = 0; i < argCount; ++i) {
-        children.push_back(&(args[i]));
+    void callNode::pushChildNodes(exprNodeVector &children) {
+      children.push_back(value);
+      for (exprNode *arg : args) {
+        children.push_back(arg);
       }
+    }
+
+    bool callNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      if (currentNode == value) {
+        delete value;
+        value = newNode;
+        return true;
+      }
+
+      for (exprNode *&arg : args) {
+        if (currentNode == arg) {
+          delete arg;
+          arg = newNode;
+          return true;
+        }
+      }
+
+      return false;
     }
 
     void callNode::print(printer &pout) const {

@@ -91,7 +91,7 @@ namespace occa {
 
   template <>
   kernelArg::kernelArg(modeMemory_t *arg) {
-    if (arg) {
+    if (arg && arg->size) {
       add(arg->makeKernelArg());
     } else {
       add(kernelArg(nullKernelArg));

@@ -12,6 +12,7 @@ namespace occa {
     class exprNode;
     class identifierToken;
     class keywords_t;
+    class parser_t;
     class statementContext_t;
     class tokenRange;
     class token_t;
@@ -36,6 +37,9 @@ namespace occa {
     class tokenContext_t {
     public:
       tokenVector tokens;
+      // Keep track of used tokens (e.g. not commnents)
+      intVector tokenIndices;
+
       intIntMap pairs;
       intVector semicolons;
       bool hasError;
@@ -48,7 +52,8 @@ namespace occa {
       ~tokenContext_t();
 
       void clear();
-      void setup();
+      void setup(const tokenVector &tokens_);
+      void setupTokenIndices();
 
       void findPairs();
       void findSemicolons();
@@ -72,15 +77,23 @@ namespace occa {
       void popAndSkip();
 
       int position() const;
+
       int size() const;
+
+      void getSkippedTokens(tokenVector &skippedTokens,
+                            const int start,
+                            const int end);
+
+      token_t* getToken(const int index);
+      token_t* getNativeToken(const int index);
+
+      void setToken(const int index,
+                    token_t *value);
 
       token_t* operator [] (const int index);
       tokenContext_t& operator ++ ();
       tokenContext_t& operator ++ (int);
       tokenContext_t& operator += (const int offset);
-
-      void setToken(const int index,
-                    token_t *value);
 
       token_t* end();
 
@@ -100,12 +113,12 @@ namespace occa {
 
       int getNextOperator(const opType_t &opType);
 
-      exprNode* getExpression(statementContext_t &smntContext,
-                              const keywords_t &keywords);
-      exprNode* getExpression(statementContext_t &smntContext,
-                              const keywords_t &keywords,
-                              const int start,
-                              const int end);
+      exprNode* parseExpression(statementContext_t &smntContext,
+                                parser_t &parser);
+      exprNode* parseExpression(statementContext_t &smntContext,
+                                parser_t &parser,
+                                const int start,
+                                const int end);
 
       token_t* replaceIdentifier(statementContext_t &smntContext,
                                  const keywords_t &keywords,

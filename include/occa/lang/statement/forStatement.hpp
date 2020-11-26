@@ -11,8 +11,10 @@ namespace occa {
 
       forStatement(blockStatement *up_,
                    token_t *source_);
+
       forStatement(blockStatement *up_,
                    const forStatement &other);
+
       ~forStatement();
 
       void setLoopStatements(statement_t *init_,
@@ -23,6 +25,8 @@ namespace occa {
 
       virtual int type() const;
       virtual std::string statementName() const;
+
+      virtual statementArray getInnerStatements();
 
       virtual void print(printer &pout) const;
     };

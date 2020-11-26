@@ -30,8 +30,18 @@ namespace occa {
       return new staticCastNode(token, valueType, *value);
     }
 
-    void staticCastNode::setChildren(exprNodeRefVector &children) {
-      children.push_back(&value);
+    void staticCastNode::pushChildNodes(exprNodeVector &children) {
+      children.push_back(value);
+    }
+
+    bool staticCastNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      if (currentNode == value) {
+        delete value;
+        value = newNode;
+        return true;
+      }
+
+      return false;
     }
 
     void staticCastNode::print(printer &pout) const {

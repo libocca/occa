@@ -28,8 +28,6 @@ namespace occa {
 
         void setSharedQualifiers();
 
-        static bool sharedVariableMatcher(exprNode &expr);
-
         void addBarriers();
 
         void setupHeaders();

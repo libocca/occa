@@ -15,27 +15,21 @@ namespace occa {
 
     vartype_t::vartype_t(const type_t &type_) :
       typeToken(NULL),
+      type(NULL),
       referenceToken(NULL),
       bitfield(-1) {
 
-      if (!type_.isNamed()) {
-        type = &(type_.clone());
-      } else {
-        type = &type_;
-      }
+      setType(type_);
     }
 
     vartype_t::vartype_t(const identifierToken &typeToken_,
                          const type_t &type_) :
-      typeToken((identifierToken*) typeToken_.clone()),
+      typeToken(NULL),
+      type(NULL),
       referenceToken(NULL),
       bitfield(-1) {
 
-      if (!type_.isNamed()) {
-        type = &(type_.clone());
-      } else {
-        type = &type_;
-      }
+      setType(typeToken_, type_);
     }
 
     vartype_t::vartype_t(const vartype_t &other) :
@@ -43,6 +37,7 @@ namespace occa {
       type(NULL),
       referenceToken(NULL),
       bitfield(-1) {
+
       *this = other;
     }
 
@@ -51,18 +46,18 @@ namespace occa {
     }
 
     vartype_t& vartype_t::operator = (const vartype_t &other) {
+      if (this == &other) {
+        return *this;
+      }
+
       clear();
       qualifiers = other.qualifiers;
       pointers   = other.pointers;
       arrays     = other.arrays;
 
       typeToken = (identifierToken*) token_t::clone(other.typeToken);
-
-      if (other.type &&
-          !other.type->isNamed()) {
-        type = &(other.type->clone());
-      } else {
-        type = other.type;
+      if (other.type) {
+        setType(*(other.type));
       }
 
       if (other.referenceToken) {
@@ -79,6 +74,20 @@ namespace occa {
       return *this;
     }
 
+    void vartype_t::setType(const identifierToken &typeToken_,
+                            const type_t &type_) {
+      typeToken = ((identifierToken*) typeToken_.clone());
+      setType(type_);
+    }
+
+    void vartype_t::setType(const type_t &type_) {
+      if (!isUniqueType(&type_)) {
+        type = &(type_.clone());
+      } else {
+        type = &type_;
+      }
+    }
+
     void vartype_t::clear() {
       qualifiers.clear();
       pointers.clear();
@@ -90,8 +99,7 @@ namespace occa {
       delete typeToken;
       typeToken = NULL;
 
-      if (type &&
-          !type->isNamed()) {
+      if (!isUniqueType(type)) {
         delete type;
       }
       type = NULL;
@@ -112,7 +120,18 @@ namespace occa {
       if (typeToken) {
         return typeToken->value;
       }
+      if (type) {
+        return type->name();
+      }
       return "";
+    }
+
+    bool vartype_t::isUniqueType(const type_t *type_) const {
+      if (!type_) {
+        return false;
+      }
+      // Note that structs can be nameless so we have to catch this case separately
+      return (type_->isNamed() || type_->type() & typeType::struct_);
     }
 
     fileOrigin vartype_t::origin() const {
@@ -291,14 +310,24 @@ namespace occa {
 
     vartype_t vartype_t::declarationType() const {
       vartype_t other;
-      other.type = type;
+
+      if (typeToken && type) {
+        other.setType(*typeToken, *type);
+      } else if (type) {
+        other.setType(*type);
+      }
       other.qualifiers = qualifiers;
+
       return other;
     }
 
     vartype_t vartype_t::flatten() const {
-      if (!type ||
-          (type->type() != typeType::typedef_)) {
+      if (!type || (type->type() != typeType::typedef_)) {
+        return *this;
+      }
+
+      typedef_t &typedefType = *((typedef_t*) type);
+      if (typedefType.declaredBaseType) {
         return *this;
       }
 
@@ -317,52 +346,70 @@ namespace occa {
       return flat;
     }
 
+    bool vartype_t::definesStruct() const {
+      if (typeToken && type && (type->type() & typeType::struct_)) {
+        return (typeToken->origin == type->source->origin);
+      }
+      if (!has(typedef_)) {
+        return false;
+      }
+
+      typedef_t &typedefType = *((typedef_t*) type);
+      return (
+        typedefType.declaredBaseType
+        && typedefType.baseType.has(struct_)
+      );
+    }
+
     void vartype_t::printDeclaration(printer &pout,
                                      const std::string &varName,
-                                     const bool printType) const {
+                                     const vartypePrintType_t printType) const {
       if (!type) {
         return;
       }
 
+      const bool printingType = (printType != vartypePrintType_t::none);
+      const bool hasName = varName.size() > 0;
+
       if (customPrefix.size()) {
-        pout << customPrefix << ' ';
+        pout << customPrefix;
+        pout.printSpace();
       }
 
-      bool spaceAfterName = false;
-      if (printType) {
+      if (printingType) {
         if (qualifiers.size()) {
-          pout << qualifiers << ' ';
+          pout << qualifiers;
+          pout.printSpace();
         }
-        pout << *type;
+
+        if (printType == vartypePrintType_t::type) {
+          pout << *type;
+        } else if (printType == vartypePrintType_t::typeDeclaration) {
+          type->printDeclaration(pout);
+        }
       }
 
       const int pointerCount = (int) pointers.size();
-      if (printType && pointerCount) {
-        spaceAfterName = true;
-        pout << ' ';
+      if (pointerCount) {
+        // int[ ]*var
+        //     ^
+        pout.printSpace();
       }
-
       for (int i = 0; i < pointerCount; ++i) {
         pout << pointers[i];
         // Don't add a space after the last * if possible
         if (pointers[i].qualifiers.size()) {
-          pout << ' ';
+          pout.printSpace();
         }
       }
 
       if (referenceToken) {
-        if (printType && !spaceAfterName) {
-          spaceAfterName = true;
-          pout << ' ';
-        }
+        pout.printSpace();
         pout << '&';
       }
 
-      if (varName.size()) {
-        if (printType && !spaceAfterName) {
-          spaceAfterName = true;
-          pout << ' ';
-        }
+      if (hasName) {
+        pout.printSpace();
         pout << varName;
       }
 
@@ -382,7 +429,7 @@ namespace occa {
 
     void vartype_t::printExtraDeclaration(printer &pout,
                                           const std::string &varName) const {
-      printDeclaration(pout, varName, false);
+      printDeclaration(pout, varName, vartypePrintType_t::none);
     }
 
     void vartype_t::printWarning(const std::string &message) const {
@@ -408,7 +455,7 @@ namespace occa {
 
     printer& operator << (printer &pout,
                           const vartype_t &type) {
-      type.printDeclaration(pout, "", true);
+      type.printDeclaration(pout, "", vartypePrintType_t::type);
       return pout;
     }
   }

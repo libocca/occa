@@ -12,7 +12,15 @@ namespace occa {
 
         virtual void afterParsing();
 
-        void findOuterMostLoops(statementPtrVector &outerMostSmnts);
+        void setupOmpPragmas();
+
+        bool isOuterForLoop(statement_t *smnt);
+
+        void setupAtomics();
+
+        static bool transformBlockStatement(blockStatement &blockSmnt);
+
+        static bool transformBasicExpressionStatement(expressionStatement &exprSmnt);
       };
     }
   }

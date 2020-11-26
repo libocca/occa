@@ -25,6 +25,10 @@ namespace occa {
 
       event_t::event_t(const event_t &other) {}
 
+      event_t& event_t::operator = (const event_t &other) {
+        return *this;
+      }
+
       void event_t::free() {}
       void event_t::freeCommandBuffer() {}
 
@@ -41,6 +45,10 @@ namespace occa {
 
       buffer_t::buffer_t(const buffer_t &other) {}
 
+      buffer_t& buffer_t::operator = (const buffer_t &other) {
+        return *this;
+      }
+
       void buffer_t::free() {}
 
       void* buffer_t::getPtr() const {
@@ -54,6 +62,10 @@ namespace occa {
                                      void *commandQueueObj_) {}
 
       commandQueue_t::commandQueue_t(const commandQueue_t &other) {}
+
+      commandQueue_t& commandQueue_t::operator = (const commandQueue_t &other) {
+        return *this;
+      }
 
       void commandQueue_t::free() {}
       void commandQueue_t::freeLastCommandBuffer() {}
@@ -97,6 +109,10 @@ namespace occa {
 
       function_t::function_t(const function_t &other) {}
 
+      function_t& function_t::operator = (const function_t &other) {
+        return *this;
+      }
+
       void function_t::run(commandQueue_t &commandQueue,
                            occa::dim outerDims,
                            occa::dim innerDims,
@@ -108,6 +124,10 @@ namespace occa {
       device_t::device_t(void *deviceObj_) {}
 
       device_t::device_t(const device_t &other) {}
+
+      device_t& device_t::operator = (const device_t &other) {
+        return *this;
+      }
 
       void device_t::free() {}
 

@@ -2,11 +2,18 @@
 #include <occa/lang/keyword.hpp>
 #include <occa/lang/loaders/typeLoader.hpp>
 #include <occa/lang/statementContext.hpp>
+#include <occa/lang/parser.hpp>
 #include <occa/lang/token.hpp>
 #include <occa/lang/tokenContext.hpp>
 
 namespace occa {
   namespace lang {
+    static const int skippableTokenTypes = (
+      tokenType::comment
+      | tokenType::unknown
+      | tokenType::none
+    );
+
     tokenRange::tokenRange() :
       start(0),
       end(0) {}
@@ -33,26 +40,45 @@ namespace occa {
       for (int i = 0; i < tokenCount; ++i) {
         delete tokens[i];
       }
+
       tokens.clear();
+      tokenIndices.clear();
+
       pairs.clear();
       semicolons.clear();
       stack.clear();
     }
 
-    void tokenContext_t::setup() {
+    // Called once all tokens are set from the parser
+    void tokenContext_t::setup(const tokenVector &tokens_) {
+      clear();
+
+      tokens = tokens_;
+      setupTokenIndices();
+
       tp.start = 0;
-      tp.end   = (int) tokens.size();
+      tp.end   = (int) tokenIndices.size();
 
       findPairs();
       findSemicolons();
     }
 
-    void tokenContext_t::findPairs() {
-      intVector pairStack;
-
+    void tokenContext_t::setupTokenIndices() {
       const int tokenCount = (int) tokens.size();
       for (int i = 0; i < tokenCount; ++i) {
         token_t *token = tokens[i];
+        if (!(token->type() & skippableTokenTypes)) {
+          tokenIndices.push_back(i);
+        }
+      }
+    }
+
+    void tokenContext_t::findPairs() {
+      intVector pairStack;
+
+      const int tokenCount = size();
+      for (int i = 0; i < tokenCount; ++i) {
+        token_t *token = getToken(i);
         opType_t opType = token->getOpType();
         if (!(opType & operatorType::pair)) {
           continue;
@@ -81,8 +107,9 @@ namespace occa {
         // Make sure we close the pair
         const int pairIndex = pairStack.back();
         pairStack.pop_back();
-        pairOperator_t &pairStartOp =
-          *((pairOperator_t*) tokens[pairIndex]->to<operatorToken>().op);
+        pairOperator_t &pairStartOp = (
+          *((pairOperator_t*) getToken(pairIndex)->to<operatorToken>().op)
+        );
 
         if (pairStartOp.opType != (pairEndOp.opType >> 1)) {
           if (!supressErrors) {
@@ -90,7 +117,7 @@ namespace occa {
             ss << "Could not find a closing '"
                << pairStartOp.pairStr
                << '\'';
-            tokens[pairIndex]->printError(ss.str());
+            getToken(pairIndex)->printError(ss.str());
             hasError = true;
           }
           return;
@@ -103,24 +130,25 @@ namespace occa {
       if (pairStack.size()) {
         const int pairIndex = pairStack.back();
         pairStack.pop_back();
-        pairOperator_t &pairStartOp =
-          *((pairOperator_t*) tokens[pairIndex]->to<operatorToken>().op);
+        pairOperator_t &pairStartOp = (
+          *((pairOperator_t*) getToken(pairIndex)->to<operatorToken>().op)
+        );
 
         if (!supressErrors) {
           std::stringstream ss;
           ss << "Could not find a closing '"
              << pairStartOp.pairStr
              << '\'';
-          tokens[pairIndex]->printError(ss.str());
+          getToken(pairIndex)->printError(ss.str());
           hasError = true;
         }
       }
     }
 
     void tokenContext_t::findSemicolons() {
-      const int tokenCount = (int) tokens.size();
+      const int tokenCount = size();
       for (int i = 0; i < tokenCount; ++i) {
-        token_t *token = tokens[i];
+        token_t *token = getToken(i);
         opType_t opType = token->getOpType();
         if (opType & operatorType::semicolon) {
           semicolons.push_back(i);
@@ -210,11 +238,53 @@ namespace occa {
       return (tp.end - tp.start);
     }
 
+    void tokenContext_t::getSkippedTokens(tokenVector &skippedTokens,
+                                          const int start,
+                                          const int end) {
+      if (start >= (int) tokenIndices.size()) {
+        return;
+      }
+
+      const int startNativeIndex = (
+        start
+        ? tokenIndices[start - 1]
+        : 0
+      );
+      const int endNativeIndex = (
+        end < (int) tokenIndices.size()
+        ? tokenIndices[end]
+        : tp.end
+      );
+
+      for (int i = startNativeIndex; i < endNativeIndex; ++i) {
+        token_t *token = tokens[i];
+        if (token->type() & skippableTokenTypes) {
+          skippedTokens.push_back(token);
+        }
+      }
+    }
+
+    token_t* tokenContext_t::getToken(const int index) {
+      return tokens[tokenIndices[index]];
+    }
+
+    void tokenContext_t::setToken(const int index,
+                                  token_t *value) {
+      if (!indexInRange(index)) {
+        return;
+      }
+      const int pos = tokenIndices[tp.start + index];
+      if (tokens[pos] != value) {
+        delete tokens[pos];
+        tokens[pos] = value;
+      }
+    }
+
     token_t* tokenContext_t::operator [] (const int index) {
       if (!indexInRange(index)) {
         return NULL;
       }
-      return tokens[tp.start + index];
+      return getToken(tp.start + index);
     }
 
     tokenContext_t& tokenContext_t::operator ++ () {
@@ -232,42 +302,34 @@ namespace occa {
       return *this;
     }
 
-    void tokenContext_t::setToken(const int index,
-                                  token_t *value) {
-      if (!indexInRange(index)) {
-        return;
-      }
-      const int pos = tp.start + index;
-      if (tokens[pos] != value) {
-        delete tokens[pos];
-        tokens[pos] = value;
-      }
-    }
-
     token_t* tokenContext_t::end() {
       if (indexInRange(tp.end - tp.start - 1)) {
-        return tokens[tp.end - 1];
+        return getToken(tp.end - 1);
       }
       return NULL;
     }
 
     token_t* tokenContext_t::getPrintToken(const bool atEnd) {
-      if (tokens.size() == 0) {
+      if (size() == 0) {
         return NULL;
       }
+
       const int start = tp.start;
       if (atEnd) {
         tp.start = tp.end;
       }
+
       int offset = 0;
-      if (!indexInRange(offset) &&
-          (0 < tp.start)) {
+      if (!indexInRange(offset) && (0 < tp.start)) {
         offset = -1;
       }
-      token_t *token = tokens[tp.start + offset];
+
+      token_t *token = getToken(tp.start + offset);
       if (atEnd) {
+        // Reset tp.start
         tp.start = start;
       }
+
       return token;
     }
 
@@ -317,7 +379,7 @@ namespace occa {
       tokens_.clear();
       tokens_.reserve(tp.end - tp.start);
       for (int i = tp.start; i < tp.end; ++i) {
-        tokens_.push_back(tokens[i]);
+        tokens_.push_back(getToken(i));
       }
     }
 
@@ -325,7 +387,7 @@ namespace occa {
       tokens_.clear();
       tokens_.reserve(tp.end - tp.start);
       for (int i = tp.start; i < tp.end; ++i) {
-        tokens_.push_back(tokens[i]->clone());
+        tokens_.push_back(getToken(i)->clone());
       }
     }
 
@@ -344,14 +406,14 @@ namespace occa {
     token_t* tokenContext_t::getClosingPairToken() {
       const int endIndex = getClosingPair();
       if (endIndex >= 0) {
-        return tokens[tp.start + endIndex];
+        return getToken(tp.start + endIndex);
       }
       return NULL;
     }
 
     int tokenContext_t::getNextOperator(const opType_t &opType) {
       for (int pos = tp.start; pos < tp.end; ++pos) {
-        token_t *token = tokens[pos];
+        token_t *token = getToken(pos);
         if (!(token->type() & tokenType::op)) {
           continue;
         }
@@ -370,15 +432,15 @@ namespace occa {
       return -1;
     }
 
-    exprNode* tokenContext_t::getExpression(statementContext_t &smntContext,
-                                            const keywords_t &keywords) {
-      return getExpression(smntContext, keywords, 0, size());
+    exprNode* tokenContext_t::parseExpression(statementContext_t &smntContext,
+                                              parser_t &parser) {
+      return parseExpression(smntContext, parser, 0, size());
     }
 
-    exprNode* tokenContext_t::getExpression(statementContext_t &smntContext,
-                                            const keywords_t &keywords,
-                                            const int start,
-                                            const int end) {
+    exprNode* tokenContext_t::parseExpression(statementContext_t &smntContext,
+                                              parser_t &parser,
+                                              const int start,
+                                              const int end) {
       push(start, end);
       const int tokenCount = size();
       tokenVector exprTokens;
@@ -389,7 +451,7 @@ namespace occa {
         token_t *token = (*this)[i];
         if (token->type() & tokenType::identifier) {
           setToken(i, replaceIdentifier(smntContext,
-                                        keywords,
+                                        parser.keywords,
                                         (identifierToken&) *token));
         }
       }
@@ -412,7 +474,7 @@ namespace occa {
         }
 
         vartype_t vartype;
-        if (!loadType(*this, smntContext, keywords, vartype)) {
+        if (!loadType(*this, smntContext, parser, vartype)) {
           pop();
           freeTokenVector(exprTokens);
           return NULL;
@@ -423,7 +485,7 @@ namespace occa {
       }
       pop();
 
-      return occa::lang::getExpression(exprTokens);
+      return expressionParser::parse(exprTokens);
     }
 
     token_t* tokenContext_t::replaceIdentifier(statementContext_t &smntContext,
@@ -457,8 +519,17 @@ namespace occa {
     }
 
     void tokenContext_t::debugPrint() {
-      for (int i = tp.start; i < tp.end; ++i) {
-        io::stdout << '[' << *tokens[i] << "]\n";
+      const int start = tokenIndices[tp.start];
+      const int end = tokenIndices[tp.end - 1];
+
+      for (int i = start; i < end; ++i) {
+        token_t &token = *(tokens[i]);
+
+        if (token.type() & skippableTokenTypes) {
+          io::stdout << '[' << token << "] (SKIPPED)\n";
+        } else {
+          io::stdout << '[' << token << "]\n";
+        }
       }
     }
   }

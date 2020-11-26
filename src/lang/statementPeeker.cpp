@@ -1,18 +1,19 @@
 #include <occa/lang/loaders/attributeLoader.hpp>
+#include <occa/lang/parser.hpp>
+#include <occa/lang/statement/statement.hpp>
 #include <occa/lang/statementContext.hpp>
 #include <occa/lang/statementPeeker.hpp>
-#include <occa/lang/statement/statement.hpp>
 #include <occa/lang/tokenContext.hpp>
 
 namespace occa {
   namespace lang {
     statementPeeker_t::statementPeeker_t(tokenContext_t &tokenContext_,
                                          statementContext_t &smntContext_,
-                                         const keywords_t &keywords_,
+                                         parser_t &parser_,
                                          nameToAttributeMap &attributeMap_) :
       tokenContext(tokenContext_),
       smntContext(smntContext_),
-      keywords(keywords_),
+      parser(parser_),
       attributeMap(attributeMap_),
       success(true),
       lastPeek(0),
@@ -68,9 +69,7 @@ namespace occa {
 
       int tokenIndex = 0;
 
-      while (success &&
-             (tokenIndex < tokens)) {
-
+      while (success && (tokenIndex < tokens)) {
         token_t *token = tokenContext[tokenIndex];
         const int tokenType = token->type();
 
@@ -88,8 +87,8 @@ namespace occa {
           return statementType::expression;
         }
 
-        if (tokenType & tokenType::comment) {
-          return statementType::comment;
+        if (tokenType & tokenType::directive) {
+          return statementType::directive;
         }
 
         if (tokenType & tokenType::pragma) {
@@ -110,7 +109,7 @@ namespace occa {
         tokenContextPos = tokenContext.position();
         success &= loadAttributes(tokenContext,
                                   smntContext,
-                                  keywords,
+                                  parser,
                                   attributeMap,
                                   attributes);
       }
@@ -118,7 +117,7 @@ namespace occa {
 
     int statementPeeker_t::peekIdentifier(const int tokenIndex) {
       token_t *token = tokenContext[tokenIndex];
-      int kType = keywords.get(smntContext, token).type();
+      int kType = parser.keywords.get(smntContext, token).type();
 
       if (kType & keywordType::none) {
         // Test for : for it to be a goto label
@@ -135,8 +134,8 @@ namespace occa {
       }
 
       if (kType & keywordType::else_) {
-        keyword_t &nextKeyword = keywords.get(smntContext,
-                                              tokenContext[tokenIndex + 1]);
+        keyword_t &nextKeyword = parser.keywords.get(smntContext,
+                                                     tokenContext[tokenIndex + 1]);
         if ((nextKeyword.type() & keywordType::if_)) {
           return statementType::elif_;
         }

@@ -34,6 +34,16 @@ namespace occa {
       return "switch";
     }
 
+    statementArray switchStatement::getInnerStatements() {
+      statementArray arr;
+
+      if (condition) {
+        arr.push(condition);
+      }
+
+      return arr;
+    }
+
     void switchStatement::print(printer &pout) const {
       pout.printStartIndentation();
       pout << "switch (";

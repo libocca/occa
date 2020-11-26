@@ -14,6 +14,8 @@ namespace occa {
         buffer_t(void *obj_ = NULL);
         buffer_t(const buffer_t &other);
 
+        buffer_t& operator = (const buffer_t &other);
+
         void free();
 
         void* getPtr() const;

@@ -3,9 +3,10 @@
 
 namespace occa {
   namespace metal {
-    modeInfo::modeInfo() {}
+    metalMode::metalMode() :
+        mode_t("Metal") {}
 
-    bool modeInfo::init() {
+    bool metalMode::init() {
 #if OCCA_METAL_ENABLED
       // Only consider metal enabled if there is an available device
       return api::metal::getDeviceCount();
@@ -14,7 +15,7 @@ namespace occa {
 #endif
     }
 
-    styling::section& modeInfo::getDescription() {
+    styling::section& metalMode::getDescription() {
       static styling::section section("Metal");
       if (section.size() == 0) {
         int deviceCount = api::metal::getDeviceCount();
@@ -36,7 +37,10 @@ namespace occa {
       return section;
     }
 
-    occa::mode<metal::modeInfo,
-               metal::device> mode("Metal");
+    modeDevice_t* metalMode::newDevice(const occa::properties &props) {
+      return new device(setModeProp(props));
+    }
+
+    metalMode mode;
   }
 }

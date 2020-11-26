@@ -78,8 +78,8 @@ function defaultIncludePath {
     mergedPaths+=":$CPLUS_INCLUDE_PATH"
     mergedPaths+=":$C_INCLUDE_PATH"
     mergedPaths+=":$INCLUDEPATH"
-    mergedPaths+=":/opt/rocm/opencl/include"
-    mergedPaths+=":/opt/rocm/hip/include"
+    mergedPaths+=":/opt/rocm*/opencl/include"
+    mergedPaths+=":/opt/rocm*/include"
     mergedPaths+=":/usr/local/cuda*/include"
     mergedPaths+=":/Developer/NVIDIA/CUDA*/include"
     mergedPaths+=":/usr/local/cuda*/targets/*/include/"
@@ -95,8 +95,8 @@ function defaultLibraryPath {
     mergedPaths+=":$OCCA_LIBRARY_PATH"
     mergedPaths+=":$LD_LIBRARY_PATH"
     mergedPaths+=":$DYLD_LIBRARY_PATH"
-    mergedPaths+=":/opt/rocm/opencl/lib/*"
-    mergedPaths+=":/opt/rocm/hip/lib/*"
+    mergedPaths+=":/opt/rocm*/opencl/lib/*"
+    mergedPaths+=":/opt/rocm*/lib"
     mergedPaths+=":/usr/local/cuda*/lib*"
     mergedPaths+=":/usr/local/cuda*/lib*/stubs"
     mergedPaths+=":/opt/cuda*/lib*"
@@ -224,6 +224,7 @@ function compilerVendor {
     local b_HP=6
     local b_VisualStudio=7
     local b_Cray=8
+    local b_PPC=9
 
     local testFilename="${SCRIPTS_DIR}/tests/compiler.cpp"
     local binaryFilename="${SCRIPTS_DIR}/tests/compiler"
@@ -243,6 +244,7 @@ function compilerVendor {
         "${b_HP}")           echo HP           ;;
         "${b_Cray}")         echo CRAY         ;;
         "${b_VisualStudio}") echo VISUALSTUDIO ;;
+        "${b_PPC}")          echo POWERPC      ;;
         *)                   echo N/A          ;;
     esac
 }
@@ -251,7 +253,7 @@ function compilerCpp11Flags {
     local vendor=$(compilerVendor "$1")
 
     case "$vendor" in
-        GCC|LLVM|INTEL|PGI)
+        GCC|LLVM|INTEL|PGI|POWERPC)
             echo "-std=c++11";;
         CRAY)      echo "-hstd=c++11"          ;;
         IBM)       echo "-qlanglvl=extended0x" ;;
@@ -268,6 +270,7 @@ function compilerReleaseFlags {
 
     case "$vendor" in
         GCC|LLVM)   echo " -O3 -march=native -D __extern_always_inline=inline" ;;
+        POWERPC)    echo " -O3 -mcpu=native -mtune=native -D __extern_always_inline=inline" ;;
         INTEL)      echo " -O3 -xHost"                                         ;;
         CRAY)       echo " -O3 -h intrinsics -fast"                            ;;
         IBM)        echo " -O3 -qhot=simd"                                     ;;
@@ -291,7 +294,7 @@ function compilerPicFlag {
     local vendor=$(compilerVendor "$1")
 
     case "$vendor" in
-        GCC|LLVM|INTEL|PATHSCALE|CRAY|PGI)
+        GCC|LLVM|INTEL|PATHSCALE|CRAY|PGI|POWERPC)
             echo "-fPIC";;
         IBM) echo "-qpic";;
         HP)  echo "+z";;
@@ -303,7 +306,7 @@ function compilerSharedFlag {
     local vendor=$(compilerVendor "$1")
 
     case "$vendor" in
-        GCC|LLVM|INTEL|PATHSCALE|CRAY|PGI)
+        GCC|LLVM|INTEL|PATHSCALE|CRAY|PGI|POWERPC)
             echo "-shared";;
         IBM) echo "-qmkshrobj";;
         HP)  echo "-b";;
@@ -319,13 +322,13 @@ function compilerOpenMPFlag {
     local vendor=$(compilerVendor "$1")
 
     case "$vendor" in
-        GCC|LLVM)        echo "-fopenmp" ;;
-        INTEL|PATHSCALE) echo "-openmp"  ;;
-        CRAY)            echo ""         ;;
-        IBM)             echo "-qsmp"    ;;
-        PGI)             echo "-mp"      ;;
-        HP)              echo "+Oopenmp" ;;
-        *)               echo ""         ;;
+        GCC|LLVM|POWERPC) echo "-fopenmp" ;;
+        INTEL|PATHSCALE)  echo "-openmp"  ;;
+        CRAY)             echo ""         ;;
+        IBM)              echo "-qsmp"    ;;
+        PGI)              echo "-mp"      ;;
+        HP)               echo "+Oopenmp" ;;
+        *)                echo ""         ;;
     esac
 }
 

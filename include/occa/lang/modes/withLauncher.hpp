@@ -3,7 +3,6 @@
 
 #include <occa/lang/parser.hpp>
 #include <occa/lang/modes/serial.hpp>
-#include <occa/lang/transforms/builtins/finders.hpp>
 
 namespace occa {
   namespace lang {
@@ -11,7 +10,6 @@ namespace occa {
       class withLauncher : public parser_t {
       public:
         serialParser launcherParser;
-        type_t *memoryType;
 
         withLauncher(const occa::properties &settings_ = occa::properties());
 
@@ -28,7 +26,10 @@ namespace occa {
         virtual void beforeKernelSplit();
         virtual void afterKernelSplit();
 
-        void setOKLLoopIndices();
+        type_t& getMemoryModeType();
+        type_t& getKernelModeType();
+
+        void setOklLoopIndices();
 
         void setupLauncherParser();
 

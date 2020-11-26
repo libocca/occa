@@ -125,8 +125,10 @@ namespace occa {
           ++c;
         }
       }
-      if (slash == '\\')
-        return std::replace(filename.begin(), filename.end(), '\\', '/');
+      if (slash == '\\') {
+        return std::replace(filename.begin(), filename.end(),
+                            '\\', '/');
+      }
 #endif
       return filename;
     }
@@ -261,6 +263,28 @@ namespace occa {
 
       const std::string &cPath = cachePath();
       return expFilename.substr(cPath.size());
+    }
+
+    std::string findInPaths(const std::string &filename, const strVector &paths) {
+      if (io::isAbsolutePath(filename)) {
+        return filename;
+      }
+
+      // Test paths until one exists
+      // Default to a relative path if none are found
+      std::string absFilename = env::CWD + filename;
+      for (size_t i = 0; i < paths.size(); ++i) {
+        const std::string path = paths[i];
+        if (io::exists(io::endWithSlash(path) + filename)) {
+          absFilename = io::endWithSlash(path) + filename;
+          break;
+        }
+      }
+
+      if (io::exists(absFilename)) {
+        return absFilename;
+      }
+      return filename;
     }
 
     bool isFile(const std::string &filename) {

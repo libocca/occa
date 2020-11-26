@@ -7,7 +7,7 @@
 
 namespace occa {
   namespace lang {
-    class keywords_t;
+    class parser_t;
     class statementContext_t;
     class tokenContext_t;
     class vartype_t;
@@ -16,13 +16,13 @@ namespace occa {
     private:
       tokenContext_t &tokenContext;
       statementContext_t &smntContext;
-      const keywords_t &keywords;
+      parser_t &parser;
       nameToAttributeMap &attributeMap;
       bool success;
 
       attributeLoader_t(tokenContext_t &tokenContext_,
                         statementContext_t &smntContext_,
-                        const keywords_t &keywords_,
+                        parser_t &parser_,
                         nameToAttributeMap &attributeMap_);
 
       bool loadAttributes(attributeTokenMap &attrs);
@@ -35,7 +35,7 @@ namespace occa {
 
       friend bool loadAttributes(tokenContext_t &tokenContext,
                                  statementContext_t &smntContext,
-                                 const keywords_t &keywords,
+                                 parser_t &parser,
                                  nameToAttributeMap &attributeMap,
                                  attributeTokenMap &attrs);
 
@@ -45,7 +45,7 @@ namespace occa {
 
     bool loadAttributes(tokenContext_t &tokenContext,
                         statementContext_t &smntContext,
-                        const keywords_t &keywords,
+                        parser_t &parser,
                         nameToAttributeMap &attributeMap,
                         attributeTokenMap &attrs);
 

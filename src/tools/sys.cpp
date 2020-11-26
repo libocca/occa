@@ -38,6 +38,7 @@
 
 #include <sys/types.h>
 #include <fcntl.h>
+#include <csignal>
 
 #include <occa/core/base.hpp>
 #include <occa/io.hpp>
@@ -175,6 +176,7 @@ namespace occa {
       size_t lineBytes = 512;
       char lineBuffer[512];
 
+      output = "";
       while (fgets(lineBuffer, lineBytes, fp)) {
         output += lineBuffer;
       }
@@ -722,6 +724,7 @@ namespace occa {
                      sys::vendor::Intel |
                      sys::vendor::HP    |
                      sys::vendor::PGI   |
+                     sys::vendor::PPC   |
                      sys::vendor::Pathscale)) {
         return "-std=c++11";
       } else if (vendor_ & sys::vendor::Cray) {
@@ -745,6 +748,7 @@ namespace occa {
                      sys::vendor::Intel |
                      sys::vendor::HP    |
                      sys::vendor::PGI   |
+                     sys::vendor::PPC   |
                      sys::vendor::Pathscale)) {
         return "-std=c99";
       } else if (vendor_ & sys::vendor::Cray) {
@@ -768,6 +772,7 @@ namespace occa {
                      sys::vendor::Intel |
                      sys::vendor::PGI   |
                      sys::vendor::Cray  |
+                     sys::vendor::PPC   |
                      sys::vendor::Pathscale)) {
         return "-fPIC -shared";
       } else if (vendor_ & sys::vendor::IBM) {
@@ -1059,12 +1064,14 @@ namespace occa {
   void printWarning(io::output &out,
                     const std::string &message,
                     const std::string &code) {
-    if (code.size()) {
-      out << yellow("Warning " + code);
-    } else {
-      out << yellow("Warning");
+    if (env::OCCA_VERBOSE) {
+      if (code.size()) {
+        out << yellow("Warning " + code);
+      } else {
+        out << yellow("Warning");
+      }
+      out << ": " << message << '\n';
     }
-    out << ": " << message << '\n';
   }
 
   void printError(io::output &out,

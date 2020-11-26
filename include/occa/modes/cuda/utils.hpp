@@ -95,6 +95,12 @@ namespace occa {
                const int line,
                const std::string &message);
 
+    void destructorError(CUresult errorCode,
+                         const std::string &filename,
+                         const std::string &function,
+                         const int line,
+                         const std::string &message);
+
     std::string getErrorMessage(const CUresult errorCode);
   }
 }

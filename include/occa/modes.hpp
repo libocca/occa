@@ -10,60 +10,44 @@
 #include <occa/core/device.hpp>
 
 namespace occa {
-  class modeDevice_t; class device;
+  class modeDevice_t;
+  class mode_t;
 
-  class mode_v;
+  typedef std::map<std::string, mode_t*> strToModeMap;
 
-  typedef std::map<std::string, mode_v*> strToModeMap;
-  typedef strToModeMap::iterator         strToModeMapIterator;
-
-  strToModeMap& modeMap();
-  void registerMode(mode_v* mode);
-  bool modeIsEnabled(const std::string &mode);
-
-  mode_v* getMode(const occa::properties &props);
-
-  modeDevice_t* newModeDevice(const occa::properties &props = occa::properties());
-
-  class modeInfo_v {
-  public:
-    modeInfo_v();
-
-    virtual bool init() = 0;
-    virtual styling::section& getDescription();
-  };
-
-  class mode_v {
-  protected:
+  class mode_t {
+   protected:
     std::string modeName;
 
-  public:
+   public:
+    mode_t(const std::string &modeName_);
+
     std::string& name();
-    virtual styling::section &getDescription() = 0;
-    virtual modeDevice_t* newDevice(const occa::properties &props = occa::properties()) = 0;
+
+    occa::properties setModeProp(const occa::properties &props);
+
+    virtual bool init() = 0;
+
+    virtual styling::section &getDescription();
+
+    virtual modeDevice_t* newDevice(const occa::properties &props) = 0;
   };
 
-  template <class modeInfo_t,
-            class device_t>
-  class mode : public mode_v {
-  public:
-    mode(std::string modeName_) {
-      modeName = modeName_;
-      if (modeInfo_t().init()) {
-        registerMode(this);
-      }
-    }
+  strToModeMap& getUnsafeModeMap();
 
-    styling::section &getDescription() {
-      return modeInfo_t().getDescription();
-    }
+  strToModeMap& getModeMap();
 
-    modeDevice_t* newDevice(const occa::properties &props) {
-      occa::properties allProps = props;
-      allProps["mode"] = modeName;
-      return new device_t(allProps);
-    }
-  };
+  void registerMode(mode_t* mode);
+
+  void initializeModes();
+
+  bool modeIsEnabled(const std::string &mode);
+
+  mode_t* getMode(const std::string &mode);
+
+  mode_t* getModeFromProps(const occa::properties &props);
+
+  modeDevice_t* newModeDevice(const occa::properties &props);
 }
 
 #endif

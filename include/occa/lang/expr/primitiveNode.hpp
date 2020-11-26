@@ -2,6 +2,7 @@
 #define OCCA_LANG_EXPR_PRIMITIVENODE_HEADER
 
 #include <occa/lang/expr/exprNode.hpp>
+#include <occa/lang/primitive.hpp>
 
 namespace occa {
   namespace lang {
@@ -22,8 +23,6 @@ namespace occa {
 
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
-
-      virtual void setChildren(exprNodeRefVector &children);
 
       virtual void print(printer &pout) const;
 

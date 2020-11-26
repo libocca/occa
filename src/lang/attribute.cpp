@@ -142,8 +142,8 @@ namespace occa {
       return attrType->forFunction();
     }
 
-    bool attributeToken_t::forStatement(const int sType) const {
-      return attrType->forStatement(sType);
+    bool attributeToken_t::forStatementType(const int sType) const {
+      return attrType->forStatementType(sType);
     }
 
     attributeArg_t* attributeToken_t::operator [] (const int index) {

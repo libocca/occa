@@ -21,8 +21,6 @@ namespace occa {
       return new identifierNode(token, value);
     }
 
-    void identifierNode::setChildren(exprNodeRefVector &children) {}
-
     void identifierNode::print(printer &pout) const {
       pout << value;
     }

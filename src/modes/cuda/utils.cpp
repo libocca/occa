@@ -20,21 +20,25 @@ namespace occa {
     }
 
     int getDeviceCount() {
-      int deviceCount;
+      init();
+
+      int deviceCount = 0;
       OCCA_CUDA_ERROR("Finding Number of Devices",
                       cuDeviceGetCount(&deviceCount));
       return deviceCount;
     }
 
     CUdevice getDevice(const int id) {
-      CUdevice device;
+      init();
+
+      CUdevice device = -1;
       OCCA_CUDA_ERROR("Getting CUdevice",
                       cuDeviceGet(&device, id));
       return device;
     }
 
     udim_t getDeviceMemorySize(CUdevice device) {
-      size_t bytes;
+      size_t bytes = 0;
       OCCA_CUDA_ERROR("Finding available memory on device",
                       cuDeviceTotalMem(&bytes, device));
       return bytes;
@@ -87,7 +91,6 @@ namespace occa {
                           CUdeviceptr srcMemory,
                           const udim_t bytes,
                           CUstream usingStream) {
-
       peerToPeerMemcpy(destDevice, destContext, destMemory,
                        srcDevice , srcContext , srcMemory ,
                        bytes,
@@ -103,7 +106,6 @@ namespace occa {
                                CUdeviceptr srcMemory,
                                const udim_t bytes,
                                CUstream usingStream) {
-
       peerToPeerMemcpy(destDevice, destContext, destMemory,
                        srcDevice , srcContext , srcMemory ,
                        bytes,
@@ -119,7 +121,6 @@ namespace occa {
                           const udim_t bytes,
                           CUstream usingStream,
                           const bool isAsync) {
-
 #if CUDA_VERSION >= 4000
       if (!isAsync) {
         OCCA_CUDA_ERROR("Peer-to-Peer Memory Copy",
@@ -154,6 +155,7 @@ namespace occa {
       CUdevice cuDevice = ((device.mode() == "CUDA")
                            ? ((cuda::device*) device.getModeDevice())->cuDevice
                            : CU_DEVICE_CPU);
+
       OCCA_CUDA_ERROR("Advising about unified memory",
                       cuMemAdvise(((cuda::memory*) mem.getModeMemory())->cuPtr,
                                   (size_t) bytes_,
@@ -177,6 +179,7 @@ namespace occa {
     void prefetch(occa::memory mem, const dim_t bytes, occa::device device) {
       OCCA_ERROR("Memory allocated with mode [" << mem.mode() << "], not [CUDA]",
                  mem.mode() == "CUDA");
+
 #if CUDA_VERSION >= 8000
       udim_t bytes_ = ((bytes == -1) ? mem.size() : bytes);
       CUdevice cuDevice = ((device.mode() == "CUDA")
@@ -202,11 +205,10 @@ namespace occa {
     occa::device wrapDevice(CUdevice device,
                             CUcontext context,
                             const occa::properties &props) {
-
       occa::properties allProps;
-      allProps["mode"]     = "CUDA";
+      allProps["mode"]      = "CUDA";
       allProps["device_id"] = -1;
-      allProps["wrapped"]  = true;
+      allProps["wrapped"]   = true;
       allProps += props;
 
       cuda::device &dev = *(new cuda::device(allProps));
@@ -258,6 +260,22 @@ namespace occa {
                const int line,
                const std::string &message) {
       if (!errorCode) {
+        return;
+      }
+      std::stringstream ss;
+      ss << message << '\n'
+         << "CUDA Error [ " << errorCode << " ]: "
+         << occa::cuda::getErrorMessage(errorCode);
+      occa::error(filename, function, line, ss.str());
+    }
+
+    // On destructors, ignore the case when CUDA becomes uninitialized
+    void destructorError(CUresult errorCode,
+                         const std::string &filename,
+                         const std::string &function,
+                         const int line,
+                         const std::string &message) {
+      if (!errorCode || errorCode == CUDA_ERROR_DEINITIALIZED) {
         return;
       }
       std::stringstream ss;

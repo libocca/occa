@@ -200,9 +200,10 @@ namespace occa {
     }
 
     void typeKeyword::deleteSource() {
-      if (type_.type() & typeType::typedef_) {
-        delete &type_;
-      }
+      // TODO: Make sure the typedef type is being deleted
+      // if (type_.type() & typeType::typedef_) {
+      //   delete &type_;
+      // }
     }
 
     void typeKeyword::printError(const std::string &message) {
@@ -320,6 +321,8 @@ namespace occa {
       keywords.add(*(new typeKeyword(const_cast<primitive_t&>(double_))));
       keywords.add(*(new typeKeyword(const_cast<primitive_t&>(void_))));
       keywords.add(*(new typeKeyword(const_cast<primitive_t&>(auto_))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(size_t_))));
+      keywords.add(*(new typeKeyword(const_cast<primitive_t&>(ptrdiff_t_))));
 
       // OKL Types
       keywords.add(*(new typeKeyword(const_cast<primitive_t&>(uchar2))));

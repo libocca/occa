@@ -112,6 +112,8 @@ namespace occa {
       token_t* getCharToken(const int encoding);
 
       int peekForHeader();
+      bool loadingQuotedHeader();
+      bool loadingAngleBracketHeader();
       std::string getHeader();
 
       void setOrigin(const int line,

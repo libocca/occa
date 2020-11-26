@@ -1,6 +1,7 @@
 #ifndef OCCA_LANG_BUILTINS_ATTRIBUTES_HEADER
 #define OCCA_LANG_BUILTINS_ATTRIBUTES_HEADER
 
+#include <occa/lang/builtins/attributes/atomic.hpp>
 #include <occa/lang/builtins/attributes/barrier.hpp>
 #include <occa/lang/builtins/attributes/dim.hpp>
 #include <occa/lang/builtins/attributes/exclusive.hpp>

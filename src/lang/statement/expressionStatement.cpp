@@ -32,6 +32,28 @@ namespace occa {
       return "expression";
     }
 
+    exprNodeArray expressionStatement::getDirectExprNodes() {
+      exprNodeArray arr;
+
+      arr.push({this, expr});
+
+      return arr;
+    }
+
+    void expressionStatement::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      if (!expr) {
+        return;
+      }
+
+      if (expr == currentNode) {
+        delete expr;
+        expr = exprNode::clone(newNode);
+        return;
+      }
+
+      expr->replaceExprNode(currentNode, newNode);
+    }
+
     void expressionStatement::print(printer &pout) const {
       pout.printStartIndentation();
       pout << (*expr);

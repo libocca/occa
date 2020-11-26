@@ -11,8 +11,6 @@
 #include <occa/lang/preprocessor.hpp>
 #include <occa/lang/processingStages.hpp>
 #include <occa/lang/statement.hpp>
-#include <occa/lang/transforms/exprTransform.hpp>
-#include <occa/lang/transforms/statementTransform.hpp>
 #include <occa/lang/tokenizer.hpp>
 #include <occa/lang/tokenContext.hpp>
 #include <occa/lang/statementContext.hpp>
@@ -51,10 +49,11 @@ namespace occa {
       statementContext_t smntContext;
       statementPeeker_t smntPeeker;
 
-      bool ignoringComments;
+      int loadingStatementType;
       bool checkSemicolon;
 
       unknownToken defaultRootToken;
+      statementArray comments;
       attributeTokenMap attributes;
 
       bool success;
@@ -110,9 +109,14 @@ namespace occa {
       keyword_t& getKeyword(token_t *token);
       keyword_t& getKeyword(const std::string &name);
 
-      exprNode* getExpression();
-      exprNode* getExpression(const int start,
-                              const int end);
+      exprNode* parseTokenContextExpression();
+      exprNode* parseTokenContextExpression(const int start,
+                                            const int end);
+
+      void loadComments();
+      void loadComments(const int start,
+                        const int end);
+      void pushComments();
 
       void loadAttributes(attributeTokenMap &attrs);
 
@@ -124,10 +128,6 @@ namespace occa {
       void loadBaseType(vartype_t &vartype);
       void loadType(vartype_t &vartype);
       vartype_t loadType();
-
-      bool isLoadingStruct();
-
-      struct_t* loadStruct();
 
       bool isLoadingVariable();
       bool isLoadingFunction();
@@ -165,8 +165,8 @@ namespace occa {
 
       void loadAllStatements();
 
+      statement_t* loadNextStatement();
       statement_t* getNextStatement();
-      statement_t* getNextNonCommentStatement();
 
       statement_t* loadBlockStatement(attributeTokenMap &smntAttributes);
 
@@ -176,14 +176,12 @@ namespace occa {
 
       statement_t* loadDeclarationStatement(attributeTokenMap &smntAttributes);
 
-      statement_t* loadStructStatement(attributeTokenMap &smntAttributes);
-
       statement_t* loadNamespaceStatement(attributeTokenMap &smntAttributes);
 
       statement_t* loadFunctionStatement(attributeTokenMap &smntAttributes);
 
       void checkIfConditionStatementExists();
-      void loadConditionStatements(statementPtrVector &statements,
+      void loadConditionStatements(statementArray &statements,
                                    const int expectedCount);
       statement_t* loadConditionStatement();
 
@@ -205,8 +203,7 @@ namespace occa {
 
       statement_t* loadClassAccessStatement(attributeTokenMap &smntAttributes);
 
-      statement_t* loadCommentStatement(attributeTokenMap &smntAttributes);
-
+      statement_t* loadDirectiveStatement(attributeTokenMap &smntAttributes);
       statement_t* loadPragmaStatement(attributeTokenMap &smntAttributes);
 
       statement_t* loadGotoStatement(attributeTokenMap &smntAttributes);

@@ -35,6 +35,8 @@ namespace occa {
 
       virtual bool equals(const type_t &other) const;
 
+      void debugPrint() const;
+
       virtual void printDeclaration(printer &pout) const;
     };
   }

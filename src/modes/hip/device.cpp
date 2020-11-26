@@ -43,15 +43,17 @@ namespace occa {
       occa::json &kernelProps = properties["kernel"];
       std::string compiler, compilerFlags;
 
-      if (kernelProps.get<std::string>("compiler").size()) {
-        compiler = (std::string) kernelProps["compiler"];
-      } else if (env::var("OCCA_HIP_COMPILER").size()) {
+      if (env::var("OCCA_HIP_COMPILER").size()) {
         compiler = env::var("OCCA_HIP_COMPILER");
+      } else if (kernelProps.get<std::string>("compiler").size()) {
+        compiler = (std::string) kernelProps["compiler"];
       } else {
         compiler = "hipcc";
       }
 
-      if (kernelProps.get<std::string>("compiler_flags").size()) {
+      if (env::var("OCCA_HIP_COMPILER_FLAGS").size()) {
+        compilerFlags = env::var("OCCA_HIP_COMPILER_FLAGS");
+      } else if (kernelProps.get<std::string>("compiler_flags").size()) {
         compilerFlags = (std::string) kernelProps["compiler_flags"];
       } else {
         compilerFlags = "-O3";
@@ -66,9 +68,13 @@ namespace occa {
       std::string arch = getDeviceArch(deviceID, archMajorVersion, archMinorVersion);
       std::string archFlag;
       if (startsWith(arch, "sm_")) {
-        archFlag = "-arch=" + arch;
+        archFlag = " -arch=" + arch;
       } else if (startsWith(arch, "gfx")) {
-        archFlag = "-t " + arch;
+#ifdef __HIP_ROCclr__
+        archFlag = " --amdgpu-target=" + arch;
+#else
+        archFlag = " -t " + arch;
+#endif
       } else {
         OCCA_FORCE_ERROR("Unknown HIP arch");
       }
@@ -229,8 +235,13 @@ namespace occa {
         kernelProps.get<std::string>("hipcc_compiler_flags")
       );
 
-      if (hipccCompilerFlags.find("-t gfx") == std::string::npos
-          && hipccCompilerFlags.find("-arch=sm") == std::string::npos) {
+      if (hipccCompilerFlags.find("-arch=sm") == std::string::npos &&
+#ifdef __HIP_ROCclr__
+          hipccCompilerFlags.find("-t gfx") == std::string::npos
+#else
+          hipccCompilerFlags.find("--amdgpu-target=gfx") == std::string::npos
+#endif
+          ) {
         kernelProps["hipcc_compiler_flags"] += " ";
         kernelProps["hipcc_compiler_flags"] += kernelProps["compiler_flag_arch"];
       }
@@ -249,8 +260,15 @@ namespace occa {
 
       setArchCompilerFlags(allProps);
 
-      const std::string compilerFlags = allProps["compiler_flags"];
+      const std::string compiler = allProps["compiler"];
+      std::string compilerFlags = allProps["compiler_flags"];
       const std::string hipccCompilerFlags = allProps["hipcc_compiler_flags"];
+      const bool compilingOkl = allProps.get("okl/enabled", true);
+
+      if (!compilingOkl) {
+        sys::addCompilerIncludeFlags(compilerFlags);
+        sys::addCompilerLibraryFlags(compilerFlags);
+      }
 
       std::stringstream command;
       if (allProps.has("compiler_env_script")) {
@@ -258,21 +276,21 @@ namespace occa {
       }
 
       //---[ Compiling Command ]--------
-      command << allProps["compiler"]
-              << " --genco";
-
-      if (compilerFlags.size()) {
-#ifdef __HIP_PLATFORM_NVCC__
-        command << ' ' << compilerFlags;
+      command << compiler
+              << " --genco"
+#if defined(__HIP_PLATFORM_NVCC___) || defined(__HIP_ROCclr__)
+              << ' ' << compilerFlags
 #else
-        command << " -f=\\\"" << compilerFlags << "\\\"";
+              << " -f=\\\"" << compilerFlags << "\\\""
 #endif
-      }
-      if (hipccCompilerFlags.size()) {
-        command << ' ' << hipccCompilerFlags;
-      }
-
-      command << ' '    << sourceFilename
+              << ' ' << hipccCompilerFlags
+#if defined(__HIP_PLATFORM_NVCC___) || defined(__HIP_ROCclr__)
+              << " -I"        << env::OCCA_DIR << "include"
+              << " -I"        << env::OCCA_INSTALL_DIR << "include"
+#endif
+              /* NC: hipcc doesn't seem to like linking a library in */
+              //<< " -L"        << env::OCCA_INSTALL_DIR << "lib -locca"
+              << ' '    << sourceFilename
               << " -o " << binaryFilename;
 
       if (!verbose) {

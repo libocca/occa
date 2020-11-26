@@ -29,6 +29,11 @@ void testPeekMethods() {
     tokenType::identifier,
     tokenizer.peek()
   );
+  setStream("true_case");
+  ASSERT_EQ_BINARY(
+    tokenType::identifier,
+    tokenizer.peek()
+  );
 
   setStream("1");
   ASSERT_EQ_BINARY(
@@ -103,6 +108,18 @@ void testPeekMethods() {
   testCharPeek("U'\\''" , encodingType::U);
   testCharPeek("L'\\''" , encodingType::L);
 
+  setStream("<foobar>");
+  ASSERT_TRUE(tokenizer.loadingAngleBracketHeader());
+  ASSERT_FALSE(tokenizer.loadingQuotedHeader());
+
+  setStream("\"foobar\"");
+  ASSERT_FALSE(tokenizer.loadingAngleBracketHeader());
+  ASSERT_TRUE(tokenizer.loadingQuotedHeader());
+
+  setStream("foobar");
+  ASSERT_FALSE(tokenizer.loadingAngleBracketHeader());
+  ASSERT_FALSE(tokenizer.loadingQuotedHeader());
+
   ASSERT_EQ("foobar",
             getHeader("<foobar>"));
   ASSERT_EQ("foobar",
@@ -121,6 +138,11 @@ void testTokenMethods() {
     getTokenType()
   );
   setToken("_abcd020230");
+  ASSERT_EQ_BINARY(
+    tokenType::identifier,
+    getTokenType()
+  );
+  setToken("true_case");
   ASSERT_EQ_BINARY(
     tokenType::identifier,
     getTokenType()

@@ -9,6 +9,9 @@ ASAN_OPTIONS+=':detect_container_overflow=0'
 
 HEADER_CHARS=80
 
+RED='\e[31m'
+NORM='\e[0m'
+
 tests=$(find "${TEST_BIN_DIR}" -type f -executable)
 failed_tests=""
 
@@ -38,7 +41,7 @@ for test in ${tests[@]}; do
 done
 
 if [[ "${failed_tests}" != "" ]]; then
-    echo -e "\n\nFailed tests:"
+    echo -e "\n\n${RED}---[ Failed tests ]----------------------------${NORM}"
     echo -e "${failed_tests}"
     exit 1
 fi

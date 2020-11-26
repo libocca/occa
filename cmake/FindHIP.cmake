@@ -22,7 +22,6 @@ if(UNIX AND NOT APPLE AND NOT CYGWIN)
       NAMES hipconfig
       PATHS
       /opt/rocm
-      /opt/rocm/hip
       PATH_SUFFIXES bin
       DOC "HIP installed location"
       )
@@ -33,14 +32,6 @@ if(UNIX AND NOT APPLE AND NOT CYGWIN)
       string(REGEX REPLACE "[/\\\\]?bin[64]*[/\\\\]?$" "" HIP_ROOT_DIR ${HIP_ROOT_DIR})
       # And push it back to the cache
       set(HIP_ROOT_DIR ${HIP_ROOT_DIR} CACHE PATH "HIP installed location" FORCE)
-    endif()
-
-    if(NOT EXISTS ${HIP_ROOT_DIR})
-      if(HIP_FIND_REQUIRED)
-        message(FATAL_ERROR "Specify HIP_ROOT_DIR")
-      elseif(NOT HIP_FIND_QUIETLY)
-        message("HIP_ROOT_DIR not found or specified")
-      endif()
     endif()
   endif()
 
@@ -53,7 +44,6 @@ if(UNIX AND NOT APPLE AND NOT CYGWIN)
     ENV ROCM_PATH
     ENV HIP_PATH
     /opt/rocm
-    /opt/rocm/hip
     PATH_SUFFIXES bin
     NO_DEFAULT_PATH
     )
@@ -98,26 +88,46 @@ if(UNIX AND NOT APPLE AND NOT CYGWIN)
     mark_as_advanced(HIP_PLATFORM)
   endif()
 
-  if(${HIP_PLATFORM} STREQUAL "hcc")
-    set(HIP_INCLUDE_DIRS "${HIP_ROOT_DIR}/include;${HIP_ROOT_DIR}/hcc/include")
-    set(HIP_LIBRARIES "${HIP_ROOT_DIR}/lib/libhip_hcc.so")
-    set(HIP_RUNTIME_DEFINE "__HIP_PLATFORM_HCC__")
-  elseif(${HIP_PLATFORM} STREQUAL "nvcc")
-    find_package(CUDA)
-
-    #find the shared library, rather than the static that find_package returns
-    find_library(
-      CUDART_LIB
-      NAMES cudart
-      PATHS
-      ${CUDA_TOOLKIT_ROOT_DIR}
-      PATH_SUFFIXES lib64 lib
-      DOC "CUDA RT lib location"
+  if(HIP_HIPCONFIG_EXECUTABLE AND NOT HIP_COMPILER)
+    # Find the compiler
+    execute_process(
+      COMMAND ${HIP_HIPCONFIG_EXECUTABLE} --compiler
+      OUTPUT_VARIABLE _hip_compiler
+      OUTPUT_STRIP_TRAILING_WHITESPACE
       )
+    set(HIP_COMPILER ${_hip_compiler} CACHE STRING "HIP compiler as computed by hipconfig")
+    mark_as_advanced(HIP_COMPILER)
+  endif()
 
-    set(HIP_INCLUDE_DIRS "${HIP_ROOT_DIR}/include;${CUDA_INCLUDE_DIRS}")
-    set(HIP_LIBRARIES "${CUDART_LIB};cuda")
-    set(HIP_RUNTIME_DEFINE "__HIP_PLATFORM_NVCC__")
+  if(HIP_PLATFORM)
+    if(${HIP_PLATFORM} STREQUAL "hcc" OR ${HIP_PLATFORM} STREQUAL "amd")
+      if(${HIP_COMPILER} STREQUAL "hcc")
+        set(HIP_INCLUDE_DIRS "${HIP_ROOT_DIR}/include;${HIP_ROOT_DIR}/hcc/include")
+        set(HIP_LIBRARIES "${HIP_ROOT_DIR}/lib/libhip_hcc.so")
+        set(HIP_RUNTIME_DEFINE "__HIP_PLATFORM_HCC__")
+      elseif(${HIP_COMPILER} STREQUAL "clang")
+        set(HIP_INCLUDE_DIRS "${HIP_ROOT_DIR}/include")
+        set(HIP_LIBRARIES "${HIP_ROOT_DIR}/lib/libamdhip64.so")
+        set(HIP_RUNTIME_DEFINE "__HIP_PLATFORM_HCC__;__HIP_ROCclr__")
+        set(HIP_PLATFORM "hip-clang")
+      endif()
+    elseif(${HIP_PLATFORM} STREQUAL "nvcc")
+      find_package(CUDA)
+
+      #find the shared library, rather than the static that find_package returns
+      find_library(
+        CUDART_LIB
+        NAMES cudart
+        PATHS
+        ${CUDA_TOOLKIT_ROOT_DIR}
+        PATH_SUFFIXES lib64 lib
+        DOC "CUDA RT lib location"
+        )
+
+      set(HIP_INCLUDE_DIRS "${HIP_ROOT_DIR}/include;${CUDA_INCLUDE_DIRS}")
+      set(HIP_LIBRARIES "${CUDART_LIB};cuda")
+      set(HIP_RUNTIME_DEFINE "__HIP_PLATFORM_NVCC__")
+    endif()
   endif()
   mark_as_advanced(HIP_INCLUDE_DIRS)
   mark_as_advanced(HIP_LIBRARIES)
@@ -135,5 +145,6 @@ find_package_handle_standard_args(
     HIP_RUNTIME_DEFINE
     HIP_HIPCONFIG_EXECUTABLE
     HIP_PLATFORM
+    HIP_COMPILER
     VERSION_VAR HIP_VERSION
     )

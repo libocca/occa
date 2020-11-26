@@ -3,9 +3,10 @@
 
 namespace occa {
   namespace hip {
-    modeInfo::modeInfo() {}
+    hipMode::hipMode() :
+        mode_t("HIP") {}
 
-    bool modeInfo::init() {
+    bool hipMode::init() {
 #if OCCA_HIP_ENABLED
       // Only consider hip enabled if there is an available device
       return (hip::init() && hip::getDeviceCount());
@@ -14,7 +15,7 @@ namespace occa {
 #endif
     }
 
-    styling::section& modeInfo::getDescription() {
+    styling::section& hipMode::getDescription() {
       static styling::section section("HIP");
       if (section.size() == 0) {
         char deviceName[256];
@@ -41,7 +42,10 @@ namespace occa {
       return section;
     }
 
-    occa::mode<hip::modeInfo,
-               hip::device> mode("HIP");
+    modeDevice_t* hipMode::newDevice(const occa::properties &props) {
+      return new device(setModeProp(props));
+    }
+
+    hipMode mode;
   }
 }

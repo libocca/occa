@@ -21,8 +21,6 @@ namespace occa {
       return new stringNode(token, value);
     }
 
-    void stringNode::setChildren(exprNodeRefVector &children) {}
-
     void stringNode::print(printer &pout) const {
       pout << "\"" << escape(value, '"') << "\"";
     }

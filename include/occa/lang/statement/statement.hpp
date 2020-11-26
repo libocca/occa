@@ -1,12 +1,15 @@
 #ifndef OCCA_LANG_STATEMENT_STATEMENT_HEADER
 #define OCCA_LANG_STATEMENT_STATEMENT_HEADER
 
+#include <map>
 #include <vector>
 
 #include <occa/lang/attribute.hpp>
 #include <occa/lang/printer.hpp>
 #include <occa/lang/keyword.hpp>
 #include <occa/lang/token.hpp>
+#include <occa/lang/statement/statementArray.hpp>
+#include <occa/lang/expr/exprNodeArray.hpp>
 
 namespace occa {
   namespace lang {
@@ -17,7 +20,8 @@ namespace occa {
     class elseStatement;
     class variableDeclaration;
 
-    typedef std::vector<statement_t*>        statementPtrVector;
+    typedef std::map<statement_t*, exprNodeArray> statementExprMap;
+
     typedef std::vector<elifStatement*>      elifStatementVector;
     typedef std::vector<variableDeclaration> variableDeclarationVector;
 
@@ -64,6 +68,8 @@ namespace occa {
       extern const int return_;
 
       extern const int attribute;
+
+      extern const int sourceCode;
 
       extern const int blockStatements;
     }
@@ -122,12 +128,38 @@ namespace occa {
 
       int childIndex() const;
       void removeFromParent();
+      void replaceWith(statement_t &other);
 
+      statementArray getParentPath();
+
+      virtual statementArray getInnerStatements();
+
+      exprNodeArray getExprNodes();
+
+      virtual exprNodeArray getDirectExprNodes();
+
+      void replaceExprNode(exprNode *currentNode, exprNode *newNode);
+      virtual void safeReplaceExprNode(exprNode *currentNode, exprNode *newNode);
+
+      void replaceKeyword(const keyword_t &currentKeyword, keyword_t &newKeyword);
+
+      void replaceVariable(const variable_t &currentVar, variable_t &newVar);
+
+      void replaceFunction(const function_t &currentFunc, function_t &newFunc);
+
+      void replaceType(const type_t &currentType, type_t &newType);
+
+      void updateVariableReferences();
+
+      void updateIdentifierReferences();
+      void updateIdentifierReferences(exprNode *expr);
+      void updateIdentifierReferences(exprNodeArray &arr);
+
+      void debugPrint() const;
       virtual void print(printer &pout) const = 0;
 
       std::string toString() const;
       operator std::string() const;
-      void debugPrint() const;
 
       void printWarning(const std::string &message) const;
       void printError(const std::string &message) const;

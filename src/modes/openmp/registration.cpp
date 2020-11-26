@@ -8,9 +8,10 @@
 
 namespace occa {
   namespace openmp {
-    modeInfo::modeInfo() {}
+    openmpMode::openmpMode() :
+        mode_t("OpenMP") {}
 
-    bool modeInfo::init() {
+    bool openmpMode::init() {
 #if OCCA_OPENMP_ENABLED
       // Generate an OpenMP library dependency (so it doesn't crash when dlclose())
       omp_get_num_threads();
@@ -20,7 +21,10 @@ namespace occa {
 #endif
     }
 
-    occa::mode<openmp::modeInfo,
-               openmp::device> mode("OpenMP");
+    modeDevice_t* openmpMode::newDevice(const occa::properties &props) {
+      return new device(setModeProp(props));
+    }
+
+    openmpMode mode;
   }
 }

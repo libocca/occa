@@ -57,10 +57,32 @@ namespace occa {
       return falseValue->endNode();
     }
 
-    void ternaryOpNode::setChildren(exprNodeRefVector &children) {
-      children.push_back(&checkValue);
-      children.push_back(&trueValue);
-      children.push_back(&falseValue);
+    void ternaryOpNode::pushChildNodes(exprNodeVector &children) {
+      children.push_back(checkValue);
+      children.push_back(trueValue);
+      children.push_back(falseValue);
+    }
+
+    bool ternaryOpNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      if (currentNode == checkValue) {
+        delete checkValue;
+        checkValue = newNode;
+        return true;
+      }
+
+      if (currentNode == trueValue) {
+        delete trueValue;
+        trueValue = newNode;
+        return true;
+      }
+
+      if (currentNode == falseValue) {
+        delete falseValue;
+        falseValue = newNode;
+        return true;
+      }
+
+      return false;
     }
 
     void ternaryOpNode::print(printer &pout) const {

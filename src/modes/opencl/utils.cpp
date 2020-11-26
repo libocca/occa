@@ -38,7 +38,7 @@ namespace occa {
     }
 
     bool isEnabled() {
-      cl_uint platformCount;
+      cl_uint platformCount = 0;
       cl_int error = clGetPlatformIDs(0, NULL, &platformCount);
       // Only count as enabled if there is a device available
       if (!error) {
@@ -262,7 +262,7 @@ namespace occa {
                                 const std::string &sourceFile,
                                 const occa::properties &properties,
                                 const io::lock_t &lock) {
-      cl_int error;
+      cl_int error = 1;
 
       const bool verbose = properties.get("verbose", false);
 
@@ -303,7 +303,8 @@ namespace occa {
                                 const std::string &kernelName,
                                 const std::string &compilerFlags,
                                 const io::lock_t &lock) {
-      cl_int error, binaryError;
+      cl_int error = 1;
+      cl_int binaryError = 1;
 
       size_t binaryBytes;
       const char *binary = io::c_read(binaryFilename, &binaryBytes, true);
@@ -332,7 +333,7 @@ namespace occa {
                       const std::string &kernelName,
                       const std::string &compilerFlags,
                       const io::lock_t &lock) {
-      cl_int error;
+      cl_int error = 1;
 
       error = clBuildProgram(info.clProgram,
                              1, &info.clDevice,
@@ -340,9 +341,9 @@ namespace occa {
                              NULL, NULL);
 
       if (error) {
-        cl_int logError;
-        char *log;
-        size_t logSize;
+        cl_int logError = 1;
+        char *log = NULL;
+        size_t logSize = 0;
 
         clGetProgramBuildInfo(info.clProgram,
                               info.clDevice,
@@ -376,7 +377,7 @@ namespace occa {
     void buildKernelFromProgram(info_t &info,
                                 const std::string &kernelName,
                                 const io::lock_t &lock) {
-      cl_int error;
+      cl_int error = 1;
 
       info.clKernel = clCreateKernel(info.clProgram,
                                      kernelName.c_str(),
@@ -392,7 +393,8 @@ namespace occa {
     bool saveProgramBinary(info_t &info,
                            const std::string &binaryFile,
                            const io::lock_t &lock) {
-      cl_int error, binaryError;
+      cl_int error = 1;
+      cl_int binaryError = 1;
 
       size_t binaryBytes;
       error = clGetProgramInfo(info.clProgram,

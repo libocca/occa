@@ -22,6 +22,8 @@ namespace occa {
         const std::string source;
         const bool printErrors;
 
+        std::string oklAttr;
+
         variable_t *iterator;
         exprNode *initValue;
 
@@ -68,12 +70,11 @@ namespace occa {
 
         int oklLoopIndex();
 
-        static int oklLoopIndex(forStatement &forSmnt);
+        static int getOklLoopIndex(forStatement &forSmnt, const std::string &oklAttr);
 
-        void getOKLLoopPath(statementPtrVector &path);
+        statementArray getOklLoopPath();
 
-        static void getOKLLoopPath(forStatement &forSmnt,
-                                   statementPtrVector &path);
+        static statementArray getOklLoopPath(forStatement &forSmnt);
 
         std::string sourceStr();
 

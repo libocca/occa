@@ -4,6 +4,7 @@
 #include <ostream>
 #include <vector>
 #include <map>
+#include <set>
 #include <stack>
 
 #include <occa/defines.hpp>
@@ -16,7 +17,7 @@ namespace occa {
   namespace lang {
     class tokenizer_t;
 
-    typedef std::map<std::string, bool> stringSet;
+    typedef std::set<std::string> stringSet;
 
     typedef std::vector<token_t*> tokenVector;
     typedef std::stack<token_t*>  tokenStack;
@@ -37,11 +38,14 @@ namespace occa {
       extern const int finishedIf;
     }
 
-    class preprocessor_t : public withInputCache<token_t*, token_t*>,
-                           public withOutputCache<token_t*, token_t*> {
+    class preprocessor_t : public withCache<token_t*, token_t*> {
     public:
       typedef void (preprocessor_t::*processDirective_t)(identifierToken &directive);
       typedef std::map<std::string, processDirective_t> directiveMap;
+
+      //---[ Settings ]-----------------
+      bool strictHeaders;
+      //================================
 
       //---[ Status ]-------------------
       std::vector<int> statusStack;
@@ -63,13 +67,14 @@ namespace occa {
       //================================
 
       //---[ Metadata ]-----------------
+      occa::properties settings;
+
       strToBoolMap dependencies;
       int warnings, errors;
       //================================
 
       //---[ Misc ]---------------------
       tokenizer_t *tokenizer;
-      bool hasLoadedTokenizer;
 
       strVector includePaths;
       //================================
@@ -83,6 +88,8 @@ namespace occa {
       void clear_();
 
       preprocessor_t& operator = (const preprocessor_t &pp);
+
+      void setSettings(occa::properties settings_);
 
       void initDirectives();
       void initStandardHeaders();

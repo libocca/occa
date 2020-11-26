@@ -39,8 +39,18 @@ namespace occa {
       return value->startNode();
     }
 
-    void rightUnaryOpNode::setChildren(exprNodeRefVector &children) {
-      children.push_back(&value);
+    void rightUnaryOpNode::pushChildNodes(exprNodeVector &children) {
+      children.push_back(value);
+    }
+
+    bool rightUnaryOpNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      if (currentNode == value) {
+        delete value;
+        value = newNode;
+        return true;
+      }
+
+      return false;
     }
 
     variable_t* rightUnaryOpNode::getVariable() {

@@ -35,9 +35,25 @@ namespace occa {
       return index->endNode();
     }
 
-    void subscriptNode::setChildren(exprNodeRefVector &children) {
-      children.push_back(&value);
-      children.push_back(&index);
+    void subscriptNode::pushChildNodes(exprNodeVector &children) {
+      children.push_back(value);
+      children.push_back(index);
+    }
+
+    bool subscriptNode::safeReplaceExprNode(exprNode *currentNode, exprNode *newNode) {
+      if (currentNode == value) {
+        delete value;
+        value = newNode;
+        return true;
+      }
+
+      if (currentNode == index) {
+        delete index;
+        index = newNode;
+        return true;
+      }
+
+      return false;
     }
 
     variable_t* subscriptNode::getVariable() {

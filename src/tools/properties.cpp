@@ -34,6 +34,12 @@ namespace occa {
 
   properties::~properties() {}
 
+  properties& properties::operator = (const properties &other) {
+    initialized = other.initialized;
+    json::operator = (other);
+    return *this;
+  }
+
   bool properties::isInitialized() const {
     if (!initialized) {
       initialized = value_.object.size();

@@ -39,6 +39,15 @@ namespace occa {
         commandBufferObj(other.commandBufferObj),
         eventTime(other.eventTime) {}
 
+        event_t& event_t::operator = (const event_t &other) {
+        commandQueue = other.commandQueue;
+        eventId = other.eventId;
+        eventObj = other.eventObj;
+        commandBufferObj = other.commandBufferObj;
+        eventTime = other.eventTime;
+        return *this;
+      }
+
       void event_t::free() {
         // Remove reference count
         eventTime = 0;

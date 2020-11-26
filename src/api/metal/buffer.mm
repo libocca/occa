@@ -17,6 +17,12 @@ namespace occa {
         bufferObj(other.bufferObj),
         ptr(other.ptr) {}
 
+      buffer_t& buffer_t::operator = (const buffer_t &other) {
+        bufferObj = other.bufferObj;
+        ptr = other.ptr;
+        return *this;
+      }
+
       void buffer_t::free() {
         // Remove reference count
         if (bufferObj) {

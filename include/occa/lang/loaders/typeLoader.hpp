@@ -5,19 +5,19 @@ namespace occa {
   namespace lang {
     class tokenContext_t;
     class statementContext_t;
-    class keywords_t;
+    class parser_t;
     class vartype_t;
 
     class typeLoader_t {
     private:
       tokenContext_t &tokenContext;
       statementContext_t &smntContext;
-      const keywords_t &keywords;
+      parser_t &parser;
       bool success;
 
       typeLoader_t(tokenContext_t &tokenContext_,
                    statementContext_t &smntContext_,
-                   const keywords_t &keywords_);
+                   parser_t &parser_);
 
       bool loadBaseType(vartype_t &vartype);
 
@@ -32,34 +32,36 @@ namespace occa {
 
       void setVartypeReference(vartype_t &vartype);
 
-      friend bool loadBaseType(tokenContext_t &tokenContext,
-                               statementContext_t &smntContext,
-                               const keywords_t &keywords,
-                               vartype_t &vartype);
+      void loadStruct(vartype_t &vartype);
 
       friend bool loadType(tokenContext_t &tokenContext,
                            statementContext_t &smntContext,
-                           const keywords_t &keywords,
+                           parser_t &parser,
                            vartype_t &vartype);
+
+      friend bool loadBaseType(tokenContext_t &tokenContext,
+                               statementContext_t &smntContext,
+                               parser_t &parser,
+                               vartype_t &vartype);
 
       friend bool isLoadingStruct(tokenContext_t &tokenContext,
                                   statementContext_t &smntContext,
-                                  const keywords_t &keywords);
+                                  parser_t &parser);
     };
-
-    bool loadBaseType(tokenContext_t &tokenContext,
-                      statementContext_t &smntContext,
-                      const keywords_t &keywords,
-                      vartype_t &vartype);
 
     bool loadType(tokenContext_t &tokenContext,
                   statementContext_t &smntContext,
-                  const keywords_t &keywords,
+                  parser_t &parser,
                   vartype_t &vartype);
+
+    bool loadBaseType(tokenContext_t &tokenContext,
+                      statementContext_t &smntContext,
+                      parser_t &parser,
+                      vartype_t &vartype);
 
     bool isLoadingStruct(tokenContext_t &tokenContext,
                          statementContext_t &smntContext,
-                         const keywords_t &keywords);
+                         parser_t &parser);
   }
 }
 

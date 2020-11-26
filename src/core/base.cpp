@@ -244,22 +244,28 @@ namespace occa {
   //====================================
 
   void printModeInfo() {
-    strToModeMap &modes = modeMap();
-    strToModeMapIterator it = modes.begin();
+    strToModeMap &modeMap = getModeMap();
+    strToModeMap::iterator it = modeMap.begin();
+
     styling::table table;
-    int serialIdx = 0;
-    int idx = 0;
-    while (it != modes.end()) {
-      if (it->first == "Serial") {
-        serialIdx = idx;
+    int serialIndex = 0;
+    int index = 0;
+
+    for (; it != modeMap.end(); ++it) {
+      if (it->second->name() == "Serial") {
+        serialIndex = index;
       }
       table.add(it->second->getDescription());
-      ++it;
-      ++idx;
+      ++index;
     }
-    styling::section serialSection = table.sections[serialIdx];
-    table.sections[serialIdx] = table.sections[0];
-    table.sections[0] = serialSection;
+
+    // Set so Serial mode is first to show up
+    if (serialIndex != 0) {
+      styling::section serialSection = table.sections[serialIndex];
+      table.sections[serialIndex] = table.sections[0];
+      table.sections[0] = serialSection;
+    }
+
     io::stdout << table;
   }
 }

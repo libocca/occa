@@ -1,4 +1,5 @@
 #include "utils.hpp"
+#include <occa/tools/misc.hpp>
 
 void testExpressionLoading();
 void testDeclarationLoading();
@@ -78,7 +79,7 @@ void testDeclarationLoading() {
 
 #define decl         statement->to<declarationStatement>()
 #define decls        decl.declarations
-#define declVar(N)   (*decls[N].variable)
+#define declVar(N)   (decls[N].variable())
 #define declValue(N) (*(decls[N].value))
 
   setStatement("int foo;",
@@ -199,38 +200,82 @@ void testNamespaceLoading() {
 }
 
 void testStructLoading() {
-  statement_t *statement;
+  statement_t *statement = NULL;
+  struct_t *structType = NULL;
+  typedef_t *typedefType = NULL;
 
-#define structSmnt statement->to<structStatement>()
-#define structType structSmnt.struct_
+#define declSmnt         statement->to<declarationStatement>()
+#define getDeclType      declSmnt.declarations[0].variable().vartype.type
+#define setStructType()  structType = (struct_t*) getDeclType
+#define setTypedefType() typedefType = (typedef_t*) getDeclType
 
+  // Test default struct
   setStatement(
     "struct vec3 {\n"
     "  int x, *y, &z;\n"
     "};",
-    statementType::struct_
+    statementType::declaration
   );
 
+  setStructType();
+
+  ASSERT_EQ("vec3",
+            structType->name());
+
   ASSERT_EQ(3,
-            (int) structType.fields.size());
+            (int) structType->fields.size());
 
   ASSERT_EQ("x",
-            structType.fields[0].name());
+            structType->fields[0].name());
   ASSERT_EQ(&int_,
-            structType.fields[0].vartype.type);
+            structType->fields[0].vartype.type);
 
   ASSERT_EQ("y",
-            structType.fields[1].name());
+            structType->fields[1].name());
   ASSERT_EQ(&int_,
-            structType.fields[1].vartype.type);
+            structType->fields[1].vartype.type);
 
   ASSERT_EQ("z",
-            structType.fields[2].name());
+            structType->fields[2].name());
   ASSERT_EQ(&int_,
-            structType.fields[2].vartype.type);
+            structType->fields[2].vartype.type);
 
-#undef structSmnt
-#undef structType
+  // Test default typedef struct
+  setStatement(
+    "typedef struct vec3_t {\n"
+    "  int x, *y, &z;\n"
+    "} vec3;",
+    statementType::declaration
+  );
+
+  setTypedefType();
+
+  ASSERT_EQ("vec3",
+            typedefType->name());
+
+  ASSERT_EQ("vec3_t",
+            typedefType->baseType.name());
+
+  // Test typedef anonymous struct
+  setStatement(
+    "typedef struct {\n"
+    "  int x, *y, &z;\n"
+    "} vec3;",
+    statementType::declaration
+  );
+
+  setTypedefType();
+
+  ASSERT_EQ("vec3",
+            typedefType->name());
+
+  ASSERT_EQ(0,
+            (int) typedefType->baseType.name().size());
+
+#undef declSmnt
+#undef getDeclType
+#undef getStructType
+#undef getTypedefType
 }
 
 void testClassLoading() {
@@ -251,8 +296,8 @@ void testFunctionLoading() {
 
 #define funcSmnt     statement->to<functionStatement>()
 #define funcDeclSmnt statement->to<functionDeclStatement>()
-#define func         funcSmnt.function
-#define funcDecl     funcDeclSmnt.function
+#define func         funcSmnt.function()
+#define funcDecl     funcDeclSmnt.function()
 
   setStatement("void foo();",
                statementType::function);
@@ -303,7 +348,7 @@ void testIfLoading() {
 #define condition    (*ifSmnt.condition)
 #define decl         condition.to<declarationStatement>()
 #define decls        decl.declarations
-#define declVar(N)   (*decls[N].variable)
+#define declVar(N)   (decls[N].variable())
 #define declValue(N) (*(decls[N].value))
 
   setStatement("if (true) {}",
@@ -383,7 +428,7 @@ void testForLoading() {
   ASSERT_EQ_BINARY(statementType::empty,
                    update.type());
   ASSERT_EQ(0,
-            (int) forSmnt.children.size());
+            (int) forSmnt.children.length());
 
   setStatement("for (;;);",
                statementType::for_);
@@ -394,7 +439,7 @@ void testForLoading() {
   ASSERT_EQ_BINARY(statementType::empty,
                    update.type());
   ASSERT_EQ(1,
-            (int) forSmnt.children.size());
+            (int) forSmnt.children.length());
 
   // Test declaration in conditional
   setStatement("for (int i = 0; i < 2; ++i) {}",
@@ -438,6 +483,7 @@ void testWhileLoading() {
 
   setStatement("do {} while (int i = 0);",
                statementType::while_);
+  occa::ignoreResult(statement);
 }
 
 void testSwitchLoading() {
@@ -583,6 +629,8 @@ void testGotoLoading() {
                statementType::gotoLabel);
   setStatement("goto label;",
                statementType::goto_);
+
+  occa::ignoreResult(statement);
 }
 
 void testBlockLoading() {
@@ -629,10 +677,9 @@ void testAttributeLoading() {
 #define smntAttr(N)       statement->attributes[N]->name()
 #define declSmnt          statement->to<declarationStatement>()
 #define decls             declSmnt.declarations
-#define declVar(N)        (*decls[N].variable)
+#define declVar(N)        (decls[N].variable())
 #define declVarAttr(N, A) declVar(N).attributes[A]
 
-#if 0
   setStatement("const int *x @dim(2, 3), *y;",
                statementType::declaration);
   ASSERT_EQ(0,
@@ -670,7 +717,6 @@ void testAttributeLoading() {
             (int) xDummy["x"]->expr->evaluate());
   ASSERT_EQ(3,
             (int) xDummy["y"]->expr->evaluate());
-  #endif
 
   setStatement("@dim(2 + 2, 10 - 5) const int *x, *y;",
                statementType::declaration);

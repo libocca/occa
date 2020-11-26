@@ -7,7 +7,6 @@ add_cpp_test(lang-stream stream.cpp)
 add_cpp_test(lang-tokenContext tokenContext.cpp)
 add_cpp_test(lang-type type.cpp)
 
-add_subdirectory(builtins)
-add_subdirectory(mode)
+add_subdirectory(modes)
 add_subdirectory(parser)
 add_subdirectory(tokenizer)

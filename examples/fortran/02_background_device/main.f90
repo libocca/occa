@@ -6,6 +6,7 @@ program main
   implicit none
 
   integer :: i
+  integer(occaUDim_t) :: iu
   integer(occaUDim_t) :: entries = 5
   character(len=1024) :: arg, info
 
@@ -57,18 +58,24 @@ program main
   ! Assign Fortran pointers to the (host) memory
   if (C_associated(a)) then
     call C_F_pointer(a,a_ptr,[entries])
+  else
+    a_ptr => null()
   end if
   if (C_associated(b)) then
     call C_F_pointer(b,b_ptr,[entries])
+  else
+    b_ptr => null()
   end if
   if (C_associated(ab)) then
     call C_F_pointer(ab,ab_ptr,[entries])
+  else
+    ab_ptr => null()
   end if
 
   ! Initialise host arrays
-  do i=1,entries
-    a_ptr(i) = real(i)-1
-    b_ptr(i) = 2-real(i)
+  do iu=1,entries
+    a_ptr(iu) = real(iu)-1
+    b_ptr(iu) = 2-real(iu)
   end do
   ab_ptr = 0
 
@@ -91,11 +98,11 @@ program main
   call occaFinish()
 
   ! Assert values
-  do i=1,entries
-    write(*,'(a,i2,a,f3.1)') "ab(", i, ") = ", ab_ptr(i)
+  do iu=1,entries
+    write(*,'(a,i2,a,f3.1)') "ab(", iu, ") = ", ab_ptr(iu)
   end do
-  do i=1,entries
-    if (ab_ptr(i) .ne. (a_ptr(i) + b_ptr(i))) stop "*** Wrong result ***"
+  do iu=1,entries
+    if (abs(ab_ptr(iu) - (a_ptr(iu) + b_ptr(iu))) > 1.0e-8) stop "*** Wrong result ***"
   end do
 
   ! Free device memory and OCCA objects
