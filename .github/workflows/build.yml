@@ -89,7 +89,7 @@ jobs:
       run: make -j 16 info
       if: ${{ !matrix.useCMake }}
 
-      name: Configure CMake build
+    - name: Configure CMake build
       run: |
         cmake -E make_directory ${{runner.workspace}}/build
         cd ${{runner.workspace}}/build
