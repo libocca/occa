@@ -90,16 +90,17 @@ jobs:
       run: make -j 16 info
       if: ${{ !matrix.useCMake }}
 
-    - name: Configure CMake build
+    - name: CMake build
       run: |
         cmake -E make_directory ${{runner.workspace}}/occa/build
         cd ${{runner.workspace}}/occa/build
         cmake -DENABLE_TESTS=On -DENABLE_EXAMPLES=On ${{runner.workspace}}/occa
+        make -j 16
       if: ${{ matrix.useCMake }}
-
 
     - name: Compile library
       run: make -j 16
+      if: ${{ !matrix.useCMake }}
 
     - name: Compile tests
       run: make -j 16 tests
