@@ -91,9 +91,9 @@ jobs:
 
     - name: Configure CMake build
       run: |
-        cmake -E make_directory ${{runner.workspace}}/build
-        cd ${{runner.workspace}}/build
-        cmake -DENABLE_TESTS=On -DENABLE_EXAMPLES=On ..
+        cmake -E make_directory ${{runner.workspace}}/occa/build
+        cd ${{runner.workspace}}/occa/build
+        cmake -DENABLE_TESTS=On -DENABLE_EXAMPLES=On ${{runner.workspace}}/occa
       if: ${{ matrix.useCMake }}
 
 
