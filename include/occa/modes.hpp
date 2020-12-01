@@ -31,6 +31,8 @@ namespace occa {
     virtual styling::section &getDescription();
 
     virtual modeDevice_t* newDevice(const occa::properties &props) = 0;
+
+    virtual int getDeviceCount(const occa::properties &props) = 0;
   };
 
   strToModeMap& getUnsafeModeMap();
@@ -48,6 +50,8 @@ namespace occa {
   mode_t* getModeFromProps(const occa::properties &props);
 
   modeDevice_t* newModeDevice(const occa::properties &props);
+
+  int getDeviceCount(const occa::properties &props);
 }
 
 #endif

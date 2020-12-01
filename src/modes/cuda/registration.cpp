@@ -44,6 +44,10 @@ namespace occa {
       return new device(setModeProp(props));
     }
 
+    int cudaMode::getDeviceCount(const occa::properties &props) {
+      return cuda::getDeviceCount();
+    }
+
     cudaMode mode;
   }
 }

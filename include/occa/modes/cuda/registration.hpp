@@ -21,6 +21,8 @@ namespace occa {
       styling::section& getDescription();
 
       modeDevice_t* newDevice(const occa::properties &props);
+
+      int getDeviceCount(const occa::properties &props);
     };
 
     extern cudaMode mode;

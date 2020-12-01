@@ -25,6 +25,10 @@ namespace occa {
       return new device(setModeProp(props));
     }
 
+    int openmpMode::getDeviceCount(const occa::properties &props) {
+      return 1;
+    }
+
     openmpMode mode;
   }
 }

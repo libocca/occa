@@ -101,4 +101,15 @@ namespace occa {
   modeDevice_t* newModeDevice(const occa::properties &props) {
     return getModeFromProps(props)->newDevice(props);
   }
+
+  int getDeviceCount(const occa::properties &props) {
+    std::string modeName = props["mode"];
+    mode_t *mode = getMode(modeName);
+
+    if (mode) {
+      return mode->getDeviceCount(props);
+    } else {
+      return 0;
+    }
+  }
 }
