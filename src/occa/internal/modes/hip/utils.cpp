@@ -58,7 +58,7 @@ namespace occa {
                      hipGetDeviceProperties(&hipProps, deviceId));
 
       if (hipProps.gcnArch) {
-        return "gfx" + toString(hipProps.gcnArch);
+        return hipProps.gcnArchName;
       }
       std::string sm = "sm_";
       sm += toString(
