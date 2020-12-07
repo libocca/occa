@@ -37,6 +37,7 @@ namespace occa {
     size_t totalGlobalMem;
     int maxThreadsPerBlock;
     int gcnArch;
+    char gcnArchName[256];
     int major;
     int minor;
 
