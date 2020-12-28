@@ -18,9 +18,8 @@ namespace occa {
     }
 
     int getDeviceCount() {
-      int deviceCount;
-      OCCA_HIP_ERROR("Finding Number of Devices",
-                     hipGetDeviceCount(&deviceCount));
+      int deviceCount=0;
+      hipGetDeviceCount(&deviceCount);
       return deviceCount;
     }
 
