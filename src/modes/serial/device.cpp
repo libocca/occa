@@ -435,7 +435,7 @@ namespace occa {
     }
 
     udim_t device::memorySize() const {
-      return sys::installedRAM();
+      return sys::SystemInfo::load().memory.total;
     }
     //==================================
   }

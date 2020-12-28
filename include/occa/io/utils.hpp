@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <occa/types.hpp>
+#include <occa/io/enums.hpp>
 
 namespace occa {
   // Kernel Caching
@@ -69,10 +70,10 @@ namespace occa {
 
     char* c_read(const std::string &filename,
                  size_t *chars = NULL,
-                 const bool readingBinary = false);
+                 const enums::FileType fileType = enums::FILE_TYPE_TEXT);
 
     std::string read(const std::string &filename,
-                     const bool readingBinary = false);
+                     const enums::FileType fileType = enums::FILE_TYPE_TEXT);
 
     void write(const std::string &filename,
                const std::string &content);

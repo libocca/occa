@@ -6,6 +6,7 @@ using namespace occa;
 void testStrip();
 void testEscape();
 void testSplit();
+void testContains();
 void testCaseMethods();
 void testString();
 void testMatchEnds();
@@ -17,6 +18,7 @@ int main(const int argc, const char **argv) {
   testStrip();
   testEscape();
   testSplit();
+  testContains();
   testCaseMethods();
   testString();
   testMatchEnds();
@@ -54,6 +56,14 @@ void testSplit() {
   ASSERT_IN("a", vec);
   ASSERT_IN("b", vec);
   ASSERT_IN("c", vec);
+}
+
+void testContains() {
+  ASSERT_TRUE(contains("abcd", "b"));
+  ASSERT_TRUE(contains("abcd", "bcd"));
+  ASSERT_TRUE(contains("abcd", "abc"));
+  ASSERT_FALSE(contains("abcd", "B"));
+  ASSERT_TRUE(contains("abcd", ""));
 }
 
 void testCaseMethods() {
@@ -147,7 +157,7 @@ void testHex() {
   ASSERT_EQ(stringifyBytes(1L << 42),
             "4 TB");
   ASSERT_EQ(stringifyBytes(1L << 52),
-            toString(1L << 52) + " bytes");
+            "4096 TB");
 }
 
 void testJoin() {

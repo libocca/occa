@@ -136,12 +136,12 @@ namespace occa {
       // Handle the multiple other formats with normal digits
       if (decimal || float_) {
         if (float_) {
-          p = (float) occa::atof(std::string(c0, c - c0));
+          p = (float) occa::parseFloat(std::string(c0, c - c0));
         } else {
-          p = (double) occa::atod(std::string(c0, c - c0));
+          p = (double) occa::parseDouble(std::string(c0, c - c0));
         }
       } else {
-        uint64_t value_ = occa::atoi(std::string(c0, c - c0));
+        uint64_t value_ = parseInt(std::string(c0, c - c0));
         if (longs == 0) {
           if (unsigned_) {
             p = (uint32_t) value_;

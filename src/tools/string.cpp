@@ -12,6 +12,7 @@
 #include <occa/tools/sys.hpp>
 
 namespace occa {
+  //---[ Helper Methods ]---------------
   std::string strip(const std::string &str) {
     std::string output;
     strip(str, true, true, output);
@@ -114,6 +115,21 @@ namespace occa {
     return sv;
   }
 
+  std::string join(const strVector &vec,
+                   const std::string &delimiter) {
+    std::string output;
+    int index = 0;
+
+    for (auto &s : vec) {
+      if (index++) {
+        output += delimiter;
+      }
+      output += s;
+    }
+
+    return output;
+  }
+
   std::string uppercase(const char *c,
                         const int chars) {
     std::string ret(c, chars);
@@ -131,7 +147,9 @@ namespace occa {
     }
     return ret;
   }
+  //====================================
 
+  //---[ Stringify ]--------------------
   template <>
   std::string toString<std::string>(const std::string &t) {
     return t;
@@ -171,8 +189,14 @@ namespace occa {
   std::string fromString(const std::string &s) {
     return s;
   }
+  //====================================
 
-  udim_t atoi(const char *c) {
+  //---[ Formatters ]-------------------
+  udim_t parseInt(const std::string &str) {
+    return occa::parseInt((const char*) str.c_str());
+  }
+
+  udim_t parseInt(const char *c) {
     udim_t ret = 0;
 
     const char *c0 = c;
@@ -189,7 +213,7 @@ namespace occa {
     }
 
     if (c[0] == '0')
-      return atoiBase2(c0);
+      return parseBinary(c0);
 
     while(('0' <= *c) && (*c <= '9')) {
       ret *= 10;
@@ -230,7 +254,7 @@ namespace occa {
     return ret;
   }
 
-  udim_t atoiBase2(const char*c) {
+  udim_t parseBinary(const char*c) {
     udim_t ret = 0;
 
 #if !OCCA_UNSAFE
@@ -308,19 +332,19 @@ namespace occa {
     return ret;
   }
 
-  udim_t atoi(const std::string &str) {
-    return occa::atoi((const char*) str.c_str());
-  }
-
-  double atof(const char *c) {
-    return ::atof(c);
-  }
-
-  double atof(const std::string &str) {
+  double parseFloat(const std::string &str) {
     return ::atof(str.c_str());
   }
 
-  double atod(const char *c) {
+  double parseFloat(const char *c) {
+    return ::atof(c);
+  }
+
+  double parseDouble(const std::string &str) {
+    return occa::parseDouble(str.c_str());
+  }
+
+  double parseDouble(const char *c) {
     double ret;
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
     sscanf(c, "%lf", &ret);
@@ -330,40 +354,35 @@ namespace occa {
     return ret;
   }
 
-  double atod(const std::string &str) {
-    return occa::atod(str.c_str());
-  }
-
   std::string stringifyBytes(udim_t bytes) {
-    if (0 < bytes) {
-      std::stringstream ss;
-      uint64_t bigBytes = bytes;
-
-      if (bigBytes < (((uint64_t) 1) << 10)) {
-        ss << bigBytes << " bytes";
-      } else if (bigBytes < (((uint64_t) 1) << 20)) {
-        ss << (bigBytes >> 10);
-        stringifyBytesFraction(ss, bigBytes >> 0);
-        ss << " KB";
-      } else if (bigBytes < (((uint64_t) 1) << 30)) {
-        ss << (bigBytes >> 20);
-        stringifyBytesFraction(ss, bigBytes >> 10);
-        ss << " MB";
-      } else if (bigBytes < (((uint64_t) 1) << 40)) {
-        ss << (bigBytes >> 30);
-        stringifyBytesFraction(ss, bigBytes >> 20);
-        ss << " GB";
-      } else if (bigBytes < (((uint64_t) 1) << 50)) {
-        ss << (bigBytes >> 40);
-        stringifyBytesFraction(ss, bigBytes >> 30);
-        ss << " TB";
-      } else {
-        ss << bigBytes << " bytes";
-      }
-      return ss.str();
+    if (dim::hasNegativeBitSet(bytes)) {
+      return "";
     }
 
-    return "";
+    std::stringstream ss;
+    uint64_t bigBytes = bytes;
+
+    if (bigBytes < (((uint64_t) 1) << 10)) {
+      ss << bigBytes << " bytes";
+    } else if (bigBytes < (((uint64_t) 1) << 20)) {
+      ss << (bigBytes >> 10);
+      stringifyBytesFraction(ss, bigBytes >> 0);
+      ss << " KB";
+    } else if (bigBytes < (((uint64_t) 1) << 30)) {
+      ss << (bigBytes >> 20);
+      stringifyBytesFraction(ss, bigBytes >> 10);
+      ss << " MB";
+    } else if (bigBytes < (((uint64_t) 1) << 40)) {
+      ss << (bigBytes >> 30);
+      stringifyBytesFraction(ss, bigBytes >> 20);
+      ss << " GB";
+    } else {
+      ss << (bigBytes >> 40);
+      stringifyBytesFraction(ss, bigBytes >> 30);
+      ss << " TB";
+    }
+
+    return ss.str();
   }
 
   void stringifyBytesFraction(std::stringstream &ss,
@@ -373,6 +392,28 @@ namespace occa {
       ss << '.' << part;
     }
   }
+
+  std::string stringifyFrequency(udim_t frequency) {
+    if (dim::hasNegativeBitSet(frequency)) {
+      return "";
+    }
+
+    std::stringstream ss;
+    ss.precision(2);
+
+    if (frequency < 1e3) {
+      ss << frequency << " Hz";
+    } else if (frequency < 1e6) {
+      ss << (frequency / 1e3) << " KHz";
+    } else if (frequency < 1e9) {
+      ss << (frequency / 1e6) << " MHz";
+    } else {
+      ss << (frequency / 1e9) << " GHz";
+    }
+
+    return ss.str();
+  }
+  //====================================
 
   //---[ Color Strings ]----------------
   namespace color {

@@ -6,6 +6,7 @@
 #include <occa/tools/exception.hpp>
 #include <occa/tools/gc.hpp>
 #include <occa/tools/hash.hpp>
+#include <occa/tools/enums.hpp>
 #include <occa/tools/json.hpp>
 #include <occa/tools/lex.hpp>
 #include <occa/tools/misc.hpp>

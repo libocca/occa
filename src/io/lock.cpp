@@ -8,6 +8,7 @@
 #include <occa/io/output.hpp>
 #include <occa/io/utils.hpp>
 #include <occa/tools/env.hpp>
+#include <occa/tools/sys.hpp>
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
 #  include <unistd.h>

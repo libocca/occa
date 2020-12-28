@@ -6,6 +6,7 @@
 #include <occa/tools/env.hpp>
 #include <occa/tools/lex.hpp>
 #include <occa/tools/properties.hpp>
+#include <occa/tools/sys.hpp>
 
 namespace occa {
   namespace io {

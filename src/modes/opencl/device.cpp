@@ -168,7 +168,7 @@ namespace occa {
       clInfo.clContext = clContext;
 
       // Build OpenCL program
-      std::string source = io::read(sourceFilename, true);
+      std::string source = io::read(sourceFilename, enums::FILE_TYPE_BINARY);
 
       opencl::buildProgramFromSource(clInfo,
                                      source,
