@@ -81,6 +81,10 @@ namespace occa {
       return new device(setModeProp(props));
     }
 
+    int serialMode::getDeviceCount(const occa::properties &props) {
+      return 1;
+    }
+
     serialMode mode;
   }
 }

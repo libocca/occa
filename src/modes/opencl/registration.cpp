@@ -44,6 +44,16 @@ namespace occa {
       return new device(setModeProp(props));
     }
 
+    int openclMode::getDeviceCount(const occa::properties &props) {
+      OCCA_ERROR("[OpenCL] getDeviceCount not given a [platform_id] integer",
+                 props.has("platform_id") &&
+                 props["platform_id"].isNumber());
+
+      int platformId = props.get<int>("platform_id");
+
+      return getDeviceCountInPlatform(platformId);
+    }
+
     openclMode mode;
   }
 }

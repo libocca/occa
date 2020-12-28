@@ -41,6 +41,10 @@ namespace occa {
       return new device(setModeProp(props));
     }
 
+    int metalMode::getDeviceCount(const occa::properties &props) {
+      return api::metal::getDeviceCount();
+    }
+
     metalMode mode;
   }
 }

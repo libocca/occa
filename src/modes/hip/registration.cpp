@@ -46,6 +46,10 @@ namespace occa {
       return new device(setModeProp(props));
     }
 
+    int hipMode::getDeviceCount(const occa::properties &props) {
+      return hip::getDeviceCount();
+    }
+
     hipMode mode;
   }
 }
