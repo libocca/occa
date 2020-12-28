@@ -21,6 +21,15 @@ jobs:
             OCCA_COVERAGE: 1
             OCCA_FORTRAN_ENABLED: 1
 
+          - name: (Ubuntu) CMake + gcc-8
+            os: ubuntu-18.04
+            CC: gcc-8
+            CXX: g++-8
+            CXXFLAGS: -Wno-maybe-uninitialized -Wno-cpp
+            GCOV: gcov-8
+            OCCA_COVERAGE: 1
+            useCMake: true
+
           - name: (Ubuntu) gcc-9
             os: ubuntu-18.04
             CC: gcc-9
@@ -79,18 +88,37 @@ jobs:
 
     - name: Compiler info
       run: make -j 16 info
+      if: ${{ !matrix.useCMake }}
+
+    - name: CMake build
+      run: |
+        cmake -E make_directory ${{runner.workspace}}/occa/build
+        cd ${{runner.workspace}}/occa/build
+        cmake -DENABLE_TESTS=On -DENABLE_EXAMPLES=On ${{runner.workspace}}/occa
+        make -j 16
+      if: ${{ matrix.useCMake }}
 
     - name: Compile library
       run: make -j 16
+      if: ${{ !matrix.useCMake }}
 
     - name: Compile tests
       run: make -j 16 tests
+      if: ${{ !matrix.useCMake }}
 
     - name: Run unit tests
       run: ./tests/run_tests
+      if: ${{ !matrix.useCMake }}
 
     - name: Run examples
       run: ./tests/run_examples
+      if: ${{ !matrix.useCMake }}
+
+    - name: Run CTests
+      run: |
+        cd ${{runner.workspace}}/occa/build
+        make test
+      if: ${{ matrix.useCMake }}
 
     - name: Upload code coverage
       run: bash <(curl --no-buffer -s https://codecov.io/bash) -x "${GCOV}"
