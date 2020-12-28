@@ -142,6 +142,12 @@ namespace occa {
       }
     }
   }
+
+  bool modeKernel_t::isNoop() const {
+    return (
+      outerDims.isZero() && innerDims.isZero()
+    );
+  }
   //====================================
 
   //---[ kernel ]-----------------------
@@ -304,6 +310,10 @@ namespace occa {
 
   void kernel::run() const {
     assertInitialized();
+
+    if (modeKernel->isNoop()) {
+      return;
+    }
 
     modeKernel->setupRun();
     modeKernel->run();

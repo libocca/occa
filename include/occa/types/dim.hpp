@@ -23,7 +23,8 @@ namespace occa {
     dim operator * (const dim &d) const;
     dim operator / (const dim &d) const;
 
-    bool hasNegativeEntries();
+    bool isZero() const;
+    bool hasNegativeEntries() const;
 
     udim_t& operator [] (int i);
     udim_t  operator [] (int i) const;

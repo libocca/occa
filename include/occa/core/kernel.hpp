@@ -70,6 +70,8 @@ namespace occa {
 
     void setupRun();
 
+    bool isNoop() const;
+
     //---[ Virtual Methods ]------------
     virtual ~modeKernel_t() = 0;
 
