@@ -66,7 +66,11 @@ namespace occa {
                z / d.z);
   }
 
-  bool dim::hasNegativeEntries() {
+  bool dim::isZero() const {
+    return !(x && y && z);
+  }
+
+  bool dim::hasNegativeEntries() const {
     return ((x & (1 << (sizeof(udim_t) - 1))) ||
             (y & (1 << (sizeof(udim_t) - 1))) ||
             (z & (1 << (sizeof(udim_t) - 1))));
