@@ -23,6 +23,11 @@ namespace occa {
     dim operator * (const dim &d) const;
     dim operator / (const dim &d) const;
 
+    template <class TM>
+    static inline bool hasNegativeBitSet(const TM &t) {
+      return t & (1 << (sizeof(TM) - 1));
+    }
+
     bool isZero() const;
     bool hasNegativeEntries() const;
 

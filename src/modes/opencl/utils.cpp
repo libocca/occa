@@ -307,7 +307,7 @@ namespace occa {
       cl_int binaryError = 1;
 
       size_t binaryBytes;
-      const char *binary = io::c_read(binaryFilename, &binaryBytes, true);
+      const char *binary = io::c_read(binaryFilename, &binaryBytes, enums::FILE_TYPE_BINARY);
       info.clProgram = clCreateProgramWithBinary(info.clContext,
                                                  1, &(info.clDevice),
                                                  &binaryBytes,

@@ -33,24 +33,10 @@ void testIndexOf() {
   );
 }
 
-void testJoin();
-
 int main(const int argc, const char **argv) {
   testIndexOf<int>();
   testIndexOf<float>();
   testIndexOf<std::string>();
-  testJoin();
 
   return 0;
-}
-
-void testJoin() {
-  strVector vec;
-  vec.push_back("a");
-  vec.push_back("b");
-  vec.push_back("c");
-  ASSERT_EQ(join(vec, ","),
-            "a,b,c");
-  ASSERT_EQ(join(vec, " , "),
-            "a , b , c");
 }

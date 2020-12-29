@@ -13,7 +13,6 @@
 #  include <sys/types.h>
 #  include <sys/stat.h>
 #  include <sys/syscall.h>
-#  include <sys/sysctl.h>
 #  include <sys/time.h>
 #  include <unistd.h>
 #  if (OCCA_OS & OCCA_LINUX_OS)
@@ -43,8 +42,9 @@
 #include <occa/core/base.hpp>
 #include <occa/io.hpp>
 #include <occa/tools/env.hpp>
-#include <occa/tools/hash.hpp>
 #include <occa/tools/exception.hpp>
+#include <occa/tools/hash.hpp>
+#include <occa/tools/json.hpp>
 #include <occa/tools/lex.hpp>
 #include <occa/tools/misc.hpp>
 #include <occa/tools/string.hpp>
@@ -53,6 +53,26 @@
 
 namespace occa {
   namespace sys {
+    CacheInfo::CacheInfo() :
+        l1d(0),
+        l1i(0),
+        l2(0),
+        l3(0) {}
+
+    ProcessorInfo::ProcessorInfo() :
+        name(""),
+        frequency(0),
+        coreCount(0),
+        cache() {}
+
+    MemoryInfo::MemoryInfo() :
+        total(0),
+        available(0) {}
+
+    SystemInfo::SystemInfo() :
+        processor(),
+        memory() {}
+
     //---[ System Info ]----------------
     double currentTime() {
       // Returns the current time in seconds
@@ -131,18 +151,18 @@ namespace occa {
       std::stringstream ss;
 
       switch (month) {
-      case 1 : ss << "Jan"; break;
-      case 2 : ss << "Feb"; break;
-      case 3 : ss << "Mar"; break;
-      case 4 : ss << "Apr"; break;
-      case 5 : ss << "May"; break;
-      case 6 : ss << "Jun"; break;
-      case 7 : ss << "Jul"; break;
-      case 8 : ss << "Aug"; break;
-      case 9 : ss << "Sep"; break;
-      case 10: ss << "Oct"; break;
-      case 11: ss << "Nov"; break;
-      case 12: ss << "Dec"; break;
+        case 1 : ss << "Jan"; break;
+        case 2 : ss << "Feb"; break;
+        case 3 : ss << "Mar"; break;
+        case 4 : ss << "Apr"; break;
+        case 5 : ss << "May"; break;
+        case 6 : ss << "Jun"; break;
+        case 7 : ss << "Jul"; break;
+        case 8 : ss << "Aug"; break;
+        case 9 : ss << "Sep"; break;
+        case 10: ss << "Oct"; break;
+        case 11: ss << "Nov"; break;
+        case 12: ss << "Dec"; break;
       }
 
       ss << ' ' << day << ' ' << year << ' ';
@@ -374,13 +394,13 @@ namespace occa {
 
     int getTID() {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-      #if OCCA_OS == OCCA_MACOS_OS & (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12)
+#if OCCA_OS == OCCA_MACOS_OS & (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12)
       uint64_t tid64;
       pthread_threadid_np(NULL, &tid64);
       pid_t tid = (pid_t)tid64;
-      #else
+#else
       pid_t tid = syscall(SYS_gettid);
-      #endif
+#endif
       return tid;
 #else
       return GetCurrentThreadId();
@@ -388,13 +408,16 @@ namespace occa {
     }
 
     void pinToCore(const int core) {
-      const int coreCount = getCoreCount();
+      sys::SystemInfo info = sys::SystemInfo::load();
+      const int coreCount = info.processor.coreCount;
+
 #if OCCA_UNSAFE
-    ignoreResult(coreCount);
+      ignoreResult(coreCount);
 #endif
       OCCA_ERROR("Core to pin (" << core << ") is not in range: [0, "
                  << coreCount << "]",
                  (0 <= core) && (core < coreCount));
+
 #if (OCCA_OS == OCCA_LINUX_OS)
       cpu_set_t cpuSet;
       CPU_ZERO(&cpuSet);
@@ -407,56 +430,94 @@ namespace occa {
     //==================================
 
     //---[ Processor Info ]-------------
-    std::string getFieldFrom(const std::string &command,
-                             const std::string &field) {
-#if (OCCA_OS & OCCA_LINUX_OS)
-      std::string shellToolsFile = env::OCCA_DIR + "include/occa/scripts/shellTools.sh";
+    json SystemInfo::getSystemInfo() {
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+      std::string content;
 
-      std::stringstream ss;
-
-      ss << "echo \"(. " << shellToolsFile << "; " << command << " '" << field << "')\" | bash";
-
-      std::string sCommand = ss.str();
-
-      FILE *fp;
-      fp = popen(sCommand.c_str(), "r");
-
-      const int bufferSize = 4096;
-      char *buffer = new char[bufferSize];
-
-      ignoreResult( fread(buffer, sizeof(char), bufferSize, fp) );
-
-      pclose(fp);
-
-      int end;
-
-      for (end = 0; end < bufferSize; ++end) {
-        if (buffer[end] == '\n')
-          break;
-      }
-
-      std::string ret(buffer, end);
-
-      delete [] buffer;
-
-      return ret;
+      const std::string command = (
+#if   (OCCA_OS & OCCA_LINUX_OS)
+        "lscpu"
 #else
-      return "";
+        "sysctl -a"
+#endif
+      );
+
+      call(command, content);
+
+      return parseSystemInfoContent(content);
+#else
+      return json();
 #endif
     }
 
-    std::string getProcessorName() {
+    // Colon-delimited with an unknown amount of spacing around the colon
+    // Example:
+    //  key1 : value1
+    //  key2: value2
+    //  key3   : value3
+    json SystemInfo::parseSystemInfoContent(const std::string &content) {
+      json info;
+
+      for (std::string &line : split(content, '\n')) {
+        if (!strip(line).size()) {
+          continue;
+        }
+
+        strVector parts = split(line, ':');
+        if (parts.size() < 2) {
+          continue;
+        }
+
+        const std::string key = lowercase(strip(parts[0]));
+
+        // Remove the key and join back on :
+        parts.erase(parts.begin());
+        const std::string value = strip(
+          join(parts, ":")
+        );
+
+        info[key] = value;
+      }
+
+      return info;
+    }
+
+    json SystemInfo::getSystemInfoField(const json &systemInfo,
+                                        const std::string &field) {
+      const std::string lowerField = lowercase(field);
+
+      if (systemInfo.has(lowerField)) {
+        return systemInfo[lowerField];
+      }
+
+      return json();
+    }
+
+    SystemInfo SystemInfo::load() {
+      json systemInfo = getSystemInfo();
+      SystemInfo info;
+
+      info.setProcessorInfo(systemInfo);
+      info.setMemoryInfo(systemInfo);
+
+      return info;
+    }
+
+    void SystemInfo::setProcessorInfo(const json &systemInfo) {
+      processor.name = getProcessorName(systemInfo);
+      processor.frequency = getProcessorFrequency(systemInfo);
+      processor.coreCount = getCoreCount(systemInfo);
+      processor.cache.l1d = getProcessorCacheSize(systemInfo, CacheLevel::L1D);
+      processor.cache.l1i = getProcessorCacheSize(systemInfo, CacheLevel::L1I);
+      processor.cache.l2  = getProcessorCacheSize(systemInfo, CacheLevel::L2);
+      processor.cache.l3  = getProcessorCacheSize(systemInfo, CacheLevel::L3);
+    }
+
+    std::string SystemInfo::getProcessorName(const json &systemInfo) {
 #if   (OCCA_OS & OCCA_LINUX_OS)
-      return getFieldFrom("getCPUINFOField", "model name");
+      return getSystemInfoField(systemInfo, "Model name");
 #elif (OCCA_OS == OCCA_MACOS_OS)
-      size_t bufferSize = 100;
-      char buffer[100];
-
-      sysctlbyname("machdep.cpu.brand_string",
-                   &buffer, &bufferSize,
-                   NULL, 0);
-
-      return std::string(buffer);
+      return getSystemInfoField(systemInfo, "machdep.cpu.brand_string");
 #elif (OCCA_OS == OCCA_WINDOWS_OS)
       char buffer[MAX_COMPUTERNAME_LENGTH + 1];
       int bytes;
@@ -467,9 +528,11 @@ namespace occa {
 #endif
     }
 
-    int getCoreCount() {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-      return sysconf(_SC_NPROCESSORS_ONLN);
+    int SystemInfo::getCoreCount(const json &systemInfo) {
+#if   (OCCA_OS & OCCA_LINUX_OS)
+      return getSystemInfoField(systemInfo, "Model name");
+#elif (OCCA_OS == OCCA_MACOS_OS)
+      return getSystemInfoField(systemInfo, "hw.physicalcpu");
 #elif (OCCA_OS == OCCA_WINDOWS_OS)
       SYSTEM_INFO sysinfo;
       GetSystemInfo(&sysinfo);
@@ -477,113 +540,120 @@ namespace occa {
 #endif
     }
 
-    int getProcessorFrequency() {
+    udim_t SystemInfo::getProcessorFrequency(const json &systemInfo) {
 #if   (OCCA_OS & OCCA_LINUX_OS)
-      std::stringstream ss;
-      float freq = 0;
+      const float frequency = parseFloat(
+        getSystemInfoField(systemInfo, "CPU max MHz")
+      );
+      return (udim_t) (frequency * 1e3);
 
-      ss << getFieldFrom("getLSCPUField", "cpu.*mhz");
-      ss >> freq;
-
-      return (int) freq;
 #elif (OCCA_OS == OCCA_MACOS_OS)
-      uint64_t frequency = 0;
-      size_t size = sizeof(frequency);
+      const float frequency = parseFloat(
+        getSystemInfoField(systemInfo, "hw.cpufrequency")
+      );
+      return (udim_t) frequency;
 
-      int error = sysctlbyname("hw.cpufrequency", &frequency, &size, NULL, 0);
-#if OCCA_UNSAFE
-    ignoreResult(error);
-#endif
-
-      OCCA_ERROR("Error getting CPU Frequency.\n",
-                 error != ENOMEM);
-
-      return frequency / 1.0e6;
 #elif (OCCA_OS == OCCA_WINDOWS_OS)
       LARGE_INTEGER performanceFrequency;
       QueryPerformanceFrequency(&performanceFrequency);
 
-      return (int) (((double) performanceFrequency.QuadPart) / 1000.0);
+      return (udim_t) (((double) performanceFrequency.QuadPart) * 1e3);
 #endif
     }
 
-    std::string getProcessorCacheSize(int level) {
-#if   (OCCA_OS & OCCA_LINUX_OS)
-      std::stringstream field;
+    udim_t SystemInfo::getProcessorCacheSize(const json &systemInfo,
+                                             CacheLevel level) {
+#if (OCCA_OS & OCCA_LINUX_OS)
+      std::string fieldName;
 
-      field << 'L' << level;
+      const std::string levelFieldNames[4] = {
+        "L1d cache",
+        "L1i cache",
+        "L2 cache",
+        "L3 cache",
+      };
 
-      if (level == 1)
-        field << 'd';
+      switch (level) {
+        case CacheLevel::L1D:
+          fieldName = levelFieldNames[0];
+          break;
 
-      field << " cache";
+        case CacheLevel::L1I:
+          fieldName = levelFieldNames[1];
+          break;
 
-      return getFieldFrom("getLSCPUField", field.str());
-#elif (OCCA_OS == OCCA_MACOS_OS)
-      std::stringstream ss;
-      ss << "hw.l" << level;
+        case CacheLevel::L2:
+          fieldName = levelFieldNames[2];
+          break;
 
-      if (level == 1)
-        ss << 'd';
-
-      ss << "cachesize";
-
-      std::string field = ss.str();
-
-      uint64_t cache = 0;
-      size_t size = sizeof(cache);
-
-      int error = sysctlbyname(field.c_str(), &cache, &size, NULL, 0);
-#if OCCA_UNSAFE
-    ignoreResult(error);
-#endif
-
-      OCCA_ERROR("Error getting L" << level << " Cache Size.\n",
-                 error != ENOMEM);
-
-      return stringifyBytes(cache);
-#elif (OCCA_OS == OCCA_WINDOWS_OS)
-      std::stringstream ss;
-      DWORD cache = 0;
-      int bytes = 0;
-
-      PSYSTEM_LOGICAL_PROCESSOR_INFORMATION buffer = NULL;
-
-      GetLogicalProcessorInformation(buffer, (LPDWORD) &bytes);
-
-      OCCA_ERROR("[GetLogicalProcessorInformation] Failed",
-                 (GetLastError() == ERROR_INSUFFICIENT_BUFFER));
-
-      buffer = (PSYSTEM_LOGICAL_PROCESSOR_INFORMATION) sys::malloc(bytes);
-
-      bool passed = GetLogicalProcessorInformation(buffer, (LPDWORD) &bytes);
-
-      OCCA_ERROR("[GetLogicalProcessorInformation] Failed",
-                 passed);
-
-      PSYSTEM_LOGICAL_PROCESSOR_INFORMATION pos = buffer;
-      int off = 0;
-      int sk = sizeof(PSYSTEM_LOGICAL_PROCESSOR_INFORMATION);
-
-      while ((off + sk) <= bytes) {
-        if (pos->Relationship == RelationCache) {
-          CACHE_DESCRIPTOR info = pos->Cache;
-          if (info.Level == level) {
-            cache = info.Size;
-            break;
-          }
-        }
-        ++pos;
-        off += sk;
+        case CacheLevel::L3:
+          fieldName = levelFieldNames[3];
+          break;
       }
 
-      sys::free(buffer);
+      const std::string humanReadableSize = lowercase(
+        (std::string) getSystemInfoField(systemInfo, fieldName)
+      );
 
-      return stringifyBytes(cache);
+      int multiplier = 0;
+      if (contains(humanReadableSize, "k")) {
+        // Examples:
+        //   22K
+        //   22 KB
+        //   22 KiB
+        multiplier = (1 << 10);
+      } else if (contains(humanReadableSize, "m")) {
+        // Examples:
+        //   22M
+        //   22 MB
+        //   22 MiB
+        multiplier = (1 << 20);
+      }
+
+      return multiplier * parseInt(humanReadableSize);
+
+#elif (OCCA_OS == OCCA_MACOS_OS)
+      std::string fieldName;
+
+      const std::string levelFieldNames[4] = {
+        "hw.l1dcachesize",
+        "hw.l1icachesize",
+        "hw.l2cachesize",
+        "hw.l3cachesize"
+      };
+
+      switch (level) {
+        case CacheLevel::L1D:
+          fieldName = levelFieldNames[0];
+          break;
+
+        case CacheLevel::L1I:
+          fieldName = levelFieldNames[1];
+          break;
+
+        case CacheLevel::L2:
+          fieldName = levelFieldNames[2];
+          break;
+
+        case CacheLevel::L3:
+          fieldName = levelFieldNames[3];
+          break;
+      }
+
+      return parseInt(
+        (std::string) getSystemInfoField(systemInfo, fieldName)
+      );
+#elif (OCCA_OS == OCCA_WINDOWS_OS)
+      return 0;
 #endif
     }
 
-    udim_t installedRAM() {
+    void SystemInfo::setMemoryInfo(const json &systemInfo) {
+      memory.total = installedMemory(systemInfo);
+      memory.available = availableMemory();
+    }
+
+    udim_t SystemInfo::installedMemory(const json &systemInfo) {
 #if   (OCCA_OS & OCCA_LINUX_OS)
       struct sysinfo info;
 
@@ -595,20 +665,13 @@ namespace occa {
 
       return info.totalram;
 #elif (OCCA_OS == OCCA_MACOS_OS)
-      int64_t ram;
-
-      int mib[2]   = {CTL_HW, HW_MEMSIZE};
-      size_t bytes = sizeof(ram);
-
-      sysctl(mib, 2, &ram, &bytes, NULL, 0);
-
-      return ram;
+      return getSystemInfoField(systemInfo, "hw.memsize");
 #elif (OCCA_OS == OCCA_WINDOWS_OS)
       return 0;
 #endif
     }
 
-    udim_t availableRAM() {
+    udim_t SystemInfo::availableMemory() {
 #if   (OCCA_OS & OCCA_LINUX_OS)
       struct sysinfo info;
 
@@ -645,7 +708,9 @@ namespace occa {
       return 0;
 #endif
     }
+    //==================================
 
+    //---[ Compiler Info ]--------------
     int compilerVendor(const std::string &compiler) {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       const std::string safeCompiler = io::slashToSnake(compiler);
@@ -1024,65 +1089,6 @@ namespace occa {
       return std::string(symbol);
 #endif
     }
-  }
-
-  void _message(const std::string &header,
-                const bool exitInFailure,
-                const std::string &filename,
-                const std::string &function,
-                const int line,
-                const std::string &message) {
-
-    exception exp(header,
-                  filename,
-                  function,
-                  line,
-                  message);
-
-    if (exitInFailure) {
-      throw exp;
-    }
-    io::stderr << exp;
-  }
-
-  void warn(const std::string &filename,
-            const std::string &function,
-            const int line,
-            const std::string &message) {
-    _message("Warning", false,
-             filename, function, line, message);
-  }
-
-  void error(const std::string &filename,
-             const std::string &function,
-             const int line,
-             const std::string &message) {
-    _message("Error", true,
-             filename, function, line, message);
-  }
-
-  void printWarning(io::output &out,
-                    const std::string &message,
-                    const std::string &code) {
-    if (env::OCCA_VERBOSE) {
-      if (code.size()) {
-        out << yellow("Warning " + code);
-      } else {
-        out << yellow("Warning");
-      }
-      out << ": " << message << '\n';
-    }
-  }
-
-  void printError(io::output &out,
-                  const std::string &message,
-                  const std::string &code) {
-    if (code.size()) {
-      out << red("Error " + code);
-    } else {
-      out << red("Error");
-    }
-    out << ": " << message << '\n';
   }
 
   mutex::mutex() {

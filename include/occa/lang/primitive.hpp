@@ -10,8 +10,8 @@
 
 #include <occa/defines.hpp>
 #include <occa/io/output.hpp>
+#include <occa/tools/logging.hpp>
 #include <occa/tools/string.hpp>
-#include <occa/tools/sys.hpp>
 
 namespace occa {
   //---[ Primitive Type ]---------------

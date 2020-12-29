@@ -3,8 +3,7 @@
 #include <time.h>
 
 #include <occa/io.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/tools.hpp>
 #include <occa/tools/testing.hpp>
 
 void testPathMethods();
@@ -166,7 +165,9 @@ void testIOMethods() {
   // Read
   ASSERT_EQ(occa::io::read(test_foo),
             content);
-  ASSERT_EQ(occa::io::read(test_foo, true),
+  ASSERT_EQ(occa::io::read(test_foo, occa::enums::FILE_TYPE_BINARY),
+            content);
+  ASSERT_EQ(occa::io::read(test_foo, occa::enums::FILE_TYPE_PSEUDO),
             content);
 
   // C Read

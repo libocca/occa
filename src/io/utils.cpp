@@ -22,6 +22,7 @@
 #include <occa/tools/env.hpp>
 #include <occa/tools/lex.hpp>
 #include <occa/tools/misc.hpp>
+#include <occa/tools/sys.hpp>
 
 namespace occa {
   // Kernel Caching
@@ -349,36 +350,67 @@ namespace occa {
 
     char* c_read(const std::string &filename,
                  size_t *chars,
-                 const bool readingBinary) {
+                 enums::FileType fileType) {
       std::string expFilename = io::filename(filename);
 
-      FILE *fp = fopen(expFilename.c_str(), readingBinary ? "rb" : "r");
+      FILE *fp = fopen(
+        expFilename.c_str(),
+        fileType == enums::FILE_TYPE_BINARY ? "rb" : "r"
+      );
       OCCA_ERROR("Failed to open [" << io::shortname(expFilename) << "]",
                  fp != NULL);
 
-      struct stat statbuf;
-      stat(expFilename.c_str(), &statbuf);
+      char *buffer;
+      size_t bufferSize = 0;
 
-      const size_t nchars = statbuf.st_size;
+      if (fileType != enums::FILE_TYPE_PSEUDO) {
+        struct stat statbuf;
+        stat(expFilename.c_str(), &statbuf);
 
-      char *buffer = new char[nchars + 1];
-      ::memset(buffer, 0, nchars + 1);
-      size_t nread = fread(buffer, sizeof(char), nchars, fp);
+        const size_t nchars = statbuf.st_size;
+
+        // Initialize buffer
+        buffer = new char[nchars + 1];
+        ::memset(buffer, 0, nchars + 1);
+
+        // Read file
+        bufferSize = fread(buffer, sizeof(char), nchars, fp);
+      } else {
+        // Pseudo files don't have a static size, so we need to fetch it line-by-line
+        char *linePtr = NULL;
+        size_t lineSize = 0;
+        std::stringstream ss;
+
+        while (getline(&linePtr, &lineSize, fp) != -1) {
+          ss << linePtr;
+        }
+
+        ::free(linePtr);
+
+        const std::string bufferContents = ss.str();
+        bufferSize = bufferContents.size();
+
+        buffer = new char[bufferSize + 1];
+        ::memcpy(buffer, bufferContents.c_str(), bufferSize);
+      }
 
       fclose(fp);
-      buffer[nread] = '\0';
 
+      // Set null terminator
+      buffer[bufferSize] = '\0';
+
+      // Set the char count
       if (chars != NULL) {
-        *chars = nread;
+        *chars = bufferSize;
       }
 
       return buffer;
     }
 
     std::string read(const std::string &filename,
-                     const bool readingBinary) {
-      size_t chars;
-      const char *c = c_read(filename, &chars, readingBinary);
+                     const enums::FileType fileType) {
+      size_t chars = 0;
+      const char *c = c_read(filename, &chars, fileType);
       std::string contents(c, chars);
       delete [] c;
       return contents;

@@ -38,7 +38,7 @@ namespace occa {
             continue;
           }
 
-          const int idx = occa::atoi(std::string(cStart, c - cStart));
+          const int idx = occa::parseInt(std::string(cStart, c - cStart));
           if (std::find(vec.begin(), vec.end(), idx) == vec.end()) {
             vec.push_back(idx);
             if (minVal > idx) {

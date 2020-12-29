@@ -87,39 +87,39 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Compiler info
-      run: make -j 16 info
       if: ${{ !matrix.useCMake }}
+      run: make -j 16 info
 
     - name: CMake build
+      if: ${{ matrix.useCMake }}
       run: |
         cmake -E make_directory ${{runner.workspace}}/occa/build
         cd ${{runner.workspace}}/occa/build
         cmake -DENABLE_TESTS=On -DENABLE_EXAMPLES=On ${{runner.workspace}}/occa
         make -j 16
-      if: ${{ matrix.useCMake }}
 
     - name: Compile library
-      run: make -j 16
       if: ${{ !matrix.useCMake }}
+      run: make -j 16
 
     - name: Compile tests
-      run: make -j 16 tests
       if: ${{ !matrix.useCMake }}
+      run: make -j 16 tests
 
     - name: Run unit tests
-      run: ./tests/run_tests
       if: ${{ !matrix.useCMake }}
+      run: ./tests/run_tests
 
     - name: Run examples
-      run: ./tests/run_examples
       if: ${{ !matrix.useCMake }}
+      run: ./tests/run_examples
 
     - name: Run CTests
+      if: ${{ matrix.useCMake }}
       run: |
         cd ${{runner.workspace}}/occa/build
-        make test
-      if: ${{ matrix.useCMake }}
+        CTEST_OUTPUT_ON_FAILURE=1 make test
 
     - name: Upload code coverage
-      run: bash <(curl --no-buffer -s https://codecov.io/bash) -x "${GCOV}"
       if: ${{ matrix.OCCA_COVERAGE }}
+      run: bash <(curl --no-buffer -s https://codecov.io/bash) -x "${GCOV}"

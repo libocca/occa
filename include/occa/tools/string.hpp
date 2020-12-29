@@ -12,6 +12,7 @@
 #include <occa/types.hpp>
 
 namespace occa {
+  //---[ Helper Methods ]---------------
   std::string strip(const std::string &str);
 
   std::string stripLeft(const std::string &str);
@@ -34,6 +35,9 @@ namespace occa {
   strVector split(const std::string &s,
                   const char delimeter,
                   const char escapeChar = 0);
+
+  std::string join(const strVector &vec,
+                   const std::string &delimiter);
 
   inline char uppercase(const char c) {
     if (('a' <= c) && (c <= 'z')) {
@@ -63,6 +67,30 @@ namespace occa {
     return lowercase(s.c_str(), s.size());
   }
 
+  inline bool startsWith(const std::string &s,
+                         const std::string &match) {
+    const int matchChars = (int) match.size();
+    return ((matchChars <= (int) s.size()) &&
+            (!strncmp(s.c_str(), match.c_str(), matchChars)));
+  }
+
+  inline bool endsWith(const std::string &s,
+                       const std::string &match) {
+    const int sChars = (int) s.size();
+    const int matchChars = (int) match.size();
+    return ((matchChars <= sChars) &&
+            (!strncmp(s.c_str() + (sChars - matchChars),
+                      match.c_str(),
+                      matchChars)));
+  }
+
+  inline bool contains(const std::string &s,
+                       const std::string &match) {
+    return s.find(match) != std::string::npos;
+  }
+  //====================================
+
+  //---[ Stringify ]--------------------
   template <class TM>
   std::string toString(const TM &t) {
     std::stringstream ss;
@@ -134,33 +162,19 @@ namespace occa {
     }
     return ret;
   }
+  //====================================
 
-  inline bool startsWith(const std::string &s,
-                         const std::string &match) {
-    const int matchChars = (int) match.size();
-    return ((matchChars <= (int) s.size()) &&
-            (!strncmp(s.c_str(), match.c_str(), matchChars)));
-  }
+  //---[ Formatters ]-------------------
+  udim_t parseInt(const std::string &str);
+  udim_t parseInt(const char *c);
 
-  inline bool endsWith(const std::string &s,
-                       const std::string &match) {
-    const int sChars = (int) s.size();
-    const int matchChars = (int) match.size();
-    return ((matchChars <= sChars) &&
-            (!strncmp(s.c_str() + (sChars - matchChars),
-                      match.c_str(),
-                      matchChars)));
-  }
+  udim_t parseBinary(const char *c);
 
-  udim_t atoi(const char *c);
-  udim_t atoiBase2(const char *c);
-  udim_t atoi(const std::string &str);
+  double parseFloat(const std::string &str);
+  double parseFloat(const char *c);
 
-  double atof(const char *c);
-  double atof(const std::string &str);
-
-  double atod(const char *c);
-  double atod(const std::string &str);
+  double parseDouble(const std::string &str);
+  double parseDouble(const char *c);
 
   inline char toHexChar(const char c) {
     if (c < 16) {
@@ -247,9 +261,11 @@ namespace occa {
   }
 
   std::string stringifyBytes(udim_t bytes);
-
   void stringifyBytesFraction(std::stringstream &ss,
                               uint64_t fraction);
+
+  std::string stringifyFrequency(udim_t frequency);
+  //====================================
 
   //---[ Color Strings ]----------------
   namespace color {

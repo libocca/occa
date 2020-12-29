@@ -1,4 +1,6 @@
 #include <occa/modes/serial/registration.hpp>
+#include <occa/tools/misc.hpp>
+#include <occa/tools/sys.hpp>
 
 namespace occa {
   namespace serial {
@@ -15,58 +17,49 @@ namespace occa {
         return section;
       }
 
-      std::stringstream ss;
+      sys::SystemInfo info = sys::SystemInfo::load();
 
-      const std::string processorName = sys::getProcessorName();
+      const std::string simdWidth = toString(32*OCCA_SIMD_WIDTH) + " bits";
 
-      ss << sys::getCoreCount();
-      const std::string coreCount = ss.str();
-      ss.str("");
+      std::string l1d = stringifyBytes(info.processor.cache.l1d);
+      std::string l1i = stringifyBytes(info.processor.cache.l1i);
+      std::string l2  = stringifyBytes(info.processor.cache.l2);
+      std::string l3  = stringifyBytes(info.processor.cache.l3);
 
-      udim_t ram = sys::installedRAM();
-      const std::string ramStr = stringifyBytes(ram);
+      const size_t cacheWidth = max({
+          l1d.size(),
+          l1i.size(),
+          l2.size(),
+          l3.size()
+        });
 
-      const int freq = sys::getProcessorFrequency();
-      if (freq < 1000) {
-        ss << freq << " MHz";
-      } else {
-        ss << (freq/1000.0) << " GHz";
-      }
-      const std::string clockFrequency = ss.str();
-      ss.str("");
-
-      ss << (32*OCCA_SIMD_WIDTH) << " bits";
-      const std::string simdWidth = ss.str();
-      ss.str("");
-
-      std::string l1 = sys::getProcessorCacheSize(1);
-      std::string l2 = sys::getProcessorCacheSize(2);
-      std::string l3 = sys::getProcessorCacheSize(3);
-
-      const size_t maxSize = std::max(std::max(l1.size(), l2.size()), l3.size());
-      if (maxSize) {
-        l1 = styling::right(l1, maxSize);
-        l2 = styling::right(l2, maxSize);
-        l3 = styling::right(l3, maxSize);
+      if (cacheWidth) {
+        l1d = styling::right(l1d, cacheWidth);
+        l1i = styling::right(l1i, cacheWidth);
+        l2  = styling::right(l2, cacheWidth);
+        l3  = styling::right(l3, cacheWidth);
       }
 
-      if (processorName.size()) {
-        section.add("Processor Name", processorName);
+      if (info.processor.name.size()) {
+        section.add("Processor Name", info.processor.name);
       }
-      if (coreCount.size()) {
-        section.add("Cores", coreCount);
+      if (info.processor.coreCount) {
+        section.add("Cores", toString(info.processor.coreCount));
       }
-      if (ramStr.size()) {
-        section.add("Memory (RAM)", ramStr);
+      if (info.memory.total) {
+        section.add("Memory", stringifyBytes(info.memory.total));
       }
-      if (clockFrequency.size()) {
-        section.add("Clock Frequency", clockFrequency);
+      if (info.processor.frequency) {
+        section.add("Clock Frequency", stringifyFrequency(info.processor.frequency));
       }
       section
         .add("SIMD Instruction Set", OCCA_VECTOR_SET)
         .add("SIMD Width", simdWidth);
-      if (l1.size()) {
-        section.add("L1 Cache Size (d)", l1);
+      if (l1d.size()) {
+        section.add("L1d Cache Size", l1d);
+      }
+      if (l1i.size()) {
+        section.add("L1i Cache Size", l1i);
       }
       if (l2.size()) {
         section.add("L2 Cache Size", l2);

@@ -46,21 +46,17 @@ namespace occa {
     }
 
     int fieldGroup::getFieldWidth() const {
-      const int fieldCount = (int) fields.size();
       int maxWidth = 0;
-      for (int i = 0; i < fieldCount; ++i) {
-        const int iWidth = (int) fields[i].name.size();
-        maxWidth = (maxWidth < iWidth) ? iWidth : maxWidth;
+      for (auto &field: fields) {
+        maxWidth = std::max(maxWidth, (int) field.name.size());
       }
       return maxWidth;
     }
 
     int fieldGroup::getValueWidth() const {
-      const int fieldCount = (int) fields.size();
       int maxWidth = 0;
-      for (int i = 0; i < fieldCount; ++i) {
-        const int iWidth = (int) fields[i].value.size();
-        maxWidth = (maxWidth < iWidth) ? iWidth : maxWidth;
+      for (auto &field: fields) {
+        maxWidth = std::max(maxWidth, (int) field.value.size());
       }
       return maxWidth;
     }
@@ -85,8 +81,7 @@ namespace occa {
 
     section& section::add(const std::string &field,
                           const std::string &value) {
-      fieldGroup &fg = groups[groups.size() - 1];
-      fg.add(field, value);
+      groups.back().add(field, value);
       return *this;
     }
 
@@ -96,19 +91,17 @@ namespace occa {
     }
 
     int section::getFieldWidth() const {
-      const int groupCount = (int) groups.size();
       int fieldWidth = 0;
-      for (int i = 0; i < groupCount; ++i) {
-        fieldWidth = std::max(fieldWidth, groups[i].getFieldWidth());
+      for (auto &group : groups) {
+        fieldWidth = std::max(fieldWidth, group.getFieldWidth());
       }
       return fieldWidth;
     }
 
     int section::getValueWidth() const {
-      const int groupCount = (int) groups.size();
       int valueWidth = 0;
-      for (int i = 0; i < groupCount; ++i) {
-        valueWidth = std::max(valueWidth, groups[i].getValueWidth());
+      for (auto &group : groups) {
+        valueWidth = std::max(valueWidth, group.getValueWidth());
       }
       return valueWidth;
     }
@@ -135,20 +128,21 @@ namespace occa {
       const std::string groupDivider = ss.str();
       ss.str("");
 
-      const int groupCount = (int) groups.size();
       if (isFirstSection) {
         ss << sectionDivider;
       }
-      for (int i = 0; i < groupCount; ++i) {
-        const fieldGroup &iGroup = groups[i];
 
-        const int fieldCount = (int) iGroup.size();
+      const int groupCount = (int) groups.size();
+      for (int i = 0; i < groupCount; ++i) {
+        const fieldGroup &group = groups[i];
+
+        const int fieldCount = (int) group.size();
         if (fieldCount == 0) {
           continue;
         }
 
         for (int j = 0; j < fieldCount; ++j) {
-          const field& jField = iGroup.fields[j];
+          const field& field = group.fields[j];
 
           ss << indentStr;
           if (i == 0 && j == 0) {
@@ -158,9 +152,9 @@ namespace occa {
           }
 
           ss << '|'
-             << left(jField.name, fieldWidth, true)
+             << left(field.name, fieldWidth, true)
              << '|'
-             << left(jField.value, valueWidth, true)
+             << left(field.value, valueWidth, true)
              << '\n';
         }
         if (i < (groupCount - 1)) {
@@ -182,25 +176,26 @@ namespace occa {
     }
 
     std::string table::toString(const int indent) const {
-      const int sectionCount = (int) sections.size();
-      std::string str;
-
       int sectionWidth = 0, fieldWidth = 0, valueWidth = 0;
-      for (int i = 0; i < sectionCount; ++i) {
-        const section &iSection = sections[i];
-        sectionWidth = std::max(sectionWidth, (int) iSection.name.size());
-        fieldWidth   = std::max(fieldWidth  , iSection.getFieldWidth());
-        valueWidth   = std::max(valueWidth  , iSection.getValueWidth());
+      for (auto &section : sections) {
+        sectionWidth = std::max(sectionWidth, (int) section.name.size());
+        fieldWidth   = std::max(fieldWidth  , section.getFieldWidth());
+        valueWidth   = std::max(valueWidth  , section.getValueWidth());
       }
 
-      for (int i = 0; i < sectionCount; ++i) {
-        if (sections[i].size()) {
-          str += sections[i].toString(indent,
-                                      sectionWidth,
-                                      fieldWidth,
-                                      valueWidth,
-                                      i == 0);
+      std::string str;
+      bool isFirstSection = true;
+      for (auto &section : sections) {
+        if (section.size()) {
+          str += section.toString(
+            indent,
+            sectionWidth,
+            fieldWidth,
+            valueWidth,
+            isFirstSection
+          );
         }
+        isFirstSection = false;
       }
 
       return str;

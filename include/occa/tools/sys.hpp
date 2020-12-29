@@ -8,7 +8,9 @@
 #include <occa/types.hpp>
 #include <occa/io/lock.hpp>
 #include <occa/io/output.hpp>
+#include <occa/tools/enums.hpp>
 #include <occa/tools/hash.hpp>
+#include <occa/tools/json.hpp>
 
 namespace occa {
   typedef void (*functionPtr_t)(...);
@@ -41,12 +43,6 @@ namespace occa {
       static const int PPC          = (1 << b_PPC);          // cc     , CC
     }
 
-    namespace language {
-      static const int notFound = 0;
-      static const int CPP      = 1;
-      static const int C        = 2;
-    }
-
     //---[ System Info ]----------------
     double currentTime();
     std::string date();
@@ -75,16 +71,67 @@ namespace occa {
     //==================================
 
     //---[ Processor Info ]-------------
-    std::string getFieldFrom(const std::string &command,
-                             const std::string &field);
+    class CacheInfo {
+     public:
+      udim_t l1d;
+      udim_t l1i;
+      udim_t l2;
+      udim_t l3;
 
-    std::string getProcessorName();
-    int getCoreCount();
-    int getProcessorFrequency();
-    std::string getProcessorCacheSize(int level);
-    udim_t installedRAM();
-    udim_t availableRAM();
+      CacheInfo();
+    };
 
+    class ProcessorInfo {
+     public:
+      std::string name;
+      udim_t frequency;
+      int coreCount;
+      CacheInfo cache;
+
+      ProcessorInfo();
+    };
+
+    class MemoryInfo {
+     public:
+      udim_t total;
+      udim_t available;
+
+      MemoryInfo();
+    };
+
+    class SystemInfo {
+     public:
+      ProcessorInfo processor;
+      MemoryInfo memory;
+
+      SystemInfo();
+
+      static json getSystemInfo();
+      static SystemInfo load();
+
+     private:
+      static json parseSystemInfoContent(const std::string &content);
+      static json getSystemInfoField(const json &systemInfo,
+                                     const std::string &field);
+
+      // Processor
+      void setProcessorInfo(const json &systemInfo);
+
+      static std::string getProcessorName(const json &systemInfo);
+      static udim_t getProcessorFrequency(const json &systemInfo);
+      static udim_t getProcessorCacheSize(const json &systemInfo,
+                                          CacheLevel level);
+      static int getCoreCount(const json &systemInfo);
+
+      // Memory
+      void setMemoryInfo(const json &systemInfo);
+
+      static udim_t installedMemory(const json &systemInfo);
+      static udim_t availableMemory();
+    };
+    //==================================
+
+    //---[ Compiler Info ]--------------
     int compilerVendor(const std::string &compiler);
 
     std::string compilerCpp11Flags(const std::string &compiler);
@@ -123,41 +170,6 @@ namespace occa {
 
     std::string prettyStackSymbol(void *frame, const char *symbol);
     //==================================
-  }
-
-  void _message(const std::string &header,
-                const bool exitInFailure,
-                const std::string &filename,
-                const std::string &function,
-                const int line,
-                const std::string &message);
-
-  void warn(const std::string &filename,
-            const std::string &function,
-            const int line,
-            const std::string &message);
-
-  void error(const std::string &filename,
-             const std::string &function,
-             const int line,
-             const std::string &message);
-
-  void printWarning(io::output &out,
-                    const std::string &message,
-                    const std::string &code = "");
-
-  inline void printWarning(const std::string &message,
-                           const std::string &code = "") {
-    printWarning(io::stderr, message, code);
-  }
-
-  void printError(io::output &out,
-                  const std::string &message,
-                  const std::string &code = "");
-
-  inline void printError(const std::string &message,
-                         const std::string &code = "") {
-    printError(io::stderr, message, code);
   }
 
   class mutex {
