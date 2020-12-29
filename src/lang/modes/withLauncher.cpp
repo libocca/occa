@@ -139,13 +139,11 @@ namespace occa {
 
       bool withLauncher::isOuterMostOklLoop(forStatement &forSmnt,
                                             const std::string &attr) {
-        statement_t *smnt = forSmnt.up;
-        while (smnt) {
-          if ((smnt->type() & statementType::for_)
-              && smnt->hasAttribute(attr)) {
+        for (auto &parentSmnt : forSmnt.getParentPath()) {
+          if (parentSmnt->type() & statementType::for_
+              && parentSmnt->hasAttribute(attr)) {
             return false;
           }
-          smnt = smnt->up;
         }
         return true;
       }
@@ -159,6 +157,15 @@ namespace occa {
           }
         }
         return true;
+      }
+
+      bool withLauncher::isInsideLoop(forStatement &forSmnt) {
+        for (auto &parentSmnt : forSmnt.getParentPath()) {
+          if (parentSmnt->type() & (statementType::for_ | statementType::while_)) {
+            return true;
+          }
+        }
+        return false;
       }
 
       void withLauncher::setKernelLaunch(functionDeclStatement &kernelSmnt,
@@ -465,7 +472,8 @@ namespace occa {
                   forStatement &innerSmnt = (forStatement&) *smnt;
 
                   //Only apply barriers when needed in the last inner-loop
-                  if (isOuterMostInnerLoop(innerSmnt) && !isLastInnerLoop(innerSmnt))
+                  if (isOuterMostInnerLoop(innerSmnt)
+                      && (!isLastInnerLoop(innerSmnt) || isInsideLoop(innerSmnt)))
                     addBarriersAfterInnerLoop(innerSmnt);
                 });
         }
