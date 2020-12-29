@@ -563,7 +563,7 @@ namespace occa {
 
     udim_t SystemInfo::getProcessorCacheSize(const json &systemInfo,
                                              CacheLevel level) {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+#if (OCCA_OS & OCCA_LINUX_OS)
       std::string fieldName;
 
       const std::string levelFieldNames[4] = {
@@ -640,7 +640,9 @@ namespace occa {
           break;
       }
 
-      return getSystemInfoField(systemInfo, fieldName);
+      return parseInt(
+        (std::string) getSystemInfoField(systemInfo, fieldName)
+      );
 #elif (OCCA_OS == OCCA_WINDOWS_OS)
       return 0;
 #endif
