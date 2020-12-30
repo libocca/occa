@@ -1,8 +1,9 @@
 #include <cstring>
 
 #include <occa/defines.hpp>
-#include <occa/io.hpp>
-#include <occa/tools/json.hpp>
+#include <occa/internal/io.hpp>
+#include <occa/types/json.hpp>
+#include <occa/internal/utils/lex.hpp>
 
 namespace occa {
   const char json::objectKeyEndChars[] = " \t\r\n\v\f:";
@@ -572,6 +573,31 @@ namespace occa {
       return (int) value_.object.size();
     }}
     return 0;
+  }
+
+  json json::getPathValue(const char *key) const {
+    const json *j = this;
+    const char *c = key;
+
+    while (*c != '\0') {
+      if (j->type != object_) {
+        return json();
+      }
+
+      const char *cStart = c;
+      lex::skipTo(c, '/');
+      std::string nextKey(cStart, c - cStart);
+      if (*c == '/') {
+        ++c;
+      }
+
+      jsonObject::const_iterator it = j->value_.object.find(nextKey);
+      if (it == j->value_.object.end()) {
+        return json();
+      }
+      j = &(it->second);
+    }
+    return *j;
   }
 
   json& json::remove(const char *c) {

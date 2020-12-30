@@ -1,7 +1,13 @@
 #include <iostream>
 
 #include <occa.hpp>
-#include <occa/types/fp.hpp>
+
+//---[ Internal Tools ]-----------------
+// Note: These headers are not officially supported
+//       Please don't rely on it outside of the occa examples
+#include <occa/tools/cli.hpp>
+#include <occa/tools/testing.hpp>
+//======================================
 
 occa::json parseArgs(int argc, const char **argv);
 
@@ -66,9 +72,6 @@ int main(int argc, const char **argv) {
 }
 
 occa::json parseArgs(int argc, const char **argv) {
-  // Note:
-  //   occa::cli is not supported yet, please don't rely on it
-  //   outside of the occa examples
   occa::cli::parser parser;
   parser
     .withDescription(

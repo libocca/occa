@@ -1,14 +1,12 @@
-#ifndef OCCA_TOOLS_EXCEPTION_HEADER
-#define OCCA_TOOLS_EXCEPTION_HEADER
+#ifndef OCCA_UTILS_EXCEPTION_HEADER
+#define OCCA_UTILS_EXCEPTION_HEADER
 
 #include <stdexcept>
-
-#include <occa/io/output.hpp>
-
+#include <ostream>
 
 namespace occa {
   class exception : public std::exception {
-  public:
+   public:
     const std::string header;
     const std::string filename;
     const std::string function;

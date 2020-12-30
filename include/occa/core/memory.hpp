@@ -5,9 +5,11 @@
 
 #include <occa/defines.hpp>
 #include <occa/dtype.hpp>
-#include <occa/io/output.hpp>
-#include <occa/tools/gc.hpp>
-#include <occa/tools/properties.hpp>
+#include <occa/types.hpp>
+
+// Unfortunately we need to expose this in include
+#include <occa/internal/utils/gc.hpp>
+
 
 namespace occa {
   class modeMemory_t; class memory;
@@ -17,93 +19,6 @@ namespace occa {
   typedef std::map<hash_t,occa::memory>   hashedMemoryMap;
   typedef hashedMemoryMap::iterator       hashedMemoryMapIterator;
   typedef hashedMemoryMap::const_iterator cHashedMemoryMapIterator;
-
-  namespace uvaFlag {
-    static const int none      = 0;
-    static const int isManaged = (1 << 0);
-    static const int inDevice  = (1 << 1);
-    static const int isStale   = (1 << 2);
-  }
-
-  //---[ modeMemory_t ]---------------------
-  class modeMemory_t : public gc::ringEntry_t {
-  public:
-    int memInfo;
-    occa::properties properties;
-
-    gc::ring_t<memory> memoryRing;
-
-    char *ptr;
-    char *uvaPtr;
-
-    occa::modeDevice_t *modeDevice;
-
-    const dtype_t *dtype_;
-    udim_t size;
-    bool isOrigin;
-
-    modeMemory_t(modeDevice_t *modeDevice_,
-                 udim_t size_,
-                 const occa::properties &properties_);
-
-    void dontUseRefs();
-    void addMemoryRef(memory *mem);
-    void removeMemoryRef(memory *mem);
-    bool needsFree() const;
-
-    bool isManaged() const;
-    bool inDevice() const;
-    bool isStale() const;
-
-    //---[ Virtual Methods ]------------
-    virtual ~modeMemory_t() = 0;
-
-    virtual kernelArg makeKernelArg() const = 0;
-
-    virtual modeMemory_t* addOffset(const dim_t offset) = 0;
-
-    virtual void* getPtr(const occa::properties &props);
-
-    virtual void copyTo(void *dest,
-                        const udim_t bytes,
-                        const udim_t offset = 0,
-                        const occa::properties &props = occa::properties()) const = 0;
-
-    virtual void copyFrom(const void *src,
-                          const udim_t bytes,
-                          const udim_t offset = 0,
-                          const occa::properties &props = occa::properties()) = 0;
-
-    virtual void copyFrom(const modeMemory_t *src,
-                          const udim_t bytes,
-                          const udim_t destOffset = 0,
-                          const udim_t srcOffset = 0,
-                          const occa::properties &props = occa::properties()) = 0;
-
-    virtual void detach() = 0;
-    //==================================
-
-    //---[ Friend Functions ]-----------
-    friend void memcpy(void *dest, void *src,
-                       const dim_t bytes,
-                       const occa::properties &props);
-
-    friend void startManaging(void *ptr);
-    friend void stopManaging(void *ptr);
-
-    friend void syncToDevice(void *ptr, const dim_t bytes);
-    friend void syncToHost(void *ptr, const dim_t bytes);
-
-    friend void syncMemToDevice(occa::modeMemory_t *mem,
-                                const dim_t bytes,
-                                const dim_t offset);
-
-    friend void syncMemToHost(occa::modeMemory_t *mem,
-                              const dim_t bytes,
-                              const dim_t offset);
-  };
-  //====================================
-
 
   //---[ memory ]-----------------------
   class memory : public gc::ringEntry_t {
@@ -166,9 +81,7 @@ namespace occa {
 
     template <class TM>
     udim_t length() const {
-      return (modeMemory
-              ? (modeMemory->size / sizeof(TM))
-              : 0);
+      return size() / sizeof(TM);
     }
 
     //---[ UVA ]------------------------

@@ -1,7 +1,7 @@
 #include <cstring>
 
 #include <occa/defines.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
 #  include <alloca.h>

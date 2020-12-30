@@ -1,7 +1,7 @@
-#ifndef OCCA_LANG_EXPR_LEFTUNARYOPNODE_HEADER
-#define OCCA_LANG_EXPR_LEFTUNARYOPNODE_HEADER
+#ifndef OCCA_INTERNAL_LANG_EXPR_LEFTUNARYOPNODE_HEADER
+#define OCCA_INTERNAL_LANG_EXPR_LEFTUNARYOPNODE_HEADER
 
-#include <occa/lang/expr/exprOpNode.hpp>
+#include <occa/internal/lang/expr/exprOpNode.hpp>
 
 namespace occa {
   namespace lang {

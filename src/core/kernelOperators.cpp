@@ -1,6 +1,6 @@
 // -------------[ DO NOT EDIT ]-------------
 //  THIS IS AN AUTOMATICALLY GENERATED FILE
-//  EDIT: scripts/setup_kernel_operators.py
+//  EDIT: scripts/codegen/setup_kernel_operators.py
 // =========================================
 
 void kernel::operator() () const {
@@ -782,4 +782,3 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
   modeKernel->setArguments(args, 50);
   run();
 }
-

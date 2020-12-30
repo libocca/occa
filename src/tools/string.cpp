@@ -6,10 +6,10 @@
 #  include <windows.h>
 #endif
 
-#include <occa/tools/env.hpp>
-#include <occa/tools/lex.hpp>
-#include <occa/tools/string.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/utils/lex.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 namespace occa {
   //---[ Helper Methods ]---------------

@@ -1,9 +1,9 @@
-#include <occa/lang/statement/statement.hpp>
-#include <occa/lang/statement/blockStatement.hpp>
-#include <occa/lang/statement/declarationStatement.hpp>
-#include <occa/lang/variable.hpp>
-#include <occa/lang/token.hpp>
-#include <occa/lang/expr.hpp>
+#include <occa/internal/lang/statement/statement.hpp>
+#include <occa/internal/lang/statement/blockStatement.hpp>
+#include <occa/internal/lang/statement/declarationStatement.hpp>
+#include <occa/internal/lang/variable.hpp>
+#include <occa/internal/lang/token.hpp>
+#include <occa/internal/lang/expr.hpp>
 
 namespace occa {
   namespace lang {

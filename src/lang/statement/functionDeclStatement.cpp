@@ -1,6 +1,6 @@
-#include <occa/lang/statement/functionDeclStatement.hpp>
-#include <occa/lang/expr/functionNode.hpp>
-#include <occa/lang/variable.hpp>
+#include <occa/internal/lang/statement/functionDeclStatement.hpp>
+#include <occa/internal/lang/expr/functionNode.hpp>
+#include <occa/internal/lang/variable.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,5 +1,5 @@
-#ifndef OCCA_LANG_PREPROCESSOR_HEADER
-#define OCCA_LANG_PREPROCESSOR_HEADER
+#ifndef OCCA_INTERNAL_LANG_PREPROCESSOR_HEADER
+#define OCCA_INTERNAL_LANG_PREPROCESSOR_HEADER
 
 #include <ostream>
 #include <vector>
@@ -9,9 +9,9 @@
 
 #include <occa/defines.hpp>
 #include <occa/types.hpp>
-#include <occa/lang/macro.hpp>
-#include <occa/lang/token.hpp>
-#include <occa/lang/stream.hpp>
+#include <occa/internal/lang/macro.hpp>
+#include <occa/internal/lang/token.hpp>
+#include <occa/internal/lang/stream.hpp>
 
 namespace occa {
   namespace lang {

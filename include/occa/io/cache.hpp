@@ -1,9 +1,9 @@
-#ifndef OCCA_IO_CACHE_HEADER
-#define OCCA_IO_CACHE_HEADER
+#ifndef OCCA_INTERNAL_IO_CACHE_HEADER
+#define OCCA_INTERNAL_IO_CACHE_HEADER
 
 #include <iostream>
 
-#include <occa/tools/hash.hpp>
+#include <occa/utils/hash.hpp>
 
 namespace occa {
   class json;

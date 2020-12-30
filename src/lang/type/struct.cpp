@@ -1,5 +1,5 @@
-#include <occa/lang/type/struct.hpp>
-#include <occa/lang/variable.hpp>
+#include <occa/internal/lang/type/struct.hpp>
+#include <occa/internal/lang/variable.hpp>
 #include <occa/dtype.hpp>
 
 namespace occa {

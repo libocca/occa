@@ -1,17 +1,17 @@
 #include <occa/core/base.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/modes/opencl/device.hpp>
-#include <occa/modes/opencl/kernel.hpp>
-#include <occa/modes/opencl/memory.hpp>
-#include <occa/modes/opencl/stream.hpp>
-#include <occa/modes/opencl/streamTag.hpp>
-#include <occa/modes/opencl/utils.hpp>
-#include <occa/modes/serial/device.hpp>
-#include <occa/modes/serial/kernel.hpp>
-#include <occa/lang/kernelMetadata.hpp>
-#include <occa/lang/primitive.hpp>
-#include <occa/lang/modes/opencl.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/internal/modes/opencl/device.hpp>
+#include <occa/internal/modes/opencl/kernel.hpp>
+#include <occa/internal/modes/opencl/memory.hpp>
+#include <occa/internal/modes/opencl/stream.hpp>
+#include <occa/internal/modes/opencl/streamTag.hpp>
+#include <occa/internal/modes/opencl/utils.hpp>
+#include <occa/internal/modes/serial/device.hpp>
+#include <occa/internal/modes/serial/kernel.hpp>
+#include <occa/internal/lang/kernelMetadata.hpp>
+#include <occa/types/primitive.hpp>
+#include <occa/internal/lang/modes/opencl.hpp>
 
 namespace occa {
   namespace opencl {

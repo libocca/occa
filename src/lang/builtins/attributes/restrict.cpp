@@ -1,7 +1,7 @@
-#include <occa/lang/statement.hpp>
-#include <occa/lang/builtins/attributes/restrict.hpp>
-#include <occa/lang/qualifier.hpp>
-#include <occa/lang/variable.hpp>
+#include <occa/internal/lang/statement.hpp>
+#include <occa/internal/lang/builtins/attributes/restrict.hpp>
+#include <occa/internal/lang/qualifier.hpp>
+#include <occa/internal/lang/variable.hpp>
 
 namespace occa {
   namespace lang {

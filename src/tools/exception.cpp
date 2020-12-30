@@ -1,8 +1,8 @@
 #include <sstream>
 
-#include <occa/tools/exception.hpp>
-#include <occa/tools/string.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/utils/exception.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 namespace occa {
   exception::exception(const std::string &header_,

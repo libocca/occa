@@ -1,4 +1,4 @@
-#include <occa/lang/expr/binaryOpNode.hpp>
+#include <occa/internal/lang/expr/binaryOpNode.hpp>
 
 namespace occa {
   namespace lang {

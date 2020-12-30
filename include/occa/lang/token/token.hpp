@@ -1,9 +1,9 @@
-#ifndef OCCA_LANG_TOKEN_TOKEN_HEADER
-#define OCCA_LANG_TOKEN_TOKEN_HEADER
+#ifndef OCCA_INTERNAL_LANG_TOKEN_TOKEN_HEADER
+#define OCCA_INTERNAL_LANG_TOKEN_TOKEN_HEADER
 
-#include <occa/io.hpp>
-#include <occa/lang/file.hpp>
-#include <occa/lang/type.hpp>
+#include <occa/internal/io.hpp>
+#include <occa/internal/lang/file.hpp>
+#include <occa/internal/lang/type.hpp>
 
 namespace occa {
   namespace lang {

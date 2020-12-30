@@ -1,4 +1,4 @@
-#include <occa/lang/type/union.hpp>
+#include <occa/internal/lang/type/union.hpp>
 
 namespace occa {
   namespace lang {

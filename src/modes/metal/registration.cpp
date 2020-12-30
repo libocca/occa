@@ -1,5 +1,6 @@
 #include <occa/defines.hpp>
-#include <occa/modes/metal/registration.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/modes/metal/registration.hpp>
 
 namespace occa {
   namespace metal {

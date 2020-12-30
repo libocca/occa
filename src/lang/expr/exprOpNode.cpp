@@ -1,5 +1,5 @@
-#include <occa/lang/expr/exprOpNode.hpp>
-#include <occa/lang/expr/parenthesesNode.hpp>
+#include <occa/internal/lang/expr/exprOpNode.hpp>
+#include <occa/internal/lang/expr/parenthesesNode.hpp>
 
 namespace occa {
   namespace lang {

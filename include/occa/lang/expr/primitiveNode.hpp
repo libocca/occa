@@ -1,8 +1,8 @@
-#ifndef OCCA_LANG_EXPR_PRIMITIVENODE_HEADER
-#define OCCA_LANG_EXPR_PRIMITIVENODE_HEADER
+#ifndef OCCA_INTERNAL_LANG_EXPR_PRIMITIVENODE_HEADER
+#define OCCA_INTERNAL_LANG_EXPR_PRIMITIVENODE_HEADER
 
-#include <occa/lang/expr/exprNode.hpp>
-#include <occa/lang/primitive.hpp>
+#include <occa/internal/lang/expr/exprNode.hpp>
+#include <occa/types/primitive.hpp>
 
 namespace occa {
   namespace lang {

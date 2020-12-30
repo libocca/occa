@@ -1,10 +1,10 @@
-#ifndef OCCA_LANG_STATEMENTPEEKER_HEADER
-#define OCCA_LANG_STATEMENTPEEKER_HEADER
+#ifndef OCCA_INTERNAL_LANG_STATEMENTPEEKER_HEADER
+#define OCCA_INTERNAL_LANG_STATEMENTPEEKER_HEADER
 
 #include <map>
 
-#include <occa/lang/attribute.hpp>
-#include <occa/lang/keyword.hpp>
+#include <occa/internal/lang/attribute.hpp>
+#include <occa/internal/lang/keyword.hpp>
 
 namespace occa {
   namespace lang {

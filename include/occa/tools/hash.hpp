@@ -1,13 +1,16 @@
-#ifndef OCCA_TOOLS_HASH_HEADER
-#define OCCA_TOOLS_HASH_HEADER
+#ifndef OCCA_UTILS_HASH_HEADER
+#define OCCA_UTILS_HASH_HEADER
 
 #include <iostream>
 
 #include <occa/defines.hpp>
-#include <occa/io/output.hpp>
-#include <occa/types.hpp>
+#include <occa/types/typedefs.hpp>
 
 namespace occa {
+  namespace io {
+    class output;
+  }
+
   // Uses FNV hashing
   class hash_t {
   public:

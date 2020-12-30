@@ -1,4 +1,4 @@
-#include <occa/lang/expr/subscriptNode.hpp>
+#include <occa/internal/lang/expr/subscriptNode.hpp>
 
 namespace occa {
   namespace lang {

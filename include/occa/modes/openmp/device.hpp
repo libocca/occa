@@ -1,7 +1,7 @@
-#ifndef OCCA_MODES_OPENMP_DEVICE_HEADER
-#define OCCA_MODES_OPENMP_DEVICE_HEADER
+#ifndef OCCA_INTERNAL_MODES_OPENMP_DEVICE_HEADER
+#define OCCA_INTERNAL_MODES_OPENMP_DEVICE_HEADER
 
-#include <occa/modes/serial/device.hpp>
+#include <occa/internal/modes/serial/device.hpp>
 
 namespace occa {
   namespace openmp {

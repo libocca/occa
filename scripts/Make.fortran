@@ -1,5 +1,5 @@
 #---[ Paths/Flags ]-------------------------------
-# OCCA (global) library path￼
+# OCCA (global) library path
 fPaths = -L$(OCCA_DIR)/lib
 
 # Extra (user-supplied) include and library paths

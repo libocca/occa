@@ -4,6 +4,12 @@
 
 #include <occa.h>
 
+//---[ Internal Tools ]-----------------
+// Note: These headers are not officially supported
+//       Please don't rely on it outside of the occa examples
+#include <occa/c/cli.hpp>
+//======================================
+
 occaJson parseArgs(int argc, const char **argv);
 
 int main(int argc, const char **argv) {

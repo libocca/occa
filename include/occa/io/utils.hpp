@@ -1,10 +1,10 @@
-#ifndef OCCA_IO_UTILS_HEADER
-#define OCCA_IO_UTILS_HEADER
+#ifndef OCCA_INTERNAL_IO_UTILS_HEADER
+#define OCCA_INTERNAL_IO_UTILS_HEADER
 
 #include <iostream>
 
 #include <occa/types.hpp>
-#include <occa/io/enums.hpp>
+#include <occa/internal/io/enums.hpp>
 
 namespace occa {
   // Kernel Caching

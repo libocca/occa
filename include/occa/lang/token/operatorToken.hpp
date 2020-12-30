@@ -1,7 +1,7 @@
-#ifndef OCCA_LANG_TOKEN_OPERATORTOKEN_HEADER
-#define OCCA_LANG_TOKEN_OPERATORTOKEN_HEADER
+#ifndef OCCA_INTERNAL_LANG_TOKEN_OPERATORTOKEN_HEADER
+#define OCCA_INTERNAL_LANG_TOKEN_OPERATORTOKEN_HEADER
 
-#include <occa/lang/token/token.hpp>
+#include <occa/internal/lang/token/token.hpp>
 
 namespace occa {
   namespace lang {

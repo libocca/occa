@@ -1,8 +1,8 @@
-#include <occa/lang/expr.hpp>
-#include <occa/lang/parser.hpp>
-#include <occa/lang/statement.hpp>
-#include <occa/lang/variable.hpp>
-#include <occa/lang/builtins/attributes/outer.hpp>
+#include <occa/internal/lang/expr.hpp>
+#include <occa/internal/lang/parser.hpp>
+#include <occa/internal/lang/statement.hpp>
+#include <occa/internal/lang/variable.hpp>
+#include <occa/internal/lang/builtins/attributes/outer.hpp>
 
 namespace occa {
   namespace lang {

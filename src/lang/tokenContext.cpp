@@ -1,10 +1,10 @@
-#include <occa/lang/expr.hpp>
-#include <occa/lang/keyword.hpp>
-#include <occa/lang/loaders/typeLoader.hpp>
-#include <occa/lang/statementContext.hpp>
-#include <occa/lang/parser.hpp>
-#include <occa/lang/token.hpp>
-#include <occa/lang/tokenContext.hpp>
+#include <occa/internal/lang/expr.hpp>
+#include <occa/internal/lang/keyword.hpp>
+#include <occa/internal/lang/loaders/typeLoader.hpp>
+#include <occa/internal/lang/statementContext.hpp>
+#include <occa/internal/lang/parser.hpp>
+#include <occa/internal/lang/token.hpp>
+#include <occa/internal/lang/tokenContext.hpp>
 
 namespace occa {
   namespace lang {

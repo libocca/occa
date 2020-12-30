@@ -1,7 +1,7 @@
-#include <occa/modes/opencl/memory.hpp>
-#include <occa/modes/opencl/device.hpp>
-#include <occa/modes/opencl/utils.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/modes/opencl/memory.hpp>
+#include <occa/internal/modes/opencl/device.hpp>
+#include <occa/internal/modes/opencl/utils.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 namespace occa {
   namespace opencl {

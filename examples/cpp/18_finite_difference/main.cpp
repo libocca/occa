@@ -6,7 +6,6 @@
 #include <math.h>
 
 #include <occa.hpp>
-#include <occa/tools/json.hpp>
 
 #include "visualizer.hpp"
 

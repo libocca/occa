@@ -1,13 +1,13 @@
 #include <map>
 
-#include <occa/lang/modes/okl.hpp>
-#include <occa/lang/variable.hpp>
-#include <occa/lang/parser.hpp>
-#include <occa/lang/builtins/attributes.hpp>
-#include <occa/lang/builtins/types.hpp>
-#include <occa/lang/expr.hpp>
-#include <occa/lang/modes/oklForStatement.hpp>
-#include <occa/lang/statement/blockStatement.hpp>
+#include <occa/internal/lang/modes/okl.hpp>
+#include <occa/internal/lang/variable.hpp>
+#include <occa/internal/lang/parser.hpp>
+#include <occa/internal/lang/builtins/attributes.hpp>
+#include <occa/internal/lang/builtins/types.hpp>
+#include <occa/internal/lang/expr.hpp>
+#include <occa/internal/lang/modes/oklForStatement.hpp>
+#include <occa/internal/lang/statement/blockStatement.hpp>
 
 namespace occa {
   namespace lang {

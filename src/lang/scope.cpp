@@ -1,6 +1,7 @@
-#include <occa/lang/scope.hpp>
-#include <occa/lang/variable.hpp>
-#include <occa/lang/type.hpp>
+#include <occa/internal/lang/scope.hpp>
+#include <occa/internal/lang/variable.hpp>
+#include <occa/internal/lang/type.hpp>
+#include <occa/internal/utils/string.hpp>
 
 namespace occa {
   namespace lang {

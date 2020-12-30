@@ -1,8 +1,8 @@
-#include <occa/modes/cuda/kernel.hpp>
-#include <occa/modes/cuda/device.hpp>
-#include <occa/modes/cuda/utils.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/io.hpp>
+#include <occa/internal/modes/cuda/kernel.hpp>
+#include <occa/internal/modes/cuda/device.hpp>
+#include <occa/internal/modes/cuda/utils.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/io.hpp>
 #include <occa/core/base.hpp>
 
 namespace occa {

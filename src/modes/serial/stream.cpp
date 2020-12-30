@@ -1,4 +1,4 @@
-#include <occa/modes/serial/stream.hpp>
+#include <occa/internal/modes/serial/stream.hpp>
 
 namespace occa {
   namespace serial {

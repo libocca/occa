@@ -1,9 +1,9 @@
-#include <occa/lang/loaders/attributeLoader.hpp>
-#include <occa/lang/parser.hpp>
-#include <occa/lang/statement/statement.hpp>
-#include <occa/lang/statementContext.hpp>
-#include <occa/lang/statementPeeker.hpp>
-#include <occa/lang/tokenContext.hpp>
+#include <occa/internal/lang/loaders/attributeLoader.hpp>
+#include <occa/internal/lang/parser.hpp>
+#include <occa/internal/lang/statement/statement.hpp>
+#include <occa/internal/lang/statementContext.hpp>
+#include <occa/internal/lang/statementPeeker.hpp>
+#include <occa/internal/lang/tokenContext.hpp>
 
 namespace occa {
   namespace lang {

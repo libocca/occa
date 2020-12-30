@@ -1,8 +1,8 @@
-#ifndef OCCA_MODES_METAL_STREAMTAG_HEADER
-#define OCCA_MODES_METAL_STREAMTAG_HEADER
+#ifndef OCCA_INTERNAL_MODES_METAL_STREAMTAG_HEADER
+#define OCCA_INTERNAL_MODES_METAL_STREAMTAG_HEADER
 
-#include <occa/core/streamTag.hpp>
-#include <occa/api/metal.hpp>
+#include <occa/internal/core/streamTag.hpp>
+#include <occa/internal/api/metal.hpp>
 
 namespace occa {
   namespace metal {

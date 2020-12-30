@@ -4,11 +4,11 @@
 #include <sys/types.h>
 
 #include <occa/defines.hpp>
-#include <occa/io/lock.hpp>
-#include <occa/io/output.hpp>
-#include <occa/io/utils.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/io/lock.hpp>
+#include <occa/internal/io/output.hpp>
+#include <occa/internal/io/utils.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
 #  include <unistd.h>

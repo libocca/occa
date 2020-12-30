@@ -1,8 +1,9 @@
-#include <occa/tools/env.hpp>
-#include <occa/tools/exception.hpp>
-#include <occa/tools/logging.hpp>
-#include <occa/tools/string.hpp>
-#include <occa/io.hpp>
+#include <occa/utils/logging.hpp>
+
+#include <occa/utils/exception.hpp>
+#include <occa/internal/io.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/utils/string.hpp>
 
 namespace occa {
   void _message(const std::string &header,

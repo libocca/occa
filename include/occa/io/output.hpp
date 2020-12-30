@@ -1,5 +1,5 @@
-#ifndef OCCA_IO_OUTPUT_HEADER
-#define OCCA_IO_OUTPUT_HEADER
+#ifndef OCCA_INTERNAL_IO_OUTPUT_HEADER
+#define OCCA_INTERNAL_IO_OUTPUT_HEADER
 
 #include <iostream>
 #include <sstream>

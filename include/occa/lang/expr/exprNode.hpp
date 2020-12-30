@@ -1,14 +1,14 @@
-#ifndef OCCA_LANG_EXPR_EXPRNODE_HEADER
-#define OCCA_LANG_EXPR_EXPRNODE_HEADER
+#ifndef OCCA_INTERNAL_LANG_EXPR_EXPRNODE_HEADER
+#define OCCA_INTERNAL_LANG_EXPR_EXPRNODE_HEADER
 
 #include <stack>
 #include <vector>
 
-#include <occa/io/output.hpp>
-#include <occa/lang/primitive.hpp>
-#include <occa/lang/printer.hpp>
-#include <occa/lang/token.hpp>
-#include <occa/lang/expr/exprNodeArray.hpp>
+#include <occa/internal/io/output.hpp>
+#include <occa/types/primitive.hpp>
+#include <occa/internal/lang/printer.hpp>
+#include <occa/internal/lang/token.hpp>
+#include <occa/internal/lang/expr/exprNodeArray.hpp>
 
 namespace occa {
   namespace lang {

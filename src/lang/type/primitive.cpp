@@ -1,4 +1,4 @@
-#include <occa/lang/type/primitive.hpp>
+#include <occa/internal/lang/type/primitive.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,5 +1,5 @@
-#include <occa/lang/builtins/types.hpp>
-#include <occa/lang/type/typedef.hpp>
+#include <occa/internal/lang/builtins/types.hpp>
+#include <occa/internal/lang/type/typedef.hpp>
 
 namespace occa {
   namespace lang {

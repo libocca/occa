@@ -1,4 +1,4 @@
-#include <occa/lang/statement/namespaceStatement.hpp>
+#include <occa/internal/lang/statement/namespaceStatement.hpp>
 
 namespace occa {
   namespace lang {

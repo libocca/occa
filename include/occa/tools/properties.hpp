@@ -1,7 +1,7 @@
-#ifndef OCCA_TOOLS_PROPERTIES_HEADER
-#define OCCA_TOOLS_PROPERTIES_HEADER
+#ifndef OCCA_TYPES_PROPERTIES_HEADER
+#define OCCA_TYPES_PROPERTIES_HEADER
 
-#include <occa/tools/json.hpp>
+#include <occa/types/json.hpp>
 
 namespace occa {
   class properties: public json {

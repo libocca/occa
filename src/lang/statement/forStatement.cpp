@@ -1,4 +1,4 @@
-#include <occa/lang/statement/forStatement.hpp>
+#include <occa/internal/lang/statement/forStatement.hpp>
 
 namespace occa {
   namespace lang {

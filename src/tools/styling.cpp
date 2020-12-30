@@ -1,4 +1,4 @@
-#include <occa/tools/styling.hpp>
+#include <occa/internal/utils/styling.hpp>
 
 namespace occa {
   namespace styling {

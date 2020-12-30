@@ -6,7 +6,9 @@
 
 #include <occa.hpp>
 #include <occa.h>
+
 #include <occa/c/types.hpp>
+#include <occa/io.hpp>
 #include <occa/tools/testing.hpp>
 
 const std::string deviceStr = (

@@ -1,14 +1,16 @@
-#ifndef OCCA_UVA_HEADER
-#define OCCA_UVA_HEADER
+#ifndef OCCA_INTERNAL_UTILS_UVA_HEADER
+#define OCCA_INTERNAL_UTILS_UVA_HEADER
 
-#include <iostream>
-#include <vector>
-
-#include <occa/defines.hpp>
-#include <occa/io/output.hpp>
-#include <occa/types.hpp>
+#include <occa/internal/io/output.hpp>
 
 namespace occa {
+  namespace uvaFlag {
+    static const int none      = 0;
+    static const int isManaged = (1 << 0);
+    static const int inDevice  = (1 << 1);
+    static const int isStale   = (1 << 2);
+  }
+
   class device;
   class memory;
   class modeMemory_t;
@@ -41,33 +43,9 @@ namespace occa {
                            const ptrRange &range);
   //====================================
 
-
   //---[ UVA ]--------------------------
-  occa::modeMemory_t* uvaToMemory(void *ptr);
-
-  bool isManaged(void *ptr);
-  void startManaging(void *ptr);
-  void stopManaging(void *ptr);
-
-  void syncToDevice(void *ptr, const udim_t bytes = (udim_t) -1);
-  void syncToHost(void *ptr, const udim_t bytes = (udim_t) -1);
-
-  void syncMemToDevice(occa::modeMemory_t *mem,
-                       const udim_t bytes = (udim_t) -1,
-                       const udim_t offset = 0);
-
-  void syncMemToHost(occa::modeMemory_t *mem,
-                     const udim_t bytes = (udim_t) -1,
-                     const udim_t offset = 0);
-
-  bool needsSync(void *ptr);
-  void sync(void *ptr);
-  void dontSync(void *ptr);
-
   void removeFromStaleMap(void *ptr);
   void removeFromStaleMap(modeMemory_t *mem);
-
-  void freeUvaPtr(void *ptr);
   //====================================
 }
 

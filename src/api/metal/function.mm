@@ -4,11 +4,11 @@
 
 #import <Metal/Metal.h>
 
-#include <occa/api/metal/buffer.hpp>
-#include <occa/api/metal/device.hpp>
-#include <occa/api/metal/function.hpp>
+#include <occa/internal/api/metal/buffer.hpp>
+#include <occa/internal/api/metal/device.hpp>
+#include <occa/internal/api/metal/function.hpp>
 #include <occa/core/kernelArg.hpp>
-#include <occa/modes/metal/memory.hpp>
+#include <occa/internal/modes/metal/memory.hpp>
 
 namespace occa {
   namespace api {

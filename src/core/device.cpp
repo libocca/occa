@@ -1,9 +1,14 @@
 #include <occa/core/device.hpp>
 #include <occa/core/base.hpp>
-#include <occa/modes.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/io.hpp>
+#include <occa/internal/core/device.hpp>
+#include <occa/internal/core/kernel.hpp>
+#include <occa/internal/core/memory.hpp>
+#include <occa/internal/core/stream.hpp>
+#include <occa/internal/core/streamTag.hpp>
+#include <occa/internal/modes.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/internal/io.hpp>
 
 namespace occa {
   //---[ modeDevice_t ]-----------------

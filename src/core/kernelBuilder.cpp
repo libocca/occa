@@ -1,9 +1,11 @@
 #include <occa/core/device.hpp>
 #include <occa/core/kernelBuilder.hpp>
 #include <occa/core/scope.hpp>
-#include <occa/tools/json.hpp>
-#include <occa/tools/lex.hpp>
-#include <occa/tools/string.hpp>
+#include <occa/types/json.hpp>
+#include <occa/internal/core/kernel.hpp>
+#include <occa/internal/lang/kernelMetadata.hpp>
+#include <occa/internal/utils/lex.hpp>
+#include <occa/internal/utils/string.hpp>
 
 namespace occa {
   //---[ kernelBuilder ]----------------

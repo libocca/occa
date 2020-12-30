@@ -1,10 +1,10 @@
-#ifndef OCCA_API_METAL_COMMANDQUEUE_HEADER
-#define OCCA_API_METAL_COMMANDQUEUE_HEADER
+#ifndef OCCA_INTERNAL_API_METAL_COMMANDQUEUE_HEADER
+#define OCCA_INTERNAL_API_METAL_COMMANDQUEUE_HEADER
 
 #include <cstddef>
 #include <vector>
 
-#include <occa/api/metal/event.hpp>
+#include <occa/internal/api/metal/event.hpp>
 #include <occa/types.hpp>
 
 namespace occa {

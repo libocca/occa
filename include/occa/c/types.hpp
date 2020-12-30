@@ -1,5 +1,5 @@
 #include <occa/core.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 #include <occa/c/types.h>
 

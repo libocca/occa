@@ -1,6 +1,7 @@
-#include <occa/io/utils.hpp>
-#include <occa/tools/properties.hpp>
-#include <occa/tools/string.hpp>
+#include <occa/internal/io/utils.hpp>
+#include <occa/internal/utils/lex.hpp>
+#include <occa/types/properties.hpp>
+#include <occa/internal/utils/string.hpp>
 
 namespace occa {
   properties::properties() {

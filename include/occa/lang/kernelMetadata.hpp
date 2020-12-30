@@ -1,8 +1,8 @@
-#ifndef OCCA_LANG_KERNELMETADATA_HEADER
-#define OCCA_LANG_KERNELMETADATA_HEADER
+#ifndef OCCA_INTERNAL_LANG_KERNELMETADATA_HEADER
+#define OCCA_INTERNAL_LANG_KERNELMETADATA_HEADER
 
-#include <occa/tools/hash.hpp>
-#include <occa/tools/json.hpp>
+#include <occa/utils/hash.hpp>
+#include <occa/types/json.hpp>
 #include <occa/dtype.hpp>
 
 namespace occa {

@@ -1,5 +1,5 @@
-#include <occa/lang/type/functionPtr.hpp>
-#include <occa/lang/variable.hpp>
+#include <occa/internal/lang/type/functionPtr.hpp>
+#include <occa/internal/lang/variable.hpp>
 
 namespace occa {
   namespace lang {

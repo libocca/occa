@@ -58,7 +58,7 @@ if __name__ == '__main__':
     with open('occa_kernel_m.f90.in', 'r') as f:
         f_in = f.readlines()
 
-    fname = os.path.join(OCCA_DIR, 'src', 'fortran', 'occa_kernel_m.f90')
+    fname = os.path.join(OCCA_DIR, 'src', 'occa', 'internal', 'fortran', 'occa_kernel_m.f90')
     print('Write OCCA Fortran kernel module to: %s' % (fname))
     with open(fname, 'w') as f:
         # Add edit warning to the top of the file

@@ -1,5 +1,6 @@
-#include <occa/modes/hip/registration.hpp>
-#include <occa/modes/hip/utils.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/modes/hip/registration.hpp>
+#include <occa/internal/modes/hip/utils.hpp>
 
 namespace occa {
   namespace hip {

@@ -1,4 +1,6 @@
 #include <occa.hpp>
+
+#include <occa/tools/vector.hpp>
 #include <occa/tools/testing.hpp>
 
 using namespace occa;

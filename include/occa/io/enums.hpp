@@ -1,5 +1,5 @@
-#ifndef OCCA_IO_ENUMS_HEADER
-#define OCCA_IO_ENUMS_HEADER
+#ifndef OCCA_INTERNAL_IO_ENUMS_HEADER
+#define OCCA_INTERNAL_IO_ENUMS_HEADER
 
 namespace occa {
   namespace enums {

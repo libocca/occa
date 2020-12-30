@@ -1,3 +1,5 @@
+#include <cstring>
+
 #include <occa/c/types.hpp>
 #include <occa/c/json.h>
 

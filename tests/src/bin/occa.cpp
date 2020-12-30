@@ -3,9 +3,11 @@
 #include <sstream>
 
 #include <occa.hpp>
+
 #include <occa/tools/cli.hpp>
 #include <occa/tools/string.hpp>
 #include <occa/tools/testing.hpp>
+#include <occa/modes.hpp>
 #include <occa/bin/occa.hpp>
 
 std::stringstream ss;

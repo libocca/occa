@@ -1,6 +1,6 @@
 #include <occa/c/cli.h>
 #include <occa/c/types.hpp>
-#include <occa/tools/cli.hpp>
+#include <occa/internal/utils/cli.hpp>
 
 OCCA_START_EXTERN_C
 

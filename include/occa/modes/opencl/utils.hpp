@@ -1,11 +1,11 @@
-#ifndef OCCA_MODES_OPENCL_UTILS_HEADER
-#define OCCA_MODES_OPENCL_UTILS_HEADER
+#ifndef OCCA_INTERNAL_MODES_OPENCL_UTILS_HEADER
+#define OCCA_INTERNAL_MODES_OPENCL_UTILS_HEADER
 
 #include <iostream>
 
-#include <occa/modes/opencl/polyfill.hpp>
-#include <occa/core/device.hpp>
-#include <occa/io/lock.hpp>
+#include <occa/internal/modes/opencl/polyfill.hpp>
+#include <occa/internal/core/device.hpp>
+#include <occa/internal/io/lock.hpp>
 
 namespace occa {
   class streamTag;

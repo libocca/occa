@@ -1,10 +1,10 @@
-#ifndef OCCA_LANG_MACRO_HEADER
-#define OCCA_LANG_MACRO_HEADER
+#ifndef OCCA_INTERNAL_LANG_MACRO_HEADER
+#define OCCA_INTERNAL_LANG_MACRO_HEADER
 
 #include <vector>
 #include <map>
 
-#include <occa/lang/token.hpp>
+#include <occa/internal/lang/token.hpp>
 
 namespace occa {
   namespace lang {

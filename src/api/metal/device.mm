@@ -5,9 +5,9 @@
 #import <Foundation/NSString.h>
 #import <Metal/Metal.h>
 
-#include <occa/api/metal/device.hpp>
-#include <occa/io/lock.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/api/metal/device.hpp>
+#include <occa/internal/io/lock.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 namespace occa {
   namespace api {

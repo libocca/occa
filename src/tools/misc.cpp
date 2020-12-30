@@ -1,4 +1,4 @@
-#include <occa/tools/misc.hpp>
+#include <occa/internal/utils/misc.hpp>
 
 namespace occa {
   udim_t ptrDiff(void *start, void *end) {

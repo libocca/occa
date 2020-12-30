@@ -1,4 +1,4 @@
-#include <occa/lang/type/pointer.hpp>
+#include <occa/internal/lang/type/pointer.hpp>
 
 namespace occa {
   namespace lang {

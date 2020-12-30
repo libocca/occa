@@ -1,4 +1,4 @@
-#include <occa/lang/statement/breakStatement.hpp>
+#include <occa/internal/lang/statement/breakStatement.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,8 +1,8 @@
-#ifndef OCCA_MODES_OPENCL_DEVICE_HEADER
-#define OCCA_MODES_OPENCL_DEVICE_HEADER
+#ifndef OCCA_INTERNAL_MODES_OPENCL_DEVICE_HEADER
+#define OCCA_INTERNAL_MODES_OPENCL_DEVICE_HEADER
 
-#include <occa/core/launchedDevice.hpp>
-#include <occa/modes/opencl/polyfill.hpp>
+#include <occa/internal/core/launchedDevice.hpp>
+#include <occa/internal/modes/opencl/polyfill.hpp>
 
 namespace occa {
   namespace opencl {

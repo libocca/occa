@@ -1,19 +1,19 @@
 #include <occa/core/base.hpp>
-#include <occa/io/output.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/misc.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/modes/hip/device.hpp>
-#include <occa/modes/hip/kernel.hpp>
-#include <occa/modes/hip/memory.hpp>
-#include <occa/modes/hip/stream.hpp>
-#include <occa/modes/hip/streamTag.hpp>
-#include <occa/modes/hip/utils.hpp>
-#include <occa/modes/serial/device.hpp>
-#include <occa/modes/serial/kernel.hpp>
-#include <occa/lang/kernelMetadata.hpp>
-#include <occa/lang/primitive.hpp>
-#include <occa/lang/modes/hip.hpp>
+#include <occa/internal/io/output.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/utils/misc.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/internal/modes/hip/device.hpp>
+#include <occa/internal/modes/hip/kernel.hpp>
+#include <occa/internal/modes/hip/memory.hpp>
+#include <occa/internal/modes/hip/stream.hpp>
+#include <occa/internal/modes/hip/streamTag.hpp>
+#include <occa/internal/modes/hip/utils.hpp>
+#include <occa/internal/modes/serial/device.hpp>
+#include <occa/internal/modes/serial/kernel.hpp>
+#include <occa/internal/lang/kernelMetadata.hpp>
+#include <occa/types/primitive.hpp>
+#include <occa/internal/lang/modes/hip.hpp>
 
 namespace occa {
   namespace hip {

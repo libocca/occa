@@ -1,7 +1,7 @@
-#include <occa/lang/statement/statementArray.hpp>
+#include <occa/internal/lang/statement/statementArray.hpp>
 
-#include <occa/lang/expr.hpp>
-#include <occa/lang/statement/statement.hpp>
+#include <occa/internal/lang/expr.hpp>
+#include <occa/internal/lang/statement/statement.hpp>
 
 namespace occa {
   namespace lang {

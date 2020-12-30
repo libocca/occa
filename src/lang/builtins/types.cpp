@@ -1,4 +1,4 @@
-#include <occa/lang/builtins/types.hpp>
+#include <occa/internal/lang/builtins/types.hpp>
 
 namespace occa {
   namespace lang {

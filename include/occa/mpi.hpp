@@ -7,8 +7,6 @@
 #include <mpi.h>
 #include <vector>
 
-#include <occa/tools/json.hpp>
-
 namespace occa {
   namespace mpi {
     static const int defaultMessageID = 15331;

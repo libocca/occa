@@ -1,8 +1,8 @@
-#ifndef OCCA_LANG_EXPR_EXPROPNODE_HEADER
-#define OCCA_LANG_EXPR_EXPROPNODE_HEADER
+#ifndef OCCA_INTERNAL_LANG_EXPR_EXPROPNODE_HEADER
+#define OCCA_INTERNAL_LANG_EXPR_EXPROPNODE_HEADER
 
-#include <occa/lang/expr/exprNode.hpp>
-#include <occa/lang/operator.hpp>
+#include <occa/internal/lang/expr/exprNode.hpp>
+#include <occa/internal/lang/operator.hpp>
 
 namespace occa {
   namespace lang {

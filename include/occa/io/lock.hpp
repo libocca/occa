@@ -1,5 +1,5 @@
-#ifndef OCCA_IO_LOCK_HEADER
-#define OCCA_IO_LOCK_HEADER
+#ifndef OCCA_INTERNAL_IO_LOCK_HEADER
+#define OCCA_INTERNAL_IO_LOCK_HEADER
 
 #include <iostream>
 

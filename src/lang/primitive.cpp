@@ -1,8 +1,9 @@
 #include <cstring>
 
-#include <occa/lang/primitive.hpp>
-#include <occa/tools/lex.hpp>
-#include <occa/types/fp.hpp>
+#include <occa/types/bits.hpp>
+#include <occa/types/primitive.hpp>
+#include <occa/internal/utils/lex.hpp>
+#include <occa/internal/utils/string.hpp>
 
 namespace occa {
   primitive::primitive(const char *c) {
@@ -13,6 +14,7 @@ namespace occa {
     const char *c = s.c_str();
     *this = load(c);
   }
+
   primitive primitive::load(const char *&c,
                             const bool includeSign) {
     bool loadedFormattedValue = false;

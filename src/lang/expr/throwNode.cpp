@@ -1,4 +1,4 @@
-#include <occa/lang/expr/throwNode.hpp>
+#include <occa/internal/lang/expr/throwNode.hpp>
 
 namespace occa {
   namespace lang {

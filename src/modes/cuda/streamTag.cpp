@@ -1,5 +1,5 @@
-#include <occa/modes/cuda/streamTag.hpp>
-#include <occa/modes/cuda/utils.hpp>
+#include <occa/internal/modes/cuda/streamTag.hpp>
+#include <occa/internal/modes/cuda/utils.hpp>
 
 namespace occa {
   namespace cuda {

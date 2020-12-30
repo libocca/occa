@@ -6,7 +6,7 @@
 #include <occa/defines.hpp>
 #include <occa/core/base.hpp>
 #include <occa/core/kernelBuilder.hpp>
-#include <occa/tools/env.hpp>
+#include <occa/internal/utils/env.hpp>
 
 namespace occa {
   namespace linalg {

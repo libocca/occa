@@ -1,4 +1,4 @@
-#include <occa/tools/trie.hpp>
+#include <occa/internal/utils/trie.hpp>
 
 namespace occa {
   //---[ Node ]-------------------------

@@ -1,4 +1,6 @@
 #include <occa.hpp>
+
+#include <occa/io.hpp>
 #include <occa/tools/testing.hpp>
 
 occa::kernel addVectors;

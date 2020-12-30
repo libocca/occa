@@ -1,4 +1,4 @@
-#include <occa/modes/metal/streamTag.hpp>
+#include <occa/internal/modes/metal/streamTag.hpp>
 
 namespace occa {
   namespace metal {

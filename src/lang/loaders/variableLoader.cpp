@@ -1,11 +1,11 @@
-#include <occa/lang/loaders/attributeLoader.hpp>
-#include <occa/lang/loaders/typeLoader.hpp>
-#include <occa/lang/loaders/variableLoader.hpp>
-#include <occa/lang/parser.hpp>
-#include <occa/lang/statementContext.hpp>
-#include <occa/lang/token.hpp>
-#include <occa/lang/tokenContext.hpp>
-#include <occa/lang/variable.hpp>
+#include <occa/internal/lang/loaders/attributeLoader.hpp>
+#include <occa/internal/lang/loaders/typeLoader.hpp>
+#include <occa/internal/lang/loaders/variableLoader.hpp>
+#include <occa/internal/lang/parser.hpp>
+#include <occa/internal/lang/statementContext.hpp>
+#include <occa/internal/lang/token.hpp>
+#include <occa/internal/lang/tokenContext.hpp>
+#include <occa/internal/lang/variable.hpp>
 
 namespace occa {
   namespace lang {

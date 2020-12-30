@@ -2,9 +2,9 @@
 #include <stdint.h>
 
 #include <occa/types.hpp>
-#include <occa/tools/hash.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/io.hpp>
+#include <occa/utils/hash.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/io.hpp>
 
 namespace occa {
   hash_t::hash_t() {

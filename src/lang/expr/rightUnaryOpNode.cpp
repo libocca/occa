@@ -1,4 +1,4 @@
-#include <occa/lang/expr/rightUnaryOpNode.hpp>
+#include <occa/internal/lang/expr/rightUnaryOpNode.hpp>
 
 namespace occa {
   namespace lang {

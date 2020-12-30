@@ -1,11 +1,11 @@
-#include <occa/io.hpp>
-#include <occa/lang/attribute.hpp>
-#include <occa/lang/expr.hpp>
-#include <occa/lang/parser.hpp>
-#include <occa/lang/variable.hpp>
-#include <occa/lang/builtins/attributes.hpp>
-#include <occa/lang/builtins/types.hpp>
-#include <occa/tools/hash.hpp>
+#include <occa/internal/io.hpp>
+#include <occa/internal/lang/attribute.hpp>
+#include <occa/internal/lang/expr.hpp>
+#include <occa/internal/lang/parser.hpp>
+#include <occa/internal/lang/variable.hpp>
+#include <occa/internal/lang/builtins/attributes.hpp>
+#include <occa/internal/lang/builtins/types.hpp>
+#include <occa/utils/hash.hpp>
 
 namespace occa {
   namespace lang {

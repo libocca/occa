@@ -1,10 +1,10 @@
-#include <occa/lang/expr/exprNode.hpp>
-#include <occa/lang/loaders/structLoader.hpp>
-#include <occa/lang/parser.hpp>
-#include <occa/lang/statement/declarationStatement.hpp>
-#include <occa/lang/token.hpp>
-#include <occa/lang/type/struct.hpp>
-#include <occa/lang/variable.hpp>
+#include <occa/internal/lang/expr/exprNode.hpp>
+#include <occa/internal/lang/loaders/structLoader.hpp>
+#include <occa/internal/lang/parser.hpp>
+#include <occa/internal/lang/statement/declarationStatement.hpp>
+#include <occa/internal/lang/token.hpp>
+#include <occa/internal/lang/type/struct.hpp>
+#include <occa/internal/lang/variable.hpp>
 
 namespace occa {
   namespace lang {

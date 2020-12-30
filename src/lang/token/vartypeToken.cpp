@@ -1,4 +1,4 @@
-#include <occa/lang/token/vartypeToken.hpp>
+#include <occa/internal/lang/token/vartypeToken.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include <occa/tools/env.hpp>
-#include <occa/io.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/io.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 namespace occa {
   namespace openmp {
@@ -39,12 +39,12 @@ namespace occa {
       const std::string safeCompiler = io::slashToSnake(compiler);
       std::stringstream ss;
 
-      const std::string openmpTest = env::OCCA_DIR + "/include/occa/scripts/tests/openmp.cpp";
+      const std::string openmpTest = env::OCCA_DIR + "/include/occa/scripts/compilerSupportsOpenMP.cpp";
       hash_t hash = occa::hashFile(openmpTest);
       hash ^= occa::hash(vendor_);
       hash ^= occa::hash(compiler);
 
-      const std::string srcFilename = io::cacheFile(openmpTest, "openmpTest.cpp", hash);
+      const std::string srcFilename = io::cacheFile(openmpTest, "compilerSupportsOpenMP.cpp", hash);
       const std::string binaryFilename = io::dirname(srcFilename) + "binary";
       const std::string outFilename = io::dirname(srcFilename) + "output";
 

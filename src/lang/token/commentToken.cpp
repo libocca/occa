@@ -1,4 +1,4 @@
-#include <occa/lang/token/commentToken.hpp>
+#include <occa/internal/lang/token/commentToken.hpp>
 
 namespace occa {
   namespace lang {

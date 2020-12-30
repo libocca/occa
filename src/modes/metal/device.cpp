@@ -1,14 +1,14 @@
 #include <occa/core/base.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/modes/metal/device.hpp>
-#include <occa/modes/metal/kernel.hpp>
-#include <occa/modes/metal/memory.hpp>
-#include <occa/modes/metal/stream.hpp>
-#include <occa/modes/metal/streamTag.hpp>
-#include <occa/modes/serial/device.hpp>
-#include <occa/modes/serial/kernel.hpp>
-#include <occa/lang/modes/metal.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/internal/modes/metal/device.hpp>
+#include <occa/internal/modes/metal/kernel.hpp>
+#include <occa/internal/modes/metal/memory.hpp>
+#include <occa/internal/modes/metal/stream.hpp>
+#include <occa/internal/modes/metal/streamTag.hpp>
+#include <occa/internal/modes/serial/device.hpp>
+#include <occa/internal/modes/serial/kernel.hpp>
+#include <occa/internal/lang/modes/metal.hpp>
 
 namespace occa {
   namespace metal {

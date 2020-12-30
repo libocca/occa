@@ -1,11 +1,11 @@
 #include <sstream>
 #include <ctime>
 
-#include <occa/tools/string.hpp>
-#include <occa/io.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/io.hpp>
 
-#include <occa/lang/preprocessor.hpp>
-#include <occa/lang/specialMacros.hpp>
+#include <occa/internal/lang/preprocessor.hpp>
+#include <occa/internal/lang/specialMacros.hpp>
 
 namespace occa {
   namespace lang {

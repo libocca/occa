@@ -1,10 +1,10 @@
-#ifndef OCCA_LANG_OPERATOR_HEADER
-#define OCCA_LANG_OPERATOR_HEADER
+#ifndef OCCA_INTERNAL_LANG_OPERATOR_HEADER
+#define OCCA_INTERNAL_LANG_OPERATOR_HEADER
 
 #include <occa/types.hpp>
-#include <occa/tools/trie.hpp>
-#include <occa/lang/primitive.hpp>
-#include <occa/lang/printer.hpp>
+#include <occa/internal/utils/trie.hpp>
+#include <occa/types/primitive.hpp>
+#include <occa/internal/lang/printer.hpp>
 
 namespace occa {
   namespace lang {

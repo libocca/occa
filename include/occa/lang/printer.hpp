@@ -1,11 +1,11 @@
-#ifndef OCCA_LANG_PRINTER_HEADER
-#define OCCA_LANG_PRINTER_HEADER
+#ifndef OCCA_INTERNAL_LANG_PRINTER_HEADER
+#define OCCA_INTERNAL_LANG_PRINTER_HEADER
 
 #include <sstream>
 #include <iostream>
 #include <vector>
 
-#include <occa/io/output.hpp>
+#include <occa/internal/io/output.hpp>
 
 namespace occa {
   namespace lang {

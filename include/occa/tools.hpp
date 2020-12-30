@@ -1,21 +1,16 @@
-#ifndef OCCA_TOOLS_HEADER
-#define OCCA_TOOLS_HEADER
+#ifndef OCCA_INTERNAL_UTILS_HEADER
+#define OCCA_INTERNAL_UTILS_HEADER
 
-#include <occa/tools/cli.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/exception.hpp>
-#include <occa/tools/gc.hpp>
-#include <occa/tools/hash.hpp>
-#include <occa/tools/enums.hpp>
-#include <occa/tools/json.hpp>
-#include <occa/tools/lex.hpp>
-#include <occa/tools/misc.hpp>
-#include <occa/tools/properties.hpp>
-#include <occa/tools/string.hpp>
-#include <occa/tools/styling.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/tools/tls.hpp>
-#include <occa/tools/uva.hpp>
-#include <occa/tools/vector.hpp>
+#include <occa/internal/utils/cli.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/utils/gc.hpp>
+#include <occa/internal/utils/enums.hpp>
+#include <occa/internal/utils/lex.hpp>
+#include <occa/internal/utils/misc.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/utils/styling.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/internal/utils/tls.hpp>
+#include <occa/internal/utils/vector.hpp>
 
 #endif

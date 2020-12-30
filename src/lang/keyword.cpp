@@ -1,8 +1,8 @@
-#include <occa/lang/keyword.hpp>
-#include <occa/lang/statementContext.hpp>
-#include <occa/lang/token.hpp>
-#include <occa/lang/variable.hpp>
-#include <occa/lang/builtins/types.hpp>
+#include <occa/internal/lang/keyword.hpp>
+#include <occa/internal/lang/statementContext.hpp>
+#include <occa/internal/lang/token.hpp>
+#include <occa/internal/lang/variable.hpp>
+#include <occa/internal/lang/builtins/types.hpp>
 
 namespace occa {
   namespace lang {

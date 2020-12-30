@@ -1,4 +1,4 @@
-#include <occa/lang/expr/dynamicCastNode.hpp>
+#include <occa/internal/lang/expr/dynamicCastNode.hpp>
 
 namespace occa {
   namespace lang {

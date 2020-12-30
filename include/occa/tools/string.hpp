@@ -1,5 +1,5 @@
-#ifndef OCCA_TOOLS_STRING_HEADER
-#define OCCA_TOOLS_STRING_HEADER
+#ifndef OCCA_INTERNAL_UTILS_STRING_HEADER
+#define OCCA_INTERNAL_UTILS_STRING_HEADER
 
 #include <iostream>
 #include <iomanip>

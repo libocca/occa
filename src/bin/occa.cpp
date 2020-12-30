@@ -1,13 +1,15 @@
 #include <fstream>
 
 #include <occa.hpp>
-#include <occa/bin/occa.hpp>
-#include <occa/lang/modes/serial.hpp>
-#include <occa/lang/modes/openmp.hpp>
-#include <occa/lang/modes/cuda.hpp>
-#include <occa/lang/modes/hip.hpp>
-#include <occa/lang/modes/opencl.hpp>
-#include <occa/lang/modes/metal.hpp>
+
+#include <occa/internal/bin/occa.hpp>
+#include <occa/internal/lang/modes/serial.hpp>
+#include <occa/internal/lang/modes/openmp.hpp>
+#include <occa/internal/lang/modes/cuda.hpp>
+#include <occa/internal/lang/modes/hip.hpp>
+#include <occa/internal/lang/modes/opencl.hpp>
+#include <occa/internal/lang/modes/metal.hpp>
+#include <occa/internal/modes.hpp>
 
 namespace occa {
   namespace bin {
@@ -289,7 +291,7 @@ namespace occa {
         occaCommand.printBashAutocomplete("occa autocomplete bash");
       } else {
         // Remove the "--" argument
-        strVector cmdArgs = arguments.getArray<std::string>();
+        strVector cmdArgs = arguments.toVector<std::string>();
         cmdArgs.erase(cmdArgs.begin());
 
         occaCommand.printBashSuggestions(cmdArgs);

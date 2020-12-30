@@ -1,10 +1,10 @@
-#ifndef OCCA_LANG_MODES_OKL_HEADER
-#define OCCA_LANG_MODES_OKL_HEADER
+#ifndef OCCA_INTERNAL_LANG_MODES_OKL_HEADER
+#define OCCA_INTERNAL_LANG_MODES_OKL_HEADER
 
 #include <functional>
 #include <vector>
 
-#include <occa/lang/statement.hpp>
+#include <occa/internal/lang/statement.hpp>
 
 namespace occa {
   namespace lang {

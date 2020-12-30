@@ -1,7 +1,7 @@
-#ifndef OCCA_LANG_TYPE_VARTYPE_HEADER
-#define OCCA_LANG_TYPE_VARTYPE_HEADER
+#ifndef OCCA_INTERNAL_LANG_TYPE_VARTYPE_HEADER
+#define OCCA_INTERNAL_LANG_TYPE_VARTYPE_HEADER
 
-#include <occa/lang/type/type.hpp>
+#include <occa/internal/lang/type/type.hpp>
 
 namespace occa {
   namespace lang {

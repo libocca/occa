@@ -1,4 +1,7 @@
+#include <cstring>
+
 #include <occa/c/types.hpp>
+#include <occa/internal/core/memory.hpp>
 
 namespace occa {
   namespace c {

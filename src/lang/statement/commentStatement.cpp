@@ -1,5 +1,5 @@
-#include <occa/lang/statement/commentStatement.hpp>
-#include <occa/tools/string.hpp>
+#include <occa/internal/lang/statement/commentStatement.hpp>
+#include <occa/internal/utils/string.hpp>
 
 namespace occa {
   namespace lang {

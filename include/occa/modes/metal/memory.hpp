@@ -1,8 +1,8 @@
-#ifndef OCCA_MODES_METAL_MEMORY_HEADER
-#define OCCA_MODES_METAL_MEMORY_HEADER
+#ifndef OCCA_INTERNAL_MODES_METAL_MEMORY_HEADER
+#define OCCA_INTERNAL_MODES_METAL_MEMORY_HEADER
 
-#include <occa/core/memory.hpp>
-#include <occa/api/metal.hpp>
+#include <occa/internal/core/memory.hpp>
+#include <occa/internal/api/metal.hpp>
 
 namespace occa {
   namespace metal {

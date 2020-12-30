@@ -1,4 +1,4 @@
-#include <occa/lang/expr/tupleNode.hpp>
+#include <occa/internal/lang/expr/tupleNode.hpp>
 
 namespace occa {
   namespace lang {

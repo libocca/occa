@@ -1,4 +1,4 @@
-#include <occa/lang/expr/cudaCallNode.hpp>
+#include <occa/internal/lang/expr/cudaCallNode.hpp>
 
 namespace occa {
   namespace lang {

@@ -16,13 +16,13 @@
 #  include <algorithm> // std::replace
 #endif
 
-#include <occa/io/cache.hpp>
-#include <occa/io/fileOpener.hpp>
-#include <occa/io/utils.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/lex.hpp>
-#include <occa/tools/misc.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/io/cache.hpp>
+#include <occa/internal/io/fileOpener.hpp>
+#include <occa/internal/io/utils.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/utils/lex.hpp>
+#include <occa/internal/utils/misc.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 namespace occa {
   // Kernel Caching

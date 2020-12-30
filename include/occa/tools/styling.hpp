@@ -1,5 +1,5 @@
-#ifndef OCCA_TOOLS_STYLING_HEADER
-#define OCCA_TOOLS_STYLING_HEADER
+#ifndef OCCA_INTERNAL_UTILS_STYLING_HEADER
+#define OCCA_INTERNAL_UTILS_STYLING_HEADER
 
 #include <occa/defines.hpp>
 #include <occa/types.hpp>

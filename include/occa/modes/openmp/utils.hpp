@@ -1,7 +1,7 @@
 #include <occa/defines.hpp>
 
-#ifndef OCCA_MODES_OPENMP_UTILS_HEADER
-#define OCCA_MODES_OPENMP_UTILS_HEADER
+#ifndef OCCA_INTERNAL_MODES_OPENMP_UTILS_HEADER
+#define OCCA_INTERNAL_MODES_OPENMP_UTILS_HEADER
 
 namespace occa {
   namespace openmp {

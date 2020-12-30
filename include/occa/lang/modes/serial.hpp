@@ -1,7 +1,7 @@
-#ifndef OCCA_LANG_MODES_SERIAL_HEADER
-#define OCCA_LANG_MODES_SERIAL_HEADER
+#ifndef OCCA_INTERNAL_LANG_MODES_SERIAL_HEADER
+#define OCCA_INTERNAL_LANG_MODES_SERIAL_HEADER
 
-#include <occa/lang/parser.hpp>
+#include <occa/internal/lang/parser.hpp>
 
 namespace occa {
   namespace lang {

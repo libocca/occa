@@ -1,5 +1,5 @@
-#ifndef OCCA_TOOLS_TLS_HEADER
-#define OCCA_TOOLS_TLS_HEADER
+#ifndef OCCA_INTERNAL_UTILS_TLS_HEADER
+#define OCCA_INTERNAL_UTILS_TLS_HEADER
 
 #include <occa/defines.hpp>
 

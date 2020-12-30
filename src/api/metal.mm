@@ -5,7 +5,7 @@
 #import <Foundation/NSArray.h>
 #import <Metal/Metal.h>
 
-#include <occa/api/metal.hpp>
+#include <occa/internal/api/metal.hpp>
 
 namespace occa {
   namespace api {

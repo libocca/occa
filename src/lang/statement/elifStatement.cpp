@@ -1,4 +1,4 @@
-#include <occa/lang/statement/elifStatement.hpp>
+#include <occa/internal/lang/statement/elifStatement.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,4 +1,4 @@
-#include <occa/lang/statement/classAccessStatement.hpp>
+#include <occa/internal/lang/statement/classAccessStatement.hpp>
 
 namespace occa {
   namespace lang {

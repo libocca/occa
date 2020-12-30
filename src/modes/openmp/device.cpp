@@ -1,8 +1,9 @@
-#include <occa/io/output.hpp>
-#include <occa/lang/modes/openmp.hpp>
-#include <occa/modes/serial/device.hpp>
-#include <occa/modes/openmp/device.hpp>
-#include <occa/modes/openmp/utils.hpp>
+#include <occa/internal/core/kernel.hpp>
+#include <occa/internal/io/output.hpp>
+#include <occa/internal/lang/modes/openmp.hpp>
+#include <occa/internal/modes/serial/device.hpp>
+#include <occa/internal/modes/openmp/device.hpp>
+#include <occa/internal/modes/openmp/utils.hpp>
 
 namespace occa {
   namespace openmp {

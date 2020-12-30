@@ -240,7 +240,7 @@ if (ENABLE_MPI)
 endif(ENABLE_MPI)
 
 #Generate CompiledDefines from libraries we found
-configure_file(scripts/compiledDefinesTemplate.hpp.in ${OCCA_BUILD_DIR}/include/occa/defines/compiledDefines.hpp)
+configure_file(scripts/build/compiledDefinesTemplate.hpp.in ${OCCA_BUILD_DIR}/include/occa/defines/compiledDefines.hpp)
 install(FILES ${OCCA_BUILD_DIR}/include/occa/defines/compiledDefines.hpp DESTINATION include/occa/defines)
 
 #Find source files

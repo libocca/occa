@@ -1,4 +1,4 @@
-#include <occa/lang/statement/emptyStatement.hpp>
+#include <occa/internal/lang/statement/emptyStatement.hpp>
 
 namespace occa {
   namespace lang {

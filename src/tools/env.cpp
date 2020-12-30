@@ -1,10 +1,10 @@
 #include <cstdlib>
 
 #include <occa/core/base.hpp>
-#include <occa/io.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/tools/tls.hpp>
+#include <occa/internal/io.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/internal/utils/tls.hpp>
 
 namespace occa {
   properties& settings() {

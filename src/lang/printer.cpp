@@ -1,4 +1,4 @@
-#include <occa/lang/printer.hpp>
+#include <occa/internal/lang/printer.hpp>
 
 namespace occa {
   namespace lang {

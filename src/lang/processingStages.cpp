@@ -1,5 +1,5 @@
-#include <occa/lang/token.hpp>
-#include <occa/lang/processingStages.hpp>
+#include <occa/internal/lang/token.hpp>
+#include <occa/internal/lang/processingStages.hpp>
 
 namespace occa {
   namespace lang {

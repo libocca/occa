@@ -1,7 +1,7 @@
 #include <occa/core/device.hpp>
-#include <occa/io/output.hpp>
-#include <occa/modes.hpp>
-#include <occa/tools/string.hpp>
+#include <occa/internal/io/output.hpp>
+#include <occa/internal/modes.hpp>
+#include <occa/internal/utils/string.hpp>
 
 namespace occa {
   //---[ mode_t ]-----------------------
@@ -100,16 +100,5 @@ namespace occa {
 
   modeDevice_t* newModeDevice(const occa::properties &props) {
     return getModeFromProps(props)->newDevice(props);
-  }
-
-  int getDeviceCount(const occa::properties &props) {
-    std::string modeName = props["mode"];
-    mode_t *mode = getMode(modeName);
-
-    if (mode) {
-      return mode->getDeviceCount(props);
-    } else {
-      return 0;
-    }
   }
 }

@@ -1,5 +1,7 @@
 #include <occa/core/streamTag.hpp>
 #include <occa/core/device.hpp>
+#include <occa/internal/core/device.hpp>
+#include <occa/internal/core/streamTag.hpp>
 
 namespace occa {
   //---[ modeStreamTag_t ]--------------

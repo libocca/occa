@@ -1,5 +1,5 @@
-#include <occa/lang/variable.hpp>
-#include <occa/lang/expr/variableNode.hpp>
+#include <occa/internal/lang/variable.hpp>
+#include <occa/internal/lang/expr/variableNode.hpp>
 
 namespace occa {
   namespace lang {

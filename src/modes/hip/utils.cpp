@@ -1,10 +1,10 @@
-#include <occa/core/device.hpp>
-#include <occa/core/memory.hpp>
-#include <occa/tools/string.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/modes/hip/device.hpp>
-#include <occa/modes/hip/memory.hpp>
-#include <occa/modes/hip/utils.hpp>
+#include <occa/internal/core/device.hpp>
+#include <occa/internal/core/memory.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/internal/modes/hip/device.hpp>
+#include <occa/internal/modes/hip/memory.hpp>
+#include <occa/internal/modes/hip/utils.hpp>
 
 namespace occa {
   //---[ Helper Functions ]-----------

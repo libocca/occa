@@ -1,5 +1,5 @@
-#include <occa/tools/string.hpp>
-#include <occa/lang/expr/expressionParser.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/lang/expr/expressionParser.hpp>
 
 namespace occa {
   namespace lang {

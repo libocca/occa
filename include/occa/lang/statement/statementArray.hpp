@@ -1,10 +1,10 @@
-#ifndef OCCA_LANG_STATEMENT_STATEMENTARRAY_HEADER
-#define OCCA_LANG_STATEMENT_STATEMENTARRAY_HEADER
+#ifndef OCCA_INTERNAL_LANG_STATEMENT_STATEMENTARRAY_HEADER
+#define OCCA_INTERNAL_LANG_STATEMENT_STATEMENTARRAY_HEADER
 
 #include <functional>
 
-#include <occa/lang/utils/array.hpp>
-#include <occa/lang/expr/exprNodeArray.hpp>
+#include <occa/internal/lang/utils/array.hpp>
+#include <occa/internal/lang/expr/exprNodeArray.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,4 +1,4 @@
-#include <occa/tools/gc.hpp>
+#include <occa/internal/utils/gc.hpp>
 #include <iostream>
 
 namespace occa {

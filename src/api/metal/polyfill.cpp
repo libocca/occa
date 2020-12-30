@@ -2,7 +2,7 @@
 
 #if !OCCA_METAL_ENABLED
 
-#include <occa/api/metal.hpp>
+#include <occa/internal/api/metal.hpp>
 
 namespace occa {
   namespace api {

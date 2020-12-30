@@ -3,10 +3,10 @@
 #include <occa/defines.hpp>
 #include <occa/types.hpp>
 
-#include <occa/tools/string.hpp>
-#include <occa/lang/macro.hpp>
-#include <occa/lang/tokenizer.hpp>
-#include <occa/lang/preprocessor.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/lang/macro.hpp>
+#include <occa/internal/lang/tokenizer.hpp>
+#include <occa/internal/lang/preprocessor.hpp>
 
 namespace occa {
   namespace lang {

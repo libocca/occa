@@ -1,4 +1,4 @@
-#include <occa/lang/expr/pairNode.hpp>
+#include <occa/internal/lang/expr/pairNode.hpp>
 
 namespace occa {
   namespace lang {

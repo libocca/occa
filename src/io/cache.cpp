@@ -1,12 +1,12 @@
 #include <occa/defines.hpp>
-#include <occa/io/cache.hpp>
-#include <occa/io/lock.hpp>
-#include <occa/io/utils.hpp>
-#include <occa/tools/hash.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/lex.hpp>
-#include <occa/tools/properties.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/io/cache.hpp>
+#include <occa/internal/io/lock.hpp>
+#include <occa/internal/io/utils.hpp>
+#include <occa/utils/hash.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/utils/lex.hpp>
+#include <occa/types/properties.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 namespace occa {
   namespace io {

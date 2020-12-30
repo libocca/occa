@@ -4,7 +4,7 @@
 
 #import <Metal/Metal.h>
 
-#include <occa/api/metal/buffer.hpp>
+#include <occa/internal/api/metal/buffer.hpp>
 
 namespace occa {
   namespace api {

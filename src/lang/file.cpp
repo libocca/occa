@@ -1,10 +1,10 @@
-#include <occa/io.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/lex.hpp>
-#include <occa/tools/string.hpp>
+#include <occa/internal/io.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/utils/lex.hpp>
+#include <occa/internal/utils/string.hpp>
 
-#include <occa/lang/file.hpp>
-#include <occa/lang/tokenizer.hpp>
+#include <occa/internal/lang/file.hpp>
+#include <occa/internal/lang/tokenizer.hpp>
 
 namespace occa {
   namespace lang {

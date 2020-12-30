@@ -1,4 +1,4 @@
-#include <occa/lang/statement/switchStatement.hpp>
+#include <occa/internal/lang/statement/switchStatement.hpp>
 
 namespace occa {
   namespace lang {

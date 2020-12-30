@@ -1,6 +1,6 @@
-#include <occa/modes/metal/memory.hpp>
-#include <occa/modes/metal/device.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/modes/metal/memory.hpp>
+#include <occa/internal/modes/metal/device.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 namespace occa {
   namespace metal {

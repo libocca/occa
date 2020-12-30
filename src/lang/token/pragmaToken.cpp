@@ -1,4 +1,4 @@
-#include <occa/lang/token/pragmaToken.hpp>
+#include <occa/internal/lang/token/pragmaToken.hpp>
 
 namespace occa {
   namespace lang {

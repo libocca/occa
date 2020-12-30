@@ -1,5 +1,5 @@
-#ifndef OCCA_TOOLS_GC_HEADER
-#define OCCA_TOOLS_GC_HEADER
+#ifndef OCCA_INTERNAL_UTILS_GC_HEADER
+#define OCCA_INTERNAL_UTILS_GC_HEADER
 
 #include <stdint.h>
 #include <cstddef>

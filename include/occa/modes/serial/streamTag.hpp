@@ -1,9 +1,9 @@
 #include <occa/defines.hpp>
 
-#ifndef OCCA_MODES_SERIAL_STREAMTAG_HEADER
-#define OCCA_MODES_SERIAL_STREAMTAG_HEADER
+#ifndef OCCA_INTERNAL_MODES_SERIAL_STREAMTAG_HEADER
+#define OCCA_INTERNAL_MODES_SERIAL_STREAMTAG_HEADER
 
-#include <occa/core/streamTag.hpp>
+#include <occa/internal/core/streamTag.hpp>
 
 namespace occa {
   namespace serial {

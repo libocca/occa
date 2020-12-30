@@ -1,4 +1,4 @@
-#include <occa/lang/expr/vartypeNode.hpp>
+#include <occa/internal/lang/expr/vartypeNode.hpp>
 
 namespace occa {
   namespace lang {

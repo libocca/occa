@@ -1,9 +1,9 @@
 #include <set>
 
-#include <occa/lang/modes/serial.hpp>
-#include <occa/lang/modes/okl.hpp>
-#include <occa/lang/builtins/types.hpp>
-#include <occa/lang/expr.hpp>
+#include <occa/internal/lang/modes/serial.hpp>
+#include <occa/internal/lang/modes/okl.hpp>
+#include <occa/internal/lang/builtins/types.hpp>
+#include <occa/internal/lang/expr.hpp>
 
 namespace occa {
   namespace lang {

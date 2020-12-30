@@ -1,7 +1,7 @@
-#ifndef OCCA_LANG_MODES_OPENMP_HEADER
-#define OCCA_LANG_MODES_OPENMP_HEADER
+#ifndef OCCA_INTERNAL_LANG_MODES_OPENMP_HEADER
+#define OCCA_INTERNAL_LANG_MODES_OPENMP_HEADER
 
-#include <occa/lang/modes/serial.hpp>
+#include <occa/internal/lang/modes/serial.hpp>
 
 namespace occa {
   namespace lang {

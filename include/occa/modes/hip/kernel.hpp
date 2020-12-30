@@ -1,8 +1,8 @@
-#ifndef OCCA_MODES_HIP_KERNEL_HEADER
-#define OCCA_MODES_HIP_KERNEL_HEADER
+#ifndef OCCA_INTERNAL_MODES_HIP_KERNEL_HEADER
+#define OCCA_INTERNAL_MODES_HIP_KERNEL_HEADER
 
-#include <occa/core/launchedKernel.hpp>
-#include <occa/modes/hip/polyfill.hpp>
+#include <occa/internal/core/launchedKernel.hpp>
+#include <occa/internal/modes/hip/polyfill.hpp>
 
 namespace occa {
   namespace hip {

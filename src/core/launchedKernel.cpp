@@ -1,5 +1,5 @@
-#include <occa/core/launchedKernel.hpp>
-#include <occa/core/memory.hpp>
+#include <occa/internal/core/memory.hpp>
+#include <occa/internal/core/launchedKernel.hpp>
 
 namespace occa {
   launchedModeKernel_t::launchedModeKernel_t(modeDevice_t *modeDevice_,

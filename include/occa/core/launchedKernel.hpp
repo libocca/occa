@@ -1,7 +1,7 @@
-#ifndef OCCA_CORE_LAUNCHEDKERNEL_HEADER
-#define OCCA_CORE_LAUNCHEDKERNEL_HEADER
+#ifndef OCCA_INTERNAL_CORE_LAUNCHEDKERNEL_HEADER
+#define OCCA_INTERNAL_CORE_LAUNCHEDKERNEL_HEADER
 
-#include <occa/core/kernel.hpp>
+#include <occa/internal/core/kernel.hpp>
 
 namespace occa {
   class launchedModeDevice_t;

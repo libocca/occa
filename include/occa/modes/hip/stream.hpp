@@ -1,8 +1,8 @@
-#ifndef OCCA_MODES_HIP_STREAM_HEADER
-#define OCCA_MODES_HIP_STREAM_HEADER
+#ifndef OCCA_INTERNAL_MODES_HIP_STREAM_HEADER
+#define OCCA_INTERNAL_MODES_HIP_STREAM_HEADER
 
-#include <occa/core/stream.hpp>
-#include <occa/modes/hip/polyfill.hpp>
+#include <occa/internal/core/stream.hpp>
+#include <occa/internal/modes/hip/polyfill.hpp>
 
 namespace occa {
   namespace hip {

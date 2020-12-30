@@ -1,4 +1,6 @@
 #include <occa.hpp>
+
+#include <occa/tools/lex.hpp>
 #include <occa/tools/testing.hpp>
 
 void testCharsetMethods();

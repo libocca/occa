@@ -1,17 +1,17 @@
 #include <occa/core/base.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/misc.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/modes/cuda/device.hpp>
-#include <occa/modes/cuda/kernel.hpp>
-#include <occa/modes/cuda/memory.hpp>
-#include <occa/modes/cuda/stream.hpp>
-#include <occa/modes/cuda/streamTag.hpp>
-#include <occa/modes/cuda/utils.hpp>
-#include <occa/modes/serial/device.hpp>
-#include <occa/modes/serial/kernel.hpp>
-#include <occa/lang/primitive.hpp>
-#include <occa/lang/modes/cuda.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/utils/misc.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/internal/modes/cuda/device.hpp>
+#include <occa/internal/modes/cuda/kernel.hpp>
+#include <occa/internal/modes/cuda/memory.hpp>
+#include <occa/internal/modes/cuda/stream.hpp>
+#include <occa/internal/modes/cuda/streamTag.hpp>
+#include <occa/internal/modes/cuda/utils.hpp>
+#include <occa/internal/modes/serial/device.hpp>
+#include <occa/internal/modes/serial/kernel.hpp>
+#include <occa/types/primitive.hpp>
+#include <occa/internal/lang/modes/cuda.hpp>
 
 namespace occa {
   namespace cuda {

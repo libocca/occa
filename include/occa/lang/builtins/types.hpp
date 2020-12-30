@@ -1,7 +1,7 @@
-#ifndef OCCA_LANG_BUILTINS_TYPES_HEADER
-#define OCCA_LANG_BUILTINS_TYPES_HEADER
+#ifndef OCCA_INTERNAL_LANG_BUILTINS_TYPES_HEADER
+#define OCCA_INTERNAL_LANG_BUILTINS_TYPES_HEADER
 
-#include <occa/lang/type.hpp>
+#include <occa/internal/lang/type.hpp>
 
 namespace occa {
   namespace lang {

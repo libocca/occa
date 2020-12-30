@@ -1,6 +1,7 @@
-#include <occa/modes/serial/registration.hpp>
-#include <occa/tools/misc.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/modes/serial/registration.hpp>
+#include <occa/internal/utils/misc.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 namespace occa {
   namespace serial {

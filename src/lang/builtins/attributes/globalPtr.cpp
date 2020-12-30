@@ -1,6 +1,6 @@
-#include <occa/lang/expr.hpp>
-#include <occa/lang/statement.hpp>
-#include <occa/lang/builtins/attributes/globalPtr.hpp>
+#include <occa/internal/lang/expr.hpp>
+#include <occa/internal/lang/statement.hpp>
+#include <occa/internal/lang/builtins/attributes/globalPtr.hpp>
 
 namespace occa {
   namespace lang {

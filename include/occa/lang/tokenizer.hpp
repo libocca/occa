@@ -1,14 +1,14 @@
-#ifndef OCCA_LANG_TOKENIZER_HEADER
-#define OCCA_LANG_TOKENIZER_HEADER
+#ifndef OCCA_INTERNAL_LANG_TOKENIZER_HEADER
+#define OCCA_INTERNAL_LANG_TOKENIZER_HEADER
 
 #include <list>
 #include <vector>
 
-#include <occa/io.hpp>
-#include <occa/tools/trie.hpp>
-#include <occa/lang/file.hpp>
-#include <occa/lang/printer.hpp>
-#include <occa/lang/stream.hpp>
+#include <occa/internal/io.hpp>
+#include <occa/internal/utils/trie.hpp>
+#include <occa/internal/lang/file.hpp>
+#include <occa/internal/lang/printer.hpp>
+#include <occa/internal/lang/stream.hpp>
 
 namespace occa {
   namespace lang {

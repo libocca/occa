@@ -1,4 +1,5 @@
-#include <occa/lang/expr/stringNode.hpp>
+#include <occa/internal/lang/expr/stringNode.hpp>
+#include <occa/internal/utils/string.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,8 +1,8 @@
 #include <occa/core/base.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/io.hpp>
-#include <occa/modes/serial/kernel.hpp>
-#include <occa/lang/modes/serial.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/io.hpp>
+#include <occa/internal/modes/serial/kernel.hpp>
+#include <occa/internal/lang/modes/serial.hpp>
 
 namespace occa {
   namespace serial {

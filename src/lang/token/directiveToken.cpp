@@ -1,4 +1,4 @@
-#include <occa/lang/token/directiveToken.hpp>
+#include <occa/internal/lang/token/directiveToken.hpp>
 
 namespace occa {
   namespace lang {

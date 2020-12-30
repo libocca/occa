@@ -136,7 +136,11 @@ namespace occa {
   void free(memory m);
   //====================================
 
+  //---[ Helper Methods ]---------------
+  int getDeviceCount(const occa::properties &props);
+
   void printModeInfo();
+  //====================================
 }
 
 #include "base.tpp"

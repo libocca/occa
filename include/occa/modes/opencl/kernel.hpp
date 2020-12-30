@@ -1,9 +1,9 @@
-#ifndef OCCA_MODES_OPENCL_KERNEL_HEADER
-#define OCCA_MODES_OPENCL_KERNEL_HEADER
+#ifndef OCCA_INTERNAL_MODES_OPENCL_KERNEL_HEADER
+#define OCCA_INTERNAL_MODES_OPENCL_KERNEL_HEADER
 
-#include <occa/core/launchedKernel.hpp>
-#include <occa/modes/opencl/polyfill.hpp>
-#include <occa/modes/opencl/utils.hpp>
+#include <occa/internal/core/launchedKernel.hpp>
+#include <occa/internal/modes/opencl/polyfill.hpp>
+#include <occa/internal/modes/opencl/utils.hpp>
 
 namespace occa {
   namespace opencl {

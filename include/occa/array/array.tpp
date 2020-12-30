@@ -1,5 +1,5 @@
 #include <occa/defines.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 namespace occa {
   template <class TM, const int idxType>

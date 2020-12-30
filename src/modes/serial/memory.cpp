@@ -1,6 +1,7 @@
-#include <occa/modes/serial/memory.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/core/device.hpp>
+#include <cstring>
+#include <occa/internal/modes/serial/memory.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/internal/core/device.hpp>
 
 namespace occa {
   namespace serial {

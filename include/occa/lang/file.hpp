@@ -1,11 +1,11 @@
-#ifndef OCCA_LANG_FILE_HEADER
-#define OCCA_LANG_FILE_HEADER
+#ifndef OCCA_INTERNAL_LANG_FILE_HEADER
+#define OCCA_INTERNAL_LANG_FILE_HEADER
 
 #include <iostream>
 
-#include <occa/io/output.hpp>
-#include <occa/tools/gc.hpp>
-#include <occa/lang/operator.hpp>
+#include <occa/internal/io/output.hpp>
+#include <occa/internal/utils/gc.hpp>
+#include <occa/internal/lang/operator.hpp>
 
 namespace occa {
   namespace lang {

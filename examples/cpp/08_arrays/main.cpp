@@ -1,4 +1,12 @@
+#include <iostream>
+
 #include <occa.hpp>
+
+//---[ Internal Tools ]-----------------
+// Note: These headers are not officially supported
+//       Please don't rely on it outside of the occa examples
+#include <occa/tools/cli.hpp>
+//======================================
 
 template <class TM, const int TMi>
 void printVector(occa::array<TM, TMi> &a);
@@ -137,9 +145,6 @@ void printMatrix(occa::array<TM,TMi> &a) {
 }
 
 occa::json parseArgs(int argc, const char **argv) {
-  // Note:
-  //   occa::cli is not supported yet, please don't rely on it
-  //   outside of the occa examples
   occa::cli::parser parser;
   parser
     .withDescription(

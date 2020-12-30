@@ -1,11 +1,11 @@
-#ifndef OCCA_LANG_EXPR_HEADER
-#define OCCA_LANG_EXPR_HEADER
+#ifndef OCCA_INTERNAL_LANG_EXPR_HEADER
+#define OCCA_INTERNAL_LANG_EXPR_HEADER
 
 // Expression Nodes
-#include <occa/lang/expr/exprNodes.hpp>
+#include <occa/internal/lang/expr/exprNodes.hpp>
 
 // Helper methods
-#include <occa/lang/expr/expressionParser.hpp>
-#include <occa/lang/expr/expr.hpp>
+#include <occa/internal/lang/expr/expressionParser.hpp>
+#include <occa/internal/lang/expr/expr.hpp>
 
 #endif

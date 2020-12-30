@@ -1,17 +1,17 @@
 #include <sstream>
 #include <stdlib.h>
 
-#include <occa/tools/hash.hpp>
-#include <occa/io.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/lex.hpp>
-#include <occa/tools/string.hpp>
-#include <occa/lang/primitive.hpp>
+#include <occa/utils/hash.hpp>
+#include <occa/internal/io.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/utils/lex.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/types/primitive.hpp>
 
-#include <occa/lang/preprocessor.hpp>
-#include <occa/lang/specialMacros.hpp>
-#include <occa/lang/expr.hpp>
-#include <occa/lang/tokenizer.hpp>
+#include <occa/internal/lang/preprocessor.hpp>
+#include <occa/internal/lang/specialMacros.hpp>
+#include <occa/internal/lang/expr.hpp>
+#include <occa/internal/lang/tokenizer.hpp>
 
 namespace occa {
   namespace lang {

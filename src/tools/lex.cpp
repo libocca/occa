@@ -1,4 +1,4 @@
-#include <occa/tools/lex.hpp>
+#include <occa/internal/utils/lex.hpp>
 
 namespace occa {
   namespace lex {

@@ -1,8 +1,8 @@
-#ifndef OCCA_MODES_METAL_KERNEL_HEADER
-#define OCCA_MODES_METAL_KERNEL_HEADER
+#ifndef OCCA_INTERNAL_MODES_METAL_KERNEL_HEADER
+#define OCCA_INTERNAL_MODES_METAL_KERNEL_HEADER
 
-#include <occa/core/launchedKernel.hpp>
-#include <occa/api/metal.hpp>
+#include <occa/internal/core/launchedKernel.hpp>
+#include <occa/internal/api/metal.hpp>
 
 namespace occa {
   namespace metal {

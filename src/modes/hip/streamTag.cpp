@@ -1,5 +1,5 @@
-#include <occa/modes/hip/streamTag.hpp>
-#include <occa/modes/hip/utils.hpp>
+#include <occa/internal/modes/hip/streamTag.hpp>
+#include <occa/internal/modes/hip/utils.hpp>
 
 namespace occa {
   namespace hip {

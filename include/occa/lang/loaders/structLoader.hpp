@@ -1,8 +1,8 @@
-#ifndef OCCA_LANG_PARSER_STRUCTLOADER_HEADER
-#define OCCA_LANG_PARSER_STRUCTLOADER_HEADER
+#ifndef OCCA_INTERNAL_LANG_PARSER_STRUCTLOADER_HEADER
+#define OCCA_INTERNAL_LANG_PARSER_STRUCTLOADER_HEADER
 
-#include <occa/lang/tokenContext.hpp>
-#include <occa/lang/statementContext.hpp>
+#include <occa/internal/lang/tokenContext.hpp>
+#include <occa/internal/lang/statementContext.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,13 +1,13 @@
-#ifndef OCCA_LANG_TYPE_TYPE_HEADER
-#define OCCA_LANG_TYPE_TYPE_HEADER
+#ifndef OCCA_INTERNAL_LANG_TYPE_TYPE_HEADER
+#define OCCA_INTERNAL_LANG_TYPE_TYPE_HEADER
 
 #include <vector>
 
 #include <occa/dtype.hpp>
-#include <occa/io/output.hpp>
-#include <occa/lang/attribute.hpp>
-#include <occa/lang/printer.hpp>
-#include <occa/lang/qualifier.hpp>
+#include <occa/internal/io/output.hpp>
+#include <occa/internal/lang/attribute.hpp>
+#include <occa/internal/lang/printer.hpp>
+#include <occa/internal/lang/qualifier.hpp>
 
 namespace occa {
   namespace lang {

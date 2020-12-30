@@ -1,11 +1,11 @@
-#ifndef OCCA_LANG_ATTRIBUTE_HEADER
-#define OCCA_LANG_ATTRIBUTE_HEADER
+#ifndef OCCA_INTERNAL_LANG_ATTRIBUTE_HEADER
+#define OCCA_INTERNAL_LANG_ATTRIBUTE_HEADER
 
 #include <iostream>
 #include <vector>
 #include <map>
 
-#include <occa/io/output.hpp>
+#include <occa/internal/io/output.hpp>
 
 namespace occa {
   namespace lang {

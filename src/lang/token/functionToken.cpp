@@ -1,4 +1,4 @@
-#include <occa/lang/token/functionToken.hpp>
+#include <occa/internal/lang/token/functionToken.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,8 +1,8 @@
-#include <occa/modes/hip/kernel.hpp>
-#include <occa/modes/hip/device.hpp>
-#include <occa/modes/hip/utils.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/io.hpp>
+#include <occa/internal/modes/hip/kernel.hpp>
+#include <occa/internal/modes/hip/device.hpp>
+#include <occa/internal/modes/hip/utils.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/io.hpp>
 #include <occa/core/base.hpp>
 
 namespace occa {

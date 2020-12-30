@@ -1,6 +1,6 @@
-#include <occa/lang/kernelMetadata.hpp>
-#include <occa/io/utils.hpp>
-#include <occa/tools/properties.hpp>
+#include <occa/internal/lang/kernelMetadata.hpp>
+#include <occa/internal/io/utils.hpp>
+#include <occa/types/properties.hpp>
 
 namespace occa {
   namespace lang {

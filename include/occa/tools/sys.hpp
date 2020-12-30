@@ -1,16 +1,16 @@
-#ifndef OCCA_TOOLS_SYS_HEADER
-#define OCCA_TOOLS_SYS_HEADER
+#ifndef OCCA_INTERNAL_UTILS_SYS_HEADER
+#define OCCA_INTERNAL_UTILS_SYS_HEADER
 
 #include <iostream>
 #include <sstream>
 
 #include <occa/defines.hpp>
 #include <occa/types.hpp>
-#include <occa/io/lock.hpp>
-#include <occa/io/output.hpp>
-#include <occa/tools/enums.hpp>
-#include <occa/tools/hash.hpp>
-#include <occa/tools/json.hpp>
+#include <occa/internal/io/lock.hpp>
+#include <occa/internal/io/output.hpp>
+#include <occa/internal/utils/enums.hpp>
+#include <occa/utils/hash.hpp>
+#include <occa/types/json.hpp>
 
 namespace occa {
   typedef void (*functionPtr_t)(...);

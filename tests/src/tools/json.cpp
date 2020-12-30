@@ -1,7 +1,7 @@
 #include <sstream>
 
 #include <occa/io.hpp>
-#include <occa/tools/json.hpp>
+#include <occa/types/json.hpp>
 #include <occa/tools/string.hpp>
 #include <occa/tools/testing.hpp>
 
@@ -211,19 +211,19 @@ void testArray() {
   vec.push_back("c");
 
   ASSERT_TRUE(occa::json::parse("1")
-              .getArray<std::string>()
+              .toVector<std::string>()
               == occa::strVector());
   ASSERT_TRUE(occa::json::parse("{}")
-              .getArray<std::string>()
+              .toVector<std::string>()
               == occa::strVector());
   ASSERT_TRUE(occa::json::parse("['a', 'b', 'c']")
-              .getArray<std::string>()
+              .toVector<std::string>()
               == vec);
   ASSERT_TRUE(occa::json::parse("{ key: ['a', 'b', 'c'] }")
-              .getArray<std::string>("key")
+              .toVector<std::string>("key")
               == vec);
   ASSERT_TRUE(occa::json::parse("{ key: ['a', 'b', 'c'] }")
-              .getArray<std::string>("foo")
+              .toVector<std::string>("foo")
               == occa::strVector());
 
 #undef loadArray

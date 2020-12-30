@@ -5,7 +5,7 @@
 
 #include <occa/core/device.hpp>
 #include <occa/core/kernelArg.hpp>
-#include <occa/tools/properties.hpp>
+#include <occa/types/properties.hpp>
 
 namespace occa {
   class scopeVariable;

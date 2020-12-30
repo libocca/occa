@@ -1,11 +1,11 @@
-#include <occa/lang/expr/binaryOpNode.hpp>
-#include <occa/lang/expr/emptyNode.hpp>
-#include <occa/lang/expr/identifierNode.hpp>
-#include <occa/lang/loaders/attributeLoader.hpp>
-#include <occa/lang/loaders/variableLoader.hpp>
-#include <occa/lang/parser.hpp>
-#include <occa/lang/statementContext.hpp>
-#include <occa/lang/token.hpp>
+#include <occa/internal/lang/expr/binaryOpNode.hpp>
+#include <occa/internal/lang/expr/emptyNode.hpp>
+#include <occa/internal/lang/expr/identifierNode.hpp>
+#include <occa/internal/lang/loaders/attributeLoader.hpp>
+#include <occa/internal/lang/loaders/variableLoader.hpp>
+#include <occa/internal/lang/parser.hpp>
+#include <occa/internal/lang/statementContext.hpp>
+#include <occa/internal/lang/token.hpp>
 
 namespace occa {
   namespace lang {

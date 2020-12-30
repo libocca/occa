@@ -1,4 +1,4 @@
-#include <occa/lang/statementContext.hpp>
+#include <occa/internal/lang/statementContext.hpp>
 
 namespace occa {
   namespace lang {

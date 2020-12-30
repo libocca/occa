@@ -1,9 +1,10 @@
 #include <algorithm>
 
 #include <occa/defines.hpp>
-#include <occa/tools/string.hpp>
-#include <occa/tools/exception.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/types/bits.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/utils/exception.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 #define OCCA_ASSERT_ERROR(message, expr)                \
   do {                                                  \
@@ -209,6 +210,5 @@ namespace occa {
     template <>
     bool areEqual<const char*, const char*>(const char * const &a,
                                             const char * const &b);
-
   }
 }

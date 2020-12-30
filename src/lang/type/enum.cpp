@@ -1,4 +1,4 @@
-#include <occa/lang/type/enum.hpp>
+#include <occa/internal/lang/type/enum.hpp>
 
 namespace occa {
   namespace lang {

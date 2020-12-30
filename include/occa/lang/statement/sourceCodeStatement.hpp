@@ -1,7 +1,7 @@
-#ifndef OCCA_LANG_STATEMENT_SOURCECODESTATEMENT_HEADER
-#define OCCA_LANG_STATEMENT_SOURCECODESTATEMENT_HEADER
+#ifndef OCCA_INTERNAL_LANG_STATEMENT_SOURCECODESTATEMENT_HEADER
+#define OCCA_INTERNAL_LANG_STATEMENT_SOURCECODESTATEMENT_HEADER
 
-#include <occa/lang/statement/statement.hpp>
+#include <occa/internal/lang/statement/statement.hpp>
 
 namespace occa {
   namespace lang {

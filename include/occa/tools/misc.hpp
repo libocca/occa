@@ -1,5 +1,5 @@
-#ifndef OCCA_TOOLS_MISC_HEADER
-#define OCCA_TOOLS_MISC_HEADER
+#ifndef OCCA_INTERNAL_UTILS_MISC_HEADER
+#define OCCA_INTERNAL_UTILS_MISC_HEADER
 
 #include <initializer_list>
 

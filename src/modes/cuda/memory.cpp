@@ -1,6 +1,6 @@
-#include <occa/modes/cuda/memory.hpp>
-#include <occa/modes/cuda/device.hpp>
-#include <occa/modes/cuda/utils.hpp>
+#include <occa/internal/modes/cuda/memory.hpp>
+#include <occa/internal/modes/cuda/device.hpp>
+#include <occa/internal/modes/cuda/utils.hpp>
 
 namespace occa {
   namespace cuda {

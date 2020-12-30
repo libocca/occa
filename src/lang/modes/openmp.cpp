@@ -1,6 +1,6 @@
-#include <occa/lang/modes/openmp.hpp>
-#include <occa/lang/expr/expr.hpp>
-#include <occa/lang/builtins/attributes/atomic.hpp>
+#include <occa/internal/lang/modes/openmp.hpp>
+#include <occa/internal/lang/expr/expr.hpp>
+#include <occa/internal/lang/builtins/attributes/atomic.hpp>
 
 namespace occa {
   namespace lang {

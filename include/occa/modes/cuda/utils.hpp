@@ -1,8 +1,8 @@
-#ifndef OCCA_MODES_CUDA_UTILS_HEADER
-#define OCCA_MODES_CUDA_UTILS_HEADER
+#ifndef OCCA_INTERNAL_MODES_CUDA_UTILS_HEADER
+#define OCCA_INTERNAL_MODES_CUDA_UTILS_HEADER
 
-#include <occa/core/device.hpp>
-#include <occa/modes/cuda/polyfill.hpp>
+#include <occa/internal/core/device.hpp>
+#include <occa/internal/modes/cuda/polyfill.hpp>
 
 namespace occa {
   namespace cuda {

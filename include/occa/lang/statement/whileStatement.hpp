@@ -1,7 +1,7 @@
-#ifndef OCCA_LANG_STATEMENT_WHILESTATEMENT_HEADER
-#define OCCA_LANG_STATEMENT_WHILESTATEMENT_HEADER
+#ifndef OCCA_INTERNAL_LANG_STATEMENT_WHILESTATEMENT_HEADER
+#define OCCA_INTERNAL_LANG_STATEMENT_WHILESTATEMENT_HEADER
 
-#include <occa/lang/statement/blockStatement.hpp>
+#include <occa/internal/lang/statement/blockStatement.hpp>
 
 namespace occa {
   namespace lang {

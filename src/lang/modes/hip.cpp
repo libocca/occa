@@ -1,5 +1,5 @@
-#include <occa/tools/string.hpp>
-#include <occa/lang/modes/hip.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/lang/modes/hip.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,5 +1,5 @@
-#ifndef OCCA_LANG_PRIMITIVE_HEADER
-#define OCCA_LANG_PRIMITIVE_HEADER
+#ifndef OCCA_TYPES_PRIMITIVE_HEADER
+#define OCCA_TYPES_PRIMITIVE_HEADER
 
 #include <iostream>
 #include <sstream>
@@ -9,11 +9,13 @@
 #include <stdlib.h>
 
 #include <occa/defines.hpp>
-#include <occa/io/output.hpp>
-#include <occa/tools/logging.hpp>
-#include <occa/tools/string.hpp>
+#include <occa/utils/logging.hpp>
 
 namespace occa {
+  namespace io {
+    class output;
+  }
+
   //---[ Primitive Type ]---------------
   namespace primitiveType {
     static const int none       = (1 << 0);

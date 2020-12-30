@@ -1,9 +1,9 @@
-#ifndef OCCA_LANG_EXPRNODE_EXPRNODEARRAY_HEADER
-#define OCCA_LANG_EXPRNODE_EXPRNODEARRAY_HEADER
+#ifndef OCCA_INTERNAL_LANG_EXPRNODE_EXPRNODEARRAY_HEADER
+#define OCCA_INTERNAL_LANG_EXPRNODE_EXPRNODEARRAY_HEADER
 
 #include <functional>
 
-#include <occa/lang/utils/array.hpp>
+#include <occa/internal/lang/utils/array.hpp>
 
 namespace occa {
   namespace lang {

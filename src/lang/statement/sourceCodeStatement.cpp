@@ -1,6 +1,6 @@
-#include <occa/lang/statement/sourceCodeStatement.hpp>
-#include <occa/lang/utils/array.hpp>
-#include <occa/tools/string.hpp>
+#include <occa/internal/lang/statement/sourceCodeStatement.hpp>
+#include <occa/internal/lang/utils/array.hpp>
+#include <occa/internal/utils/string.hpp>
 
 namespace occa {
   namespace lang {

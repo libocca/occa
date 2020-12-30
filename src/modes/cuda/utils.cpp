@@ -1,12 +1,12 @@
 #include <occa/defines.hpp>
 
-#include <occa/core/device.hpp>
-#include <occa/core/memory.hpp>
-#include <occa/tools/string.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/modes/cuda/device.hpp>
-#include <occa/modes/cuda/memory.hpp>
-#include <occa/modes/cuda/utils.hpp>
+#include <occa/internal/core/device.hpp>
+#include <occa/internal/core/memory.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/internal/modes/cuda/device.hpp>
+#include <occa/internal/modes/cuda/memory.hpp>
+#include <occa/internal/modes/cuda/utils.hpp>
 
 namespace occa {
   //---[ Helper Functions ]-----------

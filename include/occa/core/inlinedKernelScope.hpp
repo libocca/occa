@@ -1,6 +1,6 @@
 // -------------[ DO NOT EDIT ]-------------
 //  THIS IS AN AUTOMATICALLY GENERATED FILE
-//  EDIT: scripts/setup_kernel_operators.py
+//  EDIT: scripts/codegen/setup_kernel_operators.py
 // =========================================
 
 template <class ARG1>

@@ -1,10 +1,10 @@
 #include <occa/defines.hpp>
 
-#ifndef OCCA_MODES_CUDA_STREAM_HEADER
-#define OCCA_MODES_CUDA_STREAM_HEADER
+#ifndef OCCA_INTERNAL_MODES_CUDA_STREAM_HEADER
+#define OCCA_INTERNAL_MODES_CUDA_STREAM_HEADER
 
-#include <occa/core/stream.hpp>
-#include <occa/modes/cuda/polyfill.hpp>
+#include <occa/internal/core/stream.hpp>
+#include <occa/internal/modes/cuda/polyfill.hpp>
 
 namespace occa {
   namespace cuda {

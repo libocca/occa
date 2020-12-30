@@ -1,7 +1,7 @@
-#ifndef OCCA_LANG_BUILTINS_ATTRIBUTES_GLOBALPTR_HEADER
-#define OCCA_LANG_BUILTINS_ATTRIBUTES_GLOBALPTR_HEADER
+#ifndef OCCA_INTERNAL_LANG_BUILTINS_ATTRIBUTES_GLOBALPTR_HEADER
+#define OCCA_INTERNAL_LANG_BUILTINS_ATTRIBUTES_GLOBALPTR_HEADER
 
-#include <occa/lang/attribute.hpp>
+#include <occa/internal/lang/attribute.hpp>
 
 namespace occa {
   namespace lang {

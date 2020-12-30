@@ -1,6 +1,6 @@
 #include <occa/defines.hpp>
 
-#include <occa/modes/serial/streamTag.hpp>
+#include <occa/internal/modes/serial/streamTag.hpp>
 
 namespace occa {
   namespace serial {

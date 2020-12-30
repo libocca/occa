@@ -1,6 +1,6 @@
 // -------------[ DO NOT EDIT ]-------------
 //  THIS IS AN AUTOMATICALLY GENERATED FILE
-//  EDIT: scripts/setup_kernel_operators.py
+//  EDIT: scripts/codegen/setup_kernel_operators.py
 // =========================================
 
 
@@ -384,4 +384,3 @@ switch (argc) {
       args[45], args[46], args[47], args[48], args[49]);
     break;
 }
-

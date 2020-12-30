@@ -1,10 +1,10 @@
-#ifndef OCCA_TOOLS_ENV_HEADER
-#define OCCA_TOOLS_ENV_HEADER
+#ifndef OCCA_INTERNAL_UTILS_ENV_HEADER
+#define OCCA_INTERNAL_UTILS_ENV_HEADER
 
 #include <occa/defines.hpp>
 #include <occa/types.hpp>
-#include <occa/tools/string.hpp>
-#include <occa/tools/properties.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/types/properties.hpp>
 
 namespace occa {
   properties& settings();

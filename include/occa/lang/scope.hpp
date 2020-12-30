@@ -1,7 +1,7 @@
-#ifndef OCCA_LANG_SCOPE_HEADER
-#define OCCA_LANG_SCOPE_HEADER
+#ifndef OCCA_INTERNAL_LANG_SCOPE_HEADER
+#define OCCA_INTERNAL_LANG_SCOPE_HEADER
 
-#include <occa/lang/keyword.hpp>
+#include <occa/internal/lang/keyword.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,7 +1,7 @@
-#ifndef OCCA_LANG_MODES_HIP_HEADER
-#define OCCA_LANG_MODES_HIP_HEADER
+#ifndef OCCA_INTERNAL_LANG_MODES_HIP_HEADER
+#define OCCA_INTERNAL_LANG_MODES_HIP_HEADER
 
-#include <occa/lang/modes/cuda.hpp>
+#include <occa/internal/lang/modes/cuda.hpp>
 
 namespace occa {
   namespace lang {

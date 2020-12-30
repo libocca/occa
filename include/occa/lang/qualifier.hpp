@@ -1,11 +1,11 @@
-#ifndef OCCA_LANG_QUALIFIER_HEADER
-#define OCCA_LANG_QUALIFIER_HEADER
+#ifndef OCCA_INTERNAL_LANG_QUALIFIER_HEADER
+#define OCCA_INTERNAL_LANG_QUALIFIER_HEADER
 
 #include <vector>
 
-#include <occa/lang/primitive.hpp>
-#include <occa/lang/file.hpp>
-#include <occa/lang/printer.hpp>
+#include <occa/types/primitive.hpp>
+#include <occa/internal/lang/file.hpp>
+#include <occa/internal/lang/printer.hpp>
 
 namespace occa {
   namespace lang {

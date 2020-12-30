@@ -1,5 +1,5 @@
-#ifndef OCCA_TOOLS_TRIE_HEADER
-#define OCCA_TOOLS_TRIE_HEADER
+#ifndef OCCA_INTERNAL_UTILS_TRIE_HEADER
+#define OCCA_INTERNAL_UTILS_TRIE_HEADER
 
 #include <iostream>
 #include <vector>

@@ -1,4 +1,5 @@
-#include <occa/lang/token/charToken.hpp>
+#include <occa/internal/lang/token/charToken.hpp>
+#include <occa/internal/utils/string.hpp>
 
 namespace occa {
   namespace lang {

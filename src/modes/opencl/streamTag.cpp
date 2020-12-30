@@ -1,5 +1,5 @@
-#include <occa/modes/opencl/streamTag.hpp>
-#include <occa/modes/opencl/utils.hpp>
+#include <occa/internal/modes/opencl/streamTag.hpp>
+#include <occa/internal/modes/opencl/utils.hpp>
 
 namespace occa {
   namespace opencl {

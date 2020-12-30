@@ -1,8 +1,8 @@
-#ifndef OCCA_LANG_VARIABLE_HEADER
-#define OCCA_LANG_VARIABLE_HEADER
+#ifndef OCCA_INTERNAL_LANG_VARIABLE_HEADER
+#define OCCA_INTERNAL_LANG_VARIABLE_HEADER
 
 #include <occa/dtype.hpp>
-#include <occa/lang/type.hpp>
+#include <occa/internal/lang/type.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,11 +1,11 @@
-#ifndef OCCA_LANG_KEYWORD_HEADER
-#define OCCA_LANG_KEYWORD_HEADER
+#ifndef OCCA_INTERNAL_LANG_KEYWORD_HEADER
+#define OCCA_INTERNAL_LANG_KEYWORD_HEADER
 
 #include <map>
 #include <string>
 
 #include <occa/defines.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 namespace occa {
   namespace lang {

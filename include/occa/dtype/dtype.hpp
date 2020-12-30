@@ -5,8 +5,7 @@
 #include <map>
 #include <vector>
 
-#include <occa/io/output.hpp>
-#include <occa/tools/json.hpp>
+#include <occa/types/json.hpp>
 #include <occa/types/typedefs.hpp>
 
 

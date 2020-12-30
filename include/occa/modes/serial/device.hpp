@@ -1,8 +1,8 @@
-#ifndef OCCA_MODES_SERIAL_DEVICE_HEADER
-#define OCCA_MODES_SERIAL_DEVICE_HEADER
+#ifndef OCCA_INTERNAL_MODES_SERIAL_DEVICE_HEADER
+#define OCCA_INTERNAL_MODES_SERIAL_DEVICE_HEADER
 
 #include <occa/defines.hpp>
-#include <occa/core/device.hpp>
+#include <occa/internal/core/device.hpp>
 
 namespace occa {
   namespace serial {

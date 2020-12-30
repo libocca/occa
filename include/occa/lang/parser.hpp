@@ -1,21 +1,21 @@
-#ifndef OCCA_LANG_PARSER_HEADER
-#define OCCA_LANG_PARSER_HEADER
+#ifndef OCCA_INTERNAL_LANG_PARSER_HEADER
+#define OCCA_INTERNAL_LANG_PARSER_HEADER
 
 #include <map>
 #include <vector>
 
-#include <occa/tools/properties.hpp>
-#include <occa/lang/kernelMetadata.hpp>
-#include <occa/lang/keyword.hpp>
-#include <occa/lang/loaders.hpp>
-#include <occa/lang/preprocessor.hpp>
-#include <occa/lang/processingStages.hpp>
-#include <occa/lang/statement.hpp>
-#include <occa/lang/tokenizer.hpp>
-#include <occa/lang/tokenContext.hpp>
-#include <occa/lang/statementContext.hpp>
-#include <occa/lang/statementPeeker.hpp>
-#include <occa/lang/variable.hpp>
+#include <occa/types/properties.hpp>
+#include <occa/internal/lang/kernelMetadata.hpp>
+#include <occa/internal/lang/keyword.hpp>
+#include <occa/internal/lang/loaders.hpp>
+#include <occa/internal/lang/preprocessor.hpp>
+#include <occa/internal/lang/processingStages.hpp>
+#include <occa/internal/lang/statement.hpp>
+#include <occa/internal/lang/tokenizer.hpp>
+#include <occa/internal/lang/tokenContext.hpp>
+#include <occa/internal/lang/statementContext.hpp>
+#include <occa/internal/lang/statementPeeker.hpp>
+#include <occa/internal/lang/variable.hpp>
 
 namespace occa {
   namespace lang {

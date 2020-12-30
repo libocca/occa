@@ -1,4 +1,4 @@
-#include <occa/lang/expr/newNode.hpp>
+#include <occa/internal/lang/expr/newNode.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,11 +1,14 @@
 #include <occa/core/device.hpp>
 #include <occa/core/kernel.hpp>
 #include <occa/core/memory.hpp>
-#include <occa/io.hpp>
-#include <occa/lang/builtins/types.hpp>
-#include <occa/lang/parser.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/tools/uva.hpp>
+#include <occa/internal/io.hpp>
+#include <occa/internal/core/device.hpp>
+#include <occa/internal/core/kernel.hpp>
+#include <occa/internal/core/memory.hpp>
+#include <occa/internal/lang/builtins/types.hpp>
+#include <occa/internal/lang/parser.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/utils/uva.hpp>
 
 namespace occa {
   //---[ modeKernel_t ]-----------------

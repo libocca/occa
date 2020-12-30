@@ -1,6 +1,7 @@
-#include <occa/tools/string.hpp>
-#include <occa/lang/tokenizer.hpp>
-#include <occa/lang/token.hpp>
+#include <occa/internal/utils/lex.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/lang/tokenizer.hpp>
+#include <occa/internal/lang/token.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,6 +1,7 @@
 #include <occa/defines.hpp>
-#include <occa/modes/opencl/utils.hpp>
-#include <occa/modes/opencl/registration.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/modes/opencl/utils.hpp>
+#include <occa/internal/modes/opencl/registration.hpp>
 
 namespace occa {
   namespace opencl {

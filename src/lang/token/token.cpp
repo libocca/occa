@@ -1,6 +1,6 @@
-#include <occa/lang/token/token.hpp>
-#include <occa/lang/token/operatorToken.hpp>
-#include <occa/lang/type.hpp>
+#include <occa/internal/lang/token/token.hpp>
+#include <occa/internal/lang/token/operatorToken.hpp>
+#include <occa/internal/lang/type.hpp>
 
 namespace occa {
   namespace lang {

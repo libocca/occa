@@ -1,5 +1,5 @@
-#ifndef OCCA_TOOLS_ENUMS_HEADER
-#define OCCA_TOOLS_ENUMS_HEADER
+#ifndef OCCA_INTERNAL_UTILS_ENUMS_HEADER
+#define OCCA_INTERNAL_UTILS_ENUMS_HEADER
 
 namespace occa {
   namespace sys {

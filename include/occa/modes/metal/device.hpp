@@ -1,8 +1,8 @@
-#ifndef OCCA_MODES_METAL_DEVICE_HEADER
-#define OCCA_MODES_METAL_DEVICE_HEADER
+#ifndef OCCA_INTERNAL_MODES_METAL_DEVICE_HEADER
+#define OCCA_INTERNAL_MODES_METAL_DEVICE_HEADER
 
-#include <occa/core/launchedDevice.hpp>
-#include <occa/api/metal.hpp>
+#include <occa/internal/core/launchedDevice.hpp>
+#include <occa/internal/api/metal.hpp>
 
 namespace occa {
   namespace metal {

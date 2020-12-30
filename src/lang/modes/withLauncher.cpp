@@ -1,10 +1,10 @@
-#include <occa/tools/string.hpp>
-#include <occa/lang/modes/withLauncher.hpp>
-#include <occa/lang/modes/okl.hpp>
-#include <occa/lang/modes/oklForStatement.hpp>
-#include <occa/lang/builtins/attributes.hpp>
-#include <occa/lang/builtins/types.hpp>
-#include <occa/lang/expr.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/lang/modes/withLauncher.hpp>
+#include <occa/internal/lang/modes/okl.hpp>
+#include <occa/internal/lang/modes/oklForStatement.hpp>
+#include <occa/internal/lang/builtins/attributes.hpp>
+#include <occa/internal/lang/builtins/types.hpp>
+#include <occa/internal/lang/expr.hpp>
 
 namespace occa {
   namespace lang {
@@ -314,7 +314,7 @@ namespace occa {
         const int headerCount = 2;
         std::string headers[headerCount] = {
           "include <occa/core/base.hpp>",
-          "include <occa/modes/serial/kernel.hpp>"
+          "include <occa/internal/modes/serial/kernel.hpp>"
         };
         for (int i = 0; i < headerCount; ++i) {
           std::string header = headers[i];

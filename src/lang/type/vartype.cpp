@@ -1,9 +1,9 @@
-#include <occa/lang/builtins/types.hpp>
-#include <occa/lang/expr/exprNode.hpp>
-#include <occa/lang/token.hpp>
-#include <occa/lang/type/array.hpp>
-#include <occa/lang/type/pointer.hpp>
-#include <occa/lang/type/vartype.hpp>
+#include <occa/internal/lang/builtins/types.hpp>
+#include <occa/internal/lang/expr/exprNode.hpp>
+#include <occa/internal/lang/token.hpp>
+#include <occa/internal/lang/type/array.hpp>
+#include <occa/internal/lang/type/pointer.hpp>
+#include <occa/internal/lang/type/vartype.hpp>
 
 namespace occa {
   namespace lang {

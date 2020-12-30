@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cmath>
 
-#include <occa/tools/testing.hpp>
+#include <occa/internal/utils/testing.hpp>
 
 namespace occa {
   namespace test {

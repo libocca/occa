@@ -1,5 +1,5 @@
-#ifndef OCCA_TOOLS_LEX_HEADER
-#define OCCA_TOOLS_LEX_HEADER
+#ifndef OCCA_INTERNAL_UTILS_LEX_HEADER
+#define OCCA_INTERNAL_UTILS_LEX_HEADER
 
 #include <iostream>
 #include <iomanip>

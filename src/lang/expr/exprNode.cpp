@@ -1,4 +1,5 @@
-#include <occa/lang/expr/exprNode.hpp>
+#include <occa/internal/utils/lex.hpp>
+#include <occa/internal/lang/expr/exprNode.hpp>
 
 namespace occa {
   namespace lang {

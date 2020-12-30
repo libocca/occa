@@ -1,9 +1,9 @@
-#ifndef OCCA_MODES_OPENMP_REGISTRATION_HEADER
-#define OCCA_MODES_OPENMP_REGISTRATION_HEADER
+#ifndef OCCA_INTERNAL_MODES_OPENMP_REGISTRATION_HEADER
+#define OCCA_INTERNAL_MODES_OPENMP_REGISTRATION_HEADER
 
-#include <occa/modes.hpp>
-#include <occa/modes/openmp/device.hpp>
-#include <occa/modes/serial/memory.hpp>
+#include <occa/internal/modes.hpp>
+#include <occa/internal/modes/openmp/device.hpp>
+#include <occa/internal/modes/serial/memory.hpp>
 #include <occa/core/base.hpp>
 
 namespace occa {

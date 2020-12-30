@@ -1,11 +1,12 @@
 #include <map>
 
 #include <occa/core/base.hpp>
-#include <occa/core/launchedDevice.hpp>
-#include <occa/core/launchedKernel.hpp>
-#include <occa/lang/primitive.hpp>
-#include <occa/modes/serial/device.hpp>
-#include <occa/modes/serial/kernel.hpp>
+#include <occa/types/primitive.hpp>
+#include <occa/internal/core/launchedDevice.hpp>
+#include <occa/internal/core/launchedKernel.hpp>
+#include <occa/internal/modes/serial/device.hpp>
+#include <occa/internal/modes/serial/kernel.hpp>
+#include <occa/internal/utils/string.hpp>
 
 namespace occa {
   launchedModeDevice_t::launchedModeDevice_t(const occa::properties &properties_) :

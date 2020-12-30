@@ -3,9 +3,11 @@
 #include <occa/core/base.hpp>
 #include <occa/core/memory.hpp>
 #include <occa/core/device.hpp>
-#include <occa/modes/serial/memory.hpp>
-#include <occa/tools/uva.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/utils/uva.hpp>
+#include <occa/internal/modes/serial/device.hpp>
+#include <occa/internal/modes/serial/memory.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/internal/utils/uva.hpp>
 
 namespace occa {
   //---[ modeMemory_t ]-----------------

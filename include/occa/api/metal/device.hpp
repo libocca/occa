@@ -1,10 +1,10 @@
-#ifndef OCCA_API_METAL_DEVICE_HEADER
-#define OCCA_API_METAL_DEVICE_HEADER
+#ifndef OCCA_INTERNAL_API_METAL_DEVICE_HEADER
+#define OCCA_INTERNAL_API_METAL_DEVICE_HEADER
 
-#include <occa/api/metal/buffer.hpp>
-#include <occa/api/metal/commandQueue.hpp>
-#include <occa/api/metal/event.hpp>
-#include <occa/api/metal/function.hpp>
+#include <occa/internal/api/metal/buffer.hpp>
+#include <occa/internal/api/metal/commandQueue.hpp>
+#include <occa/internal/api/metal/event.hpp>
+#include <occa/internal/api/metal/function.hpp>
 
 namespace occa {
   namespace io {

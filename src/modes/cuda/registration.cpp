@@ -1,6 +1,7 @@
 #include <occa/defines.hpp>
-#include <occa/modes/cuda/registration.hpp>
-#include <occa/modes/cuda/utils.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/modes/cuda/registration.hpp>
+#include <occa/internal/modes/cuda/utils.hpp>
 
 namespace occa {
   namespace cuda {

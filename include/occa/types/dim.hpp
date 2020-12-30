@@ -1,12 +1,13 @@
 #ifndef OCCA_TYPES_DIM_HEADER
 #define OCCA_TYPES_DIM_HEADER
 
-#include <occa/io/output.hpp>
+#include <ostream>
+
 #include <occa/types/typedefs.hpp>
 
 namespace occa {
   class dim {
-  public:
+   public:
     int dims;
     udim_t x, y, z;
 
@@ -36,7 +37,7 @@ namespace occa {
   };
 
   std::ostream& operator << (std::ostream &out,
-                           const dim &d);
+                             const dim &d);
 }
 
 #endif

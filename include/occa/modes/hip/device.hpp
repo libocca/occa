@@ -1,8 +1,8 @@
-#ifndef OCCA_MODES_HIP_DEVICE_HEADER
-#define OCCA_MODES_HIP_DEVICE_HEADER
+#ifndef OCCA_INTERNAL_MODES_HIP_DEVICE_HEADER
+#define OCCA_INTERNAL_MODES_HIP_DEVICE_HEADER
 
-#include <occa/core/launchedDevice.hpp>
-#include <occa/modes/hip/polyfill.hpp>
+#include <occa/internal/core/launchedDevice.hpp>
+#include <occa/internal/modes/hip/polyfill.hpp>
 
 
 namespace occa {

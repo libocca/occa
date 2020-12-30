@@ -1,7 +1,7 @@
-#ifndef OCCA_LANG_SPECIALMACROS_HEADER
-#define OCCA_LANG_SPECIALMACROS_HEADER
+#ifndef OCCA_INTERNAL_LANG_SPECIALMACROS_HEADER
+#define OCCA_INTERNAL_LANG_SPECIALMACROS_HEADER
 
-#include <occa/lang/macro.hpp>
+#include <occa/internal/lang/macro.hpp>
 
 namespace occa {
   namespace lang {

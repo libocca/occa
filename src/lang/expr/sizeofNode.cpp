@@ -1,4 +1,4 @@
-#include <occa/lang/expr/sizeofNode.hpp>
+#include <occa/internal/lang/expr/sizeofNode.hpp>
 
 namespace occa {
   namespace lang {

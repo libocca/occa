@@ -1,4 +1,4 @@
-#include <occa/lang/statement/whileStatement.hpp>
+#include <occa/internal/lang/statement/whileStatement.hpp>
 
 namespace occa {
   namespace lang {

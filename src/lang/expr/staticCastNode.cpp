@@ -1,4 +1,4 @@
-#include <occa/lang/expr/staticCastNode.hpp>
+#include <occa/internal/lang/expr/staticCastNode.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,9 +1,9 @@
-#ifndef OCCA_LANG_EXPR_NEWNODE_HEADER
-#define OCCA_LANG_EXPR_NEWNODE_HEADER
+#ifndef OCCA_INTERNAL_LANG_EXPR_NEWNODE_HEADER
+#define OCCA_INTERNAL_LANG_EXPR_NEWNODE_HEADER
 
-#include <occa/lang/expr/exprNode.hpp>
-#include <occa/lang/expr/emptyNode.hpp>
-#include <occa/lang/expr/parenthesesNode.hpp>
+#include <occa/internal/lang/expr/exprNode.hpp>
+#include <occa/internal/lang/expr/emptyNode.hpp>
+#include <occa/internal/lang/expr/parenthesesNode.hpp>
 
 namespace occa {
   namespace lang {

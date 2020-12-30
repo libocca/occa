@@ -1,8 +1,8 @@
-#ifndef OCCA_MODES_SERIAL_MEMORY_HEADER
-#define OCCA_MODES_SERIAL_MEMORY_HEADER
+#ifndef OCCA_INTERNAL_MODES_SERIAL_MEMORY_HEADER
+#define OCCA_INTERNAL_MODES_SERIAL_MEMORY_HEADER
 
 #include <occa/defines.hpp>
-#include <occa/core/memory.hpp>
+#include <occa/internal/core/memory.hpp>
 
 namespace occa {
   namespace serial {

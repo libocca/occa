@@ -1,4 +1,8 @@
+#!/bin/bash
+
 SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OCCA_SOURCE_DIR="$(cd "$(dirname "${SCRIPTS_DIR}")" && pwd)"
+OCCA_SOURCE_SCRIPTS_DIR="${OCCA_SOURCE_DIR}/include/occa/scripts"
 
 #---[ Library Information ]-------------
 function uniqueAddToPath {
@@ -226,8 +230,8 @@ function compilerVendor {
     local b_Cray=8
     local b_PPC=9
 
-    local testFilename="${SCRIPTS_DIR}/tests/compiler.cpp"
-    local binaryFilename="${SCRIPTS_DIR}/tests/compiler"
+    local testFilename="${OCCA_SOURCE_SCRIPTS_DIR}/findCompilerVendor.cpp"
+    local binaryFilename="${OCCA_SOURCE_SCRIPTS_DIR}/findCompilerVendor"
 
     eval "${compiler}" "${testFilename}" -o "${binaryFilename}" > /dev/null 2>&1
     eval "${binaryFilename}"
@@ -336,8 +340,8 @@ function compilerSupportsOpenMP {
     local compiler="$1"
     local ompFlag=$(compilerOpenMPFlag "${compiler}")
 
-    local filename="${SCRIPTS_DIR}/tests/openmp.cpp"
-    local binary="${SCRIPTS_DIR}/tests/openmp"
+    local filename="${OCCA_SOURCE_SCRIPTS_DIR}/compilerSupportsOpenMP.cpp"
+    local binary="${OCCA_SOURCE_SCRIPTS_DIR}/compilerSupportsOpenMP"
 
     rm -f "${binary}"
 
@@ -370,8 +374,8 @@ function compilerSupportsOpenMP {
 function compilerSupportsMPI {
     local compiler="$1"
 
-    local filename="${SCRIPTS_DIR}/tests/mpi.cpp"
-    local binary="${SCRIPTS_DIR}/tests/mpi"
+    local filename="${SCRIPTS_DIR}/compiler/compilerSupportsMPI.cpp"
+    local binary="${SCRIPTS_DIR}/compiler/compilerSupportsMPI"
 
     rm -f "${binary}"
 
@@ -393,8 +397,8 @@ function compilerSupportsMPI {
 function fCompilerVendor {
     local compiler="$1"
 
-    local filename="${SCRIPTS_DIR}/tests/compiler.F90"
-    local binary="${SCRIPTS_DIR}/tests/compiler_fortran"
+    local filename="${SCRIPTS_DIR}/compiler/findFortranCompilerVendor.f90"
+    local binary="${SCRIPTS_DIR}/compiler/findFortranCompilerVendor"
 
     rm -f "$binary"
     "$compiler" "$filename" -o "$binary" > /dev/null 2>&1
@@ -434,8 +438,8 @@ function fCompilerCppFlag {
 function fCompilerSupportsMPI {
     local compiler="$1"
 
-    local filename="${SCRIPTS_DIR}/tests/mpi.f90"
-    local binary="${SCRIPTS_DIR}/tests/mpi_fortran"
+    local filename="${SCRIPTS_DIR}/compiler/fortranCompilerSupportsMPI.f90"
+    local binary="${SCRIPTS_DIR}/compiler/fortranCompilerSupportsMPI"
 
     rm -f "$binary"
 

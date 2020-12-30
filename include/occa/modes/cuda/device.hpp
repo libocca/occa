@@ -1,10 +1,10 @@
 #include <occa/defines.hpp>
 
-#ifndef OCCA_MODES_CUDA_DEVICE_HEADER
-#define OCCA_MODES_CUDA_DEVICE_HEADER
+#ifndef OCCA_INTERNAL_MODES_CUDA_DEVICE_HEADER
+#define OCCA_INTERNAL_MODES_CUDA_DEVICE_HEADER
 
-#include <occa/core/launchedDevice.hpp>
-#include <occa/modes/cuda/polyfill.hpp>
+#include <occa/internal/core/launchedDevice.hpp>
+#include <occa/internal/modes/cuda/polyfill.hpp>
 
 namespace occa {
   namespace cuda {

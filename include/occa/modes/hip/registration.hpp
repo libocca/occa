@@ -1,11 +1,11 @@
-#ifndef OCCA_MODES_HIP_REGISTRATION_HEADER
-#define OCCA_MODES_HIP_REGISTRATION_HEADER
+#ifndef OCCA_INTERNAL_MODES_HIP_REGISTRATION_HEADER
+#define OCCA_INTERNAL_MODES_HIP_REGISTRATION_HEADER
 
-#include <occa/modes.hpp>
-#include <occa/modes/hip/device.hpp>
-#include <occa/modes/hip/kernel.hpp>
-#include <occa/modes/hip/memory.hpp>
-#include <occa/tools/styling.hpp>
+#include <occa/internal/modes.hpp>
+#include <occa/internal/modes/hip/device.hpp>
+#include <occa/internal/modes/hip/kernel.hpp>
+#include <occa/internal/modes/hip/memory.hpp>
+#include <occa/internal/utils/styling.hpp>
 #include <occa/core/base.hpp>
 
 namespace occa {

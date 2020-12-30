@@ -4,7 +4,7 @@
 
 #include <occa/core/base.hpp>
 #include <occa/mpi.hpp>
-#include <occa/tools/tls.hpp>
+#include <occa/internal/utils/tls.hpp>
 
 namespace occa {
   namespace mpi {

@@ -1,4 +1,4 @@
-#include <occa/lang/operator.hpp>
+#include <occa/internal/lang/operator.hpp>
 
 namespace occa {
   namespace lang {

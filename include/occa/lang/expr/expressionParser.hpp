@@ -1,10 +1,10 @@
-#ifndef OCCA_LANG_EXPR_EXPRESSIONPARSER_HEADER
-#define OCCA_LANG_EXPR_EXPRESSIONPARSER_HEADER
+#ifndef OCCA_INTERNAL_LANG_EXPR_EXPRESSIONPARSER_HEADER
+#define OCCA_INTERNAL_LANG_EXPR_EXPRESSIONPARSER_HEADER
 
 #include <list>
 #include <vector>
 
-#include <occa/lang/expr/exprNodes.hpp>
+#include <occa/internal/lang/expr/exprNodes.hpp>
 
 namespace occa {
   namespace lang {

@@ -3,7 +3,7 @@ PROJ_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 ifndef OCCA_DIR
   OCCA_DIR=$(PROJ_DIR)/../../..
 endif
-include $(OCCA_DIR)/scripts/Makefile
+include $(OCCA_DIR)/scripts/build/Makefile
 
 
 #---[ COMPILATION ]-------------------------------

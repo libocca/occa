@@ -1,4 +1,4 @@
-#include <occa/lang/token/qualifierToken.hpp>
+#include <occa/internal/lang/token/qualifierToken.hpp>
 
 namespace occa {
   namespace lang {

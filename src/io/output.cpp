@@ -1,4 +1,4 @@
-#include <occa/io/output.hpp>
+#include <occa/internal/io/output.hpp>
 
 namespace occa {
   namespace io {

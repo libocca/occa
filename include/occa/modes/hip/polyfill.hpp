@@ -1,7 +1,7 @@
 #include <occa/defines.hpp>
 
-#ifndef OCCA_MODES_HIP_POLYFILL_HEADER
-#define OCCA_MODES_HIP_POLYFILL_HEADER
+#ifndef OCCA_INTERNAL_MODES_HIP_POLYFILL_HEADER
+#define OCCA_INTERNAL_MODES_HIP_POLYFILL_HEADER
 
 #if OCCA_HIP_ENABLED
 #  include <hip/hip_runtime_api.h>

@@ -1,4 +1,4 @@
-#include <occa/lang/statement/gotoStatement.hpp>
+#include <occa/internal/lang/statement/gotoStatement.hpp>
 
 namespace occa {
   namespace lang {

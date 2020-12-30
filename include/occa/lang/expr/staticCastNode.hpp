@@ -1,7 +1,7 @@
-#ifndef OCCA_LANG_EXPR_STATICCASTNODE_HEADER
-#define OCCA_LANG_EXPR_STATICCASTNODE_HEADER
+#ifndef OCCA_INTERNAL_LANG_EXPR_STATICCASTNODE_HEADER
+#define OCCA_INTERNAL_LANG_EXPR_STATICCASTNODE_HEADER
 
-#include <occa/lang/expr/exprNode.hpp>
+#include <occa/internal/lang/expr/exprNode.hpp>
 
 namespace occa {
   namespace lang {

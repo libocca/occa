@@ -1,5 +1,7 @@
 #include <occa/core/stream.hpp>
 #include <occa/core/device.hpp>
+#include <occa/internal/core/device.hpp>
+#include <occa/internal/core/stream.hpp>
 
 namespace occa {
   //---[ modeStream_t ]-----------------

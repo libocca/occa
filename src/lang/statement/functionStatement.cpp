@@ -1,5 +1,5 @@
-#include <occa/lang/statement/functionStatement.hpp>
-#include <occa/lang/expr/functionNode.hpp>
+#include <occa/internal/lang/statement/functionStatement.hpp>
+#include <occa/internal/lang/expr/functionNode.hpp>
 
 namespace occa {
   namespace lang {

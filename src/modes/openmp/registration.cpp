@@ -4,7 +4,7 @@
 #  include <omp.h>
 #endif
 
-#include <occa/modes/openmp/registration.hpp>
+#include <occa/internal/modes/openmp/registration.hpp>
 
 namespace occa {
   namespace openmp {

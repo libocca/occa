@@ -1,8 +1,8 @@
-#ifndef OCCA_MODES_SERIAL_STREAM_HEADER
-#define OCCA_MODES_SERIAL_STREAM_HEADER
+#ifndef OCCA_INTERNAL_MODES_SERIAL_STREAM_HEADER
+#define OCCA_INTERNAL_MODES_SERIAL_STREAM_HEADER
 
 #include <occa/defines.hpp>
-#include <occa/core/stream.hpp>
+#include <occa/internal/core/stream.hpp>
 
 namespace occa {
   namespace serial {

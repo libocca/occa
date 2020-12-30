@@ -1,4 +1,4 @@
-#include <occa/lang/statement/directiveStatement.hpp>
+#include <occa/internal/lang/statement/directiveStatement.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,6 +1,6 @@
-#include <occa/modes/hip/memory.hpp>
-#include <occa/modes/hip/device.hpp>
-#include <occa/modes/hip/utils.hpp>
+#include <occa/internal/modes/hip/memory.hpp>
+#include <occa/internal/modes/hip/device.hpp>
+#include <occa/internal/modes/hip/utils.hpp>
 
 namespace occa {
   namespace hip {

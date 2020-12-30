@@ -1,13 +1,11 @@
-#ifndef OCCA_TOOLS_JSON_HEADER
-#define OCCA_TOOLS_JSON_HEADER
+#ifndef OCCA_UTILS_JSON_HEADER
+#define OCCA_UTILS_JSON_HEADER
 
 #include <vector>
 #include <map>
 
-#include <occa/io/output.hpp>
-#include <occa/lang/primitive.hpp>
-#include <occa/tools/hash.hpp>
-#include <occa/tools/lex.hpp>
+#include <occa/types/primitive.hpp>
+#include <occa/utils/hash.hpp>
 
 namespace occa {
   class json;
@@ -401,6 +399,8 @@ namespace occa {
     json& set(const std::string &key,
               const TM &value);
 
+    json getPathValue(const char *key) const;
+
     template <class TM>
     TM get(const char *key,
            const TM &default_ = TM()) const;
@@ -410,14 +410,14 @@ namespace occa {
            const TM &default_ = TM()) const;
 
     template <class TM>
-    std::vector<TM> getArray(const std::vector<TM> &default_ = std::vector<TM>()) const;
+    std::vector<TM> toVector(const std::vector<TM> &default_ = std::vector<TM>()) const;
 
     template <class TM>
-    std::vector<TM> getArray(const char *c,
+    std::vector<TM> toVector(const char *c,
                              const std::vector<TM> &default_ = std::vector<TM>()) const;
 
     template <class TM>
-    std::vector<TM> getArray(const std::string &s,
+    std::vector<TM> toVector(const std::string &s,
                              const std::vector<TM> &default_ = std::vector<TM>()) const;
 
     strVector keys() const;

@@ -3,11 +3,11 @@
 #include <map>
 #include <sstream>
 
-#include <occa/tools/cli.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/io.hpp>
-#include <occa/tools/lex.hpp>
-#include <occa/tools/string.hpp>
+#include <occa/internal/utils/cli.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/io.hpp>
+#include <occa/internal/utils/lex.hpp>
+#include <occa/internal/utils/string.hpp>
 
 namespace occa {
   namespace cli {
@@ -783,7 +783,7 @@ namespace occa {
       lastCommandArgs = parsedArgs;
 
       json &jArguments = parsedArgs["arguments"];
-      strVector inputArgs = jArguments.getArray<std::string>();
+      strVector inputArgs = jArguments.toVector<std::string>();
 
       const int commandArg = arguments.size() - 1;
       command *comm = NULL;
@@ -909,7 +909,7 @@ namespace occa {
 
       const int inputArguments = (int) args["arguments"].size();
       const json &shellOptions = args["options"];
-      const strVector shellOptionsOrder = args["options_order"].getArray<std::string>();
+      const strVector shellOptionsOrder = args["options_order"].toVector<std::string>();
 
       // Suggest an option since it starts with '-'
       if (startsWith(autocompleteArg, "-")) {

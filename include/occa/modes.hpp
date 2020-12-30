@@ -1,12 +1,12 @@
-#ifndef OCCA_MODE_HEADER
-#define OCCA_MODE_HEADER
+#ifndef OCCA_INTERNAL_MODE_HEADER
+#define OCCA_INTERNAL_MODE_HEADER
 
 #include <iostream>
 #include <map>
 
 #include <occa/defines.hpp>
-#include <occa/tools/properties.hpp>
-#include <occa/tools/styling.hpp>
+#include <occa/types/properties.hpp>
+#include <occa/internal/utils/styling.hpp>
 #include <occa/core/device.hpp>
 
 namespace occa {
@@ -50,8 +50,6 @@ namespace occa {
   mode_t* getModeFromProps(const occa::properties &props);
 
   modeDevice_t* newModeDevice(const occa::properties &props);
-
-  int getDeviceCount(const occa::properties &props);
 }
 
 #endif

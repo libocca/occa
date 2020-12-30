@@ -1,6 +1,6 @@
-#include <occa/lang/statement/blockStatement.hpp>
-#include <occa/lang/expr.hpp>
-#include <occa/lang/variable.hpp>
+#include <occa/internal/lang/statement/blockStatement.hpp>
+#include <occa/internal/lang/expr.hpp>
+#include <occa/internal/lang/variable.hpp>
 
 namespace occa {
   namespace lang {

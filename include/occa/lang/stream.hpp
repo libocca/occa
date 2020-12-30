@@ -1,11 +1,11 @@
-#ifndef OCCA_LANG_STREAM_HEADER
-#define OCCA_LANG_STREAM_HEADER
+#ifndef OCCA_INTERNAL_LANG_STREAM_HEADER
+#define OCCA_INTERNAL_LANG_STREAM_HEADER
 
 #include <cstddef>
 #include <list>
 
 #include <occa/types.hpp>
-#include <occa/tools/properties.hpp>
+#include <occa/types/properties.hpp>
 
 namespace occa {
   namespace lang {

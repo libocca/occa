@@ -2,7 +2,7 @@
 
 #include <occa/c/types.hpp>
 #include <occa/c/io.h>
-#include <occa/io/output.hpp>
+#include <occa/internal/io/output.hpp>
 
 OCCA_START_EXTERN_C
 

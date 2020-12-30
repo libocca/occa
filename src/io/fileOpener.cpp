@@ -1,8 +1,8 @@
 #include <occa/defines.hpp>
-#include <occa/io/fileOpener.hpp>
-#include <occa/io/utils.hpp>
-#include <occa/tools/string.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/io/fileOpener.hpp>
+#include <occa/internal/io/utils.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 namespace occa {
   namespace io {

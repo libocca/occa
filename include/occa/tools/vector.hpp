@@ -1,5 +1,5 @@
-#ifndef OCCA_TOOLS_VECTOR_HEADER
-#define OCCA_TOOLS_VECTOR_HEADER
+#ifndef OCCA_INTERNAL_UTILS_VECTOR_HEADER
+#define OCCA_INTERNAL_UTILS_VECTOR_HEADER
 
 #include <string>
 #include <vector>
@@ -9,7 +9,7 @@
 namespace occa {
   template <class TM>
   dim_t indexOf(const std::vector<TM> &vec,
-              const TM &value) {
+                const TM &value) {
     const dim_t size = vec.size();
     for (dim_t i = 0; i < size; ++i) {
       if (vec[i] == value) {

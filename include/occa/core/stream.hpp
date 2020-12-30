@@ -4,46 +4,24 @@
 #include <iostream>
 
 #include <occa/defines.hpp>
-#include <occa/io/output.hpp>
-#include <occa/tools/gc.hpp>
-#include <occa/tools/properties.hpp>
+#include <occa/types.hpp>
+
+// Unfortunately we need to expose this in include
+#include <occa/internal/utils/gc.hpp>
 
 namespace occa {
   class modeStream_t; class stream;
   class modeDevice_t; class device;
-
-  //---[ modeStream_t ]---------------------
-  class modeStream_t : public gc::ringEntry_t {
-  public:
-    occa::properties properties;
-
-    gc::ring_t<stream> streamRing;
-
-    modeDevice_t *modeDevice;
-
-    modeStream_t(modeDevice_t *modeDevice_,
-                 const occa::properties &properties_);
-
-    void dontUseRefs();
-    void addStreamRef(stream *s);
-    void removeStreamRef(stream *s);
-    bool needsFree() const;
-
-    //---[ Virtual Methods ]------------
-    virtual ~modeStream_t() = 0;
-    //==================================
-  };
-  //====================================
 
   //---[ stream ]-----------------------
   class stream : public gc::ringEntry_t {
     friend class occa::modeStream_t;
     friend class occa::device;
 
-  private:
+   private:
     modeStream_t *modeStream;
 
-  public:
+   public:
     stream();
     stream(modeStream_t *modeStream_);
 
@@ -51,11 +29,11 @@ namespace occa {
     stream& operator = (const stream &m);
     ~stream();
 
-  private:
+   private:
     void setModeStream(modeStream_t *modeStream_);
     void removeStreamRef();
 
-  public:
+   public:
     void dontUseRefs();
 
     bool isInitialized() const;
@@ -76,7 +54,7 @@ namespace occa {
   //====================================
 
   std::ostream& operator << (std::ostream &out,
-                           const occa::stream &stream);
+                             const occa::stream &stream);
 }
 
 #endif

@@ -1,12 +1,12 @@
-#ifndef OCCA_CORE_LAUNCHEDDEVICE_HEADER
-#define OCCA_CORE_LAUNCHEDDEVICE_HEADER
+#ifndef OCCA_INTERNAL_CORE_LAUNCHEDDEVICE_HEADER
+#define OCCA_INTERNAL_CORE_LAUNCHEDDEVICE_HEADER
 
 #include <vector>
 
-#include <occa/core/device.hpp>
-#include <occa/lang/kernelMetadata.hpp>
-#include <occa/lang/modes/withLauncher.hpp>
-#include <occa/tools/properties.hpp>
+#include <occa/internal/core/device.hpp>
+#include <occa/internal/lang/kernelMetadata.hpp>
+#include <occa/internal/lang/modes/withLauncher.hpp>
+#include <occa/types/properties.hpp>
 
 namespace occa {
   typedef std::vector<lang::kernelMetadata_t> orderedKernelMetadata;

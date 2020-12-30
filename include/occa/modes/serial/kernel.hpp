@@ -1,11 +1,11 @@
-#ifndef OCCA_MODES_SERIAL_KERNEL_HEADER
-#define OCCA_MODES_SERIAL_KERNEL_HEADER
+#ifndef OCCA_INTERNAL_MODES_SERIAL_KERNEL_HEADER
+#define OCCA_INTERNAL_MODES_SERIAL_KERNEL_HEADER
 
 #include <vector>
 
 #include <occa/defines.hpp>
-#include <occa/core/kernel.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/core/kernel.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 namespace occa {
   namespace serial {

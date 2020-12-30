@@ -1,5 +1,5 @@
-#include <occa/lang/expr.hpp>
-#include <occa/lang/type/array.hpp>
+#include <occa/internal/lang/expr.hpp>
+#include <occa/internal/lang/type/array.hpp>
 
 namespace occa {
   namespace lang {

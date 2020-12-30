@@ -1,15 +1,15 @@
-#ifndef OCCA_LANG_STATEMENT_STATEMENT_HEADER
-#define OCCA_LANG_STATEMENT_STATEMENT_HEADER
+#ifndef OCCA_INTERNAL_LANG_STATEMENT_STATEMENT_HEADER
+#define OCCA_INTERNAL_LANG_STATEMENT_STATEMENT_HEADER
 
 #include <map>
 #include <vector>
 
-#include <occa/lang/attribute.hpp>
-#include <occa/lang/printer.hpp>
-#include <occa/lang/keyword.hpp>
-#include <occa/lang/token.hpp>
-#include <occa/lang/statement/statementArray.hpp>
-#include <occa/lang/expr/exprNodeArray.hpp>
+#include <occa/internal/lang/attribute.hpp>
+#include <occa/internal/lang/printer.hpp>
+#include <occa/internal/lang/keyword.hpp>
+#include <occa/internal/lang/token.hpp>
+#include <occa/internal/lang/statement/statementArray.hpp>
+#include <occa/internal/lang/expr/exprNodeArray.hpp>
 
 namespace occa {
   namespace lang {

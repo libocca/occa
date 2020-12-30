@@ -1,7 +1,11 @@
+#include <cstring>
+
 #include <occa/core/device.hpp>
 #include <occa/core/memory.hpp>
 #include <occa/core/kernelArg.hpp>
-#include <occa/tools/uva.hpp>
+#include <occa/utils/uva.hpp>
+#include <occa/internal/core/memory.hpp>
+#include <occa/internal/core/device.hpp>
 
 namespace occa {
   //---[ KernelArg ]--------------------

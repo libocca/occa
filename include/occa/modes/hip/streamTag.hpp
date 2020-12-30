@@ -1,8 +1,8 @@
-#ifndef OCCA_MODES_HIP_STREAMTAG_HEADER
-#define OCCA_MODES_HIP_STREAMTAG_HEADER
+#ifndef OCCA_INTERNAL_MODES_HIP_STREAMTAG_HEADER
+#define OCCA_INTERNAL_MODES_HIP_STREAMTAG_HEADER
 
-#include <occa/core/streamTag.hpp>
-#include <occa/modes/hip/polyfill.hpp>
+#include <occa/internal/core/streamTag.hpp>
+#include <occa/internal/modes/hip/polyfill.hpp>
 
 namespace occa {
   namespace hip {

@@ -1,9 +1,9 @@
-#ifndef OCCA_LANG_PARSER_ATTRIBUTELOADER_HEADER
-#define OCCA_LANG_PARSER_ATTRIBUTELOADER_HEADER
+#ifndef OCCA_INTERNAL_LANG_PARSER_ATTRIBUTELOADER_HEADER
+#define OCCA_INTERNAL_LANG_PARSER_ATTRIBUTELOADER_HEADER
 
-#include <occa/lang/attribute.hpp>
-#include <occa/lang/tokenContext.hpp>
-#include <occa/lang/variable.hpp>
+#include <occa/internal/lang/attribute.hpp>
+#include <occa/internal/lang/tokenContext.hpp>
+#include <occa/internal/lang/variable.hpp>
 
 namespace occa {
   namespace lang {

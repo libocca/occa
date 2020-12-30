@@ -1,4 +1,4 @@
-#include <occa/lang/expr/reinterpretCastNode.hpp>
+#include <occa/internal/lang/expr/reinterpretCastNode.hpp>
 
 namespace occa {
   namespace lang {

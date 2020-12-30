@@ -1,12 +1,12 @@
-#ifndef OCCA_MODES_SERIAL_REGISTRATION_HEADER
-#define OCCA_MODES_SERIAL_REGISTRATION_HEADER
+#ifndef OCCA_INTERNAL_MODES_SERIAL_REGISTRATION_HEADER
+#define OCCA_INTERNAL_MODES_SERIAL_REGISTRATION_HEADER
 
 #include <occa/defines.hpp>
-#include <occa/modes.hpp>
-#include <occa/modes/serial/device.hpp>
-#include <occa/modes/serial/kernel.hpp>
-#include <occa/modes/serial/memory.hpp>
-#include <occa/tools/styling.hpp>
+#include <occa/internal/modes.hpp>
+#include <occa/internal/modes/serial/device.hpp>
+#include <occa/internal/modes/serial/kernel.hpp>
+#include <occa/internal/modes/serial/memory.hpp>
+#include <occa/internal/utils/styling.hpp>
 #include <occa/core/base.hpp>
 
 namespace occa {

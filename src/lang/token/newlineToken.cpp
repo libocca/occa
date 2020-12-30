@@ -1,4 +1,4 @@
-#include <occa/lang/token/newlineToken.hpp>
+#include <occa/internal/lang/token/newlineToken.hpp>
 
 namespace occa {
   namespace lang {

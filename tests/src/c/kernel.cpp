@@ -2,6 +2,8 @@
 
 #include <occa.hpp>
 #include <occa.h>
+
+#include <occa/io.hpp>
 #include <occa/c/types.hpp>
 #include <occa/tools/testing.hpp>
 

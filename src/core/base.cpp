@@ -1,8 +1,11 @@
 #include <occa/core/base.hpp>
-#include <occa/modes.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/tools/tls.hpp>
+#include <occa/internal/core/device.hpp>
+#include <occa/internal/core/memory.hpp>
+#include <occa/internal/modes.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/internal/utils/tls.hpp>
+#include <occa/internal/utils/uva.hpp>
 
 namespace occa {
   //---[ Device Functions ]-------------
@@ -243,6 +246,18 @@ namespace occa {
   }
   //====================================
 
+  //---[ Helper Methods ]---------------
+  int getDeviceCount(const occa::properties &props) {
+    std::string modeName = props["mode"];
+    mode_t *mode = getMode(modeName);
+
+    if (mode) {
+      return mode->getDeviceCount(props);
+    } else {
+      return 0;
+    }
+  }
+
   void printModeInfo() {
     strToModeMap &modeMap = getModeMap();
     strToModeMap::iterator it = modeMap.begin();
@@ -268,4 +283,5 @@ namespace occa {
 
     io::stdout << table;
   }
+  //====================================
 }

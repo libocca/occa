@@ -1,7 +1,7 @@
 #include <occa/defines.hpp>
 #include <occa/dtype/builtins.hpp>
 #include <occa/dtype/dtype.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 namespace occa {
   //---[ Dtype_T ]------------------------

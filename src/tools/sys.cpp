@@ -40,16 +40,16 @@
 #include <csignal>
 
 #include <occa/core/base.hpp>
-#include <occa/io.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/exception.hpp>
-#include <occa/tools/hash.hpp>
-#include <occa/tools/json.hpp>
-#include <occa/tools/lex.hpp>
-#include <occa/tools/misc.hpp>
-#include <occa/tools/string.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/tools/vector.hpp>
+#include <occa/internal/io.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/utils/exception.hpp>
+#include <occa/utils/hash.hpp>
+#include <occa/types/json.hpp>
+#include <occa/internal/utils/lex.hpp>
+#include <occa/internal/utils/misc.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/internal/utils/vector.hpp>
 
 namespace occa {
   namespace sys {
@@ -717,12 +717,12 @@ namespace occa {
       int vendor_ = sys::vendor::notFound;
       std::stringstream ss;
 
-      const std::string compilerVendorTest = env::OCCA_DIR + "include/occa/scripts/tests/compiler.cpp";
+      const std::string compilerVendorTest = env::OCCA_DIR + "include/occa/scripts/findCompilerVendor.cpp";
       hash_t hash = occa::hashFile(compilerVendorTest);
       hash ^= occa::hash(compiler);
 
       const std::string srcFilename = io::cacheFile(compilerVendorTest,
-                                                    "compilerVendorTest.cpp",
+                                                    "findCompilerVendor.cpp",
                                                     hash);
       const std::string &hashDir = io::dirname(srcFilename);
       const std::string binaryFilename   = hashDir + "binary";

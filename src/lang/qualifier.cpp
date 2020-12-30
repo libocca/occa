@@ -1,13 +1,13 @@
 #include <sstream>
 
 #include <occa/defines.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/utils/sys.hpp>
 
-#include <occa/lang/type.hpp>
-#include <occa/lang/statement.hpp>
-#include <occa/lang/variable.hpp>
-#include <occa/lang/expr.hpp>
-#include <occa/lang/builtins/types.hpp>
+#include <occa/internal/lang/type.hpp>
+#include <occa/internal/lang/statement.hpp>
+#include <occa/internal/lang/variable.hpp>
+#include <occa/internal/lang/expr.hpp>
+#include <occa/internal/lang/builtins/types.hpp>
 
 namespace occa {
   namespace lang {

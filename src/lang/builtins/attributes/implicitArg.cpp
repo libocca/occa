@@ -1,5 +1,5 @@
-#include <occa/lang/statement.hpp>
-#include <occa/lang/builtins/attributes/implicitArg.hpp>
+#include <occa/internal/lang/statement.hpp>
+#include <occa/internal/lang/builtins/attributes/implicitArg.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,4 +1,4 @@
-#include <occa/lang/statement/continueStatement.hpp>
+#include <occa/internal/lang/statement/continueStatement.hpp>
 
 namespace occa {
   namespace lang {

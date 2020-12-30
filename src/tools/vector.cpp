@@ -1,9 +1,8 @@
-#include <occa/tools/string.hpp>
-#include <occa/tools/vector.hpp>
-#include <occa/types/fp.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/utils/vector.hpp>
+#include <occa/types/bits.hpp>
 
 namespace occa {
-
   template <>
   dim_t indexOf(const std::vector<float> &vec, const float &value) {
     const dim_t size = vec.size();

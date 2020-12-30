@@ -1,5 +1,5 @@
-#include <occa/lang/token/variableToken.hpp>
-#include <occa/lang/variable.hpp>
+#include <occa/internal/lang/token/variableToken.hpp>
+#include <occa/internal/lang/variable.hpp>
 
 namespace occa {
   namespace lang {

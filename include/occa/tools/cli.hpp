@@ -1,12 +1,12 @@
-#ifndef OCCA_TOOLS_CLI_HEADER
-#define OCCA_TOOLS_CLI_HEADER
+#ifndef OCCA_INTERNAL_UTILS_CLI_HEADER
+#define OCCA_INTERNAL_UTILS_CLI_HEADER
 
 #include <functional>
 #include <iostream>
 #include <vector>
 
 #include <occa/types.hpp>
-#include <occa/tools/json.hpp>
+#include <occa/types/json.hpp>
 
 namespace occa {
   namespace cli {

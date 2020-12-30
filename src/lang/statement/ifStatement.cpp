@@ -1,6 +1,6 @@
-#include <occa/lang/statement/ifStatement.hpp>
-#include <occa/lang/statement/elifStatement.hpp>
-#include <occa/lang/statement/elseStatement.hpp>
+#include <occa/internal/lang/statement/ifStatement.hpp>
+#include <occa/internal/lang/statement/elifStatement.hpp>
+#include <occa/internal/lang/statement/elseStatement.hpp>
 
 namespace occa {
   namespace lang {

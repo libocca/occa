@@ -1,9 +1,9 @@
-#include <occa/lang/expr.hpp>
-#include <occa/lang/statement.hpp>
-#include <occa/lang/variable.hpp>
-#include <occa/lang/builtins/types.hpp>
-#include <occa/lang/modes/oklForStatement.hpp>
-#include <occa/lang/modes/okl.hpp>
+#include <occa/internal/lang/expr.hpp>
+#include <occa/internal/lang/statement.hpp>
+#include <occa/internal/lang/variable.hpp>
+#include <occa/internal/lang/builtins/types.hpp>
+#include <occa/internal/lang/modes/oklForStatement.hpp>
+#include <occa/internal/lang/modes/okl.hpp>
 
 namespace occa {
   namespace lang {

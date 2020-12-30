@@ -1,7 +1,7 @@
-#ifndef OCCA_LANG_PROCESSINGSTAGES_HEADER
-#define OCCA_LANG_PROCESSINGSTAGES_HEADER
+#ifndef OCCA_INTERNAL_LANG_PROCESSINGSTAGES_HEADER
+#define OCCA_INTERNAL_LANG_PROCESSINGSTAGES_HEADER
 
-#include <occa/lang/stream.hpp>
+#include <occa/internal/lang/stream.hpp>
 
 namespace occa {
   namespace lang {
