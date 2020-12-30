@@ -42,6 +42,10 @@ namespace occa {
         bool isOuterMostOklLoop(forStatement &forSmnt,
                                 const std::string &attr);
 
+        bool isLastInnerLoop(forStatement &forSmnt);
+
+        bool isInsideLoop(forStatement &forSmnt);
+
         void setKernelLaunch(functionDeclStatement &kernelSmnt,
                              forStatement &forSmnt,
                              const int kernelIndex);
