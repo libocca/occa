@@ -1,7 +1,7 @@
 #include <cstring>
 #include <stdarg.h>
 
-#include <occa/c/types.hpp>
+#include <occa/internal/c/types.hpp>
 #include <occa/c/kernel.h>
 #include <occa/internal/core/kernel.hpp>
 

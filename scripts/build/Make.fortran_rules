@@ -1,6 +1,6 @@
 #---[ Fortran rules ]-----------------------------
 # Fortran module dependencies
-fObjPath = $(objPath)/occa/internal/fortran
+fObjPath = $(objPath)/fortran
 $(fObjPath)/occa_types_m.o:         $(fObjPath)/occa_typedefs_m.o
 $(fObjPath)/occa_base_m.o:          $(fObjPath)/occa_types_m.o
 $(fObjPath)/occa_dtype_m.o:         $(fObjPath)/occa_types_m.o

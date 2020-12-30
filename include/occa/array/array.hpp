@@ -3,7 +3,6 @@
 
 #include <occa/defines.hpp>
 #include <occa/core/base.hpp>
-#include <occa/internal/utils/misc.hpp>
 #include <occa/array/linalg.hpp>
 
 namespace occa {

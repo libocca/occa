@@ -1,5 +1,5 @@
 #include <occa.hpp>
-#include <occa/tools/testing.hpp>
+#include <occa/internal/utils/testing.hpp>
 
 void testDtype();
 void testCasting();

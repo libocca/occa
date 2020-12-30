@@ -6,8 +6,8 @@
 
 #include <occa.hpp>
 #include <occa.h>
-#include <occa/c/types.hpp>
-#include <occa/tools/testing.hpp>
+#include <occa/internal/c/types.hpp>
+#include <occa/internal/utils/testing.hpp>
 
 void testTypeChecking();
 void testTypes();

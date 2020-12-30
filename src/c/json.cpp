@@ -1,6 +1,6 @@
 #include <cstring>
 
-#include <occa/c/types.hpp>
+#include <occa/internal/c/types.hpp>
 #include <occa/c/json.h>
 
 OCCA_START_EXTERN_C

@@ -5,8 +5,8 @@
 //---[ Internal Tools ]-----------------
 // Note: These headers are not officially supported
 //       Please don't rely on it outside of the occa examples
-#include <occa/tools/cli.hpp>
-#include <occa/tools/testing.hpp>
+#include <occa/internal/utils/cli.hpp>
+#include <occa/internal/utils/testing.hpp>
 //======================================
 
 occa::json parseArgs(int argc, const char **argv);

@@ -247,8 +247,9 @@ install(FILES ${OCCA_BUILD_DIR}/include/occa/defines/compiledDefines.hpp DESTINA
 file(GLOB_RECURSE OCCA_SRC_cpp RELATIVE ${OCCA_SOURCE_DIR} "src/*.cpp")
 list(REMOVE_ITEM OCCA_SRC_cpp src/core/kernelOperators.cpp src/tools/runFunction.cpp)
 
-if (OCCA_OPENMP_ENABLED)
-  set_source_files_properties(${OCCA_SRC_cpp} PROPERTIES COMPILE_FLAGS ${OpenMP_CXX_FLAGS})
+if(OCCA_OPENMP_ENABLED)
+  set_source_files_properties(${OCCA_SRC_cpp} PROPERTIES
+    COMPILE_FLAGS ${OpenMP_CXX_FLAGS})
 endif()
 
 if (ENABLE_FORTRAN)

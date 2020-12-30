@@ -10,7 +10,6 @@
 // Unfortunately we need to expose this in include
 #include <occa/internal/utils/gc.hpp>
 
-
 namespace occa {
   class modeMemory_t; class memory;
   class modeDevice_t; class device;

@@ -1,7 +1,7 @@
 #include <occa/defines.hpp>
 #include <occa/types/primitive.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/tools/testing.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/internal/utils/testing.hpp>
 
 void testInit();
 void testLoad();

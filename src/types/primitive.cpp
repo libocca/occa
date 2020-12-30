@@ -2,6 +2,7 @@
 
 #include <occa/types/bits.hpp>
 #include <occa/types/primitive.hpp>
+#include <occa/internal/io.hpp>
 #include <occa/internal/utils/lex.hpp>
 #include <occa/internal/utils/string.hpp>
 

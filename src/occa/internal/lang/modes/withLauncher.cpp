@@ -252,7 +252,7 @@ namespace occa {
         };
 
         array<std::string> kernelLaunchSource = {
-          "occa::kernel kernel(deviceKernel[" + occa::toString(kernelIndex) + "]);",
+          "occa::kernel kernel(deviceKernels[" + occa::toString(kernelIndex) + "]);",
           "kernel.setRunDims(outer, inner);",
           kernelLaunch
         };
@@ -295,7 +295,7 @@ namespace occa {
 
         // Add kernel array as the first argument
         identifierToken kernelVarSource(kernelSmnt.source->origin,
-                                        "deviceKernel");
+                                        "deviceKernels");
         variable_t &kernelVar = *(new variable_t(getKernelModeType(),
                                                  &kernelVarSource));
         kernelVar += pointer_t();
@@ -310,20 +310,11 @@ namespace occa {
       }
 
       void withLauncher::setupLauncherHeaders() {
-        // TODO 1.1: Remove hack after methods are properly added
-        const int headerCount = 2;
-        std::string headers[headerCount] = {
-          "include <occa/core/base.hpp>",
-          "include <occa/internal/modes/serial/kernel.hpp>"
-        };
-        for (int i = 0; i < headerCount; ++i) {
-          std::string header = headers[i];
-          directiveToken token(root.source->origin,
-                               header);
-          launcherParser.root.addFirst(
-            *(new directiveStatement(&root, token))
-          );
-        }
+        directiveToken token(root.source->origin,
+                             "include <occa/core/base.hpp>");
+        launcherParser.root.addFirst(
+          *(new directiveStatement(&root, token))
+        );
       }
 
       int withLauncher::getInnerLoopLevel(forStatement &forSmnt) {

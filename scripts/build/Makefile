@@ -7,12 +7,12 @@ ifdef OCCA_DIR
 endif
 
 ifeq ($(strip $(OCCA_DIR)),)
-  OCCA_DIR := $(call rmSlash,$(abspath $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/..))
+  OCCA_DIR := $(call rmSlash,$(abspath $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/../..))
 endif
 
 binPath  = $(PROJ_DIR)/bin
 libPath  = $(PROJ_DIR)/lib
-modPath  = $(PROJ_DIR)/lib/occa/internal/fortran/modules
+modPath  = $(PROJ_DIR)/lib/fortran/modules
 objPath  = $(PROJ_DIR)/obj
 srcPath  = $(PROJ_DIR)/src
 incPath  = $(PROJ_DIR)/include
@@ -138,8 +138,12 @@ fLinkerFlags = $(LDFLAGS)
 
 
 #---[ Paths/Flags ]-------------------------------
-# OCCA (global) include and library paths
+# Include the public API
 paths  = -I$(OCCA_DIR)/include
+# Include the internal API
+paths += -I$(OCCA_DIR)/src
+
+# Link with the library for our examples
 paths += -L$(OCCA_DIR)/lib
 
 # Extra (user-supplied) include and library paths

@@ -84,7 +84,7 @@ namespace occa {
 
     void run() const;
 
-#include "kernelOperators.hpp"
+#include "kernelOperators.hpp_codegen"
 
     void free();
   };

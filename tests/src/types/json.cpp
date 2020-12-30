@@ -1,9 +1,9 @@
 #include <sstream>
 
-#include <occa/io.hpp>
+#include <occa/internal/io.hpp>
 #include <occa/types/json.hpp>
-#include <occa/tools/string.hpp>
-#include <occa/tools/testing.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/utils/testing.hpp>
 
 void testAsTypes();
 void testString();

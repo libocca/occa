@@ -6,7 +6,7 @@
 //---[ Internal Tools ]-----------------
 // Note: These headers are not officially supported
 //       Please don't rely on it outside of the occa examples
-#include <occa/modes/cuda/utils.hpp>
+#include <occa/internal/modes/cuda/utils.hpp>
 //======================================
 
 int main(int argc, char **argv) {

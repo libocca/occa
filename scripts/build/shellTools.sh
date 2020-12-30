@@ -397,7 +397,7 @@ function compilerSupportsMPI {
 function fCompilerVendor {
     local compiler="$1"
 
-    local filename="${SCRIPTS_DIR}/compiler/findFortranCompilerVendor.f90"
+    local filename="${SCRIPTS_DIR}/compiler/findFortranCompilerVendor.F90"
     local binary="${SCRIPTS_DIR}/compiler/findFortranCompilerVendor"
 
     rm -f "$binary"

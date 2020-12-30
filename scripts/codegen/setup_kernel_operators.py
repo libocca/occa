@@ -63,7 +63,7 @@ def array_args(N, indent):
     return content
 
 
-@to_file('src/tools/runFunction.cpp')
+@to_file('src/occa/internal/utils/runFunction.cpp_codegen')
 def run_function_from_arguments(N):
     content = '\nswitch (argc) {\n'
     for n in range(N + 1):
@@ -90,7 +90,7 @@ def run_function_from_argument(N):
     return content
 
 
-@to_file('include/occa/core/kernelOperators.hpp')
+@to_file('include/occa/core/kernelOperators.hpp_codegen')
 def operator_declarations(N):
     return '\n\n'.join(
         operator_declaration(n) for n in range(N + 1)
@@ -106,7 +106,7 @@ def operator_declaration(N):
     return content
 
 
-@to_file('src/core/kernelOperators.cpp')
+@to_file('src/core/kernelOperators.cpp_codegen')
 def operator_definitions(N):
     return '\n'.join(
         operator_definition(n) for n in range(N + 1)
@@ -137,7 +137,7 @@ def operator_definition(N):
     return content
 
 
-@to_file('include/occa/core/inlinedKernelScope.hpp')
+@to_file('include/occa/core/inlinedKernelScope.hpp_codegen')
 def inlined_kernel_scope_definitions(N):
     return '\n\n'.join(
         inlined_kernel_scope_definition(n) for n in range(1, N + 1)

@@ -1,7 +1,7 @@
 #include <occa.hpp>
 
-#include <occa/io.hpp>
-#include <occa/tools/testing.hpp>
+#include <occa/internal/io.hpp>
+#include <occa/internal/utils/testing.hpp>
 
 occa::kernel addVectors;
 const std::string addVectorsFile = (

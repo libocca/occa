@@ -55,7 +55,7 @@ namespace occa {
 
 
   //---[ Inlined Kernel ]---------------
-#include "inlinedKernelScope.hpp"
+#include "inlinedKernelScope.hpp_codegen"
 
   std::string formatInlinedKernelFromArgs(occa::scope scope,
                                           const std::string &oklArgs,

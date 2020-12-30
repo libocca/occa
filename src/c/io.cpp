@@ -1,6 +1,6 @@
 #include <stdarg.h>
 
-#include <occa/c/types.hpp>
+#include <occa/internal/c/types.hpp>
 #include <occa/c/io.h>
 #include <occa/internal/io/output.hpp>
 

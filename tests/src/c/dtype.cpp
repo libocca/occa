@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 #include <occa.h>
-#include <occa/tools/testing.hpp>
+#include <occa/internal/utils/testing.hpp>
 
 void testDtype();
 void testJsonMethods();

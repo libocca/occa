@@ -1,4 +1,4 @@
-#include <occa/c/types.hpp>
+#include <occa/internal/c/types.hpp>
 #include <occa/c/memory.h>
 
 OCCA_START_EXTERN_C

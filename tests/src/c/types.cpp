@@ -1,7 +1,7 @@
 #include <occa.hpp>
-#include <occa/c/types.hpp>
+#include <occa/internal/c/types.hpp>
 #include <occa/c/properties.h>
-#include <occa/tools/testing.hpp>
+#include <occa/internal/utils/testing.hpp>
 
 void testNewOccaTypes();
 void testCTypeWrappers();

@@ -3,6 +3,7 @@
 #include <occa.hpp>
 
 #include <occa/internal/bin/occa.hpp>
+#include <occa/internal/utils/env.hpp>
 #include <occa/internal/lang/modes/serial.hpp>
 #include <occa/internal/lang/modes/openmp.hpp>
 #include <occa/internal/lang/modes/cuda.hpp>

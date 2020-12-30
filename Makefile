@@ -24,7 +24,6 @@ else
 endif
 
 # [-L$OCCA_DIR/lib -locca] are kept for examples using $OCCA_DIR/scripts/build/Makefile
-paths += -I$(srcPath)
 paths := $(filter-out -L$(OCCA_DIR)/lib,$(paths))
 linkerFlags := $(filter-out -locca,$(linkerFlags))
 
@@ -49,14 +48,10 @@ pthreadFlag := $(pthreadFlag)
 #---[ Compilation Variables ]---------------------
 srcToObject  = $(subst $(PROJ_DIR)/src,$(PROJ_DIR)/obj,$(1:.cpp=.o))
 
-dontCompile = $(OCCA_DIR)/src/core/kernelOperators.cpp \
-              $(OCCA_DIR)/src/occa/internal/utils/runFunction.cpp
-
 sources      = $(realpath $(shell find $(PROJ_DIR)/src -type f -name '*.cpp'))
-sources     := $(filter-out $(dontCompile),$(sources))
 headers      = $(realpath $(shell find $(PROJ_DIR)/include -type f -name '*.hpp' -o -name "*.h"))
 testSources  = $(realpath $(shell find $(PROJ_DIR)/tests/src -type f -name '*.cpp'))
-testSources := $(filter-out $(testPath)/src/occa/internal/fortran/%.cpp,$(testSources))
+testSources := $(filter-out $(testPath)/src/fortran/%.cpp,$(testSources))
 tests        = $(subst $(testPath)/src,$(testPath)/bin,$(testSources:.cpp=))
 
 objects = $(call srcToObject,$(sources))
@@ -203,7 +198,7 @@ $(testPath)/bin/%:$(testPath)/src/%.cpp $(outputs)
 #  ---[ Fortran ]-------------
 fTests: $(fTests)
 
-$(objPath)/%.o: $(testPath)/src/occa/internal/fortran/typedefs_helper.cpp
+$(objPath)/%.o: $(testPath)/src/fortran/typedefs_helper.cpp
 	@mkdir -p $(abspath $(dir $@))
 	@echo " - [F90]  $<"
 	@$(compiler) $(compilerFlags) -o "$@" $(flags) -c $(paths) "$<"

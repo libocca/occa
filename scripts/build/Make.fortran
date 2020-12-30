@@ -19,9 +19,9 @@ fSoNameFlag = $(subst libocca,libocca_fortran,$(soNameFlag))
 #---[ Source/Object files ]-----------------------
 #  ---[ libocca_fortran ]-------------
 #  Fortran source files
-fSources = $(shell find $(OCCA_DIR)/src/occa/internal/fortran -type f -iname '*.f90')
+fSources     = $(shell find $(OCCA_DIR)/src/fortran -type f -iname '*.f90')
 fSrcToObject = $(subst $(OCCA_DIR)/src,$(objPath),$(1:.f90=.o))
-fObjects = $(call fSrcToObject,$(fSources))
+fObjects     = $(call fSrcToObject,$(fSources))
 #  ===================================
 
 #  ---[ Fortran tests ]---------------

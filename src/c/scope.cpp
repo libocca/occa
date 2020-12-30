@@ -1,4 +1,4 @@
-#include <occa/c/types.hpp>
+#include <occa/internal/c/types.hpp>
 #include <occa/c/scope.h>
 
 namespace occa {
