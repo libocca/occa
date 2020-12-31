@@ -6,20 +6,20 @@
 
 OCCA_START_EXTERN_C
 
-OCCA_LFUNC bool OCCA_RFUNC occaIsManaged(void *ptr);
-OCCA_LFUNC void OCCA_RFUNC occaStartManaging(void *ptr);
-OCCA_LFUNC void OCCA_RFUNC occaStopManaging(void *ptr);
+bool occaIsManaged(void *ptr);
+void occaStartManaging(void *ptr);
+void occaStopManaging(void *ptr);
 
-OCCA_LFUNC void OCCA_RFUNC occaSyncToDevice(void *ptr,
-                                            const occaUDim_t bytes);
-OCCA_LFUNC void OCCA_RFUNC occaSyncToHost(void *ptr,
-                                          const occaUDim_t bytes);
+void occaSyncToDevice(void *ptr,
+                      const occaUDim_t bytes);
+void occaSyncToHost(void *ptr,
+                    const occaUDim_t bytes);
 
-OCCA_LFUNC bool OCCA_RFUNC occaNeedsSync(void *ptr);
-OCCA_LFUNC void OCCA_RFUNC occaSync(void *ptr);
-OCCA_LFUNC void OCCA_RFUNC occaDontSync(void *ptr);
+bool occaNeedsSync(void *ptr);
+void occaSync(void *ptr);
+void occaDontSync(void *ptr);
 
-OCCA_LFUNC void OCCA_RFUNC occaFreeUvaPtr(void *ptr);
+void occaFreeUvaPtr(void *ptr);
 
 OCCA_END_EXTERN_C
 

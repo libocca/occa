@@ -6,13 +6,13 @@
 
 OCCA_START_EXTERN_C
 
-OCCA_LFUNC occaKernelBuilder OCCA_RFUNC occaKernelBuilderFromInlinedOkl(
+occaKernelBuilder occaKernelBuilderFromInlinedOkl(
   occaScope scope,
   const char *kernelSource,
   const char *kernelName
 );
 
-OCCA_LFUNC void OCCA_RFUNC occaKernelBuilderRun(
+void occaKernelBuilderRun(
   occaKernelBuilder kernelBuilder,
   occaScope scope
 );

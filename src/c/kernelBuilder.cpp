@@ -4,7 +4,7 @@
 
 OCCA_START_EXTERN_C
 
-occaKernelBuilder OCCA_RFUNC occaKernelBuilderFromInlinedOkl(
+occaKernelBuilder occaKernelBuilderFromInlinedOkl(
   occaScope scope,
   const char *kernelSource,
   const char *kernelName
@@ -19,7 +19,7 @@ occaKernelBuilder OCCA_RFUNC occaKernelBuilderFromInlinedOkl(
   return occa::c::newOccaType(*(new occa::kernelBuilder(kb)));
 }
 
-void OCCA_RFUNC occaKernelBuilderRun(
+void occaKernelBuilderRun(
   occaKernelBuilder kernelBuilder,
   occaScope scope
 ) {
