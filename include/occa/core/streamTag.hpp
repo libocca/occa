@@ -6,7 +6,7 @@
 #include <occa/defines.hpp>
 
 // Unfortunately we need to expose this in include
-#include <occa/internal/utils/gc.hpp>
+#include <occa/utils/gc.hpp>
 
 namespace occa {
   class modeDevice_t; class device;

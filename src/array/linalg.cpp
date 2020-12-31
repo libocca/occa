@@ -4,6 +4,7 @@
 #include <occa/types.hpp>
 #include <occa/array/linalg.hpp>
 #include <occa/internal/utils/lex.hpp>
+#include <occa/internal/utils/string.hpp>
 
 namespace occa {
   namespace linalg {
