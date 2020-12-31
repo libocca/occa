@@ -18,20 +18,20 @@ namespace occa {
     }
 
     int getDeviceCount() {
-      int deviceCount=0;
+      int deviceCount = 0;
       hipGetDeviceCount(&deviceCount);
       return deviceCount;
     }
 
     hipDevice_t getDevice(const int id) {
-      hipDevice_t device;
+      hipDevice_t device = 0;
       OCCA_HIP_ERROR("Getting hipDevice_t",
                      hipDeviceGet(&device, id));
       return device;
     }
 
     udim_t getDeviceMemorySize(hipDevice_t device) {
-      size_t bytes;
+      size_t bytes = 0;
       OCCA_HIP_ERROR("Finding available memory on device",
                      hipDeviceTotalMem(&bytes, device));
       return bytes;
@@ -39,7 +39,7 @@ namespace occa {
 
     std::string getVersion() {
       std::stringstream ss;
-      int driverVersion;
+      int driverVersion = 0;
       OCCA_HIP_ERROR("Finding HIP driver version",
                      hipDriverGetVersion(&driverVersion));
       ss << driverVersion;
@@ -82,7 +82,7 @@ namespace occa {
 
     void checkPeerToPeer(hipDevice_t destDevice,
                          hipDevice_t srcDevice) {
-      int canAccessPeer;
+      int canAccessPeer = 0;
 
       OCCA_HIP_ERROR("Checking Peer-to-Peer Connection",
                      hipDeviceCanAccessPeer(&canAccessPeer,

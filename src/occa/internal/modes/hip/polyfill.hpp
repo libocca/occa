@@ -7,6 +7,10 @@
 #  include <hip/hip_runtime_api.h>
 #else
 
+#include <sys/types.h>
+#undef   minor
+#undef   major
+
 // Wrap in the occa namespace so as long as we don't use ::hipModule_t, the two
 //   - hipModule_t
 //   - occa::hipModule_t
@@ -27,13 +31,22 @@ namespace occa {
   static const int HIP_LAUNCH_PARAM_BUFFER_SIZE = 0;
   static const int HIP_LAUNCH_PARAM_END = 0;
 
-  struct hipDeviceProp_t {
+  class hipDeviceProp_t {
+   public:
     char *name;
     size_t totalGlobalMem;
     int maxThreadsPerBlock;
     int gcnArch;
     int major;
     int minor;
+
+    inline hipDeviceProp_t() :
+        name(NULL),
+        totalGlobalMem(0),
+        maxThreadsPerBlock(-1),
+        gcnArch(-1),
+        major(-1),
+        minor(-1) {}
   };
 
   enum hipError_t {
