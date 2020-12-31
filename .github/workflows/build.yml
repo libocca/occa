@@ -93,9 +93,9 @@ jobs:
     - name: CMake build
       if: ${{ matrix.useCMake }}
       run: |
-        cmake -E make_directory ${{runner.workspace}}/occa/build
+        mkdir -p ${{runner.workspace}}/occa/build
         cd ${{runner.workspace}}/occa/build
-        cmake -DENABLE_TESTS=On -DENABLE_EXAMPLES=On ${{runner.workspace}}/occa
+        cmake -DENABLE_TESTS=ON -DENABLE_EXAMPLES=ON ${{runner.workspace}}/occa
         make -j 16
 
     - name: Compile library
