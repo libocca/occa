@@ -6,6 +6,8 @@
 #include <map>
 #include <vector>
 
+#include <occa/utils/gc.hpp>
+
 namespace occa {
   namespace gc {
     class withRefs {
@@ -21,19 +23,6 @@ namespace occa {
 
       void setRefs(const int refs_);
       void dontUseRefs();
-    };
-
-    class ringEntry_t {
-    public:
-      ringEntry_t *leftRingEntry;
-      ringEntry_t *rightRingEntry;
-
-      ringEntry_t();
-
-      void removeRef();
-      void dontUseRefs();
-
-      bool isAlone() const;
     };
 
     template <class entry_t>

@@ -8,7 +8,7 @@ namespace occa {
                                      "defines: {"
                                      "  VTYPE_IN: '"  + primitiveinfo<VTYPE_IN>::name  + "',"
                                      "  VTYPE_OUT: '" + primitiveinfo<VTYPE_OUT>::name + "',"
-                                     "  TILESIZE: '"  + toString(tileSize) + "',"
+                                     "  TILESIZE: '"  + std::to_string(tileSize) + "',"
                                      "}");
     }
 
@@ -395,7 +395,7 @@ namespace occa {
                                "  CTYPE0: '" + primitiveinfo<TYPE_A>::name + "',"
                                "  VTYPE0: '" + primitiveinfo<VTYPE_Y>::name + "',"
                                "  VTYPE1: '" + primitiveinfo<VTYPE_X>::name + "',"
-                               "  TILESIZE: '" + toString(usedTileSizes[i]) + "',"
+                               "  TILESIZE: '" + std::to_string(usedTileSizes[i]) + "',"
                                "}");
           builders.push_back(kerb);
         }

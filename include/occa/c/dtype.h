@@ -7,35 +7,35 @@
 OCCA_START_EXTERN_C
 
 //-----[ Methods ]----------------------
-OCCA_LFUNC occaDtype OCCA_RFUNC occaCreateDtype(const char *name,
-                                                const int bytes);
+occaDtype occaCreateDtype(const char *name,
+                          const int bytes);
 
-OCCA_LFUNC occaDtype OCCA_RFUNC occaCreateDtypeTuple(occaDtype dtype,
-                                                     const int size);
+occaDtype occaCreateDtypeTuple(occaDtype dtype,
+                               const int size);
 
-OCCA_LFUNC const char* OCCA_RFUNC occaDtypeName(occaDtype dtype);
+const char* occaDtypeName(occaDtype dtype);
 
-OCCA_LFUNC int OCCA_RFUNC occaDtypeBytes(occaDtype dtype);
+int occaDtypeBytes(occaDtype dtype);
 
 
-OCCA_LFUNC void OCCA_RFUNC occaDtypeRegisterType(occaDtype dtype);
+void occaDtypeRegisterType(occaDtype dtype);
 
-OCCA_LFUNC bool OCCA_RFUNC occaDtypeIsRegistered(occaDtype dtype);
+bool occaDtypeIsRegistered(occaDtype dtype);
 
-OCCA_LFUNC void OCCA_RFUNC occaDtypeAddField(occaDtype dtype,
-                                             const char *field,
-                                             occaDtype fieldType);
+void occaDtypeAddField(occaDtype dtype,
+                       const char *field,
+                       occaDtype fieldType);
 
-OCCA_LFUNC bool OCCA_RFUNC occaDtypesAreEqual(occaDtype a,
-                                              occaDtype b);
+bool occaDtypesAreEqual(occaDtype a,
+                        occaDtype b);
 
-OCCA_LFUNC bool OCCA_RFUNC occaDtypesMatch(occaDtype a,
-                                           occaDtype b);
+bool occaDtypesMatch(occaDtype a,
+                     occaDtype b);
 
-OCCA_LFUNC occaDtype OCCA_RFUNC occaDtypeFromJson(occaJson json);
-OCCA_LFUNC occaDtype OCCA_RFUNC occaDtypeFromJsonString(const char *str);
+occaDtype occaDtypeFromJson(occaJson json);
+occaDtype occaDtypeFromJsonString(const char *str);
 
-OCCA_LFUNC occaJson OCCA_RFUNC occaDtypeToJson(occaDtype dtype);
+occaJson occaDtypeToJson(occaDtype dtype);
 //======================================
 
 //-----[ Builtins ]---------------------

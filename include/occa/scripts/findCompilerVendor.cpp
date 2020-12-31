@@ -11,7 +11,6 @@
 #define OCCA_NOT_FOUND           10
 
 int main(int argc, char **argv) {
-
 #if  defined(__xlc__)  || defined(__xlC__)    \
   || defined(__IBMC__) || defined(__IBMCPP__) \
   || defined(__ibmxl__)

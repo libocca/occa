@@ -2,14 +2,12 @@
 #define OCCA_ARRAY_LINALG_HEADER
 
 #include <cmath>
+#include <string>
 
 #include <occa/defines.hpp>
 #include <occa/core/base.hpp>
 #include <occa/core/kernelBuilder.hpp>
 #include <occa/utils/env.hpp>
-
-// Unfortunately we need to expose this in include
-#include <occa/internal/utils/string.hpp>
 
 namespace occa {
   namespace linalg {

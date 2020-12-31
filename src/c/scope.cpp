@@ -27,7 +27,7 @@ namespace occa {
 
 OCCA_START_EXTERN_C
 
-occaScope OCCA_RFUNC occaCreateScope(occaProperties props) {
+occaScope occaCreateScope(occaProperties props) {
   occa::scope *scope;
   if (occa::c::isDefault(props)) {
     scope = new occa::scope();
@@ -37,15 +37,15 @@ occaScope OCCA_RFUNC occaCreateScope(occaProperties props) {
   return occa::c::newOccaType(*scope);
 }
 
-void OCCA_RFUNC occaScopeAdd(occaScope scope,
-                             const char *name,
-                             occaType value) {
+void occaScopeAdd(occaScope scope,
+                  const char *name,
+                  occaType value) {
   occa::addToScope(scope, name, value, false);
 }
 
-void OCCA_RFUNC occaScopeAddConst(occaScope scope,
-                                  const char *name,
-                                  occaType value) {
+void occaScopeAddConst(occaScope scope,
+                       const char *name,
+                       occaType value) {
   occa::addToScope(scope, name, value, true);
 }
 
