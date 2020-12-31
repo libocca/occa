@@ -1,6 +1,0 @@
-add_cpp_test(lang-parser-errors errors.cpp)
-add_cpp_test(lang-parser-peek peek.cpp)
-add_cpp_test(lang-parser-scope scope.cpp)
-add_cpp_test(lang-parser-statementLoading statementLoading.cpp)
-add_cpp_test(lang-parser-typeLoading typeLoading.cpp)
-add_cpp_test(lang-parser-typeMethods typeMethods.cpp)

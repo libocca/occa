@@ -1,8 +1,0 @@
-add_cpp_test(c-base base.cpp)
-add_cpp_test(c-device device.cpp)
-add_cpp_test(c-dtype dtype.cpp)
-add_cpp_test(c-json json.cpp)
-add_cpp_test(c-kernel kernel.cpp)
-add_cpp_test(c-memory memory.cpp)
-add_cpp_test(c-properties properties.cpp)
-add_cpp_test(c-types types.cpp)
