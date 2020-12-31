@@ -117,7 +117,7 @@ namespace occa {
 
     //---[ Stream ]---------------------
     modeStream_t* device::createStream(const occa::properties &props) {
-      hipStream_t hipStream;
+      hipStream_t hipStream = NULL;
 
       OCCA_HIP_ERROR("Device: Setting Device",
                      hipSetDevice(deviceID));
@@ -128,7 +128,7 @@ namespace occa {
     }
 
     occa::streamTag device::tagStream() {
-      hipEvent_t hipEvent;
+      hipEvent_t hipEvent = NULL;
 
       OCCA_HIP_ERROR("Device: Setting Device",
                      hipSetDevice(deviceID));
@@ -159,7 +159,7 @@ namespace occa {
 
       waitFor(endTag);
 
-      float msTimeTaken;
+      float msTimeTaken = 0;
       OCCA_HIP_ERROR("Device: Timing Between Tags",
                      hipEventElapsedTime(&msTimeTaken,
                                          hipStartTag->hipEvent,
@@ -203,8 +203,8 @@ namespace occa {
       }
 
       // Regular HIP Kernel
-      hipModule_t hipModule;
-      hipFunction_t hipFunction;
+      hipModule_t hipModule = NULL;
+      hipFunction_t hipFunction = NULL;
       hipError_t error;
 
       error = hipModuleLoad(&hipModule, binaryFilename.c_str());
@@ -322,7 +322,7 @@ namespace occa {
       const std::string sourceFilename = hashDir + kc::sourceFile;
       const std::string binaryFilename = hashDir + kc::binaryFile;
 
-      hipModule_t hipModule;
+      hipModule_t hipModule = NULL;
       hipError_t error;
 
       error = hipModuleLoad(&hipModule, binaryFilename.c_str());
@@ -353,7 +353,7 @@ namespace occa {
       for (int i = 0; i < launchedKernelsCount; ++i) {
         lang::kernelMetadata_t &metadata = launchedKernelsMetadata[i];
 
-        hipFunction_t hipFunction;
+        hipFunction_t hipFunction = NULL;
         error = hipModuleGetFunction(&hipFunction,
                                      hipModule,
                                      metadata.name.c_str());
@@ -380,8 +380,8 @@ namespace occa {
                                                 const std::string &kernelName,
                                                 const occa::properties &kernelProps) {
 
-      hipModule_t hipModule;
-      hipFunction_t hipFunction;
+      hipModule_t hipModule = NULL;
+      hipFunction_t hipFunction = NULL;
 
       OCCA_HIP_ERROR("Kernel [" + kernelName + "]: Loading Module",
                      hipModuleLoad(&hipModule, filename.c_str()));

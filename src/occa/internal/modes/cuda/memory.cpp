@@ -8,7 +8,7 @@ namespace occa {
                    udim_t size_,
                    const occa::properties &properties_) :
         occa::modeMemory_t(modeDevice_, size_, properties_),
-        cuPtr((CUdeviceptr&) ptr),
+        cuPtr(reinterpret_cast<CUdeviceptr&>(ptr)),
         mappedPtr(NULL),
         isUnified(false) {}
 
