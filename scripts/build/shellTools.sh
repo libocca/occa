@@ -457,46 +457,6 @@ function fCompilerSupportsMPI {
 #=======================================
 
 
-#---[ System Information ]--------------
-function getFieldFrom {
-    local command_="$1"
-    shift;
-    local field="$@"
-
-    if hash grep 2> /dev/null; then
-        echo $(LC_ALL=C; $command_ | \
-                   grep -i -m 1 "^$field" | \
-                   sed "s/.*:[ \t]*\(.*\)/\1/g")
-        return
-    fi
-
-    echo ""
-}
-
-function getLSCPUField {
-    local field="$@"
-
-    if hash lscpu 2> /dev/null; then
-        getFieldFrom "lscpu" "$field"
-        return
-    fi
-
-    echo ""
-}
-
-function getCPUINFOField {
-    local field="$@"
-
-    if hash cat 2> /dev/null; then
-        getFieldFrom "cat /proc/cpuinfo" "$field"
-        return
-    fi
-
-    echo ""
-}
-#=======================================
-
-
 #---[ Commands ]------------------------
 function installOcca {
     if [ -z "${PREFIX}" ]; then
