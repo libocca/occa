@@ -222,23 +222,6 @@ namespace occa {
       return occa::device(&dev);
     }
 
-    occa::memory wrapMemory(occa::device device,
-                            void *ptr,
-                            const udim_t bytes,
-                            const occa::properties &props) {
-
-      cuda::memory &mem = *(new cuda::memory(device.getModeDevice(),
-                                             bytes,
-                                             props));
-      mem.dontUseRefs();
-
-      mem.ptr = (char*) ptr;
-      mem.mappedPtr = NULL;
-      mem.isUnified = props.get("unified", false);
-
-      return occa::memory(&mem);
-    }
-
     void warn(CUresult errorCode,
               const std::string &filename,
               const std::string &function,

@@ -174,6 +174,16 @@ namespace occa {
     template <class TM = void>
     TM* umalloc(const dim_t entries,
                 const occa::properties &props);
+
+    template <class TM = void>
+    occa::memory wrapMemory(const TM *ptr,
+                            const dim_t entries,
+                            const occa::properties &props = occa::properties());
+
+    occa::memory wrapMemory(const void *ptr,
+                            const dim_t entries,
+                            const dtype_t &dtype,
+                            const occa::properties &props = occa::properties());
     //  |===============================
   };
 

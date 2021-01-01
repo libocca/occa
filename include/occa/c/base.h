@@ -73,6 +73,15 @@ void* occaTypedUMalloc(const occaUDim_t entries,
                        const occaDtype type,
                        const void *src,
                        occaProperties props);
+
+occaMemory occaWrapMemory(const void *ptr,
+                          const occaUDim_t entries,
+                          occaProperties props);
+
+occaMemory occaTypedWrapMemory(const void *ptr,
+                               const occaUDim_t entries,
+                               const occaDtype dtype,
+                               occaProperties props);
 //======================================
 
 OCCA_END_EXTERN_C

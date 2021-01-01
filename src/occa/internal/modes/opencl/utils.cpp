@@ -478,21 +478,6 @@ namespace occa {
       return occa::device(&dev);
     }
 
-    occa::memory wrapMemory(occa::device device,
-                            cl_mem clMem,
-                            const udim_t bytes,
-                            const occa::properties &props) {
-
-      opencl::memory &mem = *(new opencl::memory(device.getModeDevice(),
-                                                 bytes,
-                                                 props));
-      mem.dontUseRefs();
-
-      mem.clMem = clMem;
-
-      return occa::memory(&mem);
-    }
-
     void warn(cl_int errorCode,
               const std::string &filename,
               const std::string &function,

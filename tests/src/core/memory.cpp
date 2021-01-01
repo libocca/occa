@@ -2,12 +2,10 @@
 #include <occa/internal/utils/testing.hpp>
 
 void testMalloc();
-void testCpuWrapMemory();
 void testSlice();
 
 int main(const int argc, const char **argv) {
   testMalloc();
-  testCpuWrapMemory();
   testSlice();
 
   return 0;
@@ -41,20 +39,6 @@ void testMalloc() {
   ASSERT_EQ(mem.ptr<int>(), hostPtr);
 
   mem = occa::malloc(bytes, hostPtr, "use_host_pointer: false");
-  ASSERT_EQ(mem.ptr<int>()[0], value);
-  ASSERT_NEQ(mem.ptr<int>(), hostPtr);
-}
-
-void testCpuWrapMemory() {
-  const occa::udim_t bytes = 1 * sizeof(int);
-  int value = 4660;
-  int *hostPtr = &value;
-
-  occa::memory mem = occa::cpu::wrapMemory(hostPtr, bytes);
-  ASSERT_EQ(mem.ptr<int>()[0], value);
-  ASSERT_EQ(mem.ptr<int>(), hostPtr);
-
-  mem = occa::cpu::wrapMemory(hostPtr, bytes, "use_host_pointer: false");
   ASSERT_EQ(mem.ptr<int>()[0], value);
   ASSERT_NEQ(mem.ptr<int>(), hostPtr);
 }

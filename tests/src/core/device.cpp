@@ -2,9 +2,11 @@
 #include <occa/internal/utils/testing.hpp>
 
 void testProperties();
+void testWrapMemory();
 
 int main(const int argc, const char **argv) {
   testProperties();
+  testWrapMemory();
 
   return 0;
 }
@@ -96,4 +98,27 @@ void testProperties() {
     1,
     (int) device.kernelProperties()["one"]
   );
+}
+
+void testWrapMemory() {
+  occa::device device("mode: 'Serial'");
+
+  const occa::udim_t bytes = 1 * sizeof(int);
+  int value = 4660;
+  int *hostPtr = &value;
+
+  occa::memory mem = device.wrapMemory((void*) hostPtr, bytes);
+  ASSERT_EQ(mem.ptr<int>()[0], value);
+  ASSERT_EQ(mem.ptr<int>(), hostPtr);
+  ASSERT_EQ((int) mem.length<int>(), 1);
+
+  mem = device.wrapMemory(hostPtr, 1);
+  ASSERT_EQ(mem.ptr<int>()[0], value);
+  ASSERT_EQ(mem.ptr<int>(), hostPtr);
+  ASSERT_EQ((int) mem.length<int>(), 1);
+
+  mem = device.wrapMemory(hostPtr, 1, "use_host_pointer: false");
+  ASSERT_EQ(mem.ptr<int>()[0], value);
+  ASSERT_EQ(mem.ptr<int>(), hostPtr);
+  ASSERT_EQ((int) mem.length<int>(), 1);
 }

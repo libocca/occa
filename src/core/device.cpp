@@ -442,8 +442,7 @@ namespace occa {
     }
 
     const dim_t bytes = entries * dtype.bytes();
-    OCCA_ERROR("Trying to allocate "
-               << "negative bytes (" << bytes << ")",
+    OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
                bytes >= 0);
 
     occa::properties memProps = memoryProperties(props);
@@ -538,6 +537,33 @@ namespace occa {
                         const dtype_t &dtype,
                         const occa::properties &props) {
     return umalloc(entries, dtype, NULL, props);
+  }
+
+  template <>
+  occa::memory device::wrapMemory<void>(const void *ptr,
+                                        const dim_t entries,
+                                        const occa::properties &props) {
+    return wrapMemory(ptr, entries, dtype::byte, props);
+  }
+
+  occa::memory device::wrapMemory(const void *ptr,
+                                  const dim_t entries,
+                                  const dtype_t &dtype,
+                                  const occa::properties &props) {
+    assertInitialized();
+
+    const dim_t bytes = entries * dtype.bytes();
+    OCCA_ERROR("Trying to wrap a pointer with negative bytes (" << bytes << ")",
+               bytes >= 0);
+
+    occa::properties memProps = memoryProperties(props);
+
+    memory mem(modeDevice->wrapMemory(ptr, bytes, memProps));
+
+    mem.setDtype(dtype);
+    mem.dontUseRefs();
+
+    return mem;
   }
   //  |=================================
 

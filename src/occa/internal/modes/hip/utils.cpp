@@ -191,22 +191,6 @@ namespace occa {
       return occa::device(&dev);
     }
 
-    occa::memory wrapMemory(occa::device device,
-                            void *ptr,
-                            const udim_t bytes,
-                            const occa::properties &props) {
-
-      hip::memory &mem = *(new hip::memory(device.getModeDevice(),
-                                           bytes,
-                                           props));
-      mem.dontUseRefs();
-
-      mem.ptr = (char*) ptr;
-      mem.mappedPtr = NULL;
-
-      return occa::memory(&mem);
-    }
-
     void warn(hipError_t errorCode,
               const std::string &filename,
               const std::string &function,

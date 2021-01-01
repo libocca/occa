@@ -262,6 +262,18 @@ namespace occa {
       return mem;
     }
 
+    modeMemory_t* device::wrapMemory(const void *ptr,
+                                     const udim_t bytes,
+                                     const occa::properties &props) {
+      memory *mem = new memory(this,
+                               bytes,
+                               props);
+
+      mem->metalBuffer = api::metal::buffer_t(const_cast<void*>(ptr));
+
+      return mem;
+    }
+
     udim_t device::memorySize() const {
       return metalDevice.getMemorySize();
     }

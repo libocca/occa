@@ -1,5 +1,6 @@
 #include <occa/internal/c/types.hpp>
 #include <occa/c/base.h>
+#include <occa/c/dtype.h>
 #include <occa/internal/utils/env.hpp>
 
 OCCA_START_EXTERN_C
@@ -143,18 +144,10 @@ occaKernel occaBuildKernelFromBinary(const char *filename,
 occaMemory occaMalloc(const occaUDim_t bytes,
                       const void *src,
                       occaProperties props) {
-  occa::memory memory;
-
-  if (occa::c::isDefault(props)) {
-    memory = occa::malloc(bytes, src);
-  } else {
-    memory = occa::malloc(bytes,
-                          src,
-                          occa::c::properties(props));
-  }
-  memory.dontUseRefs();
-
-  return occa::c::newOccaType(memory);
+  return occaTypedMalloc(bytes,
+                         occaDtypeByte,
+                         src,
+                         props);
 }
 
 occaMemory occaTypedMalloc(const occaUDim_t entries,
@@ -180,16 +173,10 @@ occaMemory occaTypedMalloc(const occaUDim_t entries,
 void* occaUMalloc(const occaUDim_t bytes,
                   const void *src,
                   occaProperties props) {
-
-  if (occa::c::isDefault(props)) {
-    return occa::umalloc(bytes,
-                         occa::dtype::byte,
-                         src);
-  }
-  return occa::umalloc(bytes,
-                       occa::dtype::byte,
-                       src,
-                       occa::c::properties(props));
+  return occaTypedUMalloc(bytes,
+                          occaDtypeByte,
+                          src,
+                          props);
 }
 
 void* occaTypedUMalloc(const occaUDim_t entries,
@@ -205,6 +192,32 @@ void* occaTypedUMalloc(const occaUDim_t entries,
                        dtype_,
                        src,
                        occa::c::properties(props));
+}
+
+occaMemory occaWrapMemory(const void *ptr,
+                          const occaUDim_t bytes,
+                          occaProperties props) {
+  return occaTypedWrapMemory(ptr,
+                             bytes,
+                             occaDtypeByte,
+                             props);
+}
+
+occaMemory occaTypedWrapMemory(const void *ptr,
+                               const occaUDim_t entries,
+                               const occaDtype dtype,
+                               occaProperties props) {
+  const occa::dtype_t &dtype_ = occa::c::dtype(dtype);
+
+  occa::memory memory;
+  if (occa::c::isDefault(props)) {
+    memory = occa::wrapMemory(ptr, entries, dtype_);
+  } else {
+    memory = occa::wrapMemory(ptr, entries, dtype_, occa::c::properties(props));
+  }
+  memory.dontUseRefs();
+
+  return occa::c::newOccaType(memory);
 }
 //======================================
 

@@ -122,11 +122,20 @@ namespace occa {
   void memcpy(memory dest, memory src,
               const occa::properties &props);
 
-  namespace cpu {
-    occa::memory wrapMemory(void *ptr,
-                            const udim_t bytes,
-                            const occa::properties &props = occa::properties());
-  }
+  occa::memory wrapMemory(const void *ptr,
+                          const dim_t entries,
+                          const dtype_t &dtype,
+                          const occa::properties &props = occa::properties());
+
+  template <class TM = void>
+  occa::memory wrapMemory(const TM *ptr,
+                          const dim_t entries,
+                          const occa::properties &props);
+
+  template <>
+  occa::memory wrapMemory<void>(const void *ptr,
+                                const dim_t entries,
+                                const occa::properties &props);
   //====================================
 
   //---[ Free Functions ]---------------

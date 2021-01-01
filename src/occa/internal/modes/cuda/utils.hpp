@@ -78,11 +78,6 @@ namespace occa {
                             CUcontext context,
                             const occa::properties &props = occa::properties());
 
-    occa::memory wrapMemory(occa::device device,
-                            void *ptr,
-                            const udim_t bytes,
-                            const occa::properties &props = occa::properties());
-
     void warn(CUresult errorCode,
               const std::string &filename,
               const std::string &function,

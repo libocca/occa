@@ -38,4 +38,16 @@ namespace occa {
                       const occa::properties &props) {
     return (TM*) umalloc(entries, dtype::get<TM>(), props);
   }
+
+  template <>
+  occa::memory device::wrapMemory<void>(const void *ptr,
+                                        const dim_t entries,
+                                        const occa::properties &props);
+
+  template <class TM>
+  occa::memory device::wrapMemory(const TM *ptr,
+                                  const dim_t entries,
+                                  const occa::properties &props) {
+    return wrapMemory(ptr, entries, occa::dtype::get<TM>(), props);
+  }
 }
