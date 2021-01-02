@@ -32,8 +32,6 @@ namespace occa {
     return *this;
   }
 
-  kernelArgData::~kernelArgData() {}
-
   occa::modeDevice_t* kernelArgData::getModeDevice() const {
     if (!modeMemory) {
       return NULL;
@@ -76,7 +74,6 @@ namespace occa {
 
   //---[ kernelArg ]--------------------
   kernelArg::kernelArg() {}
-  kernelArg::~kernelArg() {}
 
   kernelArg::kernelArg(const kernelArgData &arg) {
     args.push_back(arg);

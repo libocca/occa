@@ -25,7 +25,6 @@ namespace occa {
     kernelArgData(const primitive &value_);
     kernelArgData(const kernelArgData &other);
     kernelArgData& operator = (const kernelArgData &other);
-    ~kernelArgData();
 
     occa::modeDevice_t* getModeDevice() const;
     occa::modeMemory_t* getModeMemory() const;
@@ -45,10 +44,11 @@ namespace occa {
     kernelArgDataVector args;
 
     kernelArg();
-    ~kernelArg();
     kernelArg(const kernelArgData &arg);
     kernelArg(const kernelArg &other);
     kernelArg& operator = (const kernelArg &other);
+
+    inline virtual ~kernelArg() {}
 
     inline virtual void primitiveConstructor(const primitive &value) {
       args.push_back(value);
@@ -138,6 +138,8 @@ namespace occa {
       isConst(true) {
       pointerConstructor(value_, dtype::get<TM>());
     }
+
+    inline virtual ~scopeKernelArg() {}
 
     inline void primitiveConstructor(const primitive &value) {
       dtype = value.dtype();

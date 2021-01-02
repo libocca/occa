@@ -6,6 +6,9 @@
 
 namespace occa {
   class generic {
+   public:
+    inline virtual ~generic() {}
+
    protected:
     virtual void primitiveConstructor(const primitive &value) = 0;
     virtual void pointerConstructor(void *ptr, const dtype_t &dtype_) = 0;
