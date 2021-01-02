@@ -29,7 +29,7 @@ namespace occa {
 
       hipStream_t& getHipStream() const;
 
-      kernelArg makeKernelArg() const;
+      kernelArg toKernelArg() const;
 
       modeMemory_t* addOffset(const dim_t offset);
 

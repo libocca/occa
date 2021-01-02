@@ -11,48 +11,17 @@ namespace occa {
   class modeDevice_t; class device;
   class kernelArgData;
 
-  typedef std::vector<kernelArgData> kArgVector;
+  typedef std::vector<kernelArgData> kernelArgDataVector;
 
   //---[ KernelArg ]--------------------
-  namespace kArgInfo {
-    static const char none       = 0;
-    static const char usePointer = (1 << 0);
-    static const char isNull     = (1 << 1);
-  }
-
-  class nullKernelArg_t {
-   public:
-    inline nullKernelArg_t() {}
-  };
-
-  extern const nullKernelArg_t nullKernelArg;
-
-  union kernelArgData_t {
-    uint8_t  uint8_;
-    uint16_t uint16_;
-    uint32_t uint32_;
-    uint64_t uint64_;
-
-    int8_t  int8_;
-    int16_t int16_;
-    int32_t int32_;
-    int64_t int64_;
-
-    float float_;
-    double double_;
-
-    void* void_;
-  };
-
   class kernelArgData {
   public:
+    primitive value;
+    udim_t ptrSize;
     occa::modeMemory_t *modeMemory;
 
-    kernelArgData_t data;
-    udim_t size;
-    char info;
-
     kernelArgData();
+    kernelArgData(const primitive &value_);
     kernelArgData(const kernelArgData &other);
     kernelArgData& operator = (const kernelArgData &other);
     ~kernelArgData();
@@ -60,24 +29,21 @@ namespace occa {
     occa::modeDevice_t* getModeDevice() const;
     occa::modeMemory_t* getModeMemory() const;
 
+    udim_t size() const;
     void* ptr() const;
-
-    bool isNull() const;
 
     void setupForKernelCall(const bool isConst) const;
   };
 
   class kernelArg {
   public:
-    kArgVector args;
+    kernelArgDataVector args;
 
     kernelArg();
     ~kernelArg();
     kernelArg(const kernelArgData &arg);
     kernelArg(const kernelArg &other);
     kernelArg& operator = (const kernelArg &other);
-
-    kernelArg(const nullKernelArg_t arg);
 
     kernelArg(const uint8_t arg);
     kernelArg(const uint16_t arg);
@@ -92,24 +58,26 @@ namespace occa {
     kernelArg(const float arg);
     kernelArg(const double arg);
 
+    kernelArg(const std::nullptr_t arg);
+
     template <class TM>
     kernelArg(const type2<TM> &arg) {
-      add((void*) const_cast<type2<TM>*>(&arg), sizeof(type2<TM>), false);
+      addPointer((void*) const_cast<type2<TM>*>(&arg), sizeof(type2<TM>), false);
     }
 
     template <class TM>
     kernelArg(const type4<TM> &arg) {
-      add((void*) const_cast<type4<TM>*>(&arg), sizeof(type4<TM>), false);
+      addPointer((void*) const_cast<type4<TM>*>(&arg), sizeof(type4<TM>), false);
     }
 
     template <class TM>
     kernelArg(TM *arg) {
-      add((void*) arg, true, false);
+      addPointer((void*) arg, true, false);
     }
 
     template <class TM>
     kernelArg(const TM *arg) {
-      add((void*) const_cast<TM*>(arg), true, false);
+      addPointer((void*) const_cast<TM*>(arg), true, false);
     }
 
     int size() const;
@@ -120,11 +88,13 @@ namespace occa {
 
     void add(const kernelArg &arg);
 
-    void add(void *arg,
-             bool lookAtUva = true, bool argIsUva = false);
+    void addPointer(void *arg,
+                    bool lookAtUva = true, bool argIsUva = false);
 
-    void add(void *arg, size_t bytes,
-             bool lookAtUva = true, bool argIsUva = false);
+    void addPointer(void *arg, size_t bytes,
+                    bool lookAtUva = true, bool argIsUva = false);
+
+    void addMemory(modeMemory_t *arg);
 
     static int argumentCount(const std::vector<kernelArg> &arguments);
   };

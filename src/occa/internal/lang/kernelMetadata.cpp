@@ -29,7 +29,7 @@ namespace occa {
       json j;
       j["const"] = isConst;
       j["ptr"]   = isPtr;
-      j["dtype"] = dtype.toJson();
+      j["dtype"] = dtype::toJson(dtype);
       j["name"]  = name;
       return j;
     }

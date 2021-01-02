@@ -1,6 +1,8 @@
 #include <occa/defines.hpp>
 #include <occa/dtype/builtins.hpp>
 #include <occa/dtype/dtype.hpp>
+#include <occa/dtype/utils.hpp>
+#include <occa/types/json.hpp>
 #include <occa/internal/utils/sys.hpp>
 
 namespace occa {
@@ -296,31 +298,6 @@ namespace occa {
     return true;
   }
 
-  json dtype_t::toJson(const std::string &name) const {
-    if (ref) {
-      return ref->toJson(name);
-    }
-
-    if (tuple_) {
-      return tuple_->toJson(name);
-    } else if (struct_) {
-      return struct_->toJson(name);
-    }
-
-    json j;
-    const dtype_t &dtype = dtype_t::getBuiltin(name_);
-    if (&dtype != &dtype::none) {
-      j["type"] = "builtin";
-      j["name"] = name_;
-    } else {
-      j["type"]  = "custom";
-      j["name"]  = name_;
-      j["bytes"] = bytes_;
-    }
-
-    return j;
-  }
-
   dtype_t dtype_t::tuple(const dtype_t &dtype,
                          const int size,
                          const bool registered_) {
@@ -404,6 +381,30 @@ namespace occa {
     }
 
     return dtype::none;
+  }
+
+  void dtype_t::toJson(json &j, const std::string &name) const {
+    if (ref) {
+      return ref->toJson(j, name);
+    }
+
+    if (tuple_) {
+      return tuple_->toJson(j, name);
+    } else if (struct_) {
+      return struct_->toJson(j, name);
+    }
+
+    j.clear();
+    j.asObject();
+    const dtype_t &dtype = dtype_t::getBuiltin(name_);
+    if (&dtype != &dtype::none) {
+      j["type"] = "builtin";
+      j["name"] = name_;
+    } else {
+      j["type"]  = "custom";
+      j["name"]  = name_;
+      j["bytes"] = bytes_;
+    }
   }
 
   dtype_t dtype_t::fromJson(const std::string &str) {
@@ -492,15 +493,16 @@ namespace occa {
     }
   }
 
-  json dtypeTuple_t::toJson(const std::string &name) const {
-    json j;
+  void dtypeTuple_t::toJson(json &j, const std::string &name) const {
+    j.clear();
+    j.asObject();
+
     j["type"]  = "tuple";
     if (name.size()) {
       j["name"]  = name;
     }
-    j["dtype"] = dtype.toJson();
+    j["dtype"] = dtype::toJson(dtype);
     j["size"]  = size;
-    return j;
   }
 
   dtypeTuple_t dtypeTuple_t::fromJson(const json &j) {
@@ -612,8 +614,10 @@ namespace occa {
     }
   }
 
-  json dtypeStruct_t::toJson(const std::string &name) const {
-    json j;
+  void dtypeStruct_t::toJson(json &j, const std::string &name) const {
+    j.clear();
+    j.asObject();
+
     j["type"] = "struct";
     if (name.size()) {
       j["name"] = name;
@@ -628,12 +632,10 @@ namespace occa {
       const dtype_t &dtype = fieldTypes.find(fieldName)->second;
 
       json fieldJson;
-      fieldJson["dtype"] = dtype.toJson();
+      fieldJson["dtype"] = dtype::toJson(dtype);
       fieldJson["name"] = fieldName;
       fieldsJson += fieldJson;
     }
-
-    return j;
   }
 
   dtypeStruct_t dtypeStruct_t::fromJson(const json &j) {

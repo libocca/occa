@@ -73,20 +73,19 @@ namespace occa {
       int padding = 0;
       for (int i = 0; i < args; ++i) {
         const kernelArgData &arg = arguments[i];
+        const udim_t argSize = arg.size();
 
         size_t bytes;
-        if ((padding + arg.size) <= sizeof(void*)) {
-          bytes = arg.size;
-          padding = sizeof(void*) - padding - arg.size;
+        if ((padding + argSize) <= sizeof(void*)) {
+          bytes = argSize;
+          padding = sizeof(void*) - padding - argSize;
         } else {
           bytes = sizeof(void*);
           dataPtr += padding;
           padding = 0;
         }
 
-        ::memcpy(dataPtr,
-                 &(arg.data.int64_),
-                 bytes);
+        ::memcpy(dataPtr, arg.ptr(), bytes);
         dataPtr += bytes;
       }
 

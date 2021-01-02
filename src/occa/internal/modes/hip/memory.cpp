@@ -33,15 +33,8 @@ namespace occa {
       return ((device*) modeDevice)->getHipStream();
     }
 
-    kernelArg memory::makeKernelArg() const {
-      kernelArgData arg;
-
-      arg.modeMemory = const_cast<memory*>(this);
-      arg.data.void_ = (void*) hipPtr;
-      arg.size       = sizeof(void*);
-      arg.info       = kArgInfo::usePointer;
-
-      return kernelArg(arg);
+    kernelArg memory::toKernelArg() const {
+      return (void*) hipPtr;
     }
 
     modeMemory_t* memory::addOffset(const dim_t offset) {

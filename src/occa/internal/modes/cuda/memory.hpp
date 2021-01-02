@@ -32,7 +32,7 @@ namespace occa {
 
       CUstream& getCuStream() const;
 
-      kernelArg makeKernelArg() const;
+      kernelArg toKernelArg() const;
 
       modeMemory_t* addOffset(const dim_t offset);
 

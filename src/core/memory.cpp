@@ -125,10 +125,7 @@ namespace occa {
   }
 
   memory::operator kernelArg() const {
-    if (modeMemory) {
-        return modeMemory->makeKernelArg();
-    }
-    return nullKernelArg;
+    return kernelArg(modeMemory);
   }
 
   const std::string& memory::mode() const {

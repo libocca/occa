@@ -116,7 +116,7 @@ namespace occa {
         const kernelArgData &arg = arguments[i];
         OCCA_OPENCL_ERROR("Kernel [" + name + "]"
                           << ": Setting Kernel Argument [" << (i + 1) << "]",
-                          clSetKernelArg(clKernel, i, arg.size, arg.ptr()));
+                          clSetKernelArg(clKernel, i, arg.size(), arg.ptr()));
       }
 
       OCCA_OPENCL_ERROR("Kernel [" + name + "]"

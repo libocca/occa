@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 
+#include <occa/dtype/builtins.hpp>
 #include <occa/types/primitive.hpp>
 #include <occa/utils/hash.hpp>
 
@@ -285,6 +286,19 @@ namespace occa {
 
     inline bool isNull() const {
       return (type == null_);
+    }
+
+    inline dtype_t dtype() const {
+      switch (type) {
+        case null_:
+          return dtype::byte;
+        case boolean_:
+          return dtype::bool_;
+        case number_:
+          return value_.number.dtype();
+        default:
+          return dtype::none;
+      }
     }
 
     inline json& asNull() {
@@ -590,7 +604,7 @@ namespace occa {
     std::string toString() const;
 
     friend std::ostream& operator << (std::ostream &out,
-                                    const json &j);
+                                      const json &j);
   };
 
   template <>

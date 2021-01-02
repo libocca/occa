@@ -232,19 +232,19 @@ namespace occa {
 
     std::string str;
     switch (type) {
-    case primitiveType::bool_   : str = (value.bool_ ? "true" : "false");         break;
-    case primitiveType::uint8_  : str = occa::toString((uint64_t) value.uint8_);  break;
-    case primitiveType::uint16_ : str = occa::toString((uint64_t) value.uint16_); break;
-    case primitiveType::uint32_ : str = occa::toString((uint64_t) value.uint32_); break;
-    case primitiveType::uint64_ : str = occa::toString((uint64_t) value.uint64_); break;
-    case primitiveType::int8_   : str = occa::toString((int64_t)  value.int8_);   break;
-    case primitiveType::int16_  : str = occa::toString((int64_t)  value.int16_);  break;
-    case primitiveType::int32_  : str = occa::toString((int64_t)  value.int32_);  break;
-    case primitiveType::int64_  : str = occa::toString((int64_t)  value.int64_);  break;
-    case primitiveType::float_  : str = occa::toString(value.float_);  break;
-    case primitiveType::double_ : str = occa::toString(value.double_); break;
-    default:
-      return "NaN";
+      case primitiveType::bool_   : str = (value.bool_ ? "true" : "false");         break;
+      case primitiveType::uint8_  : str = occa::toString((uint64_t) value.uint8_);  break;
+      case primitiveType::uint16_ : str = occa::toString((uint64_t) value.uint16_); break;
+      case primitiveType::uint32_ : str = occa::toString((uint64_t) value.uint32_); break;
+      case primitiveType::uint64_ : str = occa::toString((uint64_t) value.uint64_); break;
+      case primitiveType::int8_   : str = occa::toString((int64_t)  value.int8_);   break;
+      case primitiveType::int16_  : str = occa::toString((int64_t)  value.int16_);  break;
+      case primitiveType::int32_  : str = occa::toString((int64_t)  value.int32_);  break;
+      case primitiveType::int64_  : str = occa::toString((int64_t)  value.int64_);  break;
+      case primitiveType::float_  : str = occa::toString(value.float_);  break;
+      case primitiveType::double_ : str = occa::toString(value.double_); break;
+      default:
+        return "NaN";
     }
 
     if ((str.find("inf") != std::string::npos) ||
@@ -260,130 +260,130 @@ namespace occa {
   }
 
   //---[ Misc Methods ]-----------------
-  uint64_t primitive::sizeof_() {
+  uint64_t primitive::sizeof_() const {
     switch(type) {
-    case primitiveType::bool_   : return sizeof(bool);
-    case primitiveType::uint8_  : return sizeof(uint8_t);
-    case primitiveType::uint16_ : return sizeof(uint16_t);
-    case primitiveType::uint32_ : return sizeof(uint32_t);
-    case primitiveType::uint64_ : return sizeof(uint64_t);
-    case primitiveType::int8_   : return sizeof(int8_t);
-    case primitiveType::int16_  : return sizeof(int16_t);
-    case primitiveType::int32_  : return sizeof(int32_t);
-    case primitiveType::int64_  : return sizeof(int64_t);
-    case primitiveType::float_  : return sizeof(float);
-    case primitiveType::double_ : return sizeof(double);
-    default: OCCA_FORCE_ERROR("Type not set");
+      case primitiveType::bool_   : return sizeof(bool);
+      case primitiveType::uint8_  : return sizeof(uint8_t);
+      case primitiveType::uint16_ : return sizeof(uint16_t);
+      case primitiveType::uint32_ : return sizeof(uint32_t);
+      case primitiveType::uint64_ : return sizeof(uint64_t);
+      case primitiveType::int8_   : return sizeof(int8_t);
+      case primitiveType::int16_  : return sizeof(int16_t);
+      case primitiveType::int32_  : return sizeof(int32_t);
+      case primitiveType::int64_  : return sizeof(int64_t);
+      case primitiveType::float_  : return sizeof(float);
+      case primitiveType::double_ : return sizeof(double);
+      case primitiveType::ptr     : return sizeof(void*);
+      default: return 0;
     }
-    return 0;
   }
   //====================================
 
   //---[ Unary Operators ]--------------
   primitive primitive::not_(const primitive &p) {
     switch(p.type) {
-    case primitiveType::bool_   : return primitive(!p.value.bool_);
-    case primitiveType::int8_   : return primitive(!p.value.int8_);
-    case primitiveType::uint8_  : return primitive(!p.value.uint8_);
-    case primitiveType::int16_  : return primitive(!p.value.int16_);
-    case primitiveType::uint16_ : return primitive(!p.value.uint16_);
-    case primitiveType::int32_  : return primitive(!p.value.int32_);
-    case primitiveType::uint32_ : return primitive(!p.value.uint32_);
-    case primitiveType::int64_  : return primitive(!p.value.int64_);
-    case primitiveType::uint64_ : return primitive(!p.value.uint64_);
-    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator ! to float type");   break;
-    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator ! to double type");   break;
-    default: ;
+      case primitiveType::bool_   : return primitive(!p.value.bool_);
+      case primitiveType::int8_   : return primitive(!p.value.int8_);
+      case primitiveType::uint8_  : return primitive(!p.value.uint8_);
+      case primitiveType::int16_  : return primitive(!p.value.int16_);
+      case primitiveType::uint16_ : return primitive(!p.value.uint16_);
+      case primitiveType::int32_  : return primitive(!p.value.int32_);
+      case primitiveType::uint32_ : return primitive(!p.value.uint32_);
+      case primitiveType::int64_  : return primitive(!p.value.int64_);
+      case primitiveType::uint64_ : return primitive(!p.value.uint64_);
+      case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator ! to float type");   break;
+      case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator ! to double type");   break;
+      default: ;
     }
     return primitive();
   }
 
   primitive primitive::positive(const primitive &p) {
     switch(p.type) {
-    case primitiveType::bool_   : return primitive(+p.value.bool_);
-    case primitiveType::int8_   : return primitive(+p.value.int8_);
-    case primitiveType::uint8_  : return primitive(+p.value.uint8_);
-    case primitiveType::int16_  : return primitive(+p.value.int16_);
-    case primitiveType::uint16_ : return primitive(+p.value.uint16_);
-    case primitiveType::int32_  : return primitive(+p.value.int32_);
-    case primitiveType::uint32_ : return primitive(+p.value.uint32_);
-    case primitiveType::int64_  : return primitive(+p.value.int64_);
-    case primitiveType::uint64_ : return primitive(+p.value.uint64_);
-    case primitiveType::float_  : return primitive(+p.value.float_);
-    case primitiveType::double_ : return primitive(+p.value.double_);
-    default: ;
+      case primitiveType::bool_   : return primitive(+p.value.bool_);
+      case primitiveType::int8_   : return primitive(+p.value.int8_);
+      case primitiveType::uint8_  : return primitive(+p.value.uint8_);
+      case primitiveType::int16_  : return primitive(+p.value.int16_);
+      case primitiveType::uint16_ : return primitive(+p.value.uint16_);
+      case primitiveType::int32_  : return primitive(+p.value.int32_);
+      case primitiveType::uint32_ : return primitive(+p.value.uint32_);
+      case primitiveType::int64_  : return primitive(+p.value.int64_);
+      case primitiveType::uint64_ : return primitive(+p.value.uint64_);
+      case primitiveType::float_  : return primitive(+p.value.float_);
+      case primitiveType::double_ : return primitive(+p.value.double_);
+      default: ;
     }
     return primitive();
   }
 
   primitive primitive::negative(const primitive &p) {
     switch(p.type) {
-    case primitiveType::bool_   : return primitive(-p.value.bool_);
-    case primitiveType::int8_   : return primitive(-p.value.int8_);
-    case primitiveType::uint8_  : return primitive(-p.value.uint8_);
-    case primitiveType::int16_  : return primitive(-p.value.int16_);
-    case primitiveType::uint16_ : return primitive(-p.value.uint16_);
-    case primitiveType::int32_  : return primitive(-p.value.int32_);
-    case primitiveType::uint32_ : return primitive(-p.value.uint32_);
-    case primitiveType::int64_  : return primitive(-p.value.int64_);
-    case primitiveType::uint64_ : return primitive(-p.value.uint64_);
-    case primitiveType::float_  : return primitive(-p.value.float_);
-    case primitiveType::double_ : return primitive(-p.value.double_);
-    default: ;
+      case primitiveType::bool_   : return primitive(-p.value.bool_);
+      case primitiveType::int8_   : return primitive(-p.value.int8_);
+      case primitiveType::uint8_  : return primitive(-p.value.uint8_);
+      case primitiveType::int16_  : return primitive(-p.value.int16_);
+      case primitiveType::uint16_ : return primitive(-p.value.uint16_);
+      case primitiveType::int32_  : return primitive(-p.value.int32_);
+      case primitiveType::uint32_ : return primitive(-p.value.uint32_);
+      case primitiveType::int64_  : return primitive(-p.value.int64_);
+      case primitiveType::uint64_ : return primitive(-p.value.uint64_);
+      case primitiveType::float_  : return primitive(-p.value.float_);
+      case primitiveType::double_ : return primitive(-p.value.double_);
+      default: ;
     }
     return primitive();
   }
 
   primitive primitive::tilde(const primitive &p) {
     switch(p.type) {
-    case primitiveType::bool_   : return primitive(!p.value.bool_);
-    case primitiveType::int8_   : return primitive(~p.value.int8_);
-    case primitiveType::uint8_  : return primitive(~p.value.uint8_);
-    case primitiveType::int16_  : return primitive(~p.value.int16_);
-    case primitiveType::uint16_ : return primitive(~p.value.uint16_);
-    case primitiveType::int32_  : return primitive(~p.value.int32_);
-    case primitiveType::uint32_ : return primitive(~p.value.uint32_);
-    case primitiveType::int64_  : return primitive(~p.value.int64_);
-    case primitiveType::uint64_ : return primitive(~p.value.uint64_);
-    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator ~ to float type");   break;
-    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator ~ to double type");  break;
-    default: ;
+      case primitiveType::bool_   : return primitive(!p.value.bool_);
+      case primitiveType::int8_   : return primitive(~p.value.int8_);
+      case primitiveType::uint8_  : return primitive(~p.value.uint8_);
+      case primitiveType::int16_  : return primitive(~p.value.int16_);
+      case primitiveType::uint16_ : return primitive(~p.value.uint16_);
+      case primitiveType::int32_  : return primitive(~p.value.int32_);
+      case primitiveType::uint32_ : return primitive(~p.value.uint32_);
+      case primitiveType::int64_  : return primitive(~p.value.int64_);
+      case primitiveType::uint64_ : return primitive(~p.value.uint64_);
+      case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator ~ to float type");   break;
+      case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator ~ to double type");  break;
+      default: ;
     }
     return primitive();
   }
 
   primitive& primitive::leftIncrement(primitive &p) {
     switch(p.type) {
-    case primitiveType::bool_   : OCCA_FORCE_ERROR("Cannot apply operator ++ to bool type"); break;
-    case primitiveType::int8_   : ++p.value.int8_;    return p;
-    case primitiveType::uint8_  : ++p.value.uint8_;   return p;
-    case primitiveType::int16_  : ++p.value.int16_;   return p;
-    case primitiveType::uint16_ : ++p.value.uint16_;  return p;
-    case primitiveType::int32_  : ++p.value.int32_;   return p;
-    case primitiveType::uint32_ : ++p.value.uint32_;  return p;
-    case primitiveType::int64_  : ++p.value.int64_;   return p;
-    case primitiveType::uint64_ : ++p.value.uint64_;  return p;
-    case primitiveType::float_  : ++p.value.float_;   return p;
-    case primitiveType::double_ : ++p.value.double_;  return p;
-    default: ;
+      case primitiveType::bool_   : OCCA_FORCE_ERROR("Cannot apply operator ++ to bool type"); break;
+      case primitiveType::int8_   : ++p.value.int8_;    return p;
+      case primitiveType::uint8_  : ++p.value.uint8_;   return p;
+      case primitiveType::int16_  : ++p.value.int16_;   return p;
+      case primitiveType::uint16_ : ++p.value.uint16_;  return p;
+      case primitiveType::int32_  : ++p.value.int32_;   return p;
+      case primitiveType::uint32_ : ++p.value.uint32_;  return p;
+      case primitiveType::int64_  : ++p.value.int64_;   return p;
+      case primitiveType::uint64_ : ++p.value.uint64_;  return p;
+      case primitiveType::float_  : ++p.value.float_;   return p;
+      case primitiveType::double_ : ++p.value.double_;  return p;
+      default: ;
     }
     return p;
   }
 
   primitive& primitive::leftDecrement(primitive &p) {
     switch(p.type) {
-    case primitiveType::bool_   : OCCA_FORCE_ERROR("Cannot apply operator -- to bool type"); break;
-    case primitiveType::int8_   : --p.value.int8_;    return p;
-    case primitiveType::uint8_  : --p.value.uint8_;   return p;
-    case primitiveType::int16_  : --p.value.int16_;   return p;
-    case primitiveType::uint16_ : --p.value.uint16_;  return p;
-    case primitiveType::int32_  : --p.value.int32_;   return p;
-    case primitiveType::uint32_ : --p.value.uint32_;  return p;
-    case primitiveType::int64_  : --p.value.int64_;   return p;
-    case primitiveType::uint64_ : --p.value.uint64_;  return p;
-    case primitiveType::float_  : --p.value.float_;   return p;
-    case primitiveType::double_ : --p.value.double_;  return p;
-    default: ;
+      case primitiveType::bool_   : OCCA_FORCE_ERROR("Cannot apply operator -- to bool type"); break;
+      case primitiveType::int8_   : --p.value.int8_;    return p;
+      case primitiveType::uint8_  : --p.value.uint8_;   return p;
+      case primitiveType::int16_  : --p.value.int16_;   return p;
+      case primitiveType::uint16_ : --p.value.uint16_;  return p;
+      case primitiveType::int32_  : --p.value.int32_;   return p;
+      case primitiveType::uint32_ : --p.value.uint32_;  return p;
+      case primitiveType::int64_  : --p.value.int64_;   return p;
+      case primitiveType::uint64_ : --p.value.uint64_;  return p;
+      case primitiveType::float_  : --p.value.float_;   return p;
+      case primitiveType::double_ : --p.value.double_;  return p;
+      default: ;
     }
     return p;
   }
@@ -391,18 +391,18 @@ namespace occa {
   primitive primitive::rightIncrement(primitive &p) {
     primitive oldP = p;
     switch(p.type) {
-    case primitiveType::bool_   : OCCA_FORCE_ERROR("Cannot apply operator ++ to bool type"); break;
-    case primitiveType::int8_   : p.value.int8_++;    return oldP;
-    case primitiveType::uint8_  : p.value.uint8_++;   return oldP;
-    case primitiveType::int16_  : p.value.int16_++;   return oldP;
-    case primitiveType::uint16_ : p.value.uint16_++;  return oldP;
-    case primitiveType::int32_  : p.value.int32_++;   return oldP;
-    case primitiveType::uint32_ : p.value.uint32_++;  return oldP;
-    case primitiveType::int64_  : p.value.int64_++;   return oldP;
-    case primitiveType::uint64_ : p.value.uint64_++;  return oldP;
-    case primitiveType::float_  : p.value.float_++;   return oldP;
-    case primitiveType::double_ : p.value.double_++;  return oldP;
-    default: ;
+      case primitiveType::bool_   : OCCA_FORCE_ERROR("Cannot apply operator ++ to bool type"); break;
+      case primitiveType::int8_   : p.value.int8_++;    return oldP;
+      case primitiveType::uint8_  : p.value.uint8_++;   return oldP;
+      case primitiveType::int16_  : p.value.int16_++;   return oldP;
+      case primitiveType::uint16_ : p.value.uint16_++;  return oldP;
+      case primitiveType::int32_  : p.value.int32_++;   return oldP;
+      case primitiveType::uint32_ : p.value.uint32_++;  return oldP;
+      case primitiveType::int64_  : p.value.int64_++;   return oldP;
+      case primitiveType::uint64_ : p.value.uint64_++;  return oldP;
+      case primitiveType::float_  : p.value.float_++;   return oldP;
+      case primitiveType::double_ : p.value.double_++;  return oldP;
+      default: ;
     }
     return oldP;
   }
@@ -410,18 +410,18 @@ namespace occa {
   primitive primitive::rightDecrement(primitive &p) {
     primitive oldP = p;
     switch(p.type) {
-    case primitiveType::bool_   : OCCA_FORCE_ERROR("Cannot apply operator -- to bool type"); break;
-    case primitiveType::int8_   : p.value.int8_--;    return oldP;
-    case primitiveType::uint8_  : p.value.uint8_--;   return oldP;
-    case primitiveType::int16_  : p.value.int16_--;   return oldP;
-    case primitiveType::uint16_ : p.value.uint16_--;  return oldP;
-    case primitiveType::int32_  : p.value.int32_--;   return oldP;
-    case primitiveType::uint32_ : p.value.uint32_--;  return oldP;
-    case primitiveType::int64_  : p.value.int64_--;   return oldP;
-    case primitiveType::uint64_ : p.value.uint64_--;  return oldP;
-    case primitiveType::float_  : p.value.float_--;   return oldP;
-    case primitiveType::double_ : p.value.double_--;  return oldP;
-    default: ;
+      case primitiveType::bool_   : OCCA_FORCE_ERROR("Cannot apply operator -- to bool type"); break;
+      case primitiveType::int8_   : p.value.int8_--;    return oldP;
+      case primitiveType::uint8_  : p.value.uint8_--;   return oldP;
+      case primitiveType::int16_  : p.value.int16_--;   return oldP;
+      case primitiveType::uint16_ : p.value.uint16_--;  return oldP;
+      case primitiveType::int32_  : p.value.int32_--;   return oldP;
+      case primitiveType::uint32_ : p.value.uint32_--;  return oldP;
+      case primitiveType::int64_  : p.value.int64_--;   return oldP;
+      case primitiveType::uint64_ : p.value.uint64_--;  return oldP;
+      case primitiveType::float_  : p.value.float_--;   return oldP;
+      case primitiveType::double_ : p.value.double_--;  return oldP;
+      default: ;
     }
     return oldP;
   }
@@ -432,18 +432,18 @@ namespace occa {
   primitive primitive::lessThan(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     < b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   < b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  < b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  < b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() < b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  < b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() < b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  < b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() < b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(a.to<float>()    < b.to<float>());
-    case primitiveType::double_ : return primitive(a.to<double>()   < b.to<double>());
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     < b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   < b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  < b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  < b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() < b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  < b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() < b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  < b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() < b.to<uint64_t>());
+      case primitiveType::float_  : return primitive(a.to<float>()    < b.to<float>());
+      case primitiveType::double_ : return primitive(a.to<double>()   < b.to<double>());
+      default: ;
     }
     return primitive();
   }
@@ -451,18 +451,18 @@ namespace occa {
   primitive primitive::lessThanEq(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     <= b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   <= b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  <= b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  <= b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() <= b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  <= b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() <= b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  <= b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() <= b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(a.to<float>()    <= b.to<float>());
-    case primitiveType::double_ : return primitive(a.to<double>()   <= b.to<double>());
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     <= b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   <= b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  <= b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  <= b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() <= b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  <= b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() <= b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  <= b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() <= b.to<uint64_t>());
+      case primitiveType::float_  : return primitive(a.to<float>()    <= b.to<float>());
+      case primitiveType::double_ : return primitive(a.to<double>()   <= b.to<double>());
+      default: ;
     }
     return primitive();
   }
@@ -470,18 +470,18 @@ namespace occa {
   primitive primitive::equal(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     == b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   == b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  == b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  == b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() == b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  == b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() == b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  == b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() == b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(areBitwiseEqual(a.value.float_, b.value.float_));
-    case primitiveType::double_ : return primitive(areBitwiseEqual(a.value.double_, b.value.double_));
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     == b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   == b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  == b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  == b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() == b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  == b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() == b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  == b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() == b.to<uint64_t>());
+      case primitiveType::float_  : return primitive(areBitwiseEqual(a.value.float_, b.value.float_));
+      case primitiveType::double_ : return primitive(areBitwiseEqual(a.value.double_, b.value.double_));
+      default: ;
     }
     return primitive();
   }
@@ -496,18 +496,18 @@ namespace occa {
   primitive primitive::notEqual(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     != b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   != b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  != b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  != b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() != b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  != b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() != b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  != b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() != b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(!areBitwiseEqual(a.value.float_, b.value.float_));
-    case primitiveType::double_ : return primitive(!areBitwiseEqual(a.value.double_, b.value.double_));
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     != b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   != b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  != b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  != b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() != b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  != b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() != b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  != b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() != b.to<uint64_t>());
+      case primitiveType::float_  : return primitive(!areBitwiseEqual(a.value.float_, b.value.float_));
+      case primitiveType::double_ : return primitive(!areBitwiseEqual(a.value.double_, b.value.double_));
+      default: ;
     }
     return primitive();
   }
@@ -515,18 +515,18 @@ namespace occa {
   primitive primitive::greaterThanEq(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     >= b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   >= b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  >= b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  >= b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() >= b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  >= b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() >= b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  >= b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() >= b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(a.to<float>()    >= b.to<float>());
-    case primitiveType::double_ : return primitive(a.to<double>()   >= b.to<double>());
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     >= b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   >= b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  >= b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  >= b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() >= b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  >= b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() >= b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  >= b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() >= b.to<uint64_t>());
+      case primitiveType::float_  : return primitive(a.to<float>()    >= b.to<float>());
+      case primitiveType::double_ : return primitive(a.to<double>()   >= b.to<double>());
+      default: ;
     }
     return primitive();
   }
@@ -534,18 +534,18 @@ namespace occa {
   primitive primitive::greaterThan(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     > b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   > b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  > b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  > b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() > b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  > b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() > b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  > b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() > b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(a.to<float>()    > b.to<float>());
-    case primitiveType::double_ : return primitive(a.to<double>()   > b.to<double>());
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     > b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   > b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  > b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  > b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() > b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  > b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() > b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  > b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() > b.to<uint64_t>());
+      case primitiveType::float_  : return primitive(a.to<float>()    > b.to<float>());
+      case primitiveType::double_ : return primitive(a.to<double>()   > b.to<double>());
+      default: ;
     }
     return primitive();
   }
@@ -553,18 +553,18 @@ namespace occa {
   primitive primitive::and_(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     && b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   && b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  && b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  && b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() && b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  && b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() && b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  && b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() && b.to<uint64_t>());
-    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator && to float type");   break;
-    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator && to double type");   break;
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     && b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   && b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  && b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  && b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() && b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  && b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() && b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  && b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() && b.to<uint64_t>());
+      case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator && to float type");   break;
+      case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator && to double type");   break;
+      default: ;
     }
     return primitive();
   }
@@ -572,18 +572,18 @@ namespace occa {
   primitive primitive::or_(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     || b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   || b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  || b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  || b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() || b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  || b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() || b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  || b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() || b.to<uint64_t>());
-    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator || to float type");   break;
-    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator || to double type");   break;
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     || b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   || b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  || b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  || b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() || b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  || b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() || b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  || b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() || b.to<uint64_t>());
+      case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator || to float type");   break;
+      case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator || to double type");   break;
+      default: ;
     }
     return primitive();
   }
@@ -594,18 +594,18 @@ namespace occa {
   primitive primitive::mult(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     * b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   * b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  * b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  * b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() * b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  * b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() * b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  * b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() * b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(a.to<float>()    * b.to<float>());
-    case primitiveType::double_ : return primitive(a.to<double>()   * b.to<double>());
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     * b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   * b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  * b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  * b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() * b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  * b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() * b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  * b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() * b.to<uint64_t>());
+      case primitiveType::float_  : return primitive(a.to<float>()    * b.to<float>());
+      case primitiveType::double_ : return primitive(a.to<double>()   * b.to<double>());
+      default: ;
     }
     return primitive();
   }
@@ -613,18 +613,18 @@ namespace occa {
   primitive primitive::add(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     + b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   + b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  + b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  + b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() + b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  + b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() + b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  + b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() + b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(a.to<float>()    + b.to<float>());
-    case primitiveType::double_ : return primitive(a.to<double>()   + b.to<double>());
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     + b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   + b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  + b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  + b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() + b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  + b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() + b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  + b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() + b.to<uint64_t>());
+      case primitiveType::float_  : return primitive(a.to<float>()    + b.to<float>());
+      case primitiveType::double_ : return primitive(a.to<double>()   + b.to<double>());
+      default: ;
     }
     return primitive();
   }
@@ -632,18 +632,18 @@ namespace occa {
   primitive primitive::sub(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     - b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   - b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  - b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  - b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() - b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  - b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() - b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  - b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() - b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(a.to<float>()    - b.to<float>());
-    case primitiveType::double_ : return primitive(a.to<double>()   - b.to<double>());
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     - b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   - b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  - b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  - b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() - b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  - b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() - b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  - b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() - b.to<uint64_t>());
+      case primitiveType::float_  : return primitive(a.to<float>()    - b.to<float>());
+      case primitiveType::double_ : return primitive(a.to<double>()   - b.to<double>());
+      default: ;
     }
     return primitive();
   }
@@ -651,18 +651,18 @@ namespace occa {
   primitive primitive::div(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     / b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   / b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  / b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  / b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() / b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  / b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() / b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  / b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() / b.to<uint64_t>());
-    case primitiveType::float_  : return primitive(a.to<float>()    / b.to<float>());
-    case primitiveType::double_ : return primitive(a.to<double>()   / b.to<double>());
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     / b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   / b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  / b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  / b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() / b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  / b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() / b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  / b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() / b.to<uint64_t>());
+      case primitiveType::float_  : return primitive(a.to<float>()    / b.to<float>());
+      case primitiveType::double_ : return primitive(a.to<double>()   / b.to<double>());
+      default: ;
     }
     return primitive();
   }
@@ -670,18 +670,18 @@ namespace occa {
   primitive primitive::mod(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     % b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   % b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  % b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  % b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() % b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  % b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() % b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  % b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() % b.to<uint64_t>());
-    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator % to float type"); break;
-    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator % to double type"); break;
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     % b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   % b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  % b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  % b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() % b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  % b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() % b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  % b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() % b.to<uint64_t>());
+      case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator % to float type"); break;
+      case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator % to double type"); break;
+      default: ;
     }
     return primitive();
   }
@@ -689,18 +689,18 @@ namespace occa {
   primitive primitive::bitAnd(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     & b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   & b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  & b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  & b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() & b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  & b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() & b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  & b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() & b.to<uint64_t>());
-    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator & to float type");   break;
-    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator & to double type");  break;
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     & b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   & b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  & b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  & b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() & b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  & b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() & b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  & b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() & b.to<uint64_t>());
+      case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator & to float type");   break;
+      case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator & to double type");  break;
+      default: ;
     }
     return primitive();
   }
@@ -708,18 +708,18 @@ namespace occa {
   primitive primitive::bitOr(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     | b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   | b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  | b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  | b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() | b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  | b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() | b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  | b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() | b.to<uint64_t>());
-    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator | to float type");   break;
-    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator | to double type");  break;
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     | b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   | b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  | b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  | b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() | b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  | b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() | b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  | b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() | b.to<uint64_t>());
+      case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator | to float type");   break;
+      case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator | to double type");  break;
+      default: ;
     }
     return primitive();
   }
@@ -727,18 +727,18 @@ namespace occa {
   primitive primitive::xor_(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     ^ b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   ^ b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  ^ b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  ^ b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() ^ b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  ^ b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() ^ b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  ^ b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() ^ b.to<uint64_t>());
-    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator ^ to float type");   break;
-    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator ^ to double type");  break;
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     ^ b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   ^ b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  ^ b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  ^ b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() ^ b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  ^ b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() ^ b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  ^ b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() ^ b.to<uint64_t>());
+      case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator ^ to float type");   break;
+      case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator ^ to double type");  break;
+      default: ;
     }
     return primitive();
   }
@@ -746,18 +746,18 @@ namespace occa {
   primitive primitive::rightShift(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     >> b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   >> b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  >> b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  >> b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() >> b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  >> b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() >> b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  >> b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() >> b.to<uint64_t>());
-    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator >> to float type");   break;
-    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator >> to double type");  break;
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     >> b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   >> b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  >> b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  >> b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() >> b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  >> b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() >> b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  >> b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() >> b.to<uint64_t>());
+      case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator >> to float type");   break;
+      case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator >> to double type");  break;
+      default: ;
     }
     return primitive();
   }
@@ -765,18 +765,18 @@ namespace occa {
   primitive primitive::leftShift(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : return primitive(a.to<bool>()     << b.to<bool>());
-    case primitiveType::int8_   : return primitive(a.to<int8_t>()   << b.to<int8_t>());
-    case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  << b.to<uint8_t>());
-    case primitiveType::int16_  : return primitive(a.to<int16_t>()  << b.to<int16_t>());
-    case primitiveType::uint16_ : return primitive(a.to<uint16_t>() << b.to<uint16_t>());
-    case primitiveType::int32_  : return primitive(a.to<int32_t>()  << b.to<int32_t>());
-    case primitiveType::uint32_ : return primitive(a.to<uint32_t>() << b.to<uint32_t>());
-    case primitiveType::int64_  : return primitive(a.to<int64_t>()  << b.to<int64_t>());
-    case primitiveType::uint64_ : return primitive(a.to<uint64_t>() << b.to<uint64_t>());
-    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator << to float type");   break;
-    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator << to double type");  break;
-    default: ;
+      case primitiveType::bool_   : return primitive(a.to<bool>()     << b.to<bool>());
+      case primitiveType::int8_   : return primitive(a.to<int8_t>()   << b.to<int8_t>());
+      case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  << b.to<uint8_t>());
+      case primitiveType::int16_  : return primitive(a.to<int16_t>()  << b.to<int16_t>());
+      case primitiveType::uint16_ : return primitive(a.to<uint16_t>() << b.to<uint16_t>());
+      case primitiveType::int32_  : return primitive(a.to<int32_t>()  << b.to<int32_t>());
+      case primitiveType::uint32_ : return primitive(a.to<uint32_t>() << b.to<uint32_t>());
+      case primitiveType::int64_  : return primitive(a.to<int64_t>()  << b.to<int64_t>());
+      case primitiveType::uint64_ : return primitive(a.to<uint64_t>() << b.to<uint64_t>());
+      case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator << to float type");   break;
+      case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator << to double type");  break;
+      default: ;
     }
     return primitive();
   }
@@ -792,18 +792,18 @@ namespace occa {
   primitive& primitive::multEq(primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : a = (a.to<bool>()     * b.to<bool>());     break;
-    case primitiveType::int8_   : a = (a.to<int8_t>()   * b.to<int8_t>());   break;
-    case primitiveType::uint8_  : a = (a.to<uint8_t>()  * b.to<uint8_t>());  break;
-    case primitiveType::int16_  : a = (a.to<int16_t>()  * b.to<int16_t>());  break;
-    case primitiveType::uint16_ : a = (a.to<uint16_t>() * b.to<uint16_t>()); break;
-    case primitiveType::int32_  : a = (a.to<int32_t>()  * b.to<int32_t>());  break;
-    case primitiveType::uint32_ : a = (a.to<uint32_t>() * b.to<uint32_t>()); break;
-    case primitiveType::int64_  : a = (a.to<int64_t>()  * b.to<int64_t>());  break;
-    case primitiveType::uint64_ : a = (a.to<uint64_t>() * b.to<uint64_t>()); break;
-    case primitiveType::float_  : a = (a.to<float>()    * b.to<float>());    break;
-    case primitiveType::double_ : a = (a.to<double>()   * b.to<double>());   break;
-    default: ;
+      case primitiveType::bool_   : a = (a.to<bool>()     * b.to<bool>());     break;
+      case primitiveType::int8_   : a = (a.to<int8_t>()   * b.to<int8_t>());   break;
+      case primitiveType::uint8_  : a = (a.to<uint8_t>()  * b.to<uint8_t>());  break;
+      case primitiveType::int16_  : a = (a.to<int16_t>()  * b.to<int16_t>());  break;
+      case primitiveType::uint16_ : a = (a.to<uint16_t>() * b.to<uint16_t>()); break;
+      case primitiveType::int32_  : a = (a.to<int32_t>()  * b.to<int32_t>());  break;
+      case primitiveType::uint32_ : a = (a.to<uint32_t>() * b.to<uint32_t>()); break;
+      case primitiveType::int64_  : a = (a.to<int64_t>()  * b.to<int64_t>());  break;
+      case primitiveType::uint64_ : a = (a.to<uint64_t>() * b.to<uint64_t>()); break;
+      case primitiveType::float_  : a = (a.to<float>()    * b.to<float>());    break;
+      case primitiveType::double_ : a = (a.to<double>()   * b.to<double>());   break;
+      default: ;
     }
     return a;
   }
@@ -811,18 +811,18 @@ namespace occa {
   primitive& primitive::addEq(primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : a = (a.to<bool>()     + b.to<bool>());     break;
-    case primitiveType::int8_   : a = (a.to<int8_t>()   + b.to<int8_t>());   break;
-    case primitiveType::uint8_  : a = (a.to<uint8_t>()  + b.to<uint8_t>());  break;
-    case primitiveType::int16_  : a = (a.to<int16_t>()  + b.to<int16_t>());  break;
-    case primitiveType::uint16_ : a = (a.to<uint16_t>() + b.to<uint16_t>()); break;
-    case primitiveType::int32_  : a = (a.to<int32_t>()  + b.to<int32_t>());  break;
-    case primitiveType::uint32_ : a = (a.to<uint32_t>() + b.to<uint32_t>()); break;
-    case primitiveType::int64_  : a = (a.to<int64_t>()  + b.to<int64_t>());  break;
-    case primitiveType::uint64_ : a = (a.to<uint64_t>() + b.to<uint64_t>()); break;
-    case primitiveType::float_  : a = (a.to<float>()    + b.to<float>());    break;
-    case primitiveType::double_ : a = (a.to<double>()   + b.to<double>());   break;
-    default: ;
+      case primitiveType::bool_   : a = (a.to<bool>()     + b.to<bool>());     break;
+      case primitiveType::int8_   : a = (a.to<int8_t>()   + b.to<int8_t>());   break;
+      case primitiveType::uint8_  : a = (a.to<uint8_t>()  + b.to<uint8_t>());  break;
+      case primitiveType::int16_  : a = (a.to<int16_t>()  + b.to<int16_t>());  break;
+      case primitiveType::uint16_ : a = (a.to<uint16_t>() + b.to<uint16_t>()); break;
+      case primitiveType::int32_  : a = (a.to<int32_t>()  + b.to<int32_t>());  break;
+      case primitiveType::uint32_ : a = (a.to<uint32_t>() + b.to<uint32_t>()); break;
+      case primitiveType::int64_  : a = (a.to<int64_t>()  + b.to<int64_t>());  break;
+      case primitiveType::uint64_ : a = (a.to<uint64_t>() + b.to<uint64_t>()); break;
+      case primitiveType::float_  : a = (a.to<float>()    + b.to<float>());    break;
+      case primitiveType::double_ : a = (a.to<double>()   + b.to<double>());   break;
+      default: ;
     }
     return a;
   }
@@ -830,18 +830,18 @@ namespace occa {
   primitive& primitive::subEq(primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : a = (a.to<bool>()     - b.to<bool>());     break;
-    case primitiveType::int8_   : a = (a.to<int8_t>()   - b.to<int8_t>());   break;
-    case primitiveType::uint8_  : a = (a.to<uint8_t>()  - b.to<uint8_t>());  break;
-    case primitiveType::int16_  : a = (a.to<int16_t>()  - b.to<int16_t>());  break;
-    case primitiveType::uint16_ : a = (a.to<uint16_t>() - b.to<uint16_t>()); break;
-    case primitiveType::int32_  : a = (a.to<int32_t>()  - b.to<int32_t>());  break;
-    case primitiveType::uint32_ : a = (a.to<uint32_t>() - b.to<uint32_t>()); break;
-    case primitiveType::int64_  : a = (a.to<int64_t>()  - b.to<int64_t>());  break;
-    case primitiveType::uint64_ : a = (a.to<uint64_t>() - b.to<uint64_t>()); break;
-    case primitiveType::float_  : a = (a.to<float>()    - b.to<float>());    break;
-    case primitiveType::double_ : a = (a.to<double>()   - b.to<double>());   break;
-    default: ;
+      case primitiveType::bool_   : a = (a.to<bool>()     - b.to<bool>());     break;
+      case primitiveType::int8_   : a = (a.to<int8_t>()   - b.to<int8_t>());   break;
+      case primitiveType::uint8_  : a = (a.to<uint8_t>()  - b.to<uint8_t>());  break;
+      case primitiveType::int16_  : a = (a.to<int16_t>()  - b.to<int16_t>());  break;
+      case primitiveType::uint16_ : a = (a.to<uint16_t>() - b.to<uint16_t>()); break;
+      case primitiveType::int32_  : a = (a.to<int32_t>()  - b.to<int32_t>());  break;
+      case primitiveType::uint32_ : a = (a.to<uint32_t>() - b.to<uint32_t>()); break;
+      case primitiveType::int64_  : a = (a.to<int64_t>()  - b.to<int64_t>());  break;
+      case primitiveType::uint64_ : a = (a.to<uint64_t>() - b.to<uint64_t>()); break;
+      case primitiveType::float_  : a = (a.to<float>()    - b.to<float>());    break;
+      case primitiveType::double_ : a = (a.to<double>()   - b.to<double>());   break;
+      default: ;
     }
     return a;
   }
@@ -849,18 +849,18 @@ namespace occa {
   primitive& primitive::divEq(primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : a = (a.to<bool>()     / b.to<bool>());     break;
-    case primitiveType::int8_   : a = (a.to<int8_t>()   / b.to<int8_t>());   break;
-    case primitiveType::uint8_  : a = (a.to<uint8_t>()  / b.to<uint8_t>());  break;
-    case primitiveType::int16_  : a = (a.to<int16_t>()  / b.to<int16_t>());  break;
-    case primitiveType::uint16_ : a = (a.to<uint16_t>() / b.to<uint16_t>()); break;
-    case primitiveType::int32_  : a = (a.to<int32_t>()  / b.to<int32_t>());  break;
-    case primitiveType::uint32_ : a = (a.to<uint32_t>() / b.to<uint32_t>()); break;
-    case primitiveType::int64_  : a = (a.to<int64_t>()  / b.to<int64_t>());  break;
-    case primitiveType::uint64_ : a = (a.to<uint64_t>() / b.to<uint64_t>()); break;
-    case primitiveType::float_  : a = (a.to<float>()    / b.to<float>());    break;
-    case primitiveType::double_ : a = (a.to<double>()   / b.to<double>());   break;
-    default: ;
+      case primitiveType::bool_   : a = (a.to<bool>()     / b.to<bool>());     break;
+      case primitiveType::int8_   : a = (a.to<int8_t>()   / b.to<int8_t>());   break;
+      case primitiveType::uint8_  : a = (a.to<uint8_t>()  / b.to<uint8_t>());  break;
+      case primitiveType::int16_  : a = (a.to<int16_t>()  / b.to<int16_t>());  break;
+      case primitiveType::uint16_ : a = (a.to<uint16_t>() / b.to<uint16_t>()); break;
+      case primitiveType::int32_  : a = (a.to<int32_t>()  / b.to<int32_t>());  break;
+      case primitiveType::uint32_ : a = (a.to<uint32_t>() / b.to<uint32_t>()); break;
+      case primitiveType::int64_  : a = (a.to<int64_t>()  / b.to<int64_t>());  break;
+      case primitiveType::uint64_ : a = (a.to<uint64_t>() / b.to<uint64_t>()); break;
+      case primitiveType::float_  : a = (a.to<float>()    / b.to<float>());    break;
+      case primitiveType::double_ : a = (a.to<double>()   / b.to<double>());   break;
+      default: ;
     }
     return a;
   }
@@ -868,18 +868,18 @@ namespace occa {
   primitive& primitive::modEq(primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : a = (a.to<bool>()     % b.to<bool>());     break;
-    case primitiveType::int8_   : a = (a.to<int8_t>()   % b.to<int8_t>());   break;
-    case primitiveType::uint8_  : a = (a.to<uint8_t>()  % b.to<uint8_t>());  break;
-    case primitiveType::int16_  : a = (a.to<int16_t>()  % b.to<int16_t>());  break;
-    case primitiveType::uint16_ : a = (a.to<uint16_t>() % b.to<uint16_t>()); break;
-    case primitiveType::int32_  : a = (a.to<int32_t>()  % b.to<int32_t>());  break;
-    case primitiveType::uint32_ : a = (a.to<uint32_t>() % b.to<uint32_t>()); break;
-    case primitiveType::int64_  : a = (a.to<int64_t>()  % b.to<int64_t>());  break;
-    case primitiveType::uint64_ : a = (a.to<uint64_t>() % b.to<uint64_t>()); break;
-    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator % to float type"); break;
-    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator % to double type"); break;
-    default: ;
+      case primitiveType::bool_   : a = (a.to<bool>()     % b.to<bool>());     break;
+      case primitiveType::int8_   : a = (a.to<int8_t>()   % b.to<int8_t>());   break;
+      case primitiveType::uint8_  : a = (a.to<uint8_t>()  % b.to<uint8_t>());  break;
+      case primitiveType::int16_  : a = (a.to<int16_t>()  % b.to<int16_t>());  break;
+      case primitiveType::uint16_ : a = (a.to<uint16_t>() % b.to<uint16_t>()); break;
+      case primitiveType::int32_  : a = (a.to<int32_t>()  % b.to<int32_t>());  break;
+      case primitiveType::uint32_ : a = (a.to<uint32_t>() % b.to<uint32_t>()); break;
+      case primitiveType::int64_  : a = (a.to<int64_t>()  % b.to<int64_t>());  break;
+      case primitiveType::uint64_ : a = (a.to<uint64_t>() % b.to<uint64_t>()); break;
+      case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator % to float type"); break;
+      case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator % to double type"); break;
+      default: ;
     }
     return a;
   }
@@ -887,18 +887,18 @@ namespace occa {
   primitive& primitive::bitAndEq(primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : a = (a.to<bool>()     & b.to<bool>());     break;
-    case primitiveType::int8_   : a = (a.to<int8_t>()   & b.to<int8_t>());   break;
-    case primitiveType::uint8_  : a = (a.to<uint8_t>()  & b.to<uint8_t>());  break;
-    case primitiveType::int16_  : a = (a.to<int16_t>()  & b.to<int16_t>());  break;
-    case primitiveType::uint16_ : a = (a.to<uint16_t>() & b.to<uint16_t>()); break;
-    case primitiveType::int32_  : a = (a.to<int32_t>()  & b.to<int32_t>());  break;
-    case primitiveType::uint32_ : a = (a.to<uint32_t>() & b.to<uint32_t>()); break;
-    case primitiveType::int64_  : a = (a.to<int64_t>()  & b.to<int64_t>());  break;
-    case primitiveType::uint64_ : a = (a.to<uint64_t>() & b.to<uint64_t>()); break;
-    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator & to float type");  break;
-    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator & to double type"); break;
-    default: ;
+      case primitiveType::bool_   : a = (a.to<bool>()     & b.to<bool>());     break;
+      case primitiveType::int8_   : a = (a.to<int8_t>()   & b.to<int8_t>());   break;
+      case primitiveType::uint8_  : a = (a.to<uint8_t>()  & b.to<uint8_t>());  break;
+      case primitiveType::int16_  : a = (a.to<int16_t>()  & b.to<int16_t>());  break;
+      case primitiveType::uint16_ : a = (a.to<uint16_t>() & b.to<uint16_t>()); break;
+      case primitiveType::int32_  : a = (a.to<int32_t>()  & b.to<int32_t>());  break;
+      case primitiveType::uint32_ : a = (a.to<uint32_t>() & b.to<uint32_t>()); break;
+      case primitiveType::int64_  : a = (a.to<int64_t>()  & b.to<int64_t>());  break;
+      case primitiveType::uint64_ : a = (a.to<uint64_t>() & b.to<uint64_t>()); break;
+      case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator & to float type");  break;
+      case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator & to double type"); break;
+      default: ;
     }
     return a;
   }
@@ -906,18 +906,18 @@ namespace occa {
   primitive& primitive::bitOrEq(primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : a = (a.to<bool>()     | b.to<bool>());     break;
-    case primitiveType::int8_   : a = (a.to<int8_t>()   | b.to<int8_t>());   break;
-    case primitiveType::uint8_  : a = (a.to<uint8_t>()  | b.to<uint8_t>());  break;
-    case primitiveType::int16_  : a = (a.to<int16_t>()  | b.to<int16_t>());  break;
-    case primitiveType::uint16_ : a = (a.to<uint16_t>() | b.to<uint16_t>()); break;
-    case primitiveType::int32_  : a = (a.to<int32_t>()  | b.to<int32_t>());  break;
-    case primitiveType::uint32_ : a = (a.to<uint32_t>() | b.to<uint32_t>()); break;
-    case primitiveType::int64_  : a = (a.to<int64_t>()  | b.to<int64_t>());  break;
-    case primitiveType::uint64_ : a = (a.to<uint64_t>() | b.to<uint64_t>()); break;
-    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator | to float type");  break;
-    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator | to double type"); break;
-    default: ;
+      case primitiveType::bool_   : a = (a.to<bool>()     | b.to<bool>());     break;
+      case primitiveType::int8_   : a = (a.to<int8_t>()   | b.to<int8_t>());   break;
+      case primitiveType::uint8_  : a = (a.to<uint8_t>()  | b.to<uint8_t>());  break;
+      case primitiveType::int16_  : a = (a.to<int16_t>()  | b.to<int16_t>());  break;
+      case primitiveType::uint16_ : a = (a.to<uint16_t>() | b.to<uint16_t>()); break;
+      case primitiveType::int32_  : a = (a.to<int32_t>()  | b.to<int32_t>());  break;
+      case primitiveType::uint32_ : a = (a.to<uint32_t>() | b.to<uint32_t>()); break;
+      case primitiveType::int64_  : a = (a.to<int64_t>()  | b.to<int64_t>());  break;
+      case primitiveType::uint64_ : a = (a.to<uint64_t>() | b.to<uint64_t>()); break;
+      case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator | to float type");  break;
+      case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator | to double type"); break;
+      default: ;
     }
     return a;
   }
@@ -925,18 +925,18 @@ namespace occa {
   primitive& primitive::xorEq(primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : a = (a.to<bool>()     ^ b.to<bool>());     break;
-    case primitiveType::int8_   : a = (a.to<int8_t>()   ^ b.to<int8_t>());   break;
-    case primitiveType::uint8_  : a = (a.to<uint8_t>()  ^ b.to<uint8_t>());  break;
-    case primitiveType::int16_  : a = (a.to<int16_t>()  ^ b.to<int16_t>());  break;
-    case primitiveType::uint16_ : a = (a.to<uint16_t>() ^ b.to<uint16_t>()); break;
-    case primitiveType::int32_  : a = (a.to<int32_t>()  ^ b.to<int32_t>());  break;
-    case primitiveType::uint32_ : a = (a.to<uint32_t>() ^ b.to<uint32_t>()); break;
-    case primitiveType::int64_  : a = (a.to<int64_t>()  ^ b.to<int64_t>());  break;
-    case primitiveType::uint64_ : a = (a.to<uint64_t>() ^ b.to<uint64_t>()); break;
-    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator ^ to float type");  break;
-    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator ^ to double type"); break;
-    default: ;
+      case primitiveType::bool_   : a = (a.to<bool>()     ^ b.to<bool>());     break;
+      case primitiveType::int8_   : a = (a.to<int8_t>()   ^ b.to<int8_t>());   break;
+      case primitiveType::uint8_  : a = (a.to<uint8_t>()  ^ b.to<uint8_t>());  break;
+      case primitiveType::int16_  : a = (a.to<int16_t>()  ^ b.to<int16_t>());  break;
+      case primitiveType::uint16_ : a = (a.to<uint16_t>() ^ b.to<uint16_t>()); break;
+      case primitiveType::int32_  : a = (a.to<int32_t>()  ^ b.to<int32_t>());  break;
+      case primitiveType::uint32_ : a = (a.to<uint32_t>() ^ b.to<uint32_t>()); break;
+      case primitiveType::int64_  : a = (a.to<int64_t>()  ^ b.to<int64_t>());  break;
+      case primitiveType::uint64_ : a = (a.to<uint64_t>() ^ b.to<uint64_t>()); break;
+      case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator ^ to float type");  break;
+      case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator ^ to double type"); break;
+      default: ;
     }
     return a;
   }
@@ -944,18 +944,18 @@ namespace occa {
   primitive& primitive::rightShiftEq(primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : a = (a.to<bool>()     >> b.to<bool>());     break;
-    case primitiveType::int8_   : a = (a.to<int8_t>()   >> b.to<int8_t>());   break;
-    case primitiveType::uint8_  : a = (a.to<uint8_t>()  >> b.to<uint8_t>());  break;
-    case primitiveType::int16_  : a = (a.to<int16_t>()  >> b.to<int16_t>());  break;
-    case primitiveType::uint16_ : a = (a.to<uint16_t>() >> b.to<uint16_t>()); break;
-    case primitiveType::int32_  : a = (a.to<int32_t>()  >> b.to<int32_t>());  break;
-    case primitiveType::uint32_ : a = (a.to<uint32_t>() >> b.to<uint32_t>()); break;
-    case primitiveType::int64_  : a = (a.to<int64_t>()  >> b.to<int64_t>());  break;
-    case primitiveType::uint64_ : a = (a.to<uint64_t>() >> b.to<uint64_t>()); break;
-    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator >> to float type");  break;
-    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator >> to double type"); break;
-    default: ;
+      case primitiveType::bool_   : a = (a.to<bool>()     >> b.to<bool>());     break;
+      case primitiveType::int8_   : a = (a.to<int8_t>()   >> b.to<int8_t>());   break;
+      case primitiveType::uint8_  : a = (a.to<uint8_t>()  >> b.to<uint8_t>());  break;
+      case primitiveType::int16_  : a = (a.to<int16_t>()  >> b.to<int16_t>());  break;
+      case primitiveType::uint16_ : a = (a.to<uint16_t>() >> b.to<uint16_t>()); break;
+      case primitiveType::int32_  : a = (a.to<int32_t>()  >> b.to<int32_t>());  break;
+      case primitiveType::uint32_ : a = (a.to<uint32_t>() >> b.to<uint32_t>()); break;
+      case primitiveType::int64_  : a = (a.to<int64_t>()  >> b.to<int64_t>());  break;
+      case primitiveType::uint64_ : a = (a.to<uint64_t>() >> b.to<uint64_t>()); break;
+      case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator >> to float type");  break;
+      case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator >> to double type"); break;
+      default: ;
     }
     return a;
   }
@@ -963,18 +963,18 @@ namespace occa {
   primitive& primitive::leftShiftEq(primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-    case primitiveType::bool_   : a = (a.to<bool>()     << b.to<bool>());     break;
-    case primitiveType::int8_   : a = (a.to<int8_t>()   << b.to<int8_t>());   break;
-    case primitiveType::uint8_  : a = (a.to<uint8_t>()  << b.to<uint8_t>());  break;
-    case primitiveType::int16_  : a = (a.to<int16_t>()  << b.to<int16_t>());  break;
-    case primitiveType::uint16_ : a = (a.to<uint16_t>() << b.to<uint16_t>()); break;
-    case primitiveType::int32_  : a = (a.to<int32_t>()  << b.to<int32_t>());  break;
-    case primitiveType::uint32_ : a = (a.to<uint32_t>() << b.to<uint32_t>()); break;
-    case primitiveType::int64_  : a = (a.to<int64_t>()  << b.to<int64_t>());  break;
-    case primitiveType::uint64_ : a = (a.to<uint64_t>() << b.to<uint64_t>()); break;
-    case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator << to float type");  break;
-    case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator << to double type"); break;
-    default: ;
+      case primitiveType::bool_   : a = (a.to<bool>()     << b.to<bool>());     break;
+      case primitiveType::int8_   : a = (a.to<int8_t>()   << b.to<int8_t>());   break;
+      case primitiveType::uint8_  : a = (a.to<uint8_t>()  << b.to<uint8_t>());  break;
+      case primitiveType::int16_  : a = (a.to<int16_t>()  << b.to<int16_t>());  break;
+      case primitiveType::uint16_ : a = (a.to<uint16_t>() << b.to<uint16_t>()); break;
+      case primitiveType::int32_  : a = (a.to<int32_t>()  << b.to<int32_t>());  break;
+      case primitiveType::uint32_ : a = (a.to<uint32_t>() << b.to<uint32_t>()); break;
+      case primitiveType::int64_  : a = (a.to<int64_t>()  << b.to<int64_t>());  break;
+      case primitiveType::uint64_ : a = (a.to<uint64_t>() << b.to<uint64_t>()); break;
+      case primitiveType::float_  : OCCA_FORCE_ERROR("Cannot apply operator << to float type");  break;
+      case primitiveType::double_ : OCCA_FORCE_ERROR("Cannot apply operator << to double type"); break;
+      default: ;
     }
     return a;
   }

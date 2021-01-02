@@ -17,15 +17,8 @@ namespace occa {
       size = 0;
     }
 
-    kernelArg memory::makeKernelArg() const {
-      kernelArgData arg;
-
-      arg.modeMemory = const_cast<memory*>(this);
-      arg.data.void_ = (void*) NULL;
-      arg.size       = sizeof(void*);
-      arg.info       = kArgInfo::usePointer;
-
-      return kernelArg(arg);
+    kernelArg memory::toKernelArg() const {
+      return nullptr;
     }
 
     modeMemory_t* memory::addOffset(const dim_t offset) {

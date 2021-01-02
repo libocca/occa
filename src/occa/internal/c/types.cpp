@@ -408,9 +408,9 @@ namespace occa {
 
       switch (value.type) {
         case occa::c::typeType::ptr: {
-          arg.add(value.value.ptr,
-                  value.bytes,
-                  true, false);
+          arg.addPointer(value.value.ptr,
+                         value.bytes,
+                         true, false);
           break;
         }
         case occa::c::typeType::int8_: {
@@ -444,15 +444,15 @@ namespace occa {
           return occa::kernelArg(value.value.double_);
         }
         case occa::c::typeType::struct_: {
-          arg.add(value.value.ptr,
-                  value.bytes,
-                  false, false);
+          arg.addPointer(value.value.ptr,
+                         value.bytes,
+                         false, false);
           break;
         }
         case occa::c::typeType::string: {
-          arg.add(value.value.ptr,
-                  value.bytes,
-                  false, false);
+          arg.addPointer(value.value.ptr,
+                         value.bytes,
+                         false, false);
           break;
         }
         case occa::c::typeType::memory: {

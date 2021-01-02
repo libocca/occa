@@ -9,27 +9,25 @@
 
 namespace occa {
   //---[ KernelArg ]--------------------
-  const nullKernelArg_t nullKernelArg;
-
   kernelArgData::kernelArgData() :
-    modeMemory(NULL),
-    size(0),
-    info(kArgInfo::none) {
-    ::memset(&data, 0, sizeof(data));
-  }
+      value(),
+      ptrSize(0),
+      modeMemory(NULL) {}
+
+  kernelArgData::kernelArgData(const primitive &value_) :
+      value(value_),
+      ptrSize(0),
+      modeMemory(NULL) {}
 
   kernelArgData::kernelArgData(const kernelArgData &other) :
-      modeMemory(other.modeMemory),
-      data(other.data),
-      size(other.size),
-      info(other.info) {}
+      value(other.value),
+      ptrSize(other.ptrSize),
+      modeMemory(other.modeMemory) {}
 
   kernelArgData& kernelArgData::operator = (const kernelArgData &other) {
+    value = other.value;
+    ptrSize = other.ptrSize;
     modeMemory = other.modeMemory;
-
-    data = other.data;
-    size = other.size;
-    info = other.info;
 
     return *this;
   }
@@ -48,18 +46,11 @@ namespace occa {
   }
 
   void* kernelArgData::ptr() const {
-    if (!isNull()) {
-      if (info & kArgInfo::usePointer) {
-        return data.void_;
-      } else {
-        return (void*) &data;
-      }
-    }
-    return NULL;
+    return const_cast<void*>(value.ptr());
   }
 
-  bool kernelArgData::isNull() const {
-    return (info & kArgInfo::isNull);
+  udim_t kernelArgData::size() const {
+    return ptrSize ? ptrSize : value.sizeof_();
   }
 
   void kernelArgData::setupForKernelCall(const bool isConst) const {
@@ -95,16 +86,12 @@ namespace occa {
 
   template <>
   kernelArg::kernelArg(modeMemory_t *arg) {
-    if (arg && arg->size) {
-      add(arg->makeKernelArg());
-    } else {
-      add(kernelArg(nullKernelArg));
-    }
+    addMemory(arg);
   }
 
   template <>
   kernelArg::kernelArg(const modeMemory_t *arg) {
-    add(arg->makeKernelArg());
+    addMemory(const_cast<modeMemory_t*>(arg));
   }
 
   int kernelArg::size() const {
@@ -128,85 +115,49 @@ namespace occa {
     return args[index];
   }
 
-  kernelArg::kernelArg(const nullKernelArg_t arg) {
-    kernelArgData kArg;
-    kArg.data.void_ = NULL;
-    kArg.size       = sizeof(void*);
-    kArg.info       = (
-      kArgInfo::usePointer
-      | kArgInfo::isNull
-    );
-    args.push_back(kArg);
-  }
-
   kernelArg::kernelArg(const uint8_t arg) {
-    kernelArgData kArg;
-    kArg.data.uint8_ = arg;
-    kArg.size        = sizeof(uint8_t);
-    args.push_back(kArg);
+    args.push_back((primitive) arg);
   }
 
   kernelArg::kernelArg(const uint16_t arg) {
-    kernelArgData kArg;
-    kArg.data.uint16_ = arg;
-    kArg.size         = sizeof(uint16_t);
-    args.push_back(kArg);
+    args.push_back((primitive) arg);
   }
 
   kernelArg::kernelArg(const uint32_t arg) {
-    kernelArgData kArg;
-    kArg.data.uint32_ = arg;
-    kArg.size         = sizeof(uint32_t);
-    args.push_back(kArg);
+    args.push_back((primitive) arg);
   }
 
   kernelArg::kernelArg(const uint64_t arg) {
-    kernelArgData kArg;
-    kArg.data.uint64_ = arg;
-    kArg.size         = sizeof(uint64_t);
-    args.push_back(kArg);
+    args.push_back((primitive) arg);
   }
 
   kernelArg::kernelArg(const int8_t arg) {
-    kernelArgData kArg;
-    kArg.data.int8_ = arg;
-    kArg.size       = sizeof(int8_t);
-    args.push_back(kArg);
+    args.push_back((primitive) arg);
   }
 
   kernelArg::kernelArg(const int16_t arg) {
-    kernelArgData kArg;
-    kArg.data.int16_ = arg;
-    kArg.size        = sizeof(int16_t);
-    args.push_back(kArg);
+    args.push_back((primitive) arg);
   }
 
   kernelArg::kernelArg(const int32_t arg) {
-    kernelArgData kArg;
-    kArg.data.int32_ = arg;
-    kArg.size        = sizeof(int32_t);
-    args.push_back(kArg);
+    args.push_back((primitive) arg);
   }
 
   kernelArg::kernelArg(const int64_t arg) {
-    kernelArgData kArg;
-    kArg.data.int64_ = arg;
-    kArg.size        = sizeof(int64_t);
-    args.push_back(kArg);
+    args.push_back((primitive) arg);
   }
 
+
   kernelArg::kernelArg(const float arg) {
-    kernelArgData kArg;
-    kArg.data.float_ = arg;
-    kArg.size         = sizeof(float);
-    args.push_back(kArg);
+    args.push_back((primitive) arg);
   }
 
   kernelArg::kernelArg(const double arg) {
-    kernelArgData kArg;
-    kArg.data.double_ = arg;
-    kArg.size         = sizeof(double);
-    args.push_back(kArg);
+    args.push_back((primitive) arg);
+  }
+
+  kernelArg::kernelArg(const std::nullptr_t arg) {
+    args.push_back((primitive) arg);
   }
 
   void kernelArg::add(const kernelArg &arg) {
@@ -216,13 +167,18 @@ namespace occa {
     }
   }
 
-  void kernelArg::add(void *arg,
-                      bool lookAtUva, bool argIsUva) {
-    add(arg, sizeof(void*), lookAtUva, argIsUva);
+  void kernelArg::addPointer(void *arg,
+                             bool lookAtUva, bool argIsUva) {
+    addPointer(arg, sizeof(void*), lookAtUva, argIsUva);
   }
 
-  void kernelArg::add(void *arg, size_t bytes,
-                      bool lookAtUva, bool argIsUva) {
+  void kernelArg::addPointer(void *arg, size_t bytes,
+                             bool lookAtUva, bool argIsUva) {
+    if (!arg) {
+      args.push_back((primitive) nullptr);
+      return;
+    }
+
     modeMemory_t *modeMemory = NULL;
 
     if (argIsUva) {
@@ -235,21 +191,32 @@ namespace occa {
     }
 
     if (modeMemory) {
-      add(modeMemory->makeKernelArg());
-    } else if (arg != NULL) {
-      kernelArgData kArg;
-      kArg.data.void_ = arg;
-      kArg.size       = bytes;
-      kArg.info       = kArgInfo::usePointer;
+      add(modeMemory->toKernelArg());
+    } else {
+      kernelArgData kArg(arg);
+      kArg.ptrSize = bytes;
       args.push_back(kArg);
     }
   }
 
+  void kernelArg::addMemory(modeMemory_t *arg) {
+    if (!arg || !arg->size) {
+      add(nullptr);
+      return;
+    }
+
+    // Set the modeMemory origin on each argument
+    kernelArg memArg = arg->toKernelArg();
+    for (auto &entry : memArg.args) {
+      entry.modeMemory = arg;
+    }
+    add(memArg);
+  }
+
   int kernelArg::argumentCount(const std::vector<kernelArg> &arguments) {
-    const int kArgCount = (int) arguments.size();
     int argc = 0;
-    for (int i = 0; i < kArgCount; ++i) {
-      argc += arguments[i].args.size();
+    for (auto &arg : arguments) {
+      argc += arg.size();
     }
     return argc;
   }

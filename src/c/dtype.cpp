@@ -72,7 +72,7 @@ occaDtype occaDtypeFromJsonString(const char *str) {
 occaJson occaDtypeToJson(occaDtype dtype) {
   occa::dtype_t &dtype_ = occa::c::dtype(dtype);
   return occa::c::newOccaType(
-    *(new occa::json(dtype_.toJson())),
+    *(new occa::json(occa::dtype::toJson(dtype_))),
     true
   );
 }

@@ -6,6 +6,8 @@
 #include <occa/internal/utils/gc.hpp>
 
 namespace occa {
+  class kernelArgData;
+
   class modeMemory_t : public gc::ringEntry_t {
   public:
     int memInfo;
@@ -38,7 +40,7 @@ namespace occa {
     //---[ Virtual Methods ]------------
     virtual ~modeMemory_t() = 0;
 
-    virtual kernelArg makeKernelArg() const = 0;
+    virtual kernelArg toKernelArg() const = 0;
 
     virtual modeMemory_t* addOffset(const dim_t offset) = 0;
 
