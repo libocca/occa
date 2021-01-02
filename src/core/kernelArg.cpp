@@ -32,6 +32,8 @@ namespace occa {
     return *this;
   }
 
+  kernelArgData::~kernelArgData() {}
+
   occa::modeDevice_t* kernelArgData::getModeDevice() const {
     if (!modeMemory) {
       return NULL;
@@ -86,6 +88,8 @@ namespace occa {
     args = other.args;
     return *this;
   }
+
+  kernelArg::~kernelArg() {}
 
   template <>
   kernelArg::kernelArg(modeMemory_t *arg) {
@@ -179,6 +183,8 @@ namespace occa {
   //====================================
 
   //---[ scopeKernelArg ]---------------
+  scopeKernelArg::~scopeKernelArg() {}
+
   std::string scopeKernelArg::getDeclaration() const {
     std::stringstream ss;
 

@@ -26,6 +26,7 @@ namespace occa {
     kernelArgData(const primitive &value_);
     kernelArgData(const kernelArgData &other);
     kernelArgData& operator = (const kernelArgData &other);
+    ~kernelArgData();
 
     occa::modeDevice_t* getModeDevice() const;
     occa::modeMemory_t* getModeMemory() const;
@@ -49,10 +50,9 @@ namespace occa {
     kernelArg(const kernelArg &other);
     kernelArg& operator = (const kernelArg &other);
 
-    inline virtual ~kernelArg() {}
+    virtual ~kernelArg();
 
     inline virtual void primitiveConstructor(const primitive &value) {
-      std::cout << "dtype: " << dtype::toJson(value.dtype()) << '\n';
       args.push_back(value);
     }
 
@@ -141,7 +141,7 @@ namespace occa {
       pointerConstructor(value_, dtype::get<TM>());
     }
 
-    inline virtual ~scopeKernelArg() {}
+    virtual ~scopeKernelArg();
 
     inline void primitiveConstructor(const primitive &value) {
       dtype = value.dtype();
