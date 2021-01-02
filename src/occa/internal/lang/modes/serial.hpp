@@ -7,10 +7,10 @@ namespace occa {
   namespace lang {
     namespace okl {
       class serialParser : public parser_t {
-      public:
+       public:
         static const std::string exclusiveIndexName;
 
-        serialParser(const occa::properties &settings_ = occa::properties());
+        serialParser(const occa::json &settings_ = occa::json());
 
         virtual void onClear();
 

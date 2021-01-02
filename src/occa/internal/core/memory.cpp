@@ -5,15 +5,15 @@
 namespace occa {
   modeMemory_t::modeMemory_t(modeDevice_t *modeDevice_,
                              udim_t size_,
-                             const occa::properties &properties_) :
-      memInfo(uvaFlag::none),
-      properties(properties_),
-      ptr(NULL),
-      uvaPtr(NULL),
-      modeDevice(modeDevice_),
-      dtype_(&dtype::byte),
-      size(size_),
-      isOrigin(true) {
+                             const occa::json &properties_) :
+    memInfo(uvaFlag::none),
+    properties(properties_),
+    ptr(NULL),
+    uvaPtr(NULL),
+    modeDevice(modeDevice_),
+    dtype_(&dtype::byte),
+    size(size_),
+    isOrigin(true) {
     modeDevice->addMemoryRef(this);
   }
 
@@ -30,7 +30,7 @@ namespace occa {
     }
   }
 
-  void* modeMemory_t::getPtr(const occa::properties &props) {
+  void* modeMemory_t::getPtr(const occa::json &props) {
     return ptr;
   }
 

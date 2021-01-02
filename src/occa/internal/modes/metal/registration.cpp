@@ -38,11 +38,11 @@ namespace occa {
       return section;
     }
 
-    modeDevice_t* metalMode::newDevice(const occa::properties &props) {
+    modeDevice_t* metalMode::newDevice(const occa::json &props) {
       return new device(setModeProp(props));
     }
 
-    int metalMode::getDeviceCount(const occa::properties &props) {
+    int metalMode::getDeviceCount(const occa::json &props) {
       return api::metal::getDeviceCount();
     }
 

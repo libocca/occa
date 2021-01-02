@@ -10,7 +10,7 @@ namespace occa {
     namespace okl {
       const std::string serialParser::exclusiveIndexName = "_occa_exclusive_index";
 
-      serialParser::serialParser(const occa::properties &settings_) :
+      serialParser::serialParser(const occa::json &settings_) :
         parser_t(settings_) {
 
         okl::addOklAttributes(*this);
@@ -107,12 +107,12 @@ namespace occa {
         // Get @exclusive declarations
         bool hasExclusiveVariables = false;
         statementArray::from(root)
-            .nestedForEachDeclaration([&](variableDeclaration &decl, declarationStatement &declSmnt) {
-                if (decl.variable().hasAttribute("exclusive")) {
-                  hasExclusiveVariables = true;
-                  setupExclusiveDeclaration(declSmnt);
-                }
-              });
+          .nestedForEachDeclaration([&](variableDeclaration &decl, declarationStatement &declSmnt) {
+            if (decl.variable().hasAttribute("exclusive")) {
+              hasExclusiveVariables = true;
+              setupExclusiveDeclaration(declSmnt);
+            }
+          });
         if (!success) return;
 
         if (!hasExclusiveVariables) {
@@ -123,22 +123,22 @@ namespace occa {
         if (!success) return;
 
         statementArray::from(root)
-            .flatFilterByExprType(exprNodeType::variable, "exclusive")
-            .inplaceMap([&](smntExprNode smntExpr) -> exprNode* {
-                statement_t *smnt = smntExpr.smnt;
-                variableNode &varNode = (variableNode&) *smntExpr.node;
-                variable_t &var = varNode.value;
+          .flatFilterByExprType(exprNodeType::variable, "exclusive")
+          .inplaceMap([&](smntExprNode smntExpr) -> exprNode* {
+            statement_t *smnt = smntExpr.smnt;
+            variableNode &varNode = (variableNode&) *smntExpr.node;
+            variable_t &var = varNode.value;
 
-                if (
-                  (smnt->type() & statementType::declaration)
-                  && ((declarationStatement*) smnt)->declaresVariable(var)
-                ) {
-                  defineExclusiveVariableAsArray(var);
-                  return &varNode;
-                }
+            if (
+              (smnt->type() & statementType::declaration)
+              && ((declarationStatement*) smnt)->declaresVariable(var)
+            ) {
+              defineExclusiveVariableAsArray(var);
+              return &varNode;
+            }
 
-                return addExclusiveVariableArrayAccessor(*smnt, varNode, var);
-              });
+            return addExclusiveVariableArrayAccessor(*smnt, varNode, var);
+          });
       }
 
       void serialParser::setupExclusiveDeclaration(declarationStatement &declSmnt) {
@@ -190,39 +190,39 @@ namespace occa {
 
         std::set<statement_t*> loopsWithExclusiveUsage;
         statementArray::from(root)
-            .flatFilterByStatementType(statementType::for_, "inner")
-            .forEach([&](statement_t *smnt) {
-                const bool hasExclusiveUsage = smnt->hasInScope(exclusiveIndexName);
-                if (!hasExclusiveUsage) {
-                  return;
-                }
+          .flatFilterByStatementType(statementType::for_, "inner")
+          .forEach([&](statement_t *smnt) {
+            const bool hasExclusiveUsage = smnt->hasInScope(exclusiveIndexName);
+            if (!hasExclusiveUsage) {
+              return;
+            }
 
-                loopsWithExclusiveUsage.insert(smnt);
+            loopsWithExclusiveUsage.insert(smnt);
 
-                statementArray path = smnt->getParentPath();
+            statementArray path = smnt->getParentPath();
 
-                // Get outer-most inner loop
-                bool isInnerMostInnerLoop = true;
-                for (auto pathSmnt : path) {
-                  if (pathSmnt->hasAttribute("inner")) {
-                    outerMostInnerLoops.insert(pathSmnt);
-                    isInnerMostInnerLoop = false;
-                    break;
-                  }
-                }
+            // Get outer-most inner loop
+            bool isInnerMostInnerLoop = true;
+            for (auto pathSmnt : path) {
+              if (pathSmnt->hasAttribute("inner")) {
+                outerMostInnerLoops.insert(pathSmnt);
+                isInnerMostInnerLoop = false;
+                break;
+              }
+            }
 
-                if (isInnerMostInnerLoop) {
-                  outerMostInnerLoops.insert(smnt);
-                }
+            if (isInnerMostInnerLoop) {
+              outerMostInnerLoops.insert(smnt);
+            }
 
-                // Remove parent "inner" loops from the innerMostInnerLoops set
-                innerMostInnerLoops.insert(smnt);
-                for (auto pathSmnt : path) {
-                  if (pathSmnt->hasAttribute("inner")) {
-                    innerMostInnerLoops.erase(pathSmnt);
-                  }
-                }
-              });
+            // Remove parent "inner" loops from the innerMostInnerLoops set
+            innerMostInnerLoops.insert(smnt);
+            for (auto pathSmnt : path) {
+              if (pathSmnt->hasAttribute("inner")) {
+                innerMostInnerLoops.erase(pathSmnt);
+              }
+            }
+          });
 
         // Initialize the exclusive index to 0 before the outer-most inner loop
         for (auto smnt : outerMostInnerLoops) {

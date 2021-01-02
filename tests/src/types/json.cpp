@@ -44,14 +44,14 @@ void testAsTypes() {
   ASSERT_TRUE(j.asNumber().isNumber());
   ASSERT_TRUE(j.asObject().isObject());
   ASSERT_TRUE(j.asArray().isArray());
-  ASSERT_TRUE(j.asBoolean().isBoolean());
+  ASSERT_TRUE(j.asBoolean().isBool());
   ASSERT_TRUE(j.asNull().isNull());
 
   ASSERT_TRUE(j.asNumber().asString().isString());
   ASSERT_TRUE(j.asObject().asNumber().isNumber());
   ASSERT_TRUE(j.asArray().asObject().isObject());
   ASSERT_TRUE(j.asBoolean().asArray().isArray());
-  ASSERT_TRUE(j.asNull().asBoolean().isBoolean());
+  ASSERT_TRUE(j.asNull().asBoolean().isBool());
   ASSERT_TRUE(j.asNumber().asNull().isNull());
 }
 
@@ -234,12 +234,12 @@ void testKeywords() {
   occa::json j;
 
   j.load("true");
-  ASSERT_TRUE(j.isBoolean());
+  ASSERT_TRUE(j.isBool());
   ASSERT_EQ(true,
             j.value_.boolean);
 
   j.load("false");
-  ASSERT_TRUE(j.isBoolean());
+  ASSERT_TRUE(j.isBool());
   ASSERT_EQ(false,
             j.value_.boolean);
 

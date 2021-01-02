@@ -166,11 +166,11 @@ void testKeyMiss() {
 }
 
 void testSerialization() {
-  occa::properties &props = occa::c::properties(cProps);
+  occa::json &props = occa::c::properties(cProps);
 
   const std::string propStr = (std::string) props;
   occaProperties cProps2 = occaCreatePropertiesFromString(propStr.c_str());
-  occa::properties &props2 = occa::c::properties(cProps2);
+  occa::json &props2 = occa::c::properties(cProps2);
 
   ASSERT_EQ(props,
             props2);

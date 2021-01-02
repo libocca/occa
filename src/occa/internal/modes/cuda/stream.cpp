@@ -4,7 +4,7 @@
 namespace occa {
   namespace cuda {
     stream::stream(modeDevice_t *modeDevice_,
-                   const occa::properties &properties_,
+                   const occa::json &properties_,
                    CUstream cuStream_) :
       modeStream_t(modeDevice_, properties_),
       cuStream(cuStream_) {}

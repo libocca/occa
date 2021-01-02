@@ -9,7 +9,7 @@
 namespace occa {
   namespace lang {
     namespace okl {
-      metalParser::metalParser(const occa::properties &settings_) :
+      metalParser::metalParser(const occa::json &settings_) :
           withLauncher(settings_),
           kernel_q("kernel", qualifierType::custom),
           device_q("device", qualifierType::custom),

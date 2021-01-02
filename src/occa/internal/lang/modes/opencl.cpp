@@ -11,7 +11,7 @@ namespace occa {
     namespace okl {
       qualifier_t openclParser::global("__global", qualifierType::custom);
 
-      openclParser::openclParser(const occa::properties &settings_) :
+      openclParser::openclParser(const occa::json &settings_) :
         withLauncher(settings_),
         constant("__constant", qualifierType::custom),
         kernel("__kernel", qualifierType::custom),

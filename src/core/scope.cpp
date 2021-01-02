@@ -6,14 +6,14 @@ namespace occa {
   scope::scope() {}
 
   scope::scope(std::initializer_list<scopeKernelArg> args_,
-               const occa::properties &props_) :
+               const occa::json &props_) :
     props(props_) {
     for (const scopeKernelArg &arg : args_) {
       add(arg);
     }
   }
 
-  scope::scope(const occa::properties &props_) :
+  scope::scope(const occa::json &props_) :
     props(props_) {}
 
   occa::device scope::getDevice() {

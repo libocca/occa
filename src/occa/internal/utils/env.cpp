@@ -7,10 +7,10 @@
 #include <occa/internal/utils/tls.hpp>
 
 namespace occa {
-  properties& settings() {
-    static tls<properties> settings_;
-    properties& props = settings_.value();
-    if (!props.isInitialized()) {
+  json& settings() {
+    static tls<json> settings_;
+    json& props = settings_.value();
+    if (!props.size()) {
       props = env::baseSettings();
     }
     return props;
@@ -28,8 +28,8 @@ namespace occa {
     bool        OCCA_VERBOSE;
     bool        OCCA_COLOR_ENABLED;
 
-    properties& baseSettings() {
-      static properties settings_;
+    json& baseSettings() {
+      static json settings_;
       return settings_;
     }
 
@@ -63,7 +63,7 @@ namespace occa {
     }
 
     void envInitializer_t::initSettings() {
-      properties &settings_ = baseSettings();
+      json &settings_ = baseSettings();
       settings_["version"]     = OCCA_VERSION_STR;
       settings_["okl_version"] = OKL_VERSION_STR;
 
@@ -96,7 +96,7 @@ namespace occa {
 #endif
 
       // OCCA environment variables
-       OCCA_DIR = env::var("OCCA_DIR");
+      OCCA_DIR = env::var("OCCA_DIR");
       if (OCCA_DIR.size() == 0) {
 #ifdef OCCA_SOURCE_DIR
         OCCA_DIR = OCCA_SOURCE_DIR;
@@ -138,7 +138,7 @@ namespace occa {
         return;
       }
 
-      properties &settings_ = baseSettings();
+      json &settings_ = baseSettings();
 
       settings_ += json::read(configFile);
     }

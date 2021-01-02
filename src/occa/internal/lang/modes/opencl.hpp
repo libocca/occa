@@ -7,14 +7,14 @@ namespace occa {
   namespace lang {
     namespace okl {
       class openclParser : public withLauncher {
-      public:
+       public:
         qualifier_t constant;
         qualifier_t kernel;
         qualifier_t local;
         // Hack until code-transformation API is done
         static qualifier_t global;
 
-        openclParser(const occa::properties &settings_ = occa::properties());
+        openclParser(const occa::json &settings_ = occa::json());
 
         virtual void onClear();
         virtual void beforePreprocessing();

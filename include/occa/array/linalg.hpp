@@ -146,7 +146,7 @@ namespace occa {
 
     kernelBuilder customLinearMethod(const std::string &kernelName,
                                      const std::string &formula,
-                                     const occa::properties &props = occa::properties());
+                                     const occa::json &props = occa::json());
     //==================================
   }
 }

@@ -7,7 +7,6 @@
 
 namespace occa {
   class json;
-  class properties;
 
   namespace io {
     bool isCached(const std::string &filename);
@@ -36,7 +35,7 @@ namespace occa {
 
     void writeBuildFile(const std::string &filename,
                         const hash_t &hash,
-                        const occa::properties &props);
+                        const occa::json &props);
   }
 }
 

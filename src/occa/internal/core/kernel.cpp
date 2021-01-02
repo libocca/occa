@@ -6,7 +6,7 @@ namespace occa {
   modeKernel_t::modeKernel_t(modeDevice_t *modeDevice_,
                              const std::string &name_,
                              const std::string &sourceFilename_,
-                             const occa::properties &properties_) :
+                             const occa::json &properties_) :
     modeDevice(modeDevice_),
     name(name_),
     sourceFilename(sourceFilename_),

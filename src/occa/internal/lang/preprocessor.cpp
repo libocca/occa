@@ -24,7 +24,7 @@ namespace occa {
     }
 
     // TODO: Add actual compiler macros as well
-    preprocessor_t::preprocessor_t(const occa::properties &settings_) {
+    preprocessor_t::preprocessor_t(const occa::json &settings_) {
       init();
       initDirectives();
       initStandardHeaders();
@@ -210,7 +210,7 @@ namespace occa {
       return *this;
     }
 
-    void preprocessor_t::setSettings(occa::properties settings_) {
+    void preprocessor_t::setSettings(occa::json settings_) {
       settings = settings_;
     }
 
@@ -371,7 +371,7 @@ namespace occa {
       return *(new preprocessor_t(*this));
     }
 
-    void* preprocessor_t::passMessageToInput(const occa::properties &props) {
+    void* preprocessor_t::passMessageToInput(const occa::json &props) {
       const std::string inputName = props.get<std::string>("input_name");
       if (inputName == "preprocessor_t") {
         return (void*) this;

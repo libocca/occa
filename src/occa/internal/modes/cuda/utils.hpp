@@ -76,7 +76,7 @@ namespace occa {
 
     occa::device wrapDevice(CUdevice device,
                             CUcontext context,
-                            const occa::properties &props = occa::properties());
+                            const occa::json &props = occa::json());
 
     void warn(CUresult errorCode,
               const std::string &filename,

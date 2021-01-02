@@ -51,7 +51,7 @@ void testInfo() {
   ASSERT_EQ(addVectors.mode(),
             "Serial");
 
-  const occa::properties &props = addVectors.properties();
+  const occa::json &props = addVectors.properties();
   ASSERT_EQ(props["mode"].string(),
             "Serial");
 

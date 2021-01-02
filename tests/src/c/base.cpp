@@ -49,7 +49,7 @@ void testDeviceMethods() {
 
   occaSetDeviceFromString("mode: 'Serial',"
                           "key: 'value'");
-  occa::properties &fakeProps = occa::c::properties(occaDeviceProperties());
+  occa::json &fakeProps = occa::c::properties(occaDeviceProperties());
   ASSERT_EQ((std::string) fakeProps["key"],
             "value");
 

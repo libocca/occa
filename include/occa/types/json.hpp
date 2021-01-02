@@ -10,9 +10,12 @@
 
 namespace occa {
   class json;
+  class jsonKeyValue;
 
   typedef std::map<std::string, json> jsonObject;
   typedef std::vector<json>           jsonArray;
+
+  typedef json properties;
 
   typedef struct {
     bool boolean;
@@ -127,6 +130,11 @@ namespace occa {
       type(array_) {
       value_.array = value;
     }
+
+    json(const std::string &name,
+         const primitive &value);
+
+    json(std::initializer_list<jsonKeyValue> entries);
 
     virtual ~json();
 
@@ -280,7 +288,7 @@ namespace occa {
       return (type == array_);
     }
 
-    inline bool isBoolean() const {
+    inline bool isBool() const {
       return (type == boolean_);
     }
 
@@ -605,6 +613,37 @@ namespace occa {
 
     friend std::ostream& operator << (std::ostream &out,
                                       const json &j);
+  };
+
+  class jsonKeyValue {
+   public:
+    std::string name;
+    json value;
+
+    jsonKeyValue(const std::string &name_,
+                 const bool value) :
+      name(name_),
+      value(value) {}
+
+    jsonKeyValue(const std::string &name_,
+                 const primitive &value) :
+      name(name_),
+      value(value) {}
+
+    jsonKeyValue(const std::string &name_,
+                 const std::string &value) :
+      name(name_),
+      value(value) {}
+
+    jsonKeyValue(const std::string &name_,
+                 const jsonArray &value) :
+      name(name_),
+      value(value) {}
+
+    jsonKeyValue(const std::string &name_,
+                 const jsonObject &value) :
+      name(name_),
+      value(value) {}
   };
 
   template <>

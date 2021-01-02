@@ -44,7 +44,7 @@ namespace occa {
     occa::device getDevice() const;
 
     const std::string& mode() const;
-    const occa::properties& properties() const;
+    const occa::json& properties() const;
 
     bool operator == (const occa::stream &other) const;
     bool operator != (const occa::stream &other) const;

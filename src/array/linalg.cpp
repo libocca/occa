@@ -11,7 +11,7 @@ namespace occa {
     // "v0[i] = c1 * (v0[i] + v1[i]);"
     kernelBuilder customLinearMethod(const std::string &kernelName,
                                      const std::string &formula,
-                                     const occa::properties &props) {
+                                     const occa::json &props) {
 
       kernelBuilder builder;
 

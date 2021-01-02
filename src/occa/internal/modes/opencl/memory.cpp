@@ -7,7 +7,7 @@ namespace occa {
   namespace opencl {
     memory::memory(modeDevice_t *modeDevice_,
                    udim_t size_,
-                   const occa::properties &properties_) :
+                   const occa::json &properties_) :
         occa::modeMemory_t(modeDevice_, size_, properties_),
         rootClMem(&clMem),
         rootOffset(0),
@@ -70,7 +70,7 @@ namespace occa {
       return m;
     }
 
-    void* memory::getPtr(const occa::properties &props) {
+    void* memory::getPtr(const occa::json &props) {
       if (props.get("mapped", false)) {
         return mappedPtr;
       }
@@ -80,7 +80,7 @@ namespace occa {
     void memory::copyFrom(const void *src,
                           const udim_t bytes,
                           const udim_t offset,
-                          const occa::properties &props) {
+                          const occa::json &props) {
       const bool async = props.get("async", false);
 
       OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy From",
@@ -95,7 +95,7 @@ namespace occa {
                           const udim_t bytes,
                           const udim_t destOffset,
                           const udim_t srcOffset,
-                          const occa::properties &props) {
+                          const occa::json &props) {
       const bool async = props.get("async", false);
 
       OCCA_OPENCL_ERROR("Memory: " << (async ? "Async " : "") << "Copy From",
@@ -110,7 +110,7 @@ namespace occa {
     void memory::copyTo(void *dest,
                         const udim_t bytes,
                         const udim_t offset,
-                        const occa::properties &props) const {
+                        const occa::json &props) const {
 
       const bool async = props.get("async", false);
 

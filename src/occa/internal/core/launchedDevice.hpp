@@ -6,32 +6,32 @@
 #include <occa/internal/core/device.hpp>
 #include <occa/internal/lang/kernelMetadata.hpp>
 #include <occa/internal/lang/modes/withLauncher.hpp>
-#include <occa/types/properties.hpp>
+#include <occa/types/json.hpp>
 
 namespace occa {
   typedef std::vector<lang::kernelMetadata_t> orderedKernelMetadata;
 
   class launchedModeDevice_t : public modeDevice_t {
-  public:
-    launchedModeDevice_t(const occa::properties &properties_);
+   public:
+    launchedModeDevice_t(const occa::json &json_);
 
     bool parseFile(const std::string &filename,
                    const std::string &outputFile,
                    const std::string &launcherOutputFile,
-                   const occa::properties &kernelProps,
+                   const occa::json &kernelProps,
                    lang::sourceMetadata_t &launcherMetadata,
                    lang::sourceMetadata_t &deviceMetadata);
 
     virtual modeKernel_t* buildKernel(const std::string &filename,
                                       const std::string &kernelName,
                                       const hash_t kernelHash,
-                                      const occa::properties &kernelProps);
+                                      const occa::json &kernelProps);
 
     modeKernel_t* buildKernel(const std::string &filename,
                               const std::string &kernelName,
                               const hash_t kernelHash,
                               const bool usingOkl,
-                              const occa::properties &kernelProps);
+                              const occa::json &kernelProps);
 
     modeKernel_t* buildLauncherKernel(const hash_t kernelHash,
                                       const std::string &hashDir,
@@ -44,7 +44,7 @@ namespace occa {
     );
 
     //---[ Virtual Methods ]------------
-    virtual lang::okl::withLauncher* createParser(const occa::properties &props) const = 0;
+    virtual lang::okl::withLauncher* createParser(const occa::json &props) const = 0;
 
     virtual modeKernel_t* buildKernelFromProcessedSource(
       const hash_t kernelHash,
@@ -55,7 +55,7 @@ namespace occa {
       const bool usingOkl,
       lang::sourceMetadata_t &launcherMetadata,
       lang::sourceMetadata_t &deviceMetadata,
-      const occa::properties &kernelProps,
+      const occa::json &kernelProps,
       io::lock_t lock
     ) = 0;
 
@@ -65,7 +65,7 @@ namespace occa {
       const std::string &kernelName,
       lang::sourceMetadata_t &launcherMetadata,
       lang::sourceMetadata_t &deviceMetadata,
-      const occa::properties &kernelProps,
+      const occa::json &kernelProps,
       io::lock_t lock
     ) = 0;
     //==================================

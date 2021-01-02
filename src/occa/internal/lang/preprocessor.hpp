@@ -39,7 +39,7 @@ namespace occa {
     }
 
     class preprocessor_t : public withCache<token_t*, token_t*> {
-    public:
+     public:
       typedef void (preprocessor_t::*processDirective_t)(identifierToken &directive);
       typedef std::map<std::string, processDirective_t> directiveMap;
 
@@ -67,7 +67,7 @@ namespace occa {
       //================================
 
       //---[ Metadata ]-----------------
-      occa::properties settings;
+      occa::json settings;
 
       strToBoolMap dependencies;
       int warnings, errors;
@@ -79,7 +79,7 @@ namespace occa {
       strVector includePaths;
       //================================
 
-      preprocessor_t(const occa::properties &settings_ = occa::properties());
+      preprocessor_t(const occa::json &settings_ = occa::json());
       preprocessor_t(const preprocessor_t &other);
       ~preprocessor_t();
 
@@ -89,7 +89,7 @@ namespace occa {
 
       preprocessor_t& operator = (const preprocessor_t &pp);
 
-      void setSettings(occa::properties settings_);
+      void setSettings(occa::json settings_);
 
       void initDirectives();
       void initStandardHeaders();
@@ -102,7 +102,7 @@ namespace occa {
 
       virtual tokenMap& clone_() const;
 
-      virtual void* passMessageToInput(const occa::properties &props);
+      virtual void* passMessageToInput(const occa::json &props);
 
       void pushStatus(const int status_);
       int popStatus();

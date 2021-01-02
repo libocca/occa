@@ -20,7 +20,7 @@ namespace occa {
       cl_device_id clDevice;
       cl_context clContext;
 
-      device(const occa::properties &properties_);
+      device(const occa::json &properties_);
       virtual ~device();
 
       virtual void finish() const;
@@ -29,12 +29,12 @@ namespace occa {
 
       virtual hash_t hash() const;
 
-      virtual hash_t kernelHash(const occa::properties &props) const;
+      virtual hash_t kernelHash(const occa::json &props) const;
 
-      virtual lang::okl::withLauncher* createParser(const occa::properties &props) const;
+      virtual lang::okl::withLauncher* createParser(const occa::json &props) const;
 
       //---[ Stream ]-------------------
-      virtual modeStream_t* createStream(const occa::properties &props);
+      virtual modeStream_t* createStream(const occa::json &props);
 
       virtual streamTag tagStream();
       virtual void waitFor(streamTag tag);
@@ -53,7 +53,7 @@ namespace occa {
                                                    const bool usingOkl,
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::properties &kernelProps,
+                                                   const occa::json &kernelProps,
                                                    io::lock_t lock);
 
       modeKernel_t* buildOKLKernelFromBinary(const hash_t kernelHash,
@@ -61,7 +61,7 @@ namespace occa {
                                              const std::string &kernelName,
                                              lang::sourceMetadata_t &launcherMetadata,
                                              lang::sourceMetadata_t &deviceMetadata,
-                                             const occa::properties &kernelProps,
+                                             const occa::json &kernelProps,
                                              io::lock_t lock);
 
 
@@ -71,26 +71,26 @@ namespace occa {
                                              const std::string &kernelName,
                                              lang::sourceMetadata_t &launcherMetadata,
                                              lang::sourceMetadata_t &deviceMetadata,
-                                             const occa::properties &kernelProps,
+                                             const occa::json &kernelProps,
                                              io::lock_t lock);
 
       virtual modeKernel_t* buildKernelFromBinary(const std::string &filename,
                                                   const std::string &kernelName,
-                                                  const occa::properties &kernelProps);
+                                                  const occa::json &kernelProps);
       //================================
 
       //---[ Memory ]-------------------
       virtual modeMemory_t* malloc(const udim_t bytes,
                                    const void *src,
-                                   const occa::properties &props);
+                                   const occa::json &props);
 
       virtual modeMemory_t* mappedAlloc(const udim_t bytes,
                                         const void *src,
-                                        const occa::properties &props);
+                                        const occa::json &props);
 
       modeMemory_t* wrapMemory(const void *ptr,
                                const udim_t bytes,
-                               const occa::properties &props);
+                               const occa::json &props);
 
       virtual udim_t memorySize() const;
       //================================

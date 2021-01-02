@@ -260,7 +260,7 @@ namespace occa {
                                 const std::string &kernelName,
                                 const std::string &compilerFlags,
                                 const std::string &sourceFile,
-                                const occa::properties &properties,
+                                const occa::json &properties,
                                 const io::lock_t &lock) {
       cl_int error = 1;
 
@@ -455,9 +455,9 @@ namespace occa {
 
     occa::device wrapDevice(cl_device_id clDevice,
                             cl_context context,
-                            const occa::properties &props) {
+                            const occa::json &props) {
 
-      occa::properties allProps;
+      occa::json allProps;
       allProps["mode"]        = "OpenCL";
       allProps["platform_id"] = -1;
       allProps["device_id"]   = -1;

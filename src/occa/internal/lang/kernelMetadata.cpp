@@ -1,22 +1,22 @@
 #include <occa/internal/lang/kernelMetadata.hpp>
 #include <occa/internal/io/utils.hpp>
-#include <occa/types/properties.hpp>
+#include <occa/types/json.hpp>
 
 namespace occa {
   namespace lang {
     argMetadata_t::argMetadata_t() :
-        isConst(false),
-        isPtr(false),
-        dtype(dtype::byte) {}
+      isConst(false),
+      isPtr(false),
+      dtype(dtype::byte) {}
 
     argMetadata_t::argMetadata_t(const bool isConst_,
                                  const bool isPtr_,
                                  const dtype_t &dtype_,
                                  const std::string &name_) :
-        isConst(isConst_),
-        isPtr(isPtr_),
-        dtype(dtype_),
-        name(name_) {}
+      isConst(isConst_),
+      isPtr(isPtr_),
+      dtype(dtype_),
+      name(name_) {}
 
     argMetadata_t argMetadata_t::fromJson(const json &j) {
       return argMetadata_t((bool) j["const"],
@@ -35,7 +35,7 @@ namespace occa {
     }
 
     kernelMetadata_t::kernelMetadata_t() :
-        initialized(false) {}
+      initialized(false) {}
 
     bool kernelMetadata_t::isInitialized() const {
       return initialized;
@@ -108,7 +108,7 @@ namespace occa {
         return metadata;
       }
 
-      properties props = properties::read(filename);
+      json props = json::read(filename);
       jsonArray &kernelMetadata = props["kernel/metadata"].array();
       jsonObject &dependencyHashes_ = props["kernel/dependencies"].object();
 

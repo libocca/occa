@@ -2,16 +2,16 @@
 #define OCCA_INTERNAL_CORE_MEMORY_HEADER
 
 #include <occa/core/memory.hpp>
-#include <occa/types/properties.hpp>
+#include <occa/types/json.hpp>
 #include <occa/internal/utils/gc.hpp>
 
 namespace occa {
   class kernelArgData;
 
   class modeMemory_t : public gc::ringEntry_t {
-  public:
+   public:
     int memInfo;
-    occa::properties properties;
+    occa::json json;
 
     gc::ring_t<memory> memoryRing;
 
@@ -26,7 +26,7 @@ namespace occa {
 
     modeMemory_t(modeDevice_t *modeDevice_,
                  udim_t size_,
-                 const occa::properties &properties_);
+                 const occa::json &json_);
 
     void dontUseRefs();
     void addMemoryRef(memory *mem);
@@ -44,23 +44,23 @@ namespace occa {
 
     virtual modeMemory_t* addOffset(const dim_t offset) = 0;
 
-    virtual void* getPtr(const occa::properties &props);
+    virtual void* getPtr(const occa::json &props);
 
     virtual void copyTo(void *dest,
                         const udim_t bytes,
                         const udim_t offset = 0,
-                        const occa::properties &props = occa::properties()) const = 0;
+                        const occa::json &props = occa::json()) const = 0;
 
     virtual void copyFrom(const void *src,
                           const udim_t bytes,
                           const udim_t offset = 0,
-                          const occa::properties &props = occa::properties()) = 0;
+                          const occa::json &props = occa::json()) = 0;
 
     virtual void copyFrom(const modeMemory_t *src,
                           const udim_t bytes,
                           const udim_t destOffset = 0,
                           const udim_t srcOffset = 0,
-                          const occa::properties &props = occa::properties()) = 0;
+                          const occa::json &props = occa::json()) = 0;
 
     virtual void detach() = 0;
     //==================================
@@ -68,7 +68,7 @@ namespace occa {
     //---[ Friend Functions ]-----------
     friend void memcpy(void *dest, void *src,
                        const dim_t bytes,
-                       const occa::properties &props);
+                       const occa::json &props);
 
     friend void startManaging(void *ptr);
     friend void stopManaging(void *ptr);

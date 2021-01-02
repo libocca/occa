@@ -133,7 +133,7 @@ namespace occa {
       return *(new tokenizer_t(*this));
     }
 
-    void* tokenizer_t::passMessageToInput(const occa::properties &props) {
+    void* tokenizer_t::passMessageToInput(const occa::json &props) {
       const std::string inputName = props.get<std::string>("input_name");
       if (inputName == "tokenizer_t") {
         return (void*) this;

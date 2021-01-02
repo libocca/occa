@@ -8,13 +8,13 @@ namespace occa {
     void baseStream<output_t>::clearCache() {}
 
     template <class output_t>
-    void* baseStream<output_t>::passMessageToInput(const occa::properties &props) {
+    void* baseStream<output_t>::passMessageToInput(const occa::json &props) {
       return NULL;
     }
 
     template <class output_t>
     void* baseStream<output_t>::getInput(const std::string &name) {
-      occa::properties props;
+      occa::json props;
       props["input_name"] = name;
       return passMessageToInput(props);
     }
@@ -73,7 +73,7 @@ namespace occa {
     }
 
     template <class output_t>
-    void* stream<output_t>::passMessageToInput(const occa::properties &props) {
+    void* stream<output_t>::passMessageToInput(const occa::json &props) {
       return head->passMessageToInput(props);
     }
 
@@ -153,7 +153,7 @@ namespace occa {
     }
 
     template <class input_t, class output_t>
-    void* streamMap<input_t, output_t>::passMessageToInput(const occa::properties &props) {
+    void* streamMap<input_t, output_t>::passMessageToInput(const occa::json &props) {
       if (input) {
         return input->passMessageToInput(props);
       }
@@ -321,14 +321,14 @@ namespace occa {
     withCache<input_t, output_t>::withCache(
       const withCache<input_t, output_t> &other
     ) :
-        withInputCache<input_t, input_t>(other),
-        withOutputCache<output_t, output_t>(other) {}
+      withInputCache<input_t, input_t>(other),
+      withOutputCache<output_t, output_t>(other) {}
 
     template <class input_t, class output_t>
     void withCache<input_t, output_t>::clearCache() {
       withInputCache<input_t, input_t>::clearCache();
       withOutputCache<output_t, output_t>::clearCache();
     }
-  //====================================
+    //====================================
   }
 }

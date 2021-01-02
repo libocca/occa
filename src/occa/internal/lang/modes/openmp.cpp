@@ -5,7 +5,7 @@
 namespace occa {
   namespace lang {
     namespace okl {
-      openmpParser::openmpParser(const occa::properties &settings_) :
+      openmpParser::openmpParser(const occa::json &settings_) :
         serialParser(settings_) {}
 
       void openmpParser::afterParsing() {

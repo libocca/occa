@@ -8,6 +8,17 @@
 namespace occa {
   const char json::objectKeyEndChars[] = " \t\r\n\v\f:";
 
+  json::json(const std::string &name,
+             const primitive &value) {
+    (*this)[name] = value;
+  }
+
+  json::json(std::initializer_list<jsonKeyValue> entries) {
+    for (auto &entry : entries) {
+      (*this)[entry.name] = entry.value;
+    }
+  }
+
   json::~json() {}
 
   json& json::clear() {

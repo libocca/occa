@@ -27,13 +27,13 @@ namespace occa {
     return *this;
   }
 
-  const occa::properties& kernelBuilder::defaultProperties() const {
+  const occa::json& kernelBuilder::defaultProperties() const {
     return defaultProps;
   }
 
   kernelBuilder kernelBuilder::fromFile(const std::string &filename,
                                         const std::string &function,
-                                        const occa::properties &defaultProps_) {
+                                        const occa::json &defaultProps_) {
     kernelBuilder builder;
     builder.source_      = filename;
     builder.function_    = function;
@@ -44,7 +44,7 @@ namespace occa {
 
   kernelBuilder kernelBuilder::fromString(const std::string &content,
                                           const std::string &function,
-                                          const occa::properties &defaultProps_) {
+                                          const occa::json &defaultProps_) {
     kernelBuilder builder;
     builder.source_      = content;
     builder.function_    = function;
@@ -62,8 +62,8 @@ namespace occa {
   }
 
   occa::kernel kernelBuilder::build(occa::device device,
-                                    const occa::properties &props) {
-    occa::properties kernelProps = defaultProps;
+                                    const occa::json &props) {
+    occa::json kernelProps = defaultProps;
     kernelProps += props;
     return build(device,
                  hash(device) ^ hash(kernelProps),
@@ -77,7 +77,7 @@ namespace occa {
 
   occa::kernel kernelBuilder::build(occa::device device,
                                     const hash_t &hash,
-                                    const occa::properties &props) {
+                                    const occa::json &props) {
     occa::kernel &kernel = kernelMap[hash];
     if (!kernel.isInitialized()) {
       if (buildingFromFile) {

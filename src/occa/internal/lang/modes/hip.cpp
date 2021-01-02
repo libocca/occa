@@ -4,7 +4,7 @@
 namespace occa {
   namespace lang {
     namespace okl {
-      hipParser::hipParser(const occa::properties &settings_) :
+      hipParser::hipParser(const occa::json &settings_) :
         cudaParser(settings_) {}
 
       void hipParser::beforeKernelSplit() {

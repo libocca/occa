@@ -7,7 +7,7 @@
 #include <occa/core/device.hpp>
 #include <occa/core/kernelArg.hpp>
 #include <occa/types/primitive.hpp>
-#include <occa/types/properties.hpp>
+#include <occa/types/json.hpp>
 
 namespace occa {
   typedef std::vector<scopeKernelArg> scopeKernelArgVector;
@@ -44,16 +44,16 @@ namespace occa {
 
   class scope {
    public:
-    occa::properties props;
+    occa::json props;
     occa::device device;
     scopeKernelArgVector args;
 
     scope();
 
     scope(std::initializer_list<scopeKernelArg> args_,
-          const occa::properties &props_ = occa::properties());
+          const occa::json &props_ = occa::json());
 
-    scope(const occa::properties &props_);
+    scope(const occa::json &props_);
 
     inline void add(scopeKernelArg arg) {
       args.push_back(arg);

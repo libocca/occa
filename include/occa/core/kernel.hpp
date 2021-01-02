@@ -60,7 +60,7 @@ namespace occa {
     bool isInitialized();
 
     const std::string& mode() const;
-    const occa::properties& properties() const;
+    const occa::json& properties() const;
 
     modeKernel_t* getModeKernel() const;
 
@@ -99,9 +99,9 @@ namespace occa {
   //   includes      : Array
   //   header        : Array
   //   include_paths : Array
-  hash_t kernelHeaderHash(const occa::properties &props);
+  hash_t kernelHeaderHash(const occa::json &props);
 
-  std::string assembleKernelHeader(const occa::properties &props);
+  std::string assembleKernelHeader(const occa::json &props);
   //====================================
 }
 

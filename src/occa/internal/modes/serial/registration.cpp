@@ -71,11 +71,11 @@ namespace occa {
       return section;
     }
 
-    modeDevice_t* serialMode::newDevice(const occa::properties &props) {
+    modeDevice_t* serialMode::newDevice(const occa::json &props) {
       return new device(setModeProp(props));
     }
 
-    int serialMode::getDeviceCount(const occa::properties &props) {
+    int serialMode::getDeviceCount(const occa::json &props) {
       return 1;
     }
 

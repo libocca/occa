@@ -26,7 +26,7 @@ public:
     index = 0;
   }
 
-  virtual void* passMessageToInput(const occa::properties &props) {
+  virtual void* passMessageToInput(const occa::json &props) {
     const std::string inputName = props.get<std::string>("input_name");
     if (inputName == "vectorStream") {
       return (void*) this;

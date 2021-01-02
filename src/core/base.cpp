@@ -32,11 +32,11 @@ namespace occa {
     getDevice() = d;
   }
 
-  void setDevice(const occa::properties &props) {
+  void setDevice(const occa::json &props) {
     getDevice() = device(props);
   }
 
-  const occa::properties& deviceProperties() {
+  const occa::json& deviceProperties() {
     return getDevice().properties();
   }
 
@@ -53,7 +53,7 @@ namespace occa {
     return getDevice().timeBetween(startTag, endTag);
   }
 
-  stream createStream(const occa::properties &props) {
+  stream createStream(const occa::json &props) {
     return getDevice().createStream(props);
   }
 
@@ -72,7 +72,7 @@ namespace occa {
   //---[ Kernel Functions ]-------------
   kernel buildKernel(const std::string &filename,
                      const std::string &kernelName,
-                     const occa::properties &props) {
+                     const occa::json &props) {
 
     return getDevice().buildKernel(filename,
                                    kernelName,
@@ -81,14 +81,14 @@ namespace occa {
 
   kernel buildKernelFromString(const std::string &content,
                                const std::string &kernelName,
-                               const occa::properties &props) {
+                               const occa::json &props) {
 
     return getDevice().buildKernelFromString(content, kernelName, props);
   }
 
   kernel buildKernelFromBinary(const std::string &filename,
                                const std::string &kernelName,
-                               const occa::properties &props) {
+                               const occa::json &props) {
 
     return getDevice().buildKernelFromBinary(filename, kernelName, props);
   }
@@ -97,48 +97,48 @@ namespace occa {
   occa::memory malloc(const dim_t entries,
                       const dtype_t &dtype,
                       const void *src,
-                      const occa::properties &props) {
+                      const occa::json &props) {
     return getDevice().malloc(entries, dtype, src, props);
   }
 
   template <>
   occa::memory malloc<void>(const dim_t entries,
                             const void *src,
-                            const occa::properties &props) {
+                            const occa::json &props) {
     return getDevice().malloc(entries, dtype::byte, src, props);
   }
 
   void* umalloc(const dim_t entries,
                 const dtype_t &dtype,
                 const void *src,
-                const occa::properties &props) {
+                const occa::json &props) {
     return getDevice().umalloc(entries, dtype, src, props);
   }
 
   template <>
   void* umalloc<void>(const dim_t entries,
                       const void *src,
-                      const occa::properties &props) {
+                      const occa::json &props) {
     return getDevice().umalloc(entries, dtype::byte, src, props);
   }
 
   occa::memory wrapMemory(const void *ptr,
                           const dim_t entries,
                           const dtype_t &dtype,
-                          const occa::properties &props) {
+                          const occa::json &props) {
     return getDevice().wrapMemory(ptr, entries, dtype, props);
   }
 
   template <>
   occa::memory wrapMemory<void>(const void *ptr,
                                 const dim_t entries,
-                                const occa::properties &props) {
+                                const occa::json &props) {
     return getDevice().wrapMemory(ptr, entries, dtype::byte, props);
   }
 
   void memcpy(void *dest, const void *src,
               const dim_t bytes,
-              const occa::properties &props) {
+              const occa::json &props) {
 
     ptrRangeMap::iterator srcIt  = uvaMap.find(const_cast<void*>(src));
     ptrRangeMap::iterator destIt = uvaMap.find(dest);
@@ -187,7 +187,7 @@ namespace occa {
   void memcpy(memory dest, const void *src,
               const dim_t bytes,
               const dim_t offset,
-              const occa::properties &props) {
+              const occa::json &props) {
 
     dest.copyFrom(src, bytes, offset, props);
   }
@@ -195,7 +195,7 @@ namespace occa {
   void memcpy(void *dest, memory src,
               const dim_t bytes,
               const dim_t offset,
-              const occa::properties &props) {
+              const occa::json &props) {
 
     src.copyTo(dest, bytes, offset, props);
   }
@@ -204,28 +204,28 @@ namespace occa {
               const dim_t bytes,
               const dim_t destOffset,
               const dim_t srcOffset,
-              const occa::properties &props) {
+              const occa::json &props) {
 
     dest.copyFrom(src, bytes, destOffset, srcOffset, props);
   }
 
   void memcpy(void *dest, const void *src,
-              const occa::properties &props) {
+              const occa::json &props) {
     memcpy(dest, src, -1, props);
   }
 
   void memcpy(memory dest, const void *src,
-              const occa::properties &props) {
+              const occa::json &props) {
     memcpy(dest, src, -1, 0, props);
   }
 
   void memcpy(void *dest, memory src,
-              const occa::properties &props) {
+              const occa::json &props) {
     memcpy(dest, src, -1, 0, props);
   }
 
   void memcpy(memory dest, memory src,
-              const occa::properties &props) {
+              const occa::json &props) {
     memcpy(dest, src, -1, 0, 0, props);
   }
   //====================================
@@ -253,7 +253,7 @@ namespace occa {
     return getMode(mode);
   }
 
-  int getDeviceCount(const occa::properties &props) {
+  int getDeviceCount(const occa::json &props) {
     std::string modeName = props["mode"];
     mode_t *mode = getMode(modeName);
 

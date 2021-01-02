@@ -43,11 +43,11 @@ namespace occa {
       return section;
     }
 
-    modeDevice_t* hipMode::newDevice(const occa::properties &props) {
+    modeDevice_t* hipMode::newDevice(const occa::json &props) {
       return new device(setModeProp(props));
     }
 
-    int hipMode::getDeviceCount(const occa::properties &props) {
+    int hipMode::getDeviceCount(const occa::json &props) {
       return hip::getDeviceCount();
     }
 

@@ -9,7 +9,7 @@
 #include <occa/internal/utils/string.hpp>
 
 namespace occa {
-  launchedModeDevice_t::launchedModeDevice_t(const occa::properties &properties_) :
+  launchedModeDevice_t::launchedModeDevice_t(const occa::json &properties_) :
     modeDevice_t(properties_) {
     needsLauncherKernel = true;
   }
@@ -17,7 +17,7 @@ namespace occa {
   bool launchedModeDevice_t::parseFile(const std::string &filename,
                                        const std::string &outputFile,
                                        const std::string &launcherOutputFile,
-                                       const occa::properties &kernelProps,
+                                       const occa::json &kernelProps,
                                        lang::sourceMetadata_t &launcherMetadata,
                                        lang::sourceMetadata_t &deviceMetadata) {
     lang::okl::withLauncher &parser = *(createParser(kernelProps));
@@ -58,7 +58,7 @@ namespace occa {
   modeKernel_t* launchedModeDevice_t::buildKernel(const std::string &filename,
                                                   const std::string &kernelName,
                                                   const hash_t kernelHash,
-                                                  const occa::properties &kernelProps) {
+                                                  const occa::json &kernelProps) {
     bool usingOkl = kernelProps.get("okl/enabled", true);
 
     launchedModeKernel_t *kernel = (launchedModeKernel_t*) (
@@ -91,7 +91,7 @@ namespace occa {
                                                   const std::string &kernelName,
                                                   const hash_t kernelHash,
                                                   const bool usingOkl,
-                                                  const occa::properties &kernelProps) {
+                                                  const occa::json &kernelProps) {
     const std::string hashDir = io::hashDir(filename, kernelHash);
     const std::string binaryFilename = hashDir + kc::binaryFile;
 
@@ -172,7 +172,7 @@ namespace occa {
         .getModeDevice()
         ->writeKernelBuildFile(hashDir + kc::launcherBuildFile,
                                kernelHash,
-                               occa::properties(),
+                               occa::json(),
                                launcherMetadata);
 
       writeKernelBuildFile(hashDir + kc::buildFile,

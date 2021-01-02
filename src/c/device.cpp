@@ -38,22 +38,22 @@ const char* occaDeviceMode(occaDevice device) {
 }
 
 occaProperties occaDeviceGetProperties(occaDevice device) {
-  const occa::properties &props = occa::c::device(device).properties();
+  const occa::json &props = occa::c::device(device).properties();
   return occa::c::newOccaType(props, false);
 }
 
 occaProperties occaDeviceGetKernelProperties(occaDevice device) {
-  const occa::properties &props = occa::c::device(device).kernelProperties();
+  const occa::json &props = occa::c::device(device).kernelProperties();
   return occa::c::newOccaType(props, false);
 }
 
 occaProperties occaDeviceGetMemoryProperties(occaDevice device) {
-  const occa::properties &props = occa::c::device(device).memoryProperties();
+  const occa::json &props = occa::c::device(device).memoryProperties();
   return occa::c::newOccaType(props, false);
 }
 
 occaProperties occaDeviceGetStreamProperties(occaDevice device) {
-  const occa::properties &props = occa::c::device(device).streamProperties();
+  const occa::json &props = occa::c::device(device).streamProperties();
   return occa::c::newOccaType(props, false);
 }
 

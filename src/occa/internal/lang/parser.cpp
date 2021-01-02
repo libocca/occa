@@ -9,21 +9,21 @@
 
 namespace occa {
   namespace lang {
-    parser_t::parser_t(const occa::properties &settings_) :
-        preprocessor(settings_),
-        unknownFilter(true),
-        root(NULL, NULL),
-        smntContext(root),
-        smntPeeker(tokenContext,
-                   smntContext,
-                   *this,
-                   attributeMap),
-        loadingStatementType(0),
-        checkSemicolon(true),
-        defaultRootToken(originSource::builtin),
-        success(true),
-        settings(settings_),
-        restrictQualifier(NULL) {
+    parser_t::parser_t(const occa::json &settings_) :
+      preprocessor(settings_),
+      unknownFilter(true),
+      root(NULL, NULL),
+      smntContext(root),
+      smntPeeker(tokenContext,
+                 smntContext,
+                 *this,
+                 attributeMap),
+      loadingStatementType(0),
+      checkSemicolon(true),
+      defaultRootToken(originSource::builtin),
+      success(true),
+      settings(settings_),
+      restrictQualifier(NULL) {
       // Properly implement `identifier-nondigit` for identifiers
       // Meanwhile, we use the unknownFilter
       stream = (tokenizer
@@ -110,27 +110,27 @@ namespace occa {
 
       // Set metadata for all @kernels
       root.children
-          .forEachKernelStatement([&](functionDeclStatement &kernelSmnt) {
-              function_t &func = kernelSmnt.function();
+        .forEachKernelStatement([&](functionDeclStatement &kernelSmnt) {
+          function_t &func = kernelSmnt.function();
 
-              kernelMetadata_t &metadata = metadataMap[func.name()];
-              metadata.name = func.name();
+          kernelMetadata_t &metadata = metadataMap[func.name()];
+          metadata.name = func.name();
 
-              int args = (int) func.args.size();
-              for (int ai = 0; ai < args; ++ai) {
-                variable_t &arg = *(func.args[ai]);
-                // Ignore implicit arguments that come from the device
-                if (arg.hasAttribute("implicitArg")) {
-                  continue;
-                }
-                metadata += argMetadata_t(
-                  arg.has(const_),
-                  arg.vartype.isPointerType(),
-                  arg.dtype(),
-                  arg.name()
-                );
-              }
-            });
+          int args = (int) func.args.size();
+          for (int ai = 0; ai < args; ++ai) {
+            variable_t &arg = *(func.args[ai]);
+            // Ignore implicit arguments that come from the device
+            if (arg.hasAttribute("implicitArg")) {
+              continue;
+            }
+            metadata += argMetadata_t(
+              arg.has(const_),
+              arg.vartype.isPointerType(),
+              arg.dtype(),
+              arg.name()
+            );
+          }
+        });
 
       // Set dependencies and their hashes
       strVector dependencies = preprocessor.getDependencyFilenames();

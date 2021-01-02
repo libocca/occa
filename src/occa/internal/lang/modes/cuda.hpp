@@ -13,7 +13,7 @@ namespace occa {
         qualifier_t device;
         qualifier_t shared;
 
-        cudaParser(const occa::properties &settings_ = occa::properties());
+        cudaParser(const occa::json &settings_ = occa::json());
 
         virtual void onClear();
 

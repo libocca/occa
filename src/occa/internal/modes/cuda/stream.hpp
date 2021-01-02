@@ -13,7 +13,7 @@ namespace occa {
       CUstream cuStream;
 
       stream(modeDevice_t *modeDevice_,
-             const occa::properties &properties_,
+             const occa::json &properties_,
              CUstream cuStream_);
 
       virtual ~stream();

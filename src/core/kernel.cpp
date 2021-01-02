@@ -80,8 +80,8 @@ namespace occa {
             : noMode);
   }
 
-  const occa::properties& kernel::properties() const {
-    static const occa::properties noProperties;
+  const occa::json& kernel::properties() const {
+    static const occa::json noProperties;
     return (modeKernel
             ? modeKernel->properties
             : noProperties);
@@ -206,7 +206,7 @@ namespace occa {
   //   headers       : Array
   //   include_paths : Array
 
-  hash_t kernelHeaderHash(const occa::properties &props) {
+  hash_t kernelHeaderHash(const occa::json &props) {
     return (
       occa::hash(props["defines"])
       ^ props["includes"]
@@ -214,7 +214,7 @@ namespace occa {
     );
   }
 
-  std::string assembleKernelHeader(const occa::properties &props) {
+  std::string assembleKernelHeader(const occa::json &props) {
     std::string header;
 
     // Add defines

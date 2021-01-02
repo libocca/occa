@@ -10,7 +10,7 @@ namespace occa {
     kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
-                   const occa::properties &properties_) :
+                   const occa::json &properties_) :
       occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       hipModule(NULL),
       hipFunction(NULL) {}
@@ -20,7 +20,7 @@ namespace occa {
                    const std::string &sourceFilename_,
                    hipModule_t hipModule_,
                    hipFunction_t hipFunction_,
-                   const occa::properties &properties_) :
+                   const occa::json &properties_) :
       occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       hipModule(hipModule_),
       hipFunction(hipFunction_) {}

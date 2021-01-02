@@ -106,7 +106,7 @@ namespace occa {
     occaType newOccaType(const json &json,
                          const bool needsFree);
 
-    occaType newOccaType(const occa::properties &properties,
+    occaType newOccaType(const occa::json &properties,
                          const bool needsFree);
 
     bool isDefault(occaType value);
@@ -130,8 +130,8 @@ namespace occa {
     occa::json& json(occaType value);
     occa::json inferJson(occaType value);
 
-    occa::properties& properties(occaType value);
-    const occa::properties& constProperties(occaType value);
+    occa::json& properties(occaType value);
+    const occa::json& constProperties(occaType value);
 
     occa::dtype_t getDtype(occaType value);
   }

@@ -75,7 +75,7 @@ void testHashDir() {
 
 void testBuild() {
   // Build props
-  occa::properties props;
+  occa::json props;
   ASSERT_EQ(props.size(),
             0);
   occa::io::setBuildProps(props);

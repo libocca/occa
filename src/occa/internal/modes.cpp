@@ -6,7 +6,7 @@
 namespace occa {
   //---[ mode_t ]-----------------------
   mode_t::mode_t(const std::string &modeName_) :
-      modeName(modeName_) {
+    modeName(modeName_) {
     registerMode(this);
   }
 
@@ -19,8 +19,8 @@ namespace occa {
     return section;
   }
 
-  occa::properties mode_t::setModeProp(const occa::properties &props) {
-    occa::properties propsWithMode = props;
+  occa::json mode_t::setModeProp(const occa::json &props) {
+    occa::json propsWithMode = props;
     propsWithMode["mode"] = modeName;
     return propsWithMode;
   }
@@ -78,7 +78,7 @@ namespace occa {
     return NULL;
   }
 
-  mode_t* getModeFromProps(const occa::properties &props) {
+  mode_t* getModeFromProps(const occa::json &props) {
     std::string modeName = props["mode"];
     mode_t *mode = getMode(modeName);
 
@@ -94,7 +94,7 @@ namespace occa {
     return getMode("Serial");
   }
 
-  modeDevice_t* newModeDevice(const occa::properties &props) {
+  modeDevice_t* newModeDevice(const occa::json &props) {
     return getModeFromProps(props)->newDevice(props);
   }
 }

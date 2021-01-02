@@ -21,14 +21,14 @@ namespace occa {
       kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
-             const occa::properties &properties_);
+             const occa::json &properties_);
 
       kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
              cl_device_id clDevice_,
              cl_kernel clKernel_,
-             const occa::properties &properties_);
+             const occa::json &properties_);
 
       ~kernel();
 

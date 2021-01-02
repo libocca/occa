@@ -44,12 +44,12 @@ void testNewOccaTypes() {
   TEST_OCCA_TYPE((double) 1.0, OCCA_DOUBLE);
 
   {
-    occaType v = occa::c::newOccaType(*(new occa::properties()), true);
+    occaType v = occa::c::newOccaType(*(new occa::json()), true);
     ASSERT_EQ(v.type, OCCA_PROPERTIES);
     occaFree(&v);
   }
   {
-    occa::properties props;
+    occa::json props;
     occaType v = occa::c::newOccaType(props, false);
     ASSERT_EQ(v.type, OCCA_PROPERTIES);
     occaFree(&v);
@@ -58,7 +58,7 @@ void testNewOccaTypes() {
   occaProperties cProps = (
     occaCreatePropertiesFromString("a: 1, b: 2")
   );
-  const occa::properties &props = occa::c::constProperties(cProps);
+  const occa::json &props = occa::c::constProperties(cProps);
   ASSERT_EQ((int) props["a"],
             1);
   ASSERT_EQ((int) props["b"],

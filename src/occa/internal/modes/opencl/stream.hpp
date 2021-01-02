@@ -11,7 +11,7 @@ namespace occa {
       cl_command_queue commandQueue;
 
       stream(modeDevice_t *modeDevice_,
-             const occa::properties &properties_,
+             const occa::json &properties_,
              cl_command_queue commandQueue_);
 
       virtual ~stream();
