@@ -42,7 +42,7 @@ namespace occa {
     type_t type;
     jsonValue_t value_;
 
-    inline json(type_t type_ = none_) {
+    inline json(type_t type_ = object_) {
       clear();
       type = type_;
     }
