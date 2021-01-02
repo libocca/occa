@@ -35,7 +35,7 @@ namespace occa {
 
       cl_command_queue& getCommandQueue() const;
 
-      kernelArg toKernelArg() const;
+      void* getKernelArgPtr() const;
 
       modeMemory_t* addOffset(const dim_t offset);
 

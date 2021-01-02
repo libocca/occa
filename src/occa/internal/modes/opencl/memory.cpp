@@ -43,7 +43,7 @@ namespace occa {
       return ((device*) modeDevice)->getCommandQueue();
     }
 
-    kernelArg memory::toKernelArg() const {
+    void* memory::getKernelArgPtr() const {
       return (void*) &clMem;
     }
 

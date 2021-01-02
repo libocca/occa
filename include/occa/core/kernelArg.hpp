@@ -128,7 +128,7 @@ namespace occa {
                           TM *value_) :
       name(name_),
       isConst(false) {
-      pointerConstructor(name_, dtype::get<TM>());
+      pointerConstructor(value_, dtype::get<TM>());
     }
 
     template <class TM>

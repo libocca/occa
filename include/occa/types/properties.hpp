@@ -1,9 +1,22 @@
 #ifndef OCCA_TYPES_PROPERTIES_HEADER
 #define OCCA_TYPES_PROPERTIES_HEADER
 
+#include <initializer_list>
+
 #include <occa/types/json.hpp>
 
 namespace occa {
+  class propertyKeyValue {
+   public:
+    std::string name;
+    primitive value;
+
+    inline propertyKeyValue(const std::string &name_,
+                            const primitive &value_) :
+      name(name_),
+      value(value_) {}
+  };
+
   class properties: public json {
   public:
     // Note: Do not use directly since we're casting between
@@ -11,10 +24,17 @@ namespace occa {
     mutable bool initialized;
 
     properties();
+
     properties(const properties &other);
+
     properties(const json &j);
+
     properties(const char *c);
+
     properties(const std::string &s);
+
+    properties(std::initializer_list<propertyKeyValue> entries);
+
     ~properties();
 
     properties& operator = (const properties &other);

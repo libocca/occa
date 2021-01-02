@@ -32,7 +32,7 @@ namespace occa {
       return ((device*) modeDevice)->getCuStream();
     }
 
-    kernelArg memory::toKernelArg() const {
+    void* memory::getKernelArgPtr() const {
       return (void*) &cuPtr;
     }
 

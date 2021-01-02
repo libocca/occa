@@ -13,7 +13,7 @@ namespace occa {
              const occa::properties &properties_ = occa::properties());
       ~memory();
 
-      kernelArg toKernelArg() const;
+      void* getKernelArgPtr() const;
 
       modeMemory_t* addOffset(const dim_t offset);
 

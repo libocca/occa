@@ -29,17 +29,19 @@ int main(int argc, const char **argv) {
   }
 
   occa::scope scope({
-    entries,
+    {"entries", entries},
     // Const-ness of variables is passed through, which can be useful for the compiler
     {"a", (const float*) a},
     {"b", (const float*) b},
-    ab,
-    {"TILE_SIZE", 16}
+    {"ab", ab}
+  }, {
+    // Define TILE_SIZE at compile-time
+    {"defines/TILE_SIZE", 16}
   });
 
   OCCA_JIT(scope, (
     for (int i = 0; i < entries; ++i; @tile(TILE_SIZE, @outer, @inner)) {
-      ab[i] = 100 * (c_a[i] + c_b[i]);
+      ab[i] = a[i] + b[i];
     }
   ));
 

@@ -17,7 +17,7 @@ namespace occa {
       size = 0;
     }
 
-    kernelArg memory::toKernelArg() const {
+    void* memory::getKernelArgPtr() const {
       return nullptr;
     }
 

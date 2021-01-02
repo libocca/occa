@@ -40,7 +40,7 @@ namespace occa {
     //---[ Virtual Methods ]------------
     virtual ~modeMemory_t() = 0;
 
-    virtual kernelArg toKernelArg() const = 0;
+    virtual void* getKernelArgPtr() const = 0;
 
     virtual modeMemory_t* addOffset(const dim_t offset) = 0;
 

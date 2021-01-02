@@ -33,6 +33,12 @@ namespace occa {
     properties::load(s);
   }
 
+  properties::properties(std::initializer_list<propertyKeyValue> entries) {
+    for (auto &entry : entries) {
+      (*this)[entry.name] = entry.value;
+    }
+  }
+
   properties::~properties() {}
 
   properties& properties::operator = (const properties &other) {

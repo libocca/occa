@@ -33,7 +33,7 @@ namespace occa {
       return ((device*) modeDevice)->getHipStream();
     }
 
-    kernelArg memory::toKernelArg() const {
+    void* memory::getKernelArgPtr() const {
       return (void*) hipPtr;
     }
 

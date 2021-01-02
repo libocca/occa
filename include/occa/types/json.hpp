@@ -1,8 +1,8 @@
 #ifndef OCCA_UTILS_JSON_HEADER
 #define OCCA_UTILS_JSON_HEADER
 
-#include <vector>
 #include <map>
+#include <vector>
 
 #include <occa/dtype/builtins.hpp>
 #include <occa/types/primitive.hpp>

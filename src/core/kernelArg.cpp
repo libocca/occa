@@ -152,7 +152,7 @@ namespace occa {
     }
 
     if (modeMemory) {
-      add(modeMemory->toKernelArg());
+      addMemory(modeMemory);
     } else {
       kernelArgData kArg(arg);
       kArg.ptrSize = bytes;
@@ -166,12 +166,10 @@ namespace occa {
       return;
     }
 
-    // Set the modeMemory origin on each argument
-    kernelArg memArg = arg->toKernelArg();
-    for (auto &entry : memArg.args) {
-      entry.modeMemory = arg;
-    }
-    add(memArg);
+    // Set the modeMemory origin
+    kernelArgData kArg(arg->getKernelArgPtr());
+    kArg.modeMemory = arg;
+    add(kArg);
   }
 
   int kernelArg::argumentCount(const std::vector<kernelArg> &arguments) {
