@@ -31,6 +31,7 @@ void testProperties();
 void testMemoryMethods();
 void testKernelMethods();
 void testStreamMethods();
+void testWrapMemory();
 
 int main(const int argc, const char **argv) {
   srand(time(NULL));
@@ -40,6 +41,7 @@ int main(const int argc, const char **argv) {
   testMemoryMethods();
   testKernelMethods();
   testStreamMethods();
+  testWrapMemory();
 
   occaFree(&props);
 
@@ -259,4 +261,55 @@ void testStreamMethods() {
 
   occaFree(&cStream);
   occaFree(&device);
+}
+
+void testWrapMemory() {
+  occaDevice device = occaCreateDevice(props);
+  const int entries = 10;
+  const size_t bytes = entries * sizeof(int);
+
+  occaMemory mem1 = occaMalloc(bytes, NULL, occaDefault);
+  occaMemory mem2 = occaMemoryClone(mem1);
+
+  ASSERT_EQ(occaMemorySize(mem1),
+            occaMemorySize(mem2));
+
+  ASSERT_NEQ(occa::c::memory(mem1),
+             occa::c::memory(mem2));
+
+  int *ptr = (int*) occaMemoryPtr(mem2, occaDefault);
+  occaMemoryDetach(mem2);
+
+  for (int i = 0; i < entries; ++i) {
+    ptr[i] = i;
+  }
+
+  mem2 = occaDeviceWrapMemory(occaHost(),
+                              ptr,
+                              bytes,
+                              occaDefault);
+
+  mem2 = occaDeviceTypedWrapMemory(device,
+                                   ptr,
+                                   entries,
+                                   occaDtypeInt,
+                                   occaDefault);
+
+  occaProperties memProps = (
+    occaCreatePropertiesFromString("foo: 'bar'")
+  );
+
+  mem2 = occaDeviceWrapMemory(occaHost(),
+                              ptr,
+                              bytes,
+                              memProps);
+
+  mem2 = occaDeviceTypedWrapMemory(device,
+                                   ptr,
+                                   entries,
+                                   occaDtypeInt,
+                                   memProps);
+
+  occaFree(&device);
+  occaFree(&memProps);
 }

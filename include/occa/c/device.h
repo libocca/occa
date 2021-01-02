@@ -90,7 +90,7 @@ void* occaDeviceTypedUMalloc(occaDevice device,
 
 occaMemory occaDeviceWrapMemory(occaDevice device,
                                 const void *ptr,
-                                const occaUDim_t entries,
+                                const occaUDim_t bytes,
                                 occaProperties props);
 
 occaMemory occaDeviceTypedWrapMemory(occaDevice device,

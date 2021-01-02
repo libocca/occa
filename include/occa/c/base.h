@@ -75,7 +75,7 @@ void* occaTypedUMalloc(const occaUDim_t entries,
                        occaProperties props);
 
 occaMemory occaWrapMemory(const void *ptr,
-                          const occaUDim_t entries,
+                          const occaUDim_t bytes,
                           occaProperties props);
 
 occaMemory occaTypedWrapMemory(const void *ptr,
