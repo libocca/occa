@@ -6,6 +6,7 @@
 #include <occa/defines.hpp>
 #include <occa/types/generic.hpp>
 #include <occa/types/primitive.hpp>
+#include <occa/dtype.hpp>
 
 namespace occa {
   class modeMemory_t; class memory;
@@ -51,6 +52,7 @@ namespace occa {
     inline virtual ~kernelArg() {}
 
     inline virtual void primitiveConstructor(const primitive &value) {
+      std::cout << "dtype: " << dtype::toJson(value.dtype()) << '\n';
       args.push_back(value);
     }
 
