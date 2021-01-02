@@ -536,18 +536,4 @@ namespace occa {
     out << memory.properties();
     return out;
   }
-
-  namespace cpu {
-    occa::memory wrapMemory(occa::device device,
-                            void *ptr,
-                            const udim_t bytes,
-                            const occa::properties &props) {
-      static occa::properties defaultProps(
-        "use_host_pointer: true,"
-        "own_host_pointer: false"
-      );
-
-      return device.malloc(bytes, ptr, defaultProps + props);
-    }
-  }
 }

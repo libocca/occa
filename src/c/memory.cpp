@@ -157,30 +157,4 @@ void occaMemoryDetach(occaMemory memory) {
   occa::c::memory(memory).detach();
 }
 
-occaMemory occaWrapCpuMemory(occaDevice device,
-                             void *ptr,
-                             occaUDim_t bytes,
-                             occaProperties props) {
-  occa::device device_ = (
-    occa::c::isDefault(device)
-    ? occa::getDevice()
-    : occa::c::device(device)
-  );
-
-  occa::memory mem;
-  if (occa::c::isDefault(props)) {
-    mem = occa::cpu::wrapMemory(device_,
-                                ptr,
-                                bytes);
-  } else {
-    mem = occa::cpu::wrapMemory(device_,
-                                ptr,
-                                bytes,
-                                occa::c::properties(props));
-  }
-  mem.dontUseRefs();
-
-  return occa::c::newOccaType(mem);
-}
-
 OCCA_END_EXTERN_C

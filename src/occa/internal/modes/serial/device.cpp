@@ -434,6 +434,19 @@ namespace occa {
       return mem;
     }
 
+    modeMemory_t* device::wrapMemory(const void *ptr,
+                                     const udim_t bytes,
+                                     const occa::properties &props) {
+      memory *mem = new memory(this,
+                               bytes,
+                               props);
+
+      mem->ptr = (char*) const_cast<void*>(ptr);
+      mem->isOrigin = props.get("own_host_pointer", false);
+
+      return mem;
+    }
+
     udim_t device::memorySize() const {
       return sys::SystemInfo::load().memory.total;
     }

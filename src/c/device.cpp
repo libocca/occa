@@ -1,5 +1,6 @@
 #include <occa/internal/c/types.hpp>
 #include <occa/c/device.h>
+#include <occa/c/dtype.h>
 
 OCCA_START_EXTERN_C
 
@@ -188,18 +189,11 @@ occaMemory occaDeviceMalloc(occaDevice device,
                             const occaUDim_t bytes,
                             const void *src,
                             occaProperties props) {
-  occa::device device_ = occa::c::device(device);
-  occa::memory memory;
-  if (occa::c::isDefault(props)) {
-    memory = device_.malloc(bytes, src);
-  } else {
-    memory = device_.malloc(bytes,
-                            src,
-                            occa::c::properties(props));
-  }
-  memory.dontUseRefs();
-
-  return occa::c::newOccaType(memory);
+  return occaDeviceTypedMalloc(device,
+                               bytes,
+                               occaDtypeByte,
+                               src,
+                               props);
 }
 
 occaMemory occaDeviceTypedMalloc(occaDevice device,
@@ -228,17 +222,11 @@ void* occaDeviceUMalloc(occaDevice device,
                         const occaUDim_t bytes,
                         const void *src,
                         occaProperties props) {
-  occa::device device_ = occa::c::device(device);
-
-  if (occa::c::isDefault(props)) {
-    return device_.umalloc(bytes,
-                           occa::dtype::byte,
-                           src);
-  }
-  return device_.umalloc(bytes,
-                         occa::dtype::byte,
-                         src,
-                         occa::c::properties(props));
+  return occaDeviceTypedUMalloc(device,
+                                bytes,
+                                occaDtypeByte,
+                                src,
+                                props);
 }
 
 void* occaDeviceTypedUMalloc(occaDevice device,
@@ -256,6 +244,36 @@ void* occaDeviceTypedUMalloc(occaDevice device,
                          dtype_,
                          src,
                          occa::c::properties(props));
+}
+
+occaMemory occaDeviceWrapMemory(occaDevice device,
+                                const void *ptr,
+                                const occaUDim_t bytes,
+                                occaProperties props) {
+  return occaDeviceTypedWrapMemory(device,
+                                   ptr,
+                                   bytes,
+                                   occaDtypeByte,
+                                   props);
+}
+
+occaMemory occaDeviceTypedWrapMemory(occaDevice device,
+                                     const void *ptr,
+                                     const occaUDim_t entries,
+                                     const occaDtype dtype,
+                                     occaProperties props) {
+  occa::device device_ = occa::c::device(device);
+  const occa::dtype_t &dtype_ = occa::c::dtype(dtype);
+
+  occa::memory memory;
+  if (occa::c::isDefault(props)) {
+    memory = device_.wrapMemory(ptr, entries, dtype_);
+  } else {
+    memory = device_.wrapMemory(ptr, entries, dtype_, occa::c::properties(props));
+  }
+  memory.dontUseRefs();
+
+  return occa::c::newOccaType(memory);
 }
 //======================================
 

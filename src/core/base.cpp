@@ -126,6 +126,20 @@ namespace occa {
     return getDevice().umalloc(entries, dtype::byte, src, props);
   }
 
+  occa::memory wrapMemory(const void *ptr,
+                          const dim_t entries,
+                          const dtype_t &dtype,
+                          const occa::properties &props) {
+    return getDevice().wrapMemory(ptr, entries, dtype, props);
+  }
+
+  template <>
+  occa::memory wrapMemory<void>(const void *ptr,
+                                const dim_t entries,
+                                const occa::properties &props) {
+    return getDevice().wrapMemory(ptr, entries, dtype::byte, props);
+  }
+
   void memcpy(void *dest, const void *src,
               const dim_t bytes,
               const occa::properties &props) {
@@ -217,14 +231,6 @@ namespace occa {
   void memcpy(memory dest, memory src,
               const occa::properties &props) {
     memcpy(dest, src, -1, 0, 0, props);
-  }
-
-  namespace cpu {
-    occa::memory wrapMemory(void *ptr,
-                            const udim_t bytes,
-                            const occa::properties &props) {
-      return occa::cpu::wrapMemory(getDevice(), ptr, bytes, props);
-    }
   }
   //====================================
 

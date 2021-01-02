@@ -84,9 +84,20 @@ void* occaDeviceUMalloc(occaDevice device,
 
 void* occaDeviceTypedUMalloc(occaDevice device,
                              const occaUDim_t entries,
-                             const occaDtype type,
+                             const occaDtype dtype,
                              const void *src,
                              occaProperties props);
+
+occaMemory occaDeviceWrapMemory(occaDevice device,
+                                const void *ptr,
+                                const occaUDim_t bytes,
+                                occaProperties props);
+
+occaMemory occaDeviceTypedWrapMemory(occaDevice device,
+                                     const void *ptr,
+                                     const occaUDim_t entries,
+                                     const occaDtype dtype,
+                                     occaProperties props);
 //======================================
 
 OCCA_END_EXTERN_C

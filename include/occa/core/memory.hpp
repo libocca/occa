@@ -158,13 +158,6 @@ namespace occa {
   std::ostream& operator << (std::ostream &out,
                            const occa::memory &memory);
 
-  namespace cpu {
-    occa::memory wrapMemory(occa::device dev,
-                            void *ptr,
-                            const udim_t bytes,
-                            const occa::properties &props = occa::properties());
-  }
-
   template <>
   void* memory::ptr<void>();
 

@@ -115,6 +115,10 @@ namespace occa {
                                  const void* src,
                                  const occa::properties &props) = 0;
 
+    virtual modeMemory_t* wrapMemory(const void *ptr,
+                                     const udim_t bytes,
+                                     const occa::properties &props) = 0;
+
     virtual udim_t memorySize() const = 0;
     //  |===============================
     //==================================

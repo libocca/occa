@@ -382,6 +382,18 @@ namespace occa {
       return mem;
     }
 
+    modeMemory_t* device::wrapMemory(const void *ptr,
+                                     const udim_t bytes,
+                                     const occa::properties &props) {
+      memory *mem = new memory(this,
+                               bytes,
+                               props);
+
+      mem->clMem = (cl_mem) ptr;
+
+      return mem;
+    }
+
     udim_t device::memorySize() const {
       return opencl::getDeviceMemorySize(clDevice);
     }

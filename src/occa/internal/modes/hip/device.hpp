@@ -87,6 +87,10 @@ namespace occa {
                                         const void *src,
                                         const occa::properties &props);
 
+      modeMemory_t* wrapMemory(const void *ptr,
+                               const udim_t bytes,
+                               const occa::properties &props);
+
       virtual udim_t memorySize() const;
       //================================
     };
