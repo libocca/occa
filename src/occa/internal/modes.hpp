@@ -43,8 +43,6 @@ namespace occa {
 
   void initializeModes();
 
-  bool modeIsEnabled(const std::string &mode);
-
   mode_t* getMode(const std::string &mode);
 
   mode_t* getModeFromProps(const occa::properties &props);

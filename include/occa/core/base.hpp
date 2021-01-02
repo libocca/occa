@@ -146,6 +146,8 @@ namespace occa {
   //====================================
 
   //---[ Helper Methods ]---------------
+  bool modeIsEnabled(const std::string &mode);
+
   int getDeviceCount(const occa::properties &props);
 
   void printModeInfo();
