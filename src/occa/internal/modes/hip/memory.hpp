@@ -19,7 +19,7 @@ namespace occa {
       friend void* getMappedPtr(occa::memory mem);
 
     public:
-      hipDeviceptr_t hipPtr;
+      hipDeviceptr_t &hipPtr;
       char *mappedPtr;
 
       memory(modeDevice_t *modeDevice_,

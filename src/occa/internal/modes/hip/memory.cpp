@@ -12,11 +12,7 @@ namespace occa {
                    udim_t size_,
                    const occa::properties &properties_) :
       occa::modeMemory_t(modeDevice_, size_, properties_),
-#ifdef __HIP_PLATFORM_HCC__
-      hipPtr(ptr),
-#else
-      hipPtr((hipDeviceptr_t&) ptr),
-#endif
+      hipPtr(reinterpret_cast<hipDeviceptr_t&>(ptr)),
       mappedPtr(NULL) {}
 
     memory::~memory() {
