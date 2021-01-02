@@ -179,6 +179,16 @@ namespace occa {
     modeKernel->run();
   }
 
+  void kernel::run(std::initializer_list<kernelArg> args) const {
+    kernel &self = *(const_cast<kernel*>(this));
+
+    self.clearArgs();
+    for (const kernelArg &arg : args) {
+      self.pushArg(arg);
+    }
+    self.run();
+  }
+
 #include "kernelOperators.cpp_codegen"
 
   void kernel::free() {

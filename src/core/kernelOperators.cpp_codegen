@@ -782,3 +782,4 @@ void kernel::operator() (const kernelArg &arg1, const kernelArg &arg2, const ker
   modeKernel->setArguments(args, 50);
   run();
 }
+

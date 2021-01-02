@@ -3,6 +3,7 @@
 
 #include <occa/types/bits.hpp>
 #include <occa/types/dim.hpp>
+#include <occa/types/generic.hpp>
 #include <occa/types/primitive.hpp>
 #include <occa/types/properties.hpp>
 #include <occa/types/tuples.hpp>

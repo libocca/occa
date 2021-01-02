@@ -1,21 +1,18 @@
 #ifndef OCCA_CORE_SCOPE_HEADER
 #define OCCA_CORE_SCOPE_HEADER
 
+#include <initializer_list>
 #include <map>
 
 #include <occa/core/device.hpp>
 #include <occa/core/kernelArg.hpp>
-#include <occa/types/keyValue.hpp>
 #include <occa/types/primitive.hpp>
 #include <occa/types/properties.hpp>
 
 namespace occa {
-  class scopeVariable;
+  typedef std::vector<scopeKernelArg> scopeKernelArgVector;
 
-  typedef std::vector<scopeVariable> scopeVariableVector;
-  typedef keyValue_t<primitive> primitiveKeyValue;
-
-  namespace scopeVariableMethods {
+  namespace scopeKernelArgMethods {
     template <class TM>
     struct isMemory {
       static const bool value = false;
@@ -45,107 +42,58 @@ namespace occa {
     }
   }
 
-  class scopeVariable {
-   public:
-    dtype_t dtype;
-    bool isPointer;
-    bool isConst;
-    std::string name;
-    kernelArg value;
-
-    inline scopeVariable() {}
-
-    inline scopeVariable(const dtype_t &dtype_,
-                         const bool &isPointer_,
-                         const bool &isConst_,
-                         const std::string &name_,
-                         const kernelArg &value_) :
-        dtype(dtype_),
-        isPointer(isPointer_),
-        isConst(isConst_),
-        name(name_),
-        value(value_) {}
-
-    inline scopeVariable(const scopeVariable &other) :
-        dtype(other.dtype),
-        isPointer(other.isPointer),
-        isConst(other.isConst),
-        name(other.name),
-        value(other.value) {}
-
-    template <class TM>
-    static scopeVariable fromValue(const std::string &name_,
-                                   const TM &value_,
-                                   const bool isConst_) {
-      const bool isPointer_ = scopeVariableMethods::argIsPointer<TM>::value;
-      dtype_t dtype_;
-      if (isPointer_) {
-        dtype_ = scopeVariableMethods::getPointerType<TM>(value_);
-      } else {
-        dtype_ = dtype::get<TM>();
-      }
-
-      return scopeVariable(dtype_, isPointer_, isConst_, name_, value_);
-    }
-
-    std::string getDeclaration() const;
-  };
-
   class scope {
    public:
     occa::properties props;
     occa::device device;
-    scopeVariableVector args;
+    scopeKernelArgVector args;
 
     scope();
+
+    scope(std::initializer_list<scopeKernelArg> args_,
+          const occa::properties &props_ = occa::properties());
+
     scope(const occa::properties &props_);
 
-    inline void add(scopeVariable arg) {
+    inline void add(scopeKernelArg arg) {
       args.push_back(arg);
-      if (!device.isInitialized()) {
-        device = arg.value.getDevice();
-      }
-    }
 
-    void add(const primitiveKeyValue &kv) {
-      add(scopeVariable(
-            kv.value.dtype(),
-            false,
-            true,
-            kv.key,
-            (kernelArgData) kv.value
-          ));
+      occa::device argDevice = arg.getDevice();
+      if (!argDevice.isInitialized()) {
+        return;
+      }
+
+      if (!device.isInitialized()) {
+        device = argDevice;
+      } else if (device != argDevice) {
+        OCCA_FORCE_ERROR("Device from arg [" << arg.name << "] doesn't match"
+                         << " previous argument devices");
+      }
     }
 
     template <class TM>
     void add(const std::string &name,
              TM *value) {
-      add(scopeVariable::fromValue<TM*>(name, value, false));
+      add({name, value});
     }
 
     template <class TM>
     void add(const std::string &name,
              const TM *value) {
       // dtype -> name doesn't support const types yet
-      addConst(name, const_cast<TM*>(value));
+      add({name, value});
     }
 
     template <class TM>
     void add(const std::string &name,
              TM &value) {
-      add(scopeVariable::fromValue<TM>(name, value, false));
+      add({name, value});
     }
 
     template <class TM>
     void add(const std::string &name,
              const TM &value) {
-      addConst(name, value);
-    }
-
-    template <class TM>
-    void addConst(const std::string &name,
-                  const TM &value) {
-      add(scopeVariable::fromValue<TM>(name, value, true));
+      add({name, value});
     }
 
     occa::device getDevice();

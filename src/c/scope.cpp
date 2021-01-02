@@ -8,19 +8,12 @@ namespace occa {
                          const bool isConst) {
     occa::scope& scope_ = occa::c::scope(scope);
 
-    const bool isPointer = (
-      (value.type == OCCA_PTR) || (value.type == OCCA_MEMORY)
-    );
-
-    scope_.add(
-      scopeVariable(
-        occa::c::getDtype(value),
-        isPointer,
-        isConst,
-        name,
-        occa::c::kernelArg(value)
-      )
-    );
+    scope_.add({
+      name,
+      occa::c::kernelArg(value),
+      occa::c::getDtype(value),
+      isConst,
+    });
   }
 }
 

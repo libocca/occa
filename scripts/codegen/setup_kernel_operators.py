@@ -3,7 +3,7 @@ import functools
 
 
 OCCA_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..")
+    os.path.join(os.path.dirname(__file__), "../..")
 )
 
 EDIT_WARNING = '''
@@ -136,53 +136,7 @@ def operator_definition(N):
 '''
     return content
 
-
-@to_file('include/occa/core/inlinedKernelScope.hpp_codegen')
-def inlined_kernel_scope_definitions(N):
-    return '\n\n'.join(
-        inlined_kernel_scope_definition(n) for n in range(1, N + 1)
-    )
-
-
-def inlined_kernel_scope_definition(N):
-    template = "template <"
-    indent = ' ' * len(template)
-    template += operator_args(N, indent,
-                              argtype=lambda n: 'class ARG{}'.format(n),
-                              argname=lambda n: "")
-    template += '>'
-
-    header = """
-    occa::scope getInlinedKernelUnnamedScope(
-    """.strip()
-    indent = ' ' * len(header)
-    header += operator_args(N, indent,
-                            argtype=lambda n: 'ARG{} '.format(n))
-
-    add_args = '\n  '.join(
-        'scope.add("", arg{n});'.format(n=n)
-        for n in range(1, N + 1)
-    )
-
-    return """
-{template}
-{header}) {{
-  occa::scope scope;
-
-  {add_args}
-
-  return scope;
-}}
-    """.format(
-        N=N,
-        template=template,
-        header=header,
-        add_args=add_args,
-    ).strip()
-
-
 if __name__ == '__main__':
     run_function_from_arguments(MAX_ARGS)
     operator_declarations(MAX_ARGS)
     operator_definitions(MAX_ARGS)
-    inlined_kernel_scope_definitions(MAX_ARGS)

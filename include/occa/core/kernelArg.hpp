@@ -4,7 +4,8 @@
 #include <vector>
 
 #include <occa/defines.hpp>
-#include <occa/types.hpp>
+#include <occa/types/generic.hpp>
+#include <occa/types/primitive.hpp>
 
 namespace occa {
   class modeMemory_t; class memory;
@@ -13,9 +14,9 @@ namespace occa {
 
   typedef std::vector<kernelArgData> kernelArgDataVector;
 
-  //---[ KernelArg ]--------------------
+  //---[ kernelArgData ]----------------
   class kernelArgData {
-  public:
+   public:
     primitive value;
     udim_t ptrSize;
     occa::modeMemory_t *modeMemory;
@@ -32,11 +33,15 @@ namespace occa {
     udim_t size() const;
     void* ptr() const;
 
+    bool isPointer() const;
+
     void setupForKernelCall(const bool isConst) const;
   };
+  //====================================
 
-  class kernelArg {
-  public:
+  //---[ kernelArg ]--------------------
+  class kernelArg : public generic {
+   public:
     kernelArgDataVector args;
 
     kernelArg();
@@ -45,20 +50,19 @@ namespace occa {
     kernelArg(const kernelArg &other);
     kernelArg& operator = (const kernelArg &other);
 
-    kernelArg(const uint8_t arg);
-    kernelArg(const uint16_t arg);
-    kernelArg(const uint32_t arg);
-    kernelArg(const uint64_t arg);
+    inline virtual void primitiveConstructor(const primitive &value) {
+      args.push_back(value);
+    }
 
-    kernelArg(const int8_t arg);
-    kernelArg(const int16_t arg);
-    kernelArg(const int32_t arg);
-    kernelArg(const int64_t arg);
+    inline virtual void pointerConstructor(void *ptr, const dtype_t &dtype_) {
+      addPointer(ptr, sizeof(void*), true, false);
+    }
 
-    kernelArg(const float arg);
-    kernelArg(const double arg);
+    inline virtual void pointerConstructor(const void *ptr, const dtype_t &dtype_) {
+      addPointer(const_cast<void*>(ptr), sizeof(void*), true, false);
+    }
 
-    kernelArg(const std::nullptr_t arg);
+    OCCA_GENERIC_CLASS_CONSTRUCTORS(kernelArg);
 
     template <class TM>
     kernelArg(const type2<TM> &arg) {
@@ -68,16 +72,6 @@ namespace occa {
     template <class TM>
     kernelArg(const type4<TM> &arg) {
       addPointer((void*) const_cast<type4<TM>*>(&arg), sizeof(type4<TM>), false);
-    }
-
-    template <class TM>
-    kernelArg(TM *arg) {
-      addPointer((void*) arg, true, false);
-    }
-
-    template <class TM>
-    kernelArg(const TM *arg) {
-      addPointer((void*) const_cast<TM*>(arg), true, false);
     }
 
     int size() const;
@@ -104,6 +98,72 @@ namespace occa {
 
   template <>
   kernelArg::kernelArg(const modeMemory_t *arg);
+  //====================================
+
+  //---[ scopeKernelArg ]---------------
+  class scopeKernelArg : public kernelArg {
+   public:
+    std::string name;
+    dtype_t dtype;
+    bool isConst;
+
+    inline scopeKernelArg(const std::string &name_,
+                          const kernelArg &arg,
+                          const dtype_t &dtype_,
+                          const bool isConst_) :
+      kernelArg(arg),
+      name(name_),
+      dtype(dtype_),
+      isConst(isConst_) {}
+
+    inline scopeKernelArg(const std::string &name_,
+                          const primitive &value_) :
+      name(name_),
+      isConst(true) {
+      primitiveConstructor(value_);
+    }
+
+    template <class TM>
+    inline scopeKernelArg(const std::string &name_,
+                          TM *value_) :
+      name(name_),
+      isConst(false) {
+      pointerConstructor(name_, dtype::get<TM>());
+    }
+
+    template <class TM>
+    inline scopeKernelArg(const std::string &name_,
+                          const TM *value_) :
+      name(name_),
+      isConst(true) {
+      pointerConstructor(value_, dtype::get<TM>());
+    }
+
+    inline void primitiveConstructor(const primitive &value) {
+      dtype = value.dtype();
+      isConst = true;
+
+      kernelArg::primitiveConstructor(value);
+    }
+
+    inline void pointerConstructor(void *ptr, const dtype_t &dtype_) {
+      dtype = dtype_;
+      isConst = false;
+
+      kernelArg::pointerConstructor(ptr, dtype_);
+    }
+
+    inline void pointerConstructor(const void *ptr, const dtype_t &dtype_) {
+      dtype = dtype_;
+      isConst = true;
+
+      kernelArg::pointerConstructor(ptr, dtype_);
+    }
+
+    OCCA_GENERIC_CLASS_CONSTRUCTORS(scopeKernelArg);
+
+    std::string getDeclaration() const;
+  };
   //====================================
 }
 

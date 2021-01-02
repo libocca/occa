@@ -1,6 +1,7 @@
 #ifndef OCCA_CORE_KERNEL_HEADER
 #define OCCA_CORE_KERNEL_HEADER
 
+#include <initializer_list>
 #include <iostream>
 #include <stdint.h>
 #include <vector>
@@ -83,6 +84,7 @@ namespace occa {
     void clearArgs();
 
     void run() const;
+    void run(std::initializer_list<kernelArg> args) const;
 
 #include "kernelOperators.hpp_codegen"
 

@@ -28,66 +28,20 @@ int main(int argc, const char **argv) {
     ab[i] = 0;
   }
 
-  // Const-ness of variables is passed through which can be useful for the compiler
-  const float *c_a = a;
-  const float *c_b = b;
+  occa::scope scope({
+    entries,
+    // Const-ness of variables is passed through, which can be useful for the compiler
+    {"a", (const float*) a},
+    {"b", (const float*) b},
+    ab,
+    {"TILE_SIZE", 16}
+  });
 
-  // Arguments:
-  // 1. Captured variables
-  // 2. Inlined OKL source
-  OCCA_JIT(
-    (entries, c_a, c_b, ab),
-    (
-      for (int i = 0; i < entries; ++i; @tile(16, @outer, @inner)) {
-        ab[i] = 100 * (c_a[i] + c_b[i]);
-      }
-    )
-  );
-
-  // Runtime occa::properties can also be passed in the first argument
-  occa::properties props;
-  props["defines/TILE_SIZE"] = 16;
-
-  // Arguments:
-  // 1. Properties (optional)
-  // 2. Captured variables
-  // 3. Inlined OKL source
-  OCCA_JIT(
-    props,
-    (entries, c_a, c_b, ab),
-    (
-      // TILE_SIZE is passed as a compile-time define as opposed to a runtime variable
-      // through props
-      for (int i = 0; i < entries; ++i; @tile(TILE_SIZE, @outer, @inner)) {
-        ab[i] = 200 * (c_a[i] + c_b[i]);
-      }
-    )
-  );
-
-  // Alternatively, occa::scope can be used to more finely capture variables
-  occa::scope scope(props);
-
-  // Build the variable scope used inside the inlined OKL code
-  scope.addConst("entries", entries);
-  scope.addConst("a", a);
-  scope.addConst("b", b);
-
-  // We can name our scoped variales anything
-  scope.add("output", ab);
-
-  // We can also add unused variables to the scope which could be
-  // useful while debugging
-  scope.add("debugValue", 42);
-
-  OCCA_JIT_WITH_SCOPE(
-    scope,
-    (
-      for (int i = 0; i < entries; ++i; @tile(TILE_SIZE, @outer, @inner)) {
-        // Note it's using the scope name 'output' and not its original value name 'ab'
-        output[i] = a[i] + b[i];
-      }
-    )
-  );
+  OCCA_JIT(scope, (
+    for (int i = 0; i < entries; ++i; @tile(TILE_SIZE, @outer, @inner)) {
+      ab[i] = 100 * (c_a[i] + c_b[i]);
+    }
+  ));
 
   occa::finish();
 

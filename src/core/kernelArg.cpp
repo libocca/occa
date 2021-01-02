@@ -8,7 +8,7 @@
 #include <occa/internal/core/device.hpp>
 
 namespace occa {
-  //---[ KernelArg ]--------------------
+  //---[ kernelArgData ]----------------
   kernelArgData::kernelArgData() :
       value(),
       ptrSize(0),
@@ -53,6 +53,10 @@ namespace occa {
     return ptrSize ? ptrSize : value.sizeof_();
   }
 
+  bool kernelArgData::isPointer() const {
+    return value.isPointer();
+  }
+
   void kernelArgData::setupForKernelCall(const bool isConst) const {
     if (!modeMemory              ||
         !modeMemory->isManaged() ||
@@ -68,7 +72,9 @@ namespace occa {
       modeMemory->memInfo |= uvaFlag::isStale;
     }
   }
+  //====================================
 
+  //---[ kernelArg ]--------------------
   kernelArg::kernelArg() {}
   kernelArg::~kernelArg() {}
 
@@ -113,51 +119,6 @@ namespace occa {
 
   const kernelArgData& kernelArg::operator [] (const int index) const {
     return args[index];
-  }
-
-  kernelArg::kernelArg(const uint8_t arg) {
-    args.push_back((primitive) arg);
-  }
-
-  kernelArg::kernelArg(const uint16_t arg) {
-    args.push_back((primitive) arg);
-  }
-
-  kernelArg::kernelArg(const uint32_t arg) {
-    args.push_back((primitive) arg);
-  }
-
-  kernelArg::kernelArg(const uint64_t arg) {
-    args.push_back((primitive) arg);
-  }
-
-  kernelArg::kernelArg(const int8_t arg) {
-    args.push_back((primitive) arg);
-  }
-
-  kernelArg::kernelArg(const int16_t arg) {
-    args.push_back((primitive) arg);
-  }
-
-  kernelArg::kernelArg(const int32_t arg) {
-    args.push_back((primitive) arg);
-  }
-
-  kernelArg::kernelArg(const int64_t arg) {
-    args.push_back((primitive) arg);
-  }
-
-
-  kernelArg::kernelArg(const float arg) {
-    args.push_back((primitive) arg);
-  }
-
-  kernelArg::kernelArg(const double arg) {
-    args.push_back((primitive) arg);
-  }
-
-  kernelArg::kernelArg(const std::nullptr_t arg) {
-    args.push_back((primitive) arg);
   }
 
   void kernelArg::add(const kernelArg &arg) {
@@ -219,6 +180,32 @@ namespace occa {
       argc += arg.size();
     }
     return argc;
+  }
+  //====================================
+
+  //---[ scopeKernelArg ]---------------
+  std::string scopeKernelArg::getDeclaration() const {
+    std::stringstream ss;
+
+    bool isFirst = true;
+    for (const kernelArgData &arg : args) {
+      if (!isFirst) {
+        ss << ", ";
+      }
+
+      if (isConst) {
+        ss << "const ";
+      }
+      ss << dtype << ' ';
+      if (arg.isPointer()) {
+        ss << '*';
+      }
+      ss << name;
+
+      isFirst = false;
+    }
+
+    return ss.str();
   }
   //====================================
 }
