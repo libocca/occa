@@ -5,11 +5,15 @@
 
 #include <occa/core/device.hpp>
 #include <occa/core/kernelArg.hpp>
+#include <occa/types/keyValue.hpp>
+#include <occa/types/primitive.hpp>
 #include <occa/types/properties.hpp>
 
 namespace occa {
   class scopeVariable;
+
   typedef std::vector<scopeVariable> scopeVariableVector;
+  typedef keyValue_t<primitive> primitiveKeyValue;
 
   namespace scopeVariableMethods {
     template <class TM>
@@ -101,6 +105,16 @@ namespace occa {
       if (!device.isInitialized()) {
         device = arg.value.getDevice();
       }
+    }
+
+    void add(const primitiveKeyValue &kv) {
+      add(scopeVariable(
+            kv.value.dtype(),
+            false,
+            true,
+            kv.key,
+            (kernelArgData) kv.value
+          ));
     }
 
     template <class TM>
