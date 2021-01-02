@@ -66,10 +66,6 @@ namespace occa {
     isInitialized = true;
   }
 
-  bool modeIsEnabled(const std::string &mode) {
-    return getMode(mode);
-  }
-
   mode_t* getMode(const std::string &mode) {
     const std::string caseInsensitiveMode = lowercase(mode);
     strToModeMap &modeMap = getModeMap();
