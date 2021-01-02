@@ -40,10 +40,6 @@ namespace occa {
     return getDevice().properties();
   }
 
-  void loadKernels(const std::string &library) {
-    getDevice().loadKernels(library);
-  }
-
   void finish() {
     getDevice().finish();
   }

@@ -114,8 +114,6 @@ namespace occa {
     occa::kernel buildKernelFromBinary(const std::string &filename,
                                        const std::string &kernelName,
                                        const occa::properties &props = occa::properties()) const;
-
-    void loadKernels(const std::string &library = "");
     //  |===============================
 
     //  |---[ Memory ]------------------

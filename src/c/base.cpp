@@ -38,10 +38,6 @@ occaProperties occaDeviceProperties() {
                               false);
 }
 
-void occaLoadKernels(const char *library) {
-  occa::loadKernels(library);
-}
-
 void occaFinish() {
   occa::finish();
 }

@@ -371,63 +371,6 @@ namespace occa {
                                                     kernelName,
                                                     props));
   }
-
-  void device::loadKernels(const std::string &library) {
-    // TODO 1.1: Load kernels
-#if 0
-    assertInitialized();
-
-    std::string devHash = hash().getFullString();
-    strVector dirs = io::directories("occa://" + library);
-    const int dirCount = (int) dirs.size();
-    int kernelsLoaded = 0;
-
-    for (int d = 0; d < dirCount; ++d) {
-      const std::string buildFile = dirs[d] + kc::buildFile;
-
-      if (!io::isFile(buildFile)) {
-        continue;
-      }
-
-      json info = json::read(buildFile)["info"];
-      if ((std::string) info["device/hash"] != devHash) {
-        continue;
-      }
-      ++kernelsLoaded;
-
-      const std::string sourceFilename = dirs[d] + kc::parsedSourceFile;
-
-      json &kInfo = info["kernel"];
-      hash_t hash = hash_t::fromString(kInfo["hash"]);
-      jsonArray metadataArray = kInfo["metadata"].array();
-      occa::properties kernelProps = kInfo["props"];
-
-      // Ignore how the kernel was setup, turn off verbose
-      kernelProps["verbose"] = false;
-
-      const int kernels = metadataArray.size();
-      for (int k = 0; k < kernels; ++k) {
-        buildKernel(sourceFilename,
-                    hash,
-                    kernelProps,
-                    lang::kernelMetadata_t::fromJson(metadataArray[k]));
-      }
-    }
-
-    // Print loaded info
-    if (properties().get("verbose", false) && kernelsLoaded) {
-      io::stdout << "Loaded " << kernelsLoaded;
-      if (library.size()) {
-        io::stdout << " ["<< library << "]";
-      } else {
-        io::stdout << " cached";
-      }
-      io::stdout << ((kernelsLoaded == 1)
-                     ? " kernel\n"
-                     : " kernels\n");
-    }
-#endif
-  }
   //  |=================================
 
   //  |---[ Memory ]--------------------

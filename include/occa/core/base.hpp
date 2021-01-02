@@ -29,8 +29,6 @@ namespace occa {
 
   const occa::properties& deviceProperties();
 
-  void loadKernels(const std::string &library = "");
-
   void finish();
 
   void waitFor(streamTag tag);
