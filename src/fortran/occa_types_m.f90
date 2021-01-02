@@ -14,8 +14,7 @@ module occa_types_m
 
     occaDtype => occaType, &
     occaScope => occaType, &
-    occaJson => occaType, &
-    occaProperties => occaType
+    occaJson => occaType
 
   implicit none
 

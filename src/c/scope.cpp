@@ -20,7 +20,7 @@ namespace occa {
 
 OCCA_START_EXTERN_C
 
-occaScope occaCreateScope(occaProperties props) {
+occaScope occaCreateScope(occaJson props) {
   occa::scope *scope;
   if (occa::c::isDefault(props)) {
     scope = new occa::scope();

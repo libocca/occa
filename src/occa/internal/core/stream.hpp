@@ -8,7 +8,7 @@
 namespace occa {
   class modeStream_t : public gc::ringEntry_t {
    public:
-    occa::json json;
+    occa::json properties;
 
     gc::ring_t<stream> streamRing;
 

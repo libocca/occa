@@ -11,7 +11,7 @@ bool occaKernelIsInitialized(occaKernel kernel) {
   return (int) occa::c::kernel(kernel).isInitialized();
 }
 
-occaProperties occaKernelGetProperties(occaKernel kernel) {
+occaJson occaKernelGetProperties(occaKernel kernel) {
   return occa::c::newOccaType(
     occa::c::kernel(kernel).properties(),
     false

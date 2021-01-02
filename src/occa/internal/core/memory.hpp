@@ -11,7 +11,7 @@ namespace occa {
   class modeMemory_t : public gc::ringEntry_t {
    public:
     int memInfo;
-    occa::json json;
+    occa::json properties;
 
     gc::ring_t<memory> memoryRing;
 

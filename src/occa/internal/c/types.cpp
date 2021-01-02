@@ -321,17 +321,6 @@ namespace occa {
       return oType;
     }
 
-    occaType newOccaType(const occa::json &properties,
-                         const bool needsFree) {
-      occaType oType;
-      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
-      oType.type  = typeType::properties;
-      oType.bytes = sizeof(void*);
-      oType.value.ptr = (char*) &properties;
-      oType.needsFree = needsFree;
-      return oType;
-    }
-
     template <class TM>
     inline occaType newOccaIntType(bool isUnsigned,
                                    TM value) {
@@ -556,8 +545,6 @@ namespace occa {
           return occa::json((char*) value.value.ptr);
         case occa::c::typeType::json:
           return occa::c::json(value);
-        case occa::c::typeType::properties:
-          return occa::c::properties(value);
         case occa::c::typeType::null_:
           return occa::json(occa::json::null_);
         case occa::c::typeType::ptr:
@@ -569,18 +556,6 @@ namespace occa {
           OCCA_FORCE_ERROR("Invalid value type");
           return occa::json();
       }
-    }
-
-    occa::json& properties(occaType value) {
-      OCCA_ERROR("Input is not an occaProperties",
-                 value.type == typeType::properties);
-      return *((occa::json*) value.value.ptr);
-    }
-
-    const occa::json& constProperties(occaType value) {
-      OCCA_ERROR("Input is not an occaProperties",
-                 value.type == typeType::properties);
-      return *((const occa::json*) value.value.ptr);
     }
 
     occa::dtype_t getDtype(occaType value) {
@@ -662,7 +637,6 @@ const int OCCA_STREAMTAG     = occa::c::typeType::streamTag;
 const int OCCA_DTYPE         = occa::c::typeType::dtype;
 const int OCCA_SCOPE         = occa::c::typeType::scope;
 const int OCCA_JSON          = occa::c::typeType::json;
-const int OCCA_PROPERTIES    = occa::c::typeType::properties;
 //======================================
 
 //---[ Globals & Flags ]----------------
@@ -834,12 +808,6 @@ void occaFree(occaType *value) {
     case occa::c::typeType::json: {
       if (valueRef.needsFree) {
         delete &occa::c::json(valueRef);
-      }
-      break;
-    }
-    case occa::c::typeType::properties: {
-      if (valueRef.needsFree) {
-        delete &occa::c::properties(valueRef);
       }
       break;
     }}

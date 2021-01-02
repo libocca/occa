@@ -13,7 +13,7 @@ namespace occa {
     occa::modeDevice_t *modeDevice;
     std::string name;
     std::string sourceFilename, binaryFilename;
-    occa::json json;
+    occa::json properties;
     hash_t hash;
 
     // Requirements to launch kernel

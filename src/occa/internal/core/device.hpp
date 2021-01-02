@@ -11,7 +11,7 @@ namespace occa {
   class modeDevice_t {
    public:
     std::string mode;
-    occa::json json;
+    occa::json properties;
     bool needsLauncherKernel;
 
     gc::ring_t<device> deviceRing;
