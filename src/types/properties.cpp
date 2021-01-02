@@ -33,6 +33,11 @@ namespace occa {
     properties::load(s);
   }
 
+  properties::properties(const std::string name,
+                         const primitive &value) {
+    (*this)[name] = value;
+  }
+
   properties::properties(std::initializer_list<propertyKeyValue> entries) {
     for (auto &entry : entries) {
       (*this)[entry.name] = entry.value;

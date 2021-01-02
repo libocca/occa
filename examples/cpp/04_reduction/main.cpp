@@ -48,8 +48,9 @@ int main(int argc, const char **argv) {
   occa::memory o_atomicSum = occa::malloc<float>(1, &atomicSum);
 
   // Pass value of 'block' at kernel compile-time
-  occa::properties reductionProps;
-  reductionProps["defines/block"] = block;
+  occa::properties reductionProps({
+    {"defines/block", block},
+  });
 
   occa::kernel reductionWithSharedMemory = (
     occa::buildKernel("reduction.okl",

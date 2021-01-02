@@ -26,7 +26,7 @@ int main(int argc, const char **argv) {
     ab[i] = 0;
   }
 
-  occa::device device("mode: 'Serial'");
+  occa::device device({"mode", "Serial"});
 
   // Allocate memory on the device
   occa::memory o_a = device.malloc<float>(entries);

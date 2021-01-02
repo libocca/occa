@@ -33,6 +33,9 @@ namespace occa {
 
     properties(const std::string &s);
 
+    properties(const std::string name,
+               const primitive &value);
+
     properties(std::initializer_list<propertyKeyValue> entries);
 
     ~properties();
