@@ -49,13 +49,6 @@ module occa_base_m
       import occaProperties
     end function
 
-    ! void occaLoadKernels(const char *library);
-    subroutine occaLoadKernels(library) bind(C, name="occaLoadKernels")
-      import C_char
-      implicit none
-      character(len=1,kind=C_char), dimension(*), intent(in) :: library
-    end subroutine
-
     ! void occaFinish();
     subroutine occaFinish() bind(C, name="occaFinish")
     end subroutine

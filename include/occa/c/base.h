@@ -23,8 +23,6 @@ void occaSetDeviceFromString(const char *info);
 
 occaProperties occaDeviceProperties();
 
-void occaLoadKernels(const char *library);
-
 void occaFinish();
 
 occaStream occaCreateStream(occaProperties props);

@@ -53,8 +53,6 @@ void testDeviceMethods() {
   ASSERT_EQ((std::string) fakeProps["key"],
             "value");
 
-  occaLoadKernels("lib");
-
   occaFinish();
 }
 
