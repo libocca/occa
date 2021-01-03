@@ -267,17 +267,18 @@ void setupSolver() {
   o_u2 = dev.malloc(u1.size()*sizeof(tFloat), &(u1[0]));
   o_u3 = dev.malloc(u2.size()*sizeof(tFloat), &(u2[0]));
 
-  occa::properties kernelProps;
-  kernelProps["defines/sr"]   = stencilRadius;
-  kernelProps["defines/w"]    = width;
-  kernelProps["defines/h"]    = height;
-  kernelProps["defines/dx"]   = dx;
-  kernelProps["defines/dt"]   = dt;
-  kernelProps["defines/freq"] = freq;
-  kernelProps["defines/mX"]   = mX;
-  kernelProps["defines/mY"]   = mY;
-  kernelProps["defines/Bx"]   = Bx;
-  kernelProps["defines/By"]   = By;
+  occa::json kernelProps({
+      {"defines/sr", stencilRadius},
+      {"defines/w", width},
+      {"defines/h", height},
+      {"defines/dx", dx},
+      {"defines/dt", dt},
+      {"defines/freq", freq},
+      {"defines/mX", mX},
+      {"defines/mY", mY},
+      {"defines/Bx", Bx},
+      {"defines/By", By}
+    })
 
   if (sizeof(tFloat) == sizeof(float)) {
     kernelProps["defines/tFloat"] = "float";

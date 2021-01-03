@@ -48,11 +48,7 @@ int main(int argc, const char **argv) {
   occa::memory o_atomicSum = occa::malloc<float>(1, &atomicSum);
 
   // Pass value of 'block' at kernel compile-time
-  occa::json j({
-      {"defines/block", block},
-  });
-
-  occa::properties reductionProps({
+  occa::json reductionProps({
       {"defines/block", block},
   });
 
