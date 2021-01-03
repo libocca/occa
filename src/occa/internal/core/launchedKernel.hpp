@@ -9,15 +9,15 @@ namespace occa {
   class launchedModeKernel_t : public modeKernel_t {
     friend class launchedModeDevice_t;
 
-  protected:
-      occa::modeKernel_t *launcherKernel;
-      std::vector<modeKernel_t*> deviceKernels;
+   protected:
+    occa::modeKernel_t *launcherKernel;
+    std::vector<modeKernel_t*> deviceKernels;
 
-  public:
+   public:
     launchedModeKernel_t(modeDevice_t *modeDevice_,
                          const std::string &name_,
                          const std::string &sourceFilename_,
-                         const occa::properties &properties_);
+                         const occa::json &properties_);
 
     ~launchedModeKernel_t();
 

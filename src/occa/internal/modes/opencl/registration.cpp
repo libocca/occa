@@ -41,11 +41,11 @@ namespace occa {
       return section;
     }
 
-    modeDevice_t* openclMode::newDevice(const occa::properties &props) {
+    modeDevice_t* openclMode::newDevice(const occa::json &props) {
       return new device(setModeProp(props));
     }
 
-    int openclMode::getDeviceCount(const occa::properties &props) {
+    int openclMode::getDeviceCount(const occa::json &props) {
       OCCA_ERROR("[OpenCL] getDeviceCount not given a [platform_id] integer",
                  props.has("platform_id") &&
                  props["platform_id"].isNumber());

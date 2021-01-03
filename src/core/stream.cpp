@@ -77,8 +77,8 @@ namespace occa {
             : noMode);
   }
 
-  const occa::properties& stream::properties() const {
-    static const occa::properties noProperties;
+  const occa::json& stream::properties() const {
+    static const occa::json noProperties;
     return (modeStream
             ? modeStream->properties
             : noProperties);

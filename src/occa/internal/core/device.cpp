@@ -7,7 +7,7 @@
 #include <occa/internal/io.hpp>
 
 namespace occa {
-  modeDevice_t::modeDevice_t(const occa::properties &properties_) :
+  modeDevice_t::modeDevice_t(const occa::json &properties_) :
     mode((std::string) properties_["mode"]),
     properties(properties_),
     needsLauncherKernel(false),
@@ -85,9 +85,9 @@ namespace occa {
 
   void modeDevice_t::writeKernelBuildFile(const std::string &filename,
                                           const hash_t &kernelHash,
-                                          const occa::properties &kernelProps,
+                                          const occa::json &kernelProps,
                                           const lang::sourceMetadata_t &sourceMetadata) const {
-    occa::properties infoProps;
+    occa::json infoProps;
 
     infoProps["device"]       = properties;
     infoProps["device/hash"]  = versionedHash().getFullString();

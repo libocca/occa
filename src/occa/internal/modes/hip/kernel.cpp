@@ -10,7 +10,7 @@ namespace occa {
     kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
-                   const occa::properties &properties_) :
+                   const occa::json &properties_) :
       occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       hipModule(NULL),
       hipFunction(NULL) {}
@@ -20,7 +20,7 @@ namespace occa {
                    const std::string &sourceFilename_,
                    hipModule_t hipModule_,
                    hipFunction_t hipFunction_,
-                   const occa::properties &properties_) :
+                   const occa::json &properties_) :
       occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       hipModule(hipModule_),
       hipFunction(hipFunction_) {}
@@ -73,20 +73,19 @@ namespace occa {
       int padding = 0;
       for (int i = 0; i < args; ++i) {
         const kernelArgData &arg = arguments[i];
+        const udim_t argSize = arg.size();
 
         size_t bytes;
-        if ((padding + arg.size) <= sizeof(void*)) {
-          bytes = arg.size;
-          padding = sizeof(void*) - padding - arg.size;
+        if ((padding + argSize) <= sizeof(void*)) {
+          bytes = argSize;
+          padding = sizeof(void*) - padding - argSize;
         } else {
           bytes = sizeof(void*);
           dataPtr += padding;
           padding = 0;
         }
 
-        ::memcpy(dataPtr,
-                 &(arg.data.int64_),
-                 bytes);
+        ::memcpy(dataPtr, arg.ptr(), bytes);
         dataPtr += bytes;
       }
 

@@ -16,10 +16,10 @@ program main
   real(C_float), pointer :: a_ptr(:), b_ptr(:), ab_ptr(:)
 
   ! Set default OCCA device info
-  info = "mode: 'Serial'"
-  !info = "mode: 'OpenMP', schedule: 'compact', chunk: 10"
-  !info = "mode: 'CUDA'  , device_id: 0"
-  !info = "mode: 'OpenCL', platform_id: 0, device_id: 0"
+  info = "{mode: 'Serial'}"
+  !info = "{mode: 'OpenMP', schedule: 'compact', chunk: 10}"
+  !info = "{mode: 'CUDA'  , device_id: 0}"
+  !info = "{mode: 'OpenCL', platform_id: 0, device_id: 0}"
 
   ! Parse command arguments
   i = 1
@@ -28,7 +28,7 @@ program main
 
     select case (arg)
       case ("-v", "--verbose")
-        call occaPropertiesSet(occaSettings(), "kernel/verbose", occaTrue)
+        call occaJsonObjectSet(occaSettings(), "kernel/verbose", occaTrue)
       case ("-d", "--device")
         i = i+1
         call get_command_argument(i, info)
@@ -116,7 +116,7 @@ contains
     write(*,'(a, /)') "Example showing how to use background devices, allowing passing of the device implicitly"
     write(*,'(a, /)') "command-line options:"
     write(*,'(a)')    "  -v, --verbose     Compile kernels in verbose mode"
-    write(*,'(a)')    "  -d, --device      Device properties (default: ""mode: 'Serial'"")"
+    write(*,'(a)')    "  -d, --device      Device properties (default: ""{mode: 'Serial'}"")"
     write(*,'(a)')    "  -h, --help        Print this information and exit"
   end subroutine print_help
 end program main

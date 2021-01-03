@@ -75,7 +75,7 @@ namespace occa {
                   occa::device device);
 
     occa::device wrapDevice(hipDevice_t device,
-                            const occa::properties &props = occa::properties());
+                            const occa::json &props = occa::json());
 
     void warn(hipError_t errorCode,
               const std::string &filename,

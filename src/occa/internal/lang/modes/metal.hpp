@@ -7,13 +7,13 @@ namespace occa {
   namespace lang {
     namespace okl {
       class metalParser : public withLauncher {
-      public:
+       public:
         qualifier_t kernel_q;
         qualifier_t device_q;
         qualifier_t threadgroup_q;
         qualifier_t constant_q;
 
-        metalParser(const occa::properties &settings_ = occa::properties());
+        metalParser(const occa::json &settings_ = occa::json());
 
         virtual void onClear();
         virtual void beforePreprocessing();

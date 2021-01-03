@@ -7,8 +7,8 @@ namespace occa {
   namespace lang {
     namespace okl {
       class hipParser : public cudaParser {
-      public:
-        hipParser(const occa::properties &settings_ = occa::properties());
+       public:
+        hipParser(const occa::json &settings_ = occa::json());
 
         virtual void beforeKernelSplit();
       };

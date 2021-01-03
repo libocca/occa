@@ -6,7 +6,7 @@ namespace occa {
   modeKernel_t::modeKernel_t(modeDevice_t *modeDevice_,
                              const std::string &name_,
                              const std::string &sourceFilename_,
-                             const occa::properties &properties_) :
+                             const occa::json &properties_) :
     modeDevice(modeDevice_),
     name(name_),
     sourceFilename(sourceFilename_),
@@ -100,7 +100,7 @@ namespace occa {
         lang::argMetadata_t &argInfo = metadata.arguments[i];
 
         modeMemory_t *mem = arg.getModeMemory();
-        const bool isNull = arg.isNull();
+        const bool isNull = arg.value.isNull();
         const bool isPtr = mem || isNull;
         if (isPtr != argInfo.isPtr) {
           if (argInfo.isPtr) {

@@ -49,7 +49,7 @@ const char* occaJsonDump(occaJson j,
 //---[ Type checks ]--------------------
 bool occaJsonIsBoolean(occaJson j) {
   occa::json &j_ = occa::c::json(j);
-  return j_.isBoolean();
+  return j_.isBool();
 }
 
 bool occaJsonIsNumber(occaJson j) {

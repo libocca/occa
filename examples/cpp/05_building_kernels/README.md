@@ -18,7 +18,7 @@ Usage: ./main [OPTIONS]
 Example which shows run-time kernel source code generation
 
 Options:
-  -d, --device     Device properties (default: "mode: 'Serial'")
+  -d, --device     Device properties (default: "{mode: 'Serial'}")
   -h, --help       Print usage
   -v, --verbose    Compile kernels in verbose mode
 ```

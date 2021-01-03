@@ -11,7 +11,7 @@ namespace occa {
       api::metal::commandQueue_t metalCommandQueue;
 
       stream(modeDevice_t *modeDevice_,
-             const occa::properties &properties_,
+             const occa::json &properties_,
              api::metal::commandQueue_t metalCommandQueue_);
 
       virtual ~stream();

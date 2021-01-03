@@ -7,10 +7,10 @@
 
 namespace occa {
   namespace openmp {
-    device::device(const occa::properties &properties_) :
+    device::device(const occa::json &properties_) :
       serial::device(properties_) {}
 
-    hash_t device::kernelHash(const occa::properties &props) const {
+    hash_t device::kernelHash(const occa::json &props) const {
       return (
         serial::device::kernelHash(props)
         ^ occa::hash("openmp")
@@ -19,7 +19,7 @@ namespace occa {
 
     bool device::parseFile(const std::string &filename,
                            const std::string &outputFile,
-                           const occa::properties &kernelProps,
+                           const occa::json &kernelProps,
                            lang::sourceMetadata_t &metadata) {
       lang::okl::openmpParser parser(kernelProps);
       parser.parseFile(filename);
@@ -48,9 +48,9 @@ namespace occa {
     modeKernel_t* device::buildKernel(const std::string &filename,
                                       const std::string &kernelName,
                                       const hash_t kernelHash,
-                                      const occa::properties &kernelProps) {
+                                      const occa::json &kernelProps) {
 
-      occa::properties allKernelProps = properties + kernelProps;
+      occa::json allKernelProps = properties + kernelProps;
 
       std::string compiler = allKernelProps["compiler"];
       int vendor = allKernelProps["vendor"];

@@ -91,11 +91,11 @@ void printOccaType(const occaType *value, const bool verbose) {
     printf("      value.int64_:   %ld\n", value->value.int64_);
     printf("      value.float_:   %f\n", value->value.float_);
     printf("      value.double_:  %f\n", value->value.double_);
-    printf("      value.ptr:      %p\n", value->value.ptr);
+    printf("      value.ptr:      %p\n", (void*) value->value.ptr);
   } else {
     // In the Fortran module we store the data as int64
     printf("      value.int64_:   %ld\n", value->value.int64_);
-    printf("      value.ptr:      %p\n", value->value.ptr);
+    printf("      value.ptr:      %p\n", (void*) value->value.ptr);
   }
   printf("    ===============================================\n");
   printf("\n");

@@ -92,7 +92,7 @@ occaJson parseArgs(int argc, const char **argv) {
     "    {"
     "      name: 'device',"
     "      shortname: 'd',"
-    "      description: 'Device properties (default: \"mode: \\'Serial\\'\")',"
+    "      description: 'Device properties (default: \"{ mode: \\'Serial\\' }\")',"
     "      with_arg: true,"
     "      default_value: { mode: 'Serial' },"
     "    },"
@@ -106,8 +106,8 @@ occaJson parseArgs(int argc, const char **argv) {
     "}"
   );
 
-  occaProperties settings = occaSettings();
-  occaPropertiesSet(settings,
+  occaJson settings = occaSettings();
+  occaJsonObjectSet(settings,
                     "kernel/verbose",
                     occaJsonObjectGet(args, "options/verbose", occaBool(0)));
 

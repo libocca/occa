@@ -5,7 +5,7 @@
 #include <occa/utils/hash.hpp>
 #include <occa/internal/utils/env.hpp>
 #include <occa/internal/utils/lex.hpp>
-#include <occa/types/properties.hpp>
+#include <occa/types/json.hpp>
 #include <occa/internal/utils/sys.hpp>
 
 namespace occa {
@@ -114,11 +114,11 @@ namespace occa {
 
     void writeBuildFile(const std::string &filename,
                         const hash_t &hash,
-                        const occa::properties &props) {
+                        const occa::json &props) {
       io::lock_t lock(hash, "kernel-info");
       if (lock.isMine() &&
           !io::isFile(filename)) {
-        occa::properties info = props;
+        occa::json info = props;
         setBuildProps(info["build"]);
         info.write(filename);
       }

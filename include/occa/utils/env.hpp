@@ -1,10 +1,10 @@
 #ifndef OCCA_UTILS_ENV_HEADER
 #define OCCA_UTILS_ENV_HEADER
 
-#include <occa/types/properties.hpp>
+#include <occa/types/json.hpp>
 
 namespace occa {
-  properties& settings();
+  json& settings();
 
   namespace env {
     extern std::string OCCA_DIR, OCCA_INSTALL_DIR, OCCA_CACHE_DIR;

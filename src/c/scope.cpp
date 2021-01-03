@@ -8,31 +8,24 @@ namespace occa {
                          const bool isConst) {
     occa::scope& scope_ = occa::c::scope(scope);
 
-    const bool isPointer = (
-      (value.type == OCCA_PTR) || (value.type == OCCA_MEMORY)
-    );
-
-    scope_.add(
-      scopeVariable(
-        occa::c::getDtype(value),
-        isPointer,
-        isConst,
-        name,
-        occa::c::kernelArg(value)
-      )
-    );
+    scope_.add({
+      name,
+      occa::c::kernelArg(value),
+      occa::c::getDtype(value),
+      isConst,
+    });
   }
 }
 
 
 OCCA_START_EXTERN_C
 
-occaScope occaCreateScope(occaProperties props) {
+occaScope occaCreateScope(occaJson props) {
   occa::scope *scope;
   if (occa::c::isDefault(props)) {
     scope = new occa::scope();
   } else {
-    scope = new occa::scope(occa::c::properties(props));
+    scope = new occa::scope(occa::c::json(props));
   }
   return occa::c::newOccaType(*scope);
 }

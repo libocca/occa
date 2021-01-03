@@ -12,17 +12,19 @@
 #include <occa/internal/utils/testing.hpp>
 
 const std::string deviceStr = (
-  "mode: 'Serial',"
-  "dkey: 1,"
-  "kernel: {"
-  "  kkey: 2,"
-  "},"
-  "memory: {"
-  "  mkey: 3,"
-  "},"
+  "{"
+  "  mode: 'Serial',"
+  "  dkey: 1,"
+  "  kernel: {"
+  "    kkey: 2,"
+  "  },"
+  "  memory: {"
+  "    mkey: 3,"
+  "  },"
+  "}"
 );
 
-occaProperties props = occaCreatePropertiesFromString(
+occaJson props = occaJsonParse(
   deviceStr.c_str()
 );
 
@@ -86,14 +88,14 @@ void testProperties() {
   ASSERT_EQ((const char*) occaDeviceMode(device),
             (const char*) "Serial");
 
-  occaProperties deviceProps = occaDeviceGetProperties(device);
-  ASSERT_TRUE(occaPropertiesHas(deviceProps, "dkey"));
+  occaJson deviceProps = occaDeviceGetProperties(device);
+  ASSERT_TRUE(occaJsonObjectHas(deviceProps, "dkey"));
 
-  occaProperties kernelProps = occaDeviceGetKernelProperties(device);
-  ASSERT_TRUE(occaPropertiesHas(kernelProps, "kkey"));
+  occaJson kernelProps = occaDeviceGetKernelProperties(device);
+  ASSERT_TRUE(occaJsonObjectHas(kernelProps, "kkey"));
 
-  occaProperties memoryProps = occaDeviceGetMemoryProperties(device);
-  ASSERT_TRUE(occaPropertiesHas(memoryProps, "mkey"));
+  occaJson memoryProps = occaDeviceGetMemoryProperties(device);
+  ASSERT_TRUE(occaJsonObjectHas(memoryProps, "mkey"));
 
   occaFree(&device);
 }
@@ -295,8 +297,8 @@ void testWrapMemory() {
                                    occaDtypeInt,
                                    occaDefault);
 
-  occaProperties memProps = (
-    occaCreatePropertiesFromString("foo: 'bar'")
+  occaJson memProps = (
+    occaJsonParse("{foo: 'bar'}")
   );
 
   mem2 = occaDeviceWrapMemory(occaHost(),

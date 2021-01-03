@@ -13,13 +13,13 @@ bool occaDeviceIsInitialized(occaDevice device);
 
 const char* occaDeviceMode(occaDevice device);
 
-occaProperties occaDeviceGetProperties(occaDevice device);
+occaJson occaDeviceGetProperties(occaDevice device);
 
-occaProperties occaDeviceGetKernelProperties(occaDevice device);
+occaJson occaDeviceGetKernelProperties(occaDevice device);
 
-occaProperties occaDeviceGetMemoryProperties(occaDevice device);
+occaJson occaDeviceGetMemoryProperties(occaDevice device);
 
-occaProperties occaDeviceGetStreamProperties(occaDevice device);
+occaJson occaDeviceGetStreamProperties(occaDevice device);
 
 occaUDim_t occaDeviceMemorySize(occaDevice device);
 
@@ -31,7 +31,7 @@ bool occaDeviceHasSeparateMemorySpace(occaDevice device);
 
 //---[ Stream ]-------------------------
 occaStream occaDeviceCreateStream(occaDevice device,
-                                  occaProperties props);
+                                  occaJson props);
 
 occaStream occaDeviceGetStream(occaDevice device);
 
@@ -52,52 +52,52 @@ double occaDeviceTimeBetweenTags(occaDevice device,
 occaKernel occaDeviceBuildKernel(occaDevice device,
                                  const char *filename,
                                  const char *kernelName,
-                                 const occaProperties props);
+                                 const occaJson props);
 
 occaKernel occaDeviceBuildKernelFromString(occaDevice device,
                                            const char *str,
                                            const char *kernelName,
-                                           const occaProperties props);
+                                           const occaJson props);
 
 occaKernel occaDeviceBuildKernelFromBinary(occaDevice device,
                                            const char *filename,
                                            const char *kernelName,
-                                           const occaProperties props);
+                                           const occaJson props);
 //======================================
 
 //---[ Memory ]-------------------------
 occaMemory occaDeviceMalloc(occaDevice device,
                             const occaUDim_t bytes,
                             const void *src,
-                            occaProperties props);
+                            occaJson props);
 
 occaMemory occaDeviceTypedMalloc(occaDevice device,
                                  const occaUDim_t entries,
                                  const occaDtype dtype,
                                  const void *src,
-                                 occaProperties props);
+                                 occaJson props);
 
 void* occaDeviceUMalloc(occaDevice device,
                         const occaUDim_t bytes,
                         const void *src,
-                        occaProperties props);
+                        occaJson props);
 
 void* occaDeviceTypedUMalloc(occaDevice device,
                              const occaUDim_t entries,
                              const occaDtype dtype,
                              const void *src,
-                             occaProperties props);
+                             occaJson props);
 
 occaMemory occaDeviceWrapMemory(occaDevice device,
                                 const void *ptr,
                                 const occaUDim_t bytes,
-                                occaProperties props);
+                                occaJson props);
 
 occaMemory occaDeviceTypedWrapMemory(occaDevice device,
                                      const void *ptr,
                                      const occaUDim_t entries,
                                      const occaDtype dtype,
-                                     occaProperties props);
+                                     occaJson props);
 //======================================
 
 OCCA_END_EXTERN_C

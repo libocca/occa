@@ -9,6 +9,7 @@
 #include <stdlib.h>
 
 #include <occa/defines.hpp>
+#include <occa/dtype/builtins.hpp>
 #include <occa/utils/logging.hpp>
 
 namespace occa {
@@ -152,9 +153,14 @@ namespace occa {
       value.double_ = value_;
     }
 
-    inline primitive(void *value_) {
+    inline primitive(const void *value_) {
       type = primitiveType::ptr;
-      value.ptr = (char*) value_;
+      value.ptr = (char*) const_cast<void*>(value_);
+    }
+
+    inline primitive(const std::nullptr_t &_) {
+      type = primitiveType::ptr;
+      value.ptr = NULL;
     }
 
     static primitive load(const char *&c,
@@ -164,6 +170,23 @@ namespace occa {
 
     static primitive loadBinary(const char *&c, const bool isNegative = false);
     static primitive loadHex(const char *&c, const bool isNegative = false);
+
+    inline dtype_t dtype() const {
+      switch(type) {
+        case primitiveType::bool_   : return dtype::bool_;
+        case primitiveType::uint8_  : return dtype::uint8;
+        case primitiveType::uint16_ : return dtype::uint16;
+        case primitiveType::uint32_ : return dtype::uint32;
+        case primitiveType::uint64_ : return dtype::uint64;
+        case primitiveType::int8_   : return dtype::int8;
+        case primitiveType::int16_  : return dtype::int16;
+        case primitiveType::int32_  : return dtype::int32;
+        case primitiveType::int64_  : return dtype::int64;
+        case primitiveType::float_  : return dtype::float_;
+        case primitiveType::double_ : return dtype::double_;
+        default: return dtype::none;
+      }
+    }
 
     inline primitive& operator = (const bool value_) {
       type = primitiveType::bool_;
@@ -331,6 +354,24 @@ namespace occa {
       return type & primitiveType::ptr;
     }
 
+    inline bool isNull() const {
+      return (isNaN() || (isPointer() && !value.ptr));
+    }
+
+    inline const void* ptr() const {
+      switch (type) {
+        case primitiveType::none: return NULL;
+        case primitiveType::ptr: return value.ptr;
+        default: return &value;
+      }
+    }
+
+    inline void* ptr() {
+      return const_cast<void*>(
+        static_cast<const primitive*>(this)->ptr()
+      );
+    }
+
     std::string toString() const;
     std::string toBinaryString() const;
     std::string toHexString() const;
@@ -339,7 +380,7 @@ namespace occa {
                                     const primitive &p);
 
     //---[ Misc Methods ]-----------------
-    uint64_t sizeof_();
+    uint64_t sizeof_() const;
     //====================================
 
     //---[ Unary Operators ]--------------

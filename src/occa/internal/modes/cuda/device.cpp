@@ -15,7 +15,7 @@
 
 namespace occa {
   namespace cuda {
-    device::device(const occa::properties &properties_) :
+    device::device(const occa::json &properties_) :
         occa::launchedModeDevice_t(properties_),
         nullPtr(NULL) {
 
@@ -106,7 +106,7 @@ namespace occa {
       return hash_;
     }
 
-    hash_t device::kernelHash(const occa::properties &props) const {
+    hash_t device::kernelHash(const occa::json &props) const {
       return (
         occa::hash(props["compiler"])
         ^ props["compiler_flags"]
@@ -114,14 +114,14 @@ namespace occa {
       );
     }
 
-    lang::okl::withLauncher* device::createParser(const occa::properties &props) const {
+    lang::okl::withLauncher* device::createParser(const occa::json &props) const {
       return new lang::okl::cudaParser(props);
     }
 
     void* device::getNullPtr() {
       if (!nullPtr) {
         // Auto freed through ring garbage collection
-        nullPtr = (cuda::memory*) malloc(1, NULL, occa::properties());
+        nullPtr = (cuda::memory*) malloc(1, NULL, occa::json());
       }
       return (void*) &(nullPtr->cuPtr);
     }
@@ -132,7 +132,7 @@ namespace occa {
     }
 
     //---[ Stream ]---------------------
-    modeStream_t* device::createStream(const occa::properties &props) {
+    modeStream_t* device::createStream(const occa::json &props) {
       CUstream cuStream = NULL;
 
       setCudaContext();
@@ -201,7 +201,7 @@ namespace occa {
       const bool usingOkl,
       lang::sourceMetadata_t &launcherMetadata,
       lang::sourceMetadata_t &deviceMetadata,
-      const occa::properties &kernelProps,
+      const occa::json &kernelProps,
       io::lock_t lock
     ) {
       compileKernel(hashDir,
@@ -249,7 +249,7 @@ namespace occa {
                         kernelProps);
     }
 
-    void device::setArchCompilerFlags(const occa::properties &kernelProps,
+    void device::setArchCompilerFlags(const occa::json &kernelProps,
                                       std::string &compilerFlags) {
       if (compilerFlags.find("-arch=sm_") == std::string::npos) {
         compilerFlags += " -arch=sm_";
@@ -260,10 +260,10 @@ namespace occa {
 
     void device::compileKernel(const std::string &hashDir,
                                const std::string &kernelName,
-                               const occa::properties &kernelProps,
+                               const occa::json &kernelProps,
                                io::lock_t &lock) {
 
-      occa::properties allProps = kernelProps;
+      occa::json allProps = kernelProps;
       const bool verbose = allProps.get("verbose", false);
 
       std::string sourceFilename = hashDir + kc::sourceFile;
@@ -351,7 +351,7 @@ namespace occa {
                                                    const std::string &kernelName,
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::properties &kernelProps,
+                                                   const occa::json &kernelProps,
                                                    io::lock_t lock) {
 
       const std::string sourceFilename = hashDir + kc::sourceFile;
@@ -415,7 +415,7 @@ namespace occa {
 
     modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
                                                 const std::string &kernelName,
-                                                const occa::properties &kernelProps) {
+                                                const occa::json &kernelProps) {
       CUmodule cuModule = NULL;
       CUfunction cuFunction = NULL;
 
@@ -439,7 +439,7 @@ namespace occa {
     //---[ Memory ]---------------------
     modeMemory_t* device::malloc(const udim_t bytes,
                                  const void *src,
-                                 const occa::properties &props) {
+                                 const occa::json &props) {
       if (props.get("mapped", false)) {
         return mappedAlloc(bytes, src, props);
       }
@@ -462,7 +462,7 @@ namespace occa {
 
     modeMemory_t* device::mappedAlloc(const udim_t bytes,
                                       const void *src,
-                                      const occa::properties &props) {
+                                      const occa::json &props) {
 
       cuda::memory &mem = *(new cuda::memory(this, bytes, props));
 
@@ -483,7 +483,7 @@ namespace occa {
 
     modeMemory_t* device::unifiedAlloc(const udim_t bytes,
                                        const void *src,
-                                       const occa::properties &props) {
+                                       const occa::json &props) {
       cuda::memory &mem = *(new cuda::memory(this, bytes, props));
 #if CUDA_VERSION >= 8000
       mem.isUnified = true;
@@ -511,7 +511,7 @@ namespace occa {
 
     modeMemory_t* device::wrapMemory(const void *ptr,
                                      const udim_t bytes,
-                                     const occa::properties &props) {
+                                     const occa::json &props) {
       memory *mem = new memory(this,
                                bytes,
                                props);

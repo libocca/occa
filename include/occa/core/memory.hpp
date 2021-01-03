@@ -58,10 +58,10 @@ namespace occa {
     const TM* ptr() const;
 
     template <class TM = void>
-    TM* ptr(const occa::properties &props);
+    TM* ptr(const occa::json &props);
 
     template <class TM = void>
-    const TM* ptr(const occa::properties &props) const;
+    const TM* ptr(const occa::json &props) const;
 
     modeMemory_t* getModeMemory() const;
     modeDevice_t* getModeDevice() const;
@@ -71,7 +71,7 @@ namespace occa {
     operator kernelArg() const;
 
     const std::string& mode() const;
-    const occa::properties& properties() const;
+    const occa::json& properties() const;
 
     const dtype_t& dtype() const;
 
@@ -112,36 +112,36 @@ namespace occa {
     void copyFrom(const void *src,
                   const dim_t bytes = -1,
                   const dim_t offset = 0,
-                  const occa::properties &props = occa::properties());
+                  const occa::json &props = occa::json());
 
     void copyFrom(const memory src,
                   const dim_t bytes = -1,
                   const dim_t destOffset = 0,
                   const dim_t srcOffset = 0,
-                  const occa::properties &props = occa::properties());
+                  const occa::json &props = occa::json());
 
     void copyTo(void *dest,
                 const dim_t bytes = -1,
                 const dim_t offset = 0,
-                const occa::properties &props = occa::properties()) const;
+                const occa::json &props = occa::json()) const;
 
     void copyTo(const memory dest,
                 const dim_t bytes = -1,
                 const dim_t destOffset = 0,
                 const dim_t srcOffset = 0,
-                const occa::properties &props = occa::properties()) const;
+                const occa::json &props = occa::json()) const;
 
     void copyFrom(const void *src,
-                  const occa::properties &props);
+                  const occa::json &props);
 
     void copyFrom(const memory src,
-                  const occa::properties &props);
+                  const occa::json &props);
 
     void copyTo(void *dest,
-                const occa::properties &props) const;
+                const occa::json &props) const;
 
     void copyTo(const memory dest,
-                const occa::properties &props) const;
+                const occa::json &props) const;
 
     occa::memory as(const dtype_t &dtype_) const;
 
@@ -165,10 +165,10 @@ namespace occa {
   const void* memory::ptr<void>() const;
 
   template <>
-  void* memory::ptr<void>(const occa::properties &props);
+  void* memory::ptr<void>(const occa::json &props);
 
   template <>
-  const void* memory::ptr<void>(const occa::properties &props) const;
+  const void* memory::ptr<void>(const occa::json &props) const;
 }
 
 #include "memory.tpp"

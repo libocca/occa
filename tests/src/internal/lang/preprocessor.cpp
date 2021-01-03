@@ -517,7 +517,7 @@ void testErrorDefines() {
 void testOccaMacros() {
   occa::hash_t hash = occa::hash_t::fromString("df15688e1bde01ebb5b3750031d017b2312d028acd9753b27dd4ba0aef0a4d41");
 
-  occa::properties preprocessorSettings;
+  occa::json preprocessorSettings;
   preprocessorSettings["hash"] = hash.getFullString();
   preprocessorSettings["mode"] = "CUDA";
 

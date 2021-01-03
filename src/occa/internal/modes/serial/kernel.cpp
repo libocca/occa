@@ -9,7 +9,7 @@ namespace occa {
     kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
-                   const occa::properties &properties_) :
+                   const occa::json &properties_) :
       occa::modeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       dlHandle(NULL),
       function(NULL),

@@ -5,7 +5,7 @@
 #include <occa/types.hpp>
 #include <occa/utils/env.hpp>
 #include <occa/internal/utils/string.hpp>
-#include <occa/types/properties.hpp>
+#include <occa/types/json.hpp>
 
 namespace occa {
   namespace env {
@@ -19,7 +19,7 @@ namespace occa {
     extern bool        OCCA_VERBOSE;
     extern bool        OCCA_COLOR_ENABLED;
 
-    properties& baseSettings();
+    json& baseSettings();
 
     std::string var(const std::string &var);
 
@@ -35,11 +35,11 @@ namespace occa {
     void setOccaCacheDir(const std::string &path);
 
     class envInitializer_t {
-    public:
+     public:
       envInitializer_t();
       ~envInitializer_t();
 
-    private:
+     private:
       bool isInitialized;
 
       static void initSettings();

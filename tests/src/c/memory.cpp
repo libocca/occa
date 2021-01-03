@@ -25,8 +25,8 @@ void testInit() {
   data[2] = 2;
 
   occaMemory mem = occaUndefined;
-  occaProperties props = (
-    occaCreatePropertiesFromString("foo: 'bar'")
+  occaJson props = (
+    occaJsonParse("{foo: 'bar'}")
   );
 
   ASSERT_TRUE(occaIsUndefined(mem));
@@ -51,8 +51,8 @@ void testInit() {
   ASSERT_EQ(occa::c::device(occaMemoryGetDevice(mem)),
             occa::host());
 
-  occaProperties memProps = occaMemoryGetProperties(mem);
-  occaType memMode = occaPropertiesGet(memProps, "foo", occaUndefined);
+  occaJson memProps = occaMemoryGetProperties(mem);
+  occaType memMode = occaJsonObjectGet(memProps, "foo", occaUndefined);
   ASSERT_EQ((const char*) occaJsonGetString(memMode),
             (const char*) "bar");
 
@@ -134,8 +134,8 @@ void testCopyMethods() {
   occaMemory mem2 = occaMalloc(bytes2, data2, occaDefault);
   occaMemory mem4 = occaMalloc(bytes4, data4, occaDefault);
 
-  occaProperties props = (
-    occaCreatePropertiesFromString("foo: 'bar'")
+  occaJson props = (
+    occaJsonParse("{foo: 'bar'}")
   );
 
   int *ptr2 = (int*) occaMemoryPtr(mem2, occaDefault);

@@ -20,7 +20,7 @@ Usage: ./main [OPTIONS]
 Example showing the use of multiple device streams
 
 Options:
-  -d, --device     Device properties (default: "mode: 'Serial'")
+  -d, --device     Device properties (default: "{mode: 'Serial'}")
   -h, --help       Print usage
   -v, --verbose    Compile kernels in verbose mode
 ```

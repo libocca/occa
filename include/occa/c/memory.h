@@ -9,11 +9,11 @@ OCCA_START_EXTERN_C
 bool occaMemoryIsInitialized(occaMemory memory);
 
 void* occaMemoryPtr(occaMemory memory,
-                    occaProperties props);
+                    occaJson props);
 
 occaDevice occaMemoryGetDevice(occaMemory memory);
 
-occaProperties occaMemoryGetProperties(occaMemory memory);
+occaJson occaMemoryGetProperties(occaMemory memory);
 
 occaUDim_t occaMemorySize(occaMemory memory);
 
@@ -44,25 +44,25 @@ void occaMemorySyncToHost(occaMemory memory,
 void occaMemcpy(void *dest,
                 const void *src,
                 const occaUDim_t bytes,
-                occaProperties props);
+                occaJson props);
 
 void occaCopyMemToMem(occaMemory dest, occaMemory src,
                       const occaUDim_t bytes,
                       const occaUDim_t destOffset,
                       const occaUDim_t srcOffset,
-                      occaProperties props);
+                      occaJson props);
 
 void occaCopyPtrToMem(occaMemory dest,
                       const void *src,
                       const occaUDim_t bytes,
                       const occaUDim_t offset,
-                      occaProperties props);
+                      occaJson props);
 
 void occaCopyMemToPtr(void *dest,
                       occaMemory src,
                       const occaUDim_t bytes,
                       const occaUDim_t offset,
-                      occaProperties props);
+                      occaJson props);
 
 occaMemory occaMemoryClone(occaMemory memory);
 
@@ -71,7 +71,7 @@ void occaMemoryDetach(occaMemory memory);
 occaMemory occaWrapCpuMemory(occaDevice device,
                              void *ptr,
                              occaUDim_t bytes,
-                             occaProperties props);
+                             occaJson props);
 
 OCCA_END_EXTERN_C
 

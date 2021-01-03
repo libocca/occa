@@ -158,14 +158,14 @@ void setupOCCA() {
     }
   }
 
-  occa::properties kernelProps;
-
-  kernelProps["defines/WIDTH"]         = width;
-  kernelProps["defines/HEIGHT"]        = height;
-  kernelProps["defines/BATCH_SIZE"]    = batchSize;
-  kernelProps["defines/SHAPE_FUNCTION"]= shapeFunction;
-  kernelProps["defines/PIXEL"]         = pixel;
-  kernelProps["defines/HALF_PIXEL"]    = halfPixel;
+  occa::json kernelProps({
+    {"defines/WIDTH", width},
+    {"defines/HEIGHT", height},
+    {"defines/BATCH_SIZE", batchSize},
+    {"defines/SHAPE_FUNCTION", shapeFunction},
+    {"defines/PIXEL", pixel},
+    {"defines/HALF_PIXEL", halfPixel},
+  });
 
   if (sizeof(tFloat) == sizeof(float)) {
     kernelProps["defines/tFloat"]  = "float";

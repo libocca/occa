@@ -6,7 +6,7 @@
 
 OCCA_START_EXTERN_C
 
-occaScope occaCreateScope(occaProperties props);
+occaScope occaCreateScope(occaJson props);
 
 void occaScopeAdd(occaScope scope,
                   const char *name,

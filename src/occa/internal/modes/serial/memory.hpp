@@ -10,28 +10,28 @@ namespace occa {
     public:
       memory(modeDevice_t *modeDevice_,
              udim_t size_,
-             const occa::properties &properties_ = occa::properties());
+             const occa::json &properties_ = occa::json());
       ~memory();
 
-      kernelArg makeKernelArg() const;
+      void* getKernelArgPtr() const;
 
       modeMemory_t* addOffset(const dim_t offset);
 
       void copyTo(void *dest,
                   const udim_t bytes,
                   const udim_t destOffset,
-                  const occa::properties &props) const;
+                  const occa::json &props) const;
 
       void copyFrom(const void *src,
                     const udim_t bytes,
                     const udim_t offset,
-                    const occa::properties &props);
+                    const occa::json &props);
 
       void copyFrom(const modeMemory_t *src,
                     const udim_t bytes,
                     const udim_t destOffset,
                     const udim_t srcOffset,
-                    const occa::properties &props);
+                    const occa::json &props);
       void detach();
     };
   }

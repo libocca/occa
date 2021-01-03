@@ -6,7 +6,7 @@
 OCCA_START_EXTERN_C
 
 //---[ Globals & Flags ]----------------
-occaProperties occaSettings() {
+occaJson occaSettings() {
   return occa::c::newOccaType(occa::settings(),
                               false);
 }
@@ -30,28 +30,26 @@ void occaSetDevice(occaDevice device) {
 }
 
 void occaSetDeviceFromString(const char *info) {
-  occa::setDevice(info);
+  occa::setDevice(
+    occa::json::parse(info)
+  );
 }
 
-occaProperties occaDeviceProperties() {
+occaJson occaDeviceProperties() {
   return occa::c::newOccaType(occa::deviceProperties(),
                               false);
-}
-
-void occaLoadKernels(const char *library) {
-  occa::loadKernels(library);
 }
 
 void occaFinish() {
   occa::finish();
 }
 
-occaStream occaCreateStream(occaProperties props) {
+occaStream occaCreateStream(occaJson props) {
   occa::stream stream;
   if (occa::c::isDefault(props)) {
     stream = occa::createStream();
   } else {
-    stream = occa::createStream(occa::c::properties(props));
+    stream = occa::createStream(occa::c::json(props));
   }
   stream.dontUseRefs();
 
@@ -87,7 +85,7 @@ double occaTimeBetweenTags(occaStreamTag startTag,
 //---[ Kernel ]-------------------------
 occaKernel occaBuildKernel(const char *filename,
                            const char *kernelName,
-                           const occaProperties props) {
+                           const occaJson props) {
   occa::kernel kernel;
 
   if (occa::c::isDefault(props)) {
@@ -96,7 +94,7 @@ occaKernel occaBuildKernel(const char *filename,
   } else {
     kernel = occa::buildKernel(filename,
                                kernelName,
-                               occa::c::properties(props));
+                               occa::c::json(props));
   }
   kernel.dontUseRefs();
 
@@ -105,7 +103,7 @@ occaKernel occaBuildKernel(const char *filename,
 
 occaKernel occaBuildKernelFromString(const char *source,
                                      const char *kernelName,
-                                     const occaProperties props) {
+                                     const occaJson props) {
   occa::kernel kernel;
 
   if (occa::c::isDefault(props)) {
@@ -114,7 +112,7 @@ occaKernel occaBuildKernelFromString(const char *source,
   } else {
     kernel = occa::buildKernelFromString(source,
                                          kernelName,
-                                         occa::c::properties(props));
+                                         occa::c::json(props));
   }
   kernel.dontUseRefs();
 
@@ -123,7 +121,7 @@ occaKernel occaBuildKernelFromString(const char *source,
 
 occaKernel occaBuildKernelFromBinary(const char *filename,
                                      const char *kernelName,
-                                     const occaProperties props) {
+                                     const occaJson props) {
   occa::kernel kernel;
 
   if (occa::c::isDefault(props)) {
@@ -132,7 +130,7 @@ occaKernel occaBuildKernelFromBinary(const char *filename,
   } else {
     kernel = occa::buildKernelFromBinary(filename,
                                          kernelName,
-                                         occa::c::properties(props));
+                                         occa::c::json(props));
   }
   kernel.dontUseRefs();
 
@@ -143,7 +141,7 @@ occaKernel occaBuildKernelFromBinary(const char *filename,
 //---[ Memory ]-------------------------
 occaMemory occaMalloc(const occaUDim_t bytes,
                       const void *src,
-                      occaProperties props) {
+                      occaJson props) {
   return occaTypedMalloc(bytes,
                          occaDtypeByte,
                          src,
@@ -153,7 +151,7 @@ occaMemory occaMalloc(const occaUDim_t bytes,
 occaMemory occaTypedMalloc(const occaUDim_t entries,
                            const occaDtype dtype,
                            const void *src,
-                           occaProperties props) {
+                           occaJson props) {
   const occa::dtype_t &dtype_ = occa::c::dtype(dtype);
 
   occa::memory memory;
@@ -163,7 +161,7 @@ occaMemory occaTypedMalloc(const occaUDim_t entries,
     memory = occa::malloc(entries,
                           dtype_,
                           src,
-                          occa::c::properties(props));
+                          occa::c::json(props));
   }
   memory.dontUseRefs();
 
@@ -172,7 +170,7 @@ occaMemory occaTypedMalloc(const occaUDim_t entries,
 
 void* occaUMalloc(const occaUDim_t bytes,
                   const void *src,
-                  occaProperties props) {
+                  occaJson props) {
   return occaTypedUMalloc(bytes,
                           occaDtypeByte,
                           src,
@@ -182,7 +180,7 @@ void* occaUMalloc(const occaUDim_t bytes,
 void* occaTypedUMalloc(const occaUDim_t entries,
                        const occaDtype dtype,
                        const void *src,
-                       occaProperties props) {
+                       occaJson props) {
   const occa::dtype_t &dtype_ = occa::c::dtype(dtype);
 
   if (occa::c::isDefault(props)) {
@@ -191,12 +189,12 @@ void* occaTypedUMalloc(const occaUDim_t entries,
   return occa::umalloc(entries,
                        dtype_,
                        src,
-                       occa::c::properties(props));
+                       occa::c::json(props));
 }
 
 occaMemory occaWrapMemory(const void *ptr,
                           const occaUDim_t bytes,
-                          occaProperties props) {
+                          occaJson props) {
   return occaTypedWrapMemory(ptr,
                              bytes,
                              occaDtypeByte,
@@ -206,14 +204,14 @@ occaMemory occaWrapMemory(const void *ptr,
 occaMemory occaTypedWrapMemory(const void *ptr,
                                const occaUDim_t entries,
                                const occaDtype dtype,
-                               occaProperties props) {
+                               occaJson props) {
   const occa::dtype_t &dtype_ = occa::c::dtype(dtype);
 
   occa::memory memory;
   if (occa::c::isDefault(props)) {
     memory = occa::wrapMemory(ptr, entries, dtype_);
   } else {
-    memory = occa::wrapMemory(ptr, entries, dtype_, occa::c::properties(props));
+    memory = occa::wrapMemory(ptr, entries, dtype_, occa::c::json(props));
   }
   memory.dontUseRefs();
 

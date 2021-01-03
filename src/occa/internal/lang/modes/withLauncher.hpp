@@ -8,10 +8,10 @@ namespace occa {
   namespace lang {
     namespace okl {
       class withLauncher : public parser_t {
-      public:
+       public:
         serialParser launcherParser;
 
-        withLauncher(const occa::properties &settings_ = occa::properties());
+        withLauncher(const occa::json &settings_ = occa::json());
 
         //---[ Public ]-----------------
         virtual bool succeeded() const;

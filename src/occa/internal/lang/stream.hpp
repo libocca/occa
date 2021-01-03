@@ -5,7 +5,7 @@
 #include <list>
 
 #include <occa/types.hpp>
-#include <occa/types/properties.hpp>
+#include <occa/types/json.hpp>
 
 namespace occa {
   namespace lang {
@@ -19,7 +19,7 @@ namespace occa {
     //---[ baseStream ]-------------------
     template <class output_t>
     class baseStream {
-    public:
+     public:
       virtual ~baseStream();
 
       virtual baseStream& clone() const = 0;
@@ -29,7 +29,7 @@ namespace occa {
       virtual void setNext(output_t &out) = 0;
 
       virtual void clearCache();
-      virtual void* passMessageToInput(const occa::properties &props);
+      virtual void* passMessageToInput(const occa::json &props);
       void* getInput(const std::string &name);
 
       template <class newOutput_t>
@@ -50,10 +50,10 @@ namespace occa {
       template<typename>
       friend class stream;
 
-    private:
+     private:
       baseStream<output_t> *head;
 
-    public:
+     public:
       stream();
       stream(baseStream<output_t> &head_);
       stream(const stream &other);
@@ -64,7 +64,7 @@ namespace occa {
       stream& clone() const;
 
       void clearCache();
-      void* passMessageToInput(const occa::properties &props);
+      void* passMessageToInput(const occa::json &props);
       void* getInput(const std::string &name);
 
       bool isEmpty();
@@ -83,7 +83,7 @@ namespace occa {
     template <class input_t,
               class output_t>
     class streamMap : public baseStream<output_t> {
-    public:
+     public:
       baseStream<input_t> *input;
 
       streamMap();
@@ -96,13 +96,13 @@ namespace occa {
       virtual streamMap& clone_() const = 0;
 
       virtual void clearCache();
-      virtual void* passMessageToInput(const occa::properties &props);
+      virtual void* passMessageToInput(const occa::json &props);
     };
 
     template <class input_t,
               class output_t>
     class streamMapFunc : public streamMap<input_t, output_t> {
-    public:
+     public:
       output_t (*func)(const input_t &value);
 
       streamMapFunc(output_t (*func_)(const input_t &value));
@@ -117,7 +117,7 @@ namespace occa {
     //---[ streamFilter ]-----------------
     template <class input_t>
     class streamFilter : public streamMap<input_t, input_t> {
-    public:
+     public:
       input_t lastValue;
       bool usedLastValue;
       bool isEmpty_;
@@ -134,7 +134,7 @@ namespace occa {
 
     template <class input_t>
     class streamFilterFunc : public streamFilter<input_t> {
-    public:
+     public:
       bool (*func)(const input_t &value);
 
       streamFilterFunc(bool (*func_)(const input_t &value));
@@ -149,7 +149,7 @@ namespace occa {
     //---[ Cache ]------------------------
     template <class input_t, class output_t>
     class withInputCache : virtual public streamMap<input_t, output_t> {
-    public:
+     public:
       std::list<input_t> inputCache;
 
       withInputCache();
@@ -166,7 +166,7 @@ namespace occa {
 
     template <class input_t, class output_t>
     class withOutputCache : virtual public streamMap<input_t, output_t> {
-    public:
+     public:
       std::list<output_t> outputCache;
 
       withOutputCache();
@@ -186,7 +186,7 @@ namespace occa {
     template <class input_t, class output_t>
     class withCache : public withInputCache<input_t, input_t>,
                       public withOutputCache<output_t, output_t> {
-    public:
+     public:
       withCache();
       withCache(const withCache<input_t, output_t> &other);
 

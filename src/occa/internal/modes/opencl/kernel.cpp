@@ -11,7 +11,7 @@ namespace occa {
     kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
-                   const occa::properties &properties_) :
+                   const occa::json &properties_) :
       occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       clDevice(NULL),
       clKernel(NULL) {}
@@ -21,7 +21,7 @@ namespace occa {
                    const std::string &sourceFilename_,
                    cl_device_id clDevice_,
                    cl_kernel clKernel_,
-                   const occa::properties &properties_) :
+                   const occa::json &properties_) :
       occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       clDevice(clDevice_),
       clKernel(clKernel_) {}
@@ -116,7 +116,7 @@ namespace occa {
         const kernelArgData &arg = arguments[i];
         OCCA_OPENCL_ERROR("Kernel [" + name + "]"
                           << ": Setting Kernel Argument [" << (i + 1) << "]",
-                          clSetKernelArg(clKernel, i, arg.size, arg.ptr()));
+                          clSetKernelArg(clKernel, i, arg.size(), arg.ptr()));
       }
 
       OCCA_OPENCL_ERROR("Kernel [" + name + "]"

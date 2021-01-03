@@ -36,7 +36,9 @@ namespace occa {
   public:
     device();
     device(modeDevice_t *modeDevice_);
-    device(const occa::properties &props);
+    device(const std::string &props);
+    device(const occa::json &props);
+    device(jsonInitializerList initializer);
 
     device(const occa::device &other);
     device& operator = (const occa::device &other);
@@ -57,22 +59,23 @@ namespace occa {
 
     modeDevice_t* getModeDevice() const;
 
-    void setup(const occa::properties &props);
+    void setup(const std::string &props);
+    void setup(const occa::json &props);
 
     void free();
 
     const std::string& mode() const;
 
-    const occa::properties& properties() const;
+    const occa::json& properties() const;
 
-    const occa::properties& kernelProperties() const;
-    occa::properties kernelProperties(const occa::properties &additionalProps) const;
+    const occa::json& kernelProperties() const;
+    occa::json kernelProperties(const occa::json &additionalProps) const;
 
-    const occa::properties& memoryProperties() const;
-    occa::properties memoryProperties(const occa::properties &additionalProps) const;
+    const occa::json& memoryProperties() const;
+    occa::json memoryProperties(const occa::json &additionalProps) const;
 
-    const occa::properties& streamProperties() const;
-    occa::properties streamProperties(const occa::properties &additionalProps) const;
+    const occa::json& streamProperties() const;
+    occa::json streamProperties(const occa::json &additionalProps) const;
 
     hash_t hash() const;
 
@@ -84,7 +87,7 @@ namespace occa {
     bool hasSeparateMemorySpace();
 
     //  |---[ Stream ]------------------
-    stream createStream(const occa::properties &props = occa::properties());
+    stream createStream(const occa::json &props = occa::json());
 
     stream getStream();
     void setStream(stream s);
@@ -96,94 +99,92 @@ namespace occa {
     //  |===============================
 
     //  |---[ Kernel ]------------------
-    void setupKernelInfo(const occa::properties &props,
+    void setupKernelInfo(const occa::json &props,
                          const hash_t &sourceHash,
-                         occa::properties &kernelProps,
+                         occa::json &kernelProps,
                          hash_t &kernelHash) const;
 
     hash_t applyDependencyHash(const hash_t &kernelHash) const;
 
     occa::kernel buildKernel(const std::string &filename,
                              const std::string &kernelName,
-                             const occa::properties &props = occa::properties()) const;
+                             const occa::json &props = occa::json()) const;
 
     occa::kernel buildKernelFromString(const std::string &content,
                                        const std::string &kernelName,
-                                       const occa::properties &props = occa::properties()) const;
+                                       const occa::json &props = occa::json()) const;
 
     occa::kernel buildKernelFromBinary(const std::string &filename,
                                        const std::string &kernelName,
-                                       const occa::properties &props = occa::properties()) const;
-
-    void loadKernels(const std::string &library = "");
+                                       const occa::json &props = occa::json()) const;
     //  |===============================
 
     //  |---[ Memory ]------------------
     occa::memory malloc(const dim_t entries,
                         const dtype_t &dtype,
                         const void *src = NULL,
-                        const occa::properties &props = occa::properties());
+                        const occa::json &props = occa::json());
 
     occa::memory malloc(const dim_t entries,
                         const dtype_t &dtype,
                         const occa::memory src,
-                        const occa::properties &props = occa::properties());
+                        const occa::json &props = occa::json());
 
     occa::memory malloc(const dim_t entries,
                         const dtype_t &dtype,
-                        const occa::properties &props);
+                        const occa::json &props);
 
     template <class TM = void>
     occa::memory malloc(const dim_t bytes,
                         const void *src = NULL,
-                        const occa::properties &props = occa::properties());
+                        const occa::json &props = occa::json());
 
     template <class TM = void>
     occa::memory malloc(const dim_t bytes,
                         const occa::memory src,
-                        const occa::properties &props = occa::properties());
+                        const occa::json &props = occa::json());
 
     template <class TM = void>
     occa::memory malloc(const dim_t bytes,
-                        const occa::properties &props);
+                        const occa::json &props);
 
     void* umalloc(const dim_t entries,
                   const dtype_t &dtype,
                   const void *src = NULL,
-                  const occa::properties &props = occa::properties());
+                  const occa::json &props = occa::json());
 
     void* umalloc(const dim_t entries,
                   const dtype_t &dtype,
                   const occa::memory src,
-                  const occa::properties &props = occa::properties());
+                  const occa::json &props = occa::json());
 
     void* umalloc(const dim_t entries,
                   const dtype_t &dtype,
-                  const occa::properties &props);
+                  const occa::json &props);
 
     template <class TM = void>
     TM* umalloc(const dim_t entries,
                 const void *src = NULL,
-                const occa::properties &props = occa::properties());
+                const occa::json &props = occa::json());
 
     template <class TM = void>
     TM* umalloc(const dim_t entries,
                 const occa::memory src,
-                const occa::properties &props = occa::properties());
+                const occa::json &props = occa::json());
 
     template <class TM = void>
     TM* umalloc(const dim_t entries,
-                const occa::properties &props);
+                const occa::json &props);
 
     template <class TM = void>
     occa::memory wrapMemory(const TM *ptr,
                             const dim_t entries,
-                            const occa::properties &props = occa::properties());
+                            const occa::json &props = occa::json());
 
     occa::memory wrapMemory(const void *ptr,
                             const dim_t entries,
                             const dtype_t &dtype,
-                            const occa::properties &props = occa::properties());
+                            const occa::json &props = occa::json());
     //  |===============================
   };
 
@@ -196,29 +197,29 @@ namespace occa {
   template <>
   occa::memory device::malloc<void>(const dim_t entries,
                                     const void *src,
-                                    const occa::properties &props);
+                                    const occa::json &props);
 
   template <>
   occa::memory device::malloc<void>(const dim_t entries,
                                     const occa::memory src,
-                                    const occa::properties &props);
+                                    const occa::json &props);
 
   template <>
   occa::memory device::malloc<void>(const dim_t entries,
-                                    const occa::properties &props);
+                                    const occa::json &props);
   //====================================
 
   //---[ Utils ]------------------------
-  occa::properties getModeSpecificProps(const std::string &mode,
-                                        const occa::properties &props);
+  occa::json getModeSpecificProps(const std::string &mode,
+                                        const occa::json &props);
 
-  occa::properties getObjectSpecificProps(const std::string &mode,
+  occa::json getObjectSpecificProps(const std::string &mode,
                                           const std::string &object,
-                                          const occa::properties &props);
+                                          const occa::json &props);
 
-  occa::properties initialObjectProps(const std::string &mode,
+  occa::json initialObjectProps(const std::string &mode,
                                       const std::string &object,
-                                      const occa::properties &props);
+                                      const occa::json &props);
   //====================================
 }
 

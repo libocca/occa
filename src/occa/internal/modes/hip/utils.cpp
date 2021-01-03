@@ -173,9 +173,9 @@ namespace occa {
     }
 
     occa::device wrapDevice(hipDevice_t device,
-                            const occa::properties &props) {
+                            const occa::json &props) {
 
-      occa::properties allProps;
+      occa::json allProps;
       allProps["mode"]     = "HIP";
       allProps["device_id"] = -1;
       allProps["wrapped"]  = true;

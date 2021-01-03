@@ -16,9 +16,9 @@ namespace occa {
 
       void setupProperties();
 
-      modeDevice_t* newDevice(const occa::properties &props);
+      modeDevice_t* newDevice(const occa::json &props);
 
-      int getDeviceCount(const occa::properties &props);
+      int getDeviceCount(const occa::json &props);
     };
 
     extern openmpMode mode;

@@ -12,7 +12,7 @@
 
 namespace occa {
   namespace metal {
-    device::device(const occa::properties &properties_) :
+    device::device(const occa::json &properties_) :
         occa::launchedModeDevice_t(properties_) {
 
       OCCA_ERROR("[Metal] device not given a [device_id] integer",
@@ -60,16 +60,16 @@ namespace occa {
       return hash_;
     }
 
-    hash_t device::kernelHash(const occa::properties &props) const {
+    hash_t device::kernelHash(const occa::json &props) const {
       return occa::hash(props["compiler_flags"]);
     }
 
-    lang::okl::withLauncher* device::createParser(const occa::properties &props) const {
+    lang::okl::withLauncher* device::createParser(const occa::json &props) const {
       return new lang::okl::metalParser(props);
     }
 
     //---[ Stream ]---------------------
-    modeStream_t* device::createStream(const occa::properties &props) {
+    modeStream_t* device::createStream(const occa::json &props) {
       return new stream(this, props, metalCommandQueue);
     }
 
@@ -112,7 +112,7 @@ namespace occa {
       const bool usingOkl,
       lang::sourceMetadata_t &launcherMetadata,
       lang::sourceMetadata_t &deviceMetadata,
-      const occa::properties &kernelProps,
+      const occa::json &kernelProps,
       io::lock_t lock
     ) {
       OCCA_ERROR("Metal kernels need to use OKL for now",
@@ -134,10 +134,10 @@ namespace occa {
 
     void device::compileKernel(const std::string &hashDir,
                                const std::string &kernelName,
-                               const occa::properties &kernelProps,
+                               const occa::json &kernelProps,
                                io::lock_t &lock) {
 
-      occa::properties allProps = kernelProps;
+      occa::json allProps = kernelProps;
       const bool verbose = allProps.get("verbose", false);
 
       const std::string sourceFilename = hashDir + kc::sourceFile;
@@ -197,7 +197,7 @@ namespace occa {
                                                    const std::string &kernelName,
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::properties &kernelProps,
+                                                   const occa::json &kernelProps,
                                                    io::lock_t lock) {
 
       const std::string sourceFilename = hashDir + kc::sourceFile;
@@ -245,7 +245,7 @@ namespace occa {
 
     modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
                                                 const std::string &kernelName,
-                                                const occa::properties &kernelProps) {
+                                                const occa::json &kernelProps) {
       OCCA_FORCE_ERROR("Unable to build Metal kernels from binary");
       return NULL;
     }
@@ -254,7 +254,7 @@ namespace occa {
     //---[ Memory ]---------------------
     modeMemory_t* device::malloc(const udim_t bytes,
                                  const void *src,
-                                 const occa::properties &props) {
+                                 const occa::json &props) {
       metal::memory *mem = new metal::memory(this, bytes, props);
 
       mem->metalBuffer = metalDevice.malloc(bytes, src);
@@ -264,7 +264,7 @@ namespace occa {
 
     modeMemory_t* device::wrapMemory(const void *ptr,
                                      const udim_t bytes,
-                                     const occa::properties &props) {
+                                     const occa::json &props) {
       memory *mem = new memory(this,
                                bytes,
                                props);

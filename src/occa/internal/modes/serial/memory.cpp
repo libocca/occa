@@ -7,7 +7,7 @@ namespace occa {
   namespace serial {
     memory::memory(modeDevice_t *modeDevice_,
                    udim_t size_,
-                   const occa::properties &properties_) :
+                   const occa::json &properties_) :
       occa::modeMemory_t(modeDevice_, size_, properties_) {}
 
     memory::~memory() {
@@ -18,15 +18,8 @@ namespace occa {
       size = 0;
     }
 
-    kernelArg memory::makeKernelArg() const {
-      kernelArgData arg;
-
-      arg.modeMemory = const_cast<memory*>(this);
-      arg.data.void_ = ptr;
-      arg.size       = sizeof(void*);
-      arg.info       = kArgInfo::usePointer;
-
-      return kernelArg(arg);
+    void* memory::getKernelArgPtr() const {
+      return ptr;
     }
 
     modeMemory_t* memory::addOffset(const dim_t offset) {
@@ -40,7 +33,7 @@ namespace occa {
     void memory::copyTo(void *dest,
                         const udim_t bytes,
                         const udim_t offset,
-                        const occa::properties &props) const {
+                        const occa::json &props) const {
       const void *srcPtr = ptr + offset;
 
       ::memcpy(dest, srcPtr, bytes);
@@ -49,7 +42,7 @@ namespace occa {
     void memory::copyFrom(const void *src,
                           const udim_t bytes,
                           const udim_t offset,
-                          const occa::properties &props) {
+                          const occa::json &props) {
 
       void *destPtr      = ptr + offset;
       const void *srcPtr = src;
@@ -61,7 +54,7 @@ namespace occa {
                           const udim_t bytes,
                           const udim_t destOffset,
                           const udim_t srcOffset,
-                          const occa::properties &props) {
+                          const occa::json &props) {
 
       void *destPtr      = ptr + destOffset;
       const void *srcPtr = src->ptr + srcOffset;

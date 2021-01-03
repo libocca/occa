@@ -13,19 +13,19 @@ namespace occa {
       std::string lastCompilerOpenMPFlag;
 
     public:
-      device(const occa::properties &properties_);
+      device(const occa::json &properties_);
 
-      virtual hash_t kernelHash(const occa::properties &props) const;
+      virtual hash_t kernelHash(const occa::json &props) const;
 
       virtual bool parseFile(const std::string &filename,
                              const std::string &outputFile,
-                             const occa::properties &kernelProps,
+                             const occa::json &kernelProps,
                              lang::sourceMetadata_t &metadata);
 
       virtual modeKernel_t* buildKernel(const std::string &filename,
                                         const std::string &kernelName,
                                         const hash_t kernelHash,
-                                        const occa::properties &kernelProps);
+                                        const occa::json &kernelProps);
     };
   }
 }

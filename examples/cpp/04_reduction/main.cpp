@@ -14,11 +14,6 @@ occa::json parseArgs(int argc, const char **argv);
 int main(int argc, const char **argv) {
   occa::json args = parseArgs(argc, argv);
 
-  // occa::setDevice("mode: 'Serial'");
-  // occa::setDevice("mode: 'OpenMP'");
-  // occa::setDevice("mode: 'CUDA'  , device_id: 0");
-  // occa::setDevice("mode: 'OpenCL', platform_id: 0, device_id: 0");
-  // occa::setDevice("mode: 'Metal', device_id: 0");
   occa::setDevice((std::string) args["options/device"]);
 
   // Choosing something not divisible by 256
@@ -48,8 +43,9 @@ int main(int argc, const char **argv) {
   occa::memory o_atomicSum = occa::malloc<float>(1, &atomicSum);
 
   // Pass value of 'block' at kernel compile-time
-  occa::properties reductionProps;
-  reductionProps["defines/block"] = block;
+  occa::json reductionProps({
+    {"defines/block", block},
+  });
 
   occa::kernel reductionWithSharedMemory = (
     occa::buildKernel("reduction.okl",
@@ -123,9 +119,9 @@ occa::json parseArgs(int argc, const char **argv) {
     )
     .addOption(
       occa::cli::option('d', "device",
-                        "Device properties (default: \"mode: 'Serial'\")")
+                        "Device properties (default: \"{mode: 'Serial'}\")")
       .withArg()
-      .withDefaultValue("mode: 'Serial'")
+      .withDefaultValue("{mode: 'Serial'}")
     )
     .addOption(
       occa::cli::option('v', "verbose",

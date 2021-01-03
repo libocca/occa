@@ -8,12 +8,12 @@ bool occaMemoryIsInitialized(occaMemory memory) {
 }
 
 void* occaMemoryPtr(occaMemory memory,
-                    occaProperties props) {
+                    occaJson props) {
   occa::memory mem = occa::c::memory(memory);
   if (occa::c::isDefault(props)) {
     return mem.ptr();
   }
-  return mem.ptr(occa::c::properties(props));
+  return mem.ptr(occa::c::json(props));
 }
 
 occaDevice occaMemoryGetDevice(occaMemory memory) {
@@ -22,7 +22,7 @@ occaDevice occaMemoryGetDevice(occaMemory memory) {
   );
 }
 
-occaProperties occaMemoryGetProperties(occaMemory memory) {
+occaJson occaMemoryGetProperties(occaMemory memory) {
   return occa::c::newOccaType(
     occa::c::memory(memory).properties(),
     false
@@ -79,12 +79,12 @@ void occaMemorySyncToHost(occaMemory memory,
 
 void occaMemcpy(void *dest, const void *src,
                 const occaUDim_t bytes,
-                occaProperties props) {
+                occaJson props) {
   if (occa::c::isDefault(props)) {
     occa::memcpy(dest, src, bytes);
   } else {
     occa::memcpy(dest, src, bytes,
-                 occa::c::properties(props));
+                 occa::c::json(props));
   }
 }
 
@@ -92,7 +92,7 @@ void occaCopyMemToMem(occaMemory dest, occaMemory src,
                       const occaUDim_t bytes,
                       const occaUDim_t destOffset,
                       const occaUDim_t srcOffset,
-                      occaProperties props) {
+                      occaJson props) {
 
   occa::memory src_ = occa::c::memory(src);
   occa::memory dest_ = occa::c::memory(dest);
@@ -105,14 +105,14 @@ void occaCopyMemToMem(occaMemory dest, occaMemory src,
     occa::memcpy(dest_, src_,
                  bytes,
                  destOffset, srcOffset,
-                 occa::c::properties(props));
+                 occa::c::json(props));
   }
 }
 
 void occaCopyPtrToMem(occaMemory dest, const void *src,
                       const occaUDim_t bytes,
                       const occaUDim_t offset,
-                      occaProperties props) {
+                      occaJson props) {
 
   occa::memory dest_ = occa::c::memory(dest);
 
@@ -124,14 +124,14 @@ void occaCopyPtrToMem(occaMemory dest, const void *src,
     occa::memcpy(dest_, src,
                  bytes,
                  offset,
-                 occa::c::properties(props));
+                 occa::c::json(props));
   }
 }
 
 void occaCopyMemToPtr(void *dest, occaMemory src,
                       const occaUDim_t bytes,
                       const occaUDim_t offset,
-                      occaProperties props) {
+                      occaJson props) {
 
   occa::memory src_ = occa::c::memory(src);
 
@@ -143,7 +143,7 @@ void occaCopyMemToPtr(void *dest, occaMemory src,
     occa::memcpy(dest, src_,
                  bytes,
                  offset,
-                 occa::c::properties(props));
+                 occa::c::json(props));
   }
 }
 

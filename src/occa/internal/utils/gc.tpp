@@ -74,7 +74,6 @@ namespace occa {
     }
 
     //---[ multiRing_t ]----------------
-
     template <class entry_t>
     multiRing_t<entry_t>::multiRing_t() :
       useRefs(true) {}

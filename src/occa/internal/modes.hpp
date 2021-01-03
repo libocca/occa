@@ -5,7 +5,7 @@
 #include <map>
 
 #include <occa/defines.hpp>
-#include <occa/types/properties.hpp>
+#include <occa/types/json.hpp>
 #include <occa/internal/utils/styling.hpp>
 #include <occa/core/device.hpp>
 
@@ -24,15 +24,15 @@ namespace occa {
 
     std::string& name();
 
-    occa::properties setModeProp(const occa::properties &props);
+    occa::json setModeProp(const occa::json &props);
 
     virtual bool init() = 0;
 
     virtual styling::section &getDescription();
 
-    virtual modeDevice_t* newDevice(const occa::properties &props) = 0;
+    virtual modeDevice_t* newDevice(const occa::json &props) = 0;
 
-    virtual int getDeviceCount(const occa::properties &props) = 0;
+    virtual int getDeviceCount(const occa::json &props) = 0;
   };
 
   strToModeMap& getUnsafeModeMap();
@@ -45,9 +45,9 @@ namespace occa {
 
   mode_t* getMode(const std::string &mode);
 
-  mode_t* getModeFromProps(const occa::properties &props);
+  mode_t* getModeFromProps(const occa::json &props);
 
-  modeDevice_t* newModeDevice(const occa::properties &props);
+  modeDevice_t* newModeDevice(const occa::json &props);
 }
 
 #endif

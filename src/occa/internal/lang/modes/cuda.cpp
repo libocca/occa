@@ -10,7 +10,7 @@
 namespace occa {
   namespace lang {
     namespace okl {
-      cudaParser::cudaParser(const occa::properties &settings_) :
+      cudaParser::cudaParser(const occa::json &settings_) :
         withLauncher(settings_),
         constant("__constant__", qualifierType::custom),
         global("__global__", qualifierType::custom),
@@ -62,77 +62,77 @@ namespace occa {
 
       void cudaParser::updateConstToConstant() {
         root.children
-            .forEachDeclaration([&](variableDeclaration &decl) {
-                variable_t &var = decl.variable();
+          .forEachDeclaration([&](variableDeclaration &decl) {
+            variable_t &var = decl.variable();
 
-                if (var.has(const_) && !var.has(typedef_)) {
-                  var -= const_;
-                  var += constant;
-                }
-              });
+            if (var.has(const_) && !var.has(typedef_)) {
+              var -= const_;
+              var += constant;
+            }
+          });
       }
 
       void cudaParser::setFunctionQualifiers() {
         root.children
-            .filterByStatementType(statementType::functionDecl)
-            .forEach([&](statement_t *smnt) {
-                functionDeclStatement &funcDeclSmnt = (functionDeclStatement&) *smnt;
+          .filterByStatementType(statementType::functionDecl)
+          .forEach([&](statement_t *smnt) {
+            functionDeclStatement &funcDeclSmnt = (functionDeclStatement&) *smnt;
 
-                // Only add __device__ to non-kernel functions
-                if (funcDeclSmnt.hasAttribute("kernel")) {
-                  return;
-                }
+            // Only add __device__ to non-kernel functions
+            if (funcDeclSmnt.hasAttribute("kernel")) {
+              return;
+            }
 
-                vartype_t &vartype = funcDeclSmnt.function().returnType;
-                vartype.qualifiers.addFirst(vartype.origin(),
-                                            device);
-              });
+            vartype_t &vartype = funcDeclSmnt.function().returnType;
+            vartype.qualifiers.addFirst(vartype.origin(),
+                                        device);
+          });
       }
 
       void cudaParser::setSharedQualifiers() {
         statementArray::from(root)
-            .flatFilterByStatementType(statementType::declaration)
-            .forEach([&](statement_t *smnt) {
-                declarationStatement &declSmnt = *((declarationStatement*) smnt);
-                for (variableDeclaration &varDecl : declSmnt.declarations) {
-                  variable_t &var = varDecl.variable();
-                  if (var.hasAttribute("shared")) {
-                    var += shared;
-                  }
-                }
-              });
+          .flatFilterByStatementType(statementType::declaration)
+          .forEach([&](statement_t *smnt) {
+            declarationStatement &declSmnt = *((declarationStatement*) smnt);
+            for (variableDeclaration &varDecl : declSmnt.declarations) {
+              variable_t &var = varDecl.variable();
+              if (var.hasAttribute("shared")) {
+                var += shared;
+              }
+            }
+          });
       }
 
       void cudaParser::addBarriers() {
         statementArray::from(root)
-            .flatFilterByStatementType(statementType::empty, "barrier")
-            .forEach([&](statement_t *smnt) {
-                // TODO: Implement proper barriers
-                emptyStatement &emptySmnt = *((emptyStatement*) smnt);
+          .flatFilterByStatementType(statementType::empty, "barrier")
+          .forEach([&](statement_t *smnt) {
+            // TODO: Implement proper barriers
+            emptyStatement &emptySmnt = *((emptyStatement*) smnt);
 
-                statement_t &barrierSmnt = (
-                  *(new sourceCodeStatement(
-                      emptySmnt.up,
-                      emptySmnt.source,
-                      " __syncthreads();"
-                    ))
-                );
+            statement_t &barrierSmnt = (
+              *(new sourceCodeStatement(
+                  emptySmnt.up,
+                  emptySmnt.source,
+                  " __syncthreads();"
+                ))
+            );
 
-                emptySmnt.replaceWith(barrierSmnt);
-                delete &emptySmnt;
-              });
+            emptySmnt.replaceWith(barrierSmnt);
+            delete &emptySmnt;
+          });
       }
 
       void cudaParser::setupKernels() {
         root.children
-            .forEachKernelStatement([&](functionDeclStatement &kernelSmnt) {
-                // Set kernel qualifiers
-                vartype_t &vartype = kernelSmnt.function().returnType;
-                vartype.qualifiers.addFirst(vartype.origin(),
-                                            global);
-                vartype.qualifiers.addFirst(vartype.origin(),
-                                            externC);
-              });
+          .forEachKernelStatement([&](functionDeclStatement &kernelSmnt) {
+            // Set kernel qualifiers
+            vartype_t &vartype = kernelSmnt.function().returnType;
+            vartype.qualifiers.addFirst(vartype.origin(),
+                                        global);
+            vartype.qualifiers.addFirst(vartype.origin(),
+                                        externC);
+          });
       }
 
       void cudaParser::setupAtomics() {

@@ -97,14 +97,14 @@ namespace occa {
   }
 
   template <>
-  void* memory::ptr<void>(const occa::properties &props) {
+  void* memory::ptr<void>(const occa::json &props) {
     return (modeMemory
             ? modeMemory->getPtr(props)
             : NULL);
   }
 
   template <>
-  const void* memory::ptr<void>(const occa::properties &props) const {
+  const void* memory::ptr<void>(const occa::json &props) const {
     return (modeMemory
             ? modeMemory->getPtr(props)
             : NULL);
@@ -125,10 +125,7 @@ namespace occa {
   }
 
   memory::operator kernelArg() const {
-    if (modeMemory) {
-        return modeMemory->makeKernelArg();
-    }
-    return nullKernelArg;
+    return kernelArg(modeMemory);
   }
 
   const std::string& memory::mode() const {
@@ -138,8 +135,8 @@ namespace occa {
             : noMode);
   }
 
-  const occa::properties& memory::properties() const {
-    static const occa::properties noProperties;
+  const occa::json& memory::properties() const {
+    static const occa::json noProperties;
     return (modeMemory
             ? modeMemory->properties
             : noProperties);
@@ -352,7 +349,7 @@ namespace occa {
   void memory::copyFrom(const void *src,
                         const dim_t bytes,
                         const dim_t offset,
-                        const occa::properties &props) {
+                        const occa::json &props) {
     assertInitialized();
 
     udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
@@ -374,7 +371,7 @@ namespace occa {
                         const dim_t bytes,
                         const dim_t destOffset,
                         const dim_t srcOffset,
-                        const occa::properties &props) {
+                        const occa::json &props) {
     assertInitialized();
 
     udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
@@ -402,7 +399,7 @@ namespace occa {
   void memory::copyTo(void *dest,
                       const dim_t bytes,
                       const dim_t offset,
-                      const occa::properties &props) const {
+                      const occa::json &props) const {
     assertInitialized();
 
     udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
@@ -424,7 +421,7 @@ namespace occa {
                       const dim_t bytes,
                       const dim_t destOffset,
                       const dim_t srcOffset,
-                      const occa::properties &props) const {
+                      const occa::json &props) const {
     assertInitialized();
 
     udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
@@ -450,22 +447,22 @@ namespace occa {
   }
 
   void memory::copyFrom(const void *src,
-                        const occa::properties &props) {
+                        const occa::json &props) {
     copyFrom(src, -1, 0, props);
   }
 
   void memory::copyFrom(const memory src,
-                        const occa::properties &props) {
+                        const occa::json &props) {
     copyFrom(src, -1, 0, 0, props);
   }
 
   void memory::copyTo(void *dest,
-                      const occa::properties &props) const {
+                      const occa::json &props) const {
     copyTo(dest, -1, 0, props);
   }
 
   void memory::copyTo(const memory dest,
-                      const occa::properties &props) const {
+                      const occa::json &props) const {
     copyTo(dest, -1, 0, 0, props);
   }
 

@@ -20,10 +20,10 @@ module occa_kernel_m
       type(occaKernel), value :: kernel
     end function
 
-    ! occaProperties occaKernelGetProperties(occaKernel kernel);
-    type(occaProperties) function occaKernelGetProperties(kernel) &
+    ! occaJson occaKernelGetProperties(occaKernel kernel);
+    type(occaJson) function occaKernelGetProperties(kernel) &
                                   bind(C, name="occaKernelGetProperties")
-      import occaKernel, occaProperties
+      import occaKernel, occaJson
       implicit none
       type(occaKernel), value :: kernel
     end function

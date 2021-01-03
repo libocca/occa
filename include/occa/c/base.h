@@ -7,7 +7,7 @@
 OCCA_START_EXTERN_C
 
 //---[ Globals & Flags ]----------------
-occaProperties occaSettings();
+occaJson occaSettings();
 
 void occaPrintModeInfo();
 //======================================
@@ -21,13 +21,11 @@ void occaSetDevice(occaDevice device);
 
 void occaSetDeviceFromString(const char *info);
 
-occaProperties occaDeviceProperties();
-
-void occaLoadKernels(const char *library);
+occaJson occaDeviceProperties();
 
 void occaFinish();
 
-occaStream occaCreateStream(occaProperties props);
+occaStream occaCreateStream(occaJson props);
 
 occaStream occaGetStream();
 
@@ -44,44 +42,44 @@ double occaTimeBetweenTags(occaStreamTag startTag,
 //---[ Kernel ]-------------------------
 occaKernel occaBuildKernel(const char *filename,
                            const char *kernelName,
-                           const occaProperties props);
+                           const occaJson props);
 
 occaKernel occaBuildKernelFromString(const char *source,
                                      const char *kernelName,
-                                     const occaProperties props);
+                                     const occaJson props);
 
 occaKernel occaBuildKernelFromBinary(const char *filename,
                                      const char *kernelName,
-                                     const occaProperties props);
+                                     const occaJson props);
 //======================================
 
 //---[ Memory ]-------------------------
 occaMemory occaMalloc(const occaUDim_t bytes,
                       const void *src,
-                      occaProperties props);
+                      occaJson props);
 
 occaMemory occaTypedMalloc(const occaUDim_t entries,
                            const occaDtype type,
                            const void *src,
-                           occaProperties props);
+                           occaJson props);
 
 void* occaUMalloc(const occaUDim_t bytes,
                   const void *src,
-                  occaProperties props);
+                  occaJson props);
 
 void* occaTypedUMalloc(const occaUDim_t entries,
                        const occaDtype type,
                        const void *src,
-                       occaProperties props);
+                       occaJson props);
 
 occaMemory occaWrapMemory(const void *ptr,
                           const occaUDim_t bytes,
-                          occaProperties props);
+                          occaJson props);
 
 occaMemory occaTypedWrapMemory(const void *ptr,
                                const occaUDim_t entries,
                                const occaDtype dtype,
-                               occaProperties props);
+                               occaJson props);
 //======================================
 
 OCCA_END_EXTERN_C

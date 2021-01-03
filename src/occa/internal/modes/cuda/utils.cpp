@@ -204,8 +204,8 @@ namespace occa {
 
     occa::device wrapDevice(CUdevice device,
                             CUcontext context,
-                            const occa::properties &props) {
-      occa::properties allProps;
+                            const occa::json &props) {
+      occa::json allProps;
       allProps["mode"]      = "CUDA";
       allProps["device_id"] = -1;
       allProps["wrapped"]   = true;

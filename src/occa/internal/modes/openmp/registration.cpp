@@ -21,11 +21,11 @@ namespace occa {
 #endif
     }
 
-    modeDevice_t* openmpMode::newDevice(const occa::properties &props) {
+    modeDevice_t* openmpMode::newDevice(const occa::json &props) {
       return new device(setModeProp(props));
     }
 
-    int openmpMode::getDeviceCount(const occa::properties &props) {
+    int openmpMode::getDeviceCount(const occa::json &props) {
       return 1;
     }
 

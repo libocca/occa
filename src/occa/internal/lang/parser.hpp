@@ -4,7 +4,7 @@
 #include <map>
 #include <vector>
 
-#include <occa/types/properties.hpp>
+#include <occa/types/json.hpp>
 #include <occa/internal/lang/kernelMetadata.hpp>
 #include <occa/internal/lang/keyword.hpp>
 #include <occa/internal/lang/loaders.hpp>
@@ -27,7 +27,7 @@ namespace occa {
     typedef std::map<int, statementLoader_t> statementLoaderMap;
 
     class parser_t {
-    public:
+     public:
       //---[ Stream ]-------------------
       tokenStream stream;
       tokenizer_t tokenizer;
@@ -60,11 +60,11 @@ namespace occa {
       //================================
 
       //---[ Misc ]---------------------
-      occa::properties settings;
+      occa::json settings;
       qualifier_t *restrictQualifier;
       //================================
 
-      parser_t(const occa::properties &settings_ = occa::properties());
+      parser_t(const occa::json &settings_ = occa::json());
       virtual ~parser_t();
 
       //---[ Customization ]------------

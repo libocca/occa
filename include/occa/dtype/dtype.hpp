@@ -5,7 +5,6 @@
 #include <map>
 #include <vector>
 
-#include <occa/types/json.hpp>
 #include <occa/types/typedefs.hpp>
 
 
@@ -13,6 +12,7 @@ namespace occa {
   class dtype_t;
   class dtypeTuple_t;
   class dtypeStruct_t;
+  class json;
 
   typedef std::map<std::string, const dtype_t*> dtypeGlobalMap_t;
   typedef std::map<std::string, dtype_t>        dtypeNameMap_t;
@@ -87,13 +87,13 @@ namespace occa {
     static bool isCyclic(const dtypeVector_t &vec,
                          const int cycleLength);
 
-    json toJson(const std::string &name = "") const;
-
     static dtype_t tuple(const dtype_t &dtype,
                          const int size,
                          const bool registered_ = false);
 
     static const dtype_t& getBuiltin(const std::string &name);
+
+    void toJson(json &j, const std::string &name = "") const;
 
     static dtype_t fromJson(const std::string &str);
     static dtype_t fromJson(const json &j);
@@ -125,7 +125,7 @@ namespace occa {
 
     void addFlatDtypes(dtypeVector_t &vec) const;
 
-    json toJson(const std::string &name = "") const;
+    void toJson(json &j, const std::string &name = "") const;
     static dtypeTuple_t fromJson(const json &j);
 
     std::string toString(const std::string &varName = "") const;
@@ -157,7 +157,7 @@ namespace occa {
 
     void addFlatDtypes(dtypeVector_t &vec) const;
 
-    json toJson(const std::string &name = "") const;
+    void toJson(json &j, const std::string &name = "") const;
     static dtypeStruct_t fromJson(const json &j);
 
     std::string toString(const std::string &varName = "") const;

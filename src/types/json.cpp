@@ -8,6 +8,18 @@
 namespace occa {
   const char json::objectKeyEndChars[] = " \t\r\n\v\f:";
 
+  json::json(const std::string &name,
+             const primitive &value) {
+    (*this)[name] = value;
+  }
+
+  json::json(std::initializer_list<jsonKeyValue> entries) {
+    type = object_;
+    for (auto &entry : entries) {
+      (*this)[entry.name] = entry.value;
+    }
+  }
+
   json::~json() {}
 
   json& json::clear() {
@@ -16,7 +28,6 @@ namespace occa {
     value_.number = 0;
     value_.object.clear();
     value_.array.clear();
-    value_.boolean = false;
     return *this;
   }
 
@@ -75,10 +86,6 @@ namespace occa {
     }
     case null_: {
       out += "null";
-      break;
-    }
-    case boolean_: {
-      out += value_.boolean ? "true" : "false";
       break;
     }
     case number_: {
@@ -352,16 +359,16 @@ namespace occa {
     OCCA_ERROR("Cannot read value: " << c,
                !strncmp(c, "true", 4));
     c += 4;
-    type = boolean_;
-    value_.boolean = true;
+    type = number_;
+    value_.number = true;
   }
 
   void json::loadFalse(const char *&c) {
     OCCA_ERROR("Cannot read value: " << c,
                !strncmp(c, "false", 5));
     c += 5;
-    type = boolean_;
-    value_.boolean = false;
+    type = number_;
+    value_.number = false;
   }
 
   void json::loadNull(const char *&c) {
@@ -400,10 +407,6 @@ namespace occa {
     switch(type) {
     case none_: break;
     case null_: break;
-    case boolean_: {
-      value_.boolean |= j.value_.boolean;
-      break;
-    }
     case number_: {
       primitive::addEq(value_.number, j.value_.number);
       break;
@@ -557,9 +560,6 @@ namespace occa {
     case null_: {
       return 0;
     }
-    case boolean_: {
-      return 0;
-    }
     case number_: {
       return 0;
     }
@@ -666,6 +666,26 @@ namespace occa {
     }
     return vec;
   }
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const primitive &value_) :
+    name(name_),
+    value(value_) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const char *value_) :
+    name(name_),
+    value(value_) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const std::string &value_) :
+    name(name_),
+    value(value_.c_str()) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             std::initializer_list<jsonKeyValue> value_) :
+    name(name_),
+    value(value_) {}
 
   template <>
   hash_t hash(const occa::json &json) {

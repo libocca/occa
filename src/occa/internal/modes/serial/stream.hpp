@@ -9,7 +9,7 @@ namespace occa {
     class stream : public occa::modeStream_t {
     public:
       stream(modeDevice_t *modeDevice_,
-             const occa::properties &properties_);
+             const occa::json &properties_);
 
       virtual ~stream();
     };

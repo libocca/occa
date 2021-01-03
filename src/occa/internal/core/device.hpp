@@ -2,7 +2,7 @@
 #define OCCA_INTERNAL_CORE_DEVICE_HEADER
 
 #include <occa/core/device.hpp>
-#include <occa/types/properties.hpp>
+#include <occa/types/json.hpp>
 #include <occa/internal/utils/gc.hpp>
 #include <occa/internal/utils/uva.hpp>
 #include <occa/internal/lang/kernelMetadata.hpp>
@@ -11,7 +11,7 @@ namespace occa {
   class modeDevice_t {
    public:
     std::string mode;
-    occa::properties properties;
+    occa::json properties;
     bool needsLauncherKernel;
 
     gc::ring_t<device> deviceRing;
@@ -30,7 +30,7 @@ namespace occa {
 
     cachedKernelMap cachedKernels;
 
-    modeDevice_t(const occa::properties &properties_);
+    modeDevice_t(const occa::json &json_);
 
     template <class modeType_t>
     void freeRing(gc::ring_t<modeType_t> ring) {
@@ -70,10 +70,10 @@ namespace occa {
 
     hash_t versionedHash() const;
     virtual hash_t hash() const = 0;
-    virtual hash_t kernelHash(const occa::properties &props) const = 0;
+    virtual hash_t kernelHash(const occa::json &props) const = 0;
 
     //  |---[ Stream ]------------------
-    virtual modeStream_t* createStream(const occa::properties &props) = 0;
+    virtual modeStream_t* createStream(const occa::json &props) = 0;
 
     virtual streamTag tagStream() = 0;
     virtual void waitFor(streamTag tag) = 0;
@@ -84,7 +84,7 @@ namespace occa {
     //  |---[ Kernel ]------------------
     void writeKernelBuildFile(const std::string &filename,
                               const hash_t &kernelHash,
-                              const occa::properties &kernelProps,
+                              const occa::json &kernelProps,
                               const lang::sourceMetadata_t &metadataMap) const;
 
     std::string getKernelHash(const std::string &fullHash,
@@ -103,21 +103,21 @@ namespace occa {
     virtual modeKernel_t* buildKernel(const std::string &filename,
                                       const std::string &kernelName,
                                       const hash_t hash,
-                                      const occa::properties &props) = 0;
+                                      const occa::json &props) = 0;
 
     virtual modeKernel_t* buildKernelFromBinary(const std::string &filename,
                                                 const std::string &kernelName,
-                                                const occa::properties &props) = 0;
+                                                const occa::json &props) = 0;
     //  |===============================
 
     //  |---[ Memory ]------------------
     virtual modeMemory_t* malloc(const udim_t bytes,
                                  const void* src,
-                                 const occa::properties &props) = 0;
+                                 const occa::json &props) = 0;
 
     virtual modeMemory_t* wrapMemory(const void *ptr,
                                      const udim_t bytes,
-                                     const occa::properties &props) = 0;
+                                     const occa::json &props) = 0;
 
     virtual udim_t memorySize() const = 0;
     //  |===============================

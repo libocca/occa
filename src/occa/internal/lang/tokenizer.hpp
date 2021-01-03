@@ -57,7 +57,7 @@ namespace occa {
 
       virtual baseStream<token_t*>& clone() const;
 
-      virtual void* passMessageToInput(const occa::properties &props);
+      virtual void* passMessageToInput(const occa::json &props);
 
       void set(const char *root);
 

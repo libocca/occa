@@ -26,13 +26,12 @@ int main(int argc, const char **argv) {
     ab[i] = 0;
   }
 
-  occa::properties deviceProps;
-  deviceProps["mode"] = "Serial";
-  deviceProps["kernel/compiler"] = "gcc";
-  // Defaults to 'C++' (not case-sensitive)
-  deviceProps["kernel/compiler_language"] = "C";
-
-  occa::device device(deviceProps);
+  occa::device device({
+    {"mode", "Serial"},
+    {"kernel/compiler", "gcc"},
+    // Defaults to 'C++' (not case-sensitive)
+    {"kernel/compiler_language", "C"}
+  });
 
   // Allocate memory on the device
   occa::memory o_a = device.malloc<float>(entries);
@@ -40,8 +39,10 @@ int main(int argc, const char **argv) {
   occa::memory o_ab = device.malloc<float>(entries);
 
   // Compile a regular C++ function at run-time
-  occa::properties kernelProps;
-  kernelProps["okl/enabled"] = false;
+  occa::json kernelProps({
+    {"okl/enabled", false},
+  });
+
   occa::kernel addVectors = device.buildKernel("addVectors.c",
                                                "addVectors",
                                                kernelProps);

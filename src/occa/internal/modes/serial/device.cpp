@@ -11,7 +11,7 @@
 
 namespace occa {
   namespace serial {
-    device::device(const occa::properties &properties_) :
+    device::device(const occa::json &properties_) :
       occa::modeDevice_t(properties_) {
 
       occa::json &kernelProps = properties["kernel"];
@@ -142,7 +142,7 @@ namespace occa {
       return hash_;
     }
 
-    hash_t device::kernelHash(const occa::properties &props) const {
+    hash_t device::kernelHash(const occa::json &props) const {
       return (
         occa::hash(props["compiler"])
         ^ props["compiler_flags"]
@@ -155,7 +155,7 @@ namespace occa {
     }
 
     //---[ Stream ]---------------------
-    modeStream_t* device::createStream(const occa::properties &props) {
+    modeStream_t* device::createStream(const occa::json &props) {
       return new stream(this, props);
     }
 
@@ -181,7 +181,7 @@ namespace occa {
     //---[ Kernel ]---------------------
     bool device::parseFile(const std::string &filename,
                            const std::string &outputFile,
-                           const occa::properties &kernelProps,
+                           const occa::json &kernelProps,
                            lang::sourceMetadata_t &metadata) {
       lang::okl::serialParser parser(kernelProps);
       parser.parseFile(filename);
@@ -209,7 +209,7 @@ namespace occa {
     modeKernel_t* device::buildKernel(const std::string &filename,
                                       const std::string &kernelName,
                                       const hash_t kernelHash,
-                                      const occa::properties &kernelProps) {
+                                      const occa::json &kernelProps) {
       return buildKernel(filename, kernelName, kernelHash, kernelProps, false);
     }
 
@@ -222,7 +222,7 @@ namespace occa {
     modeKernel_t* device::buildKernel(const std::string &filename,
                                       const std::string &kernelName,
                                       const hash_t kernelHash,
-                                      const occa::properties &kernelProps,
+                                      const occa::json &kernelProps,
                                       const bool isLauncherKernel) {
       const std::string hashDir = io::hashDir(filename, kernelHash);
 
@@ -380,7 +380,7 @@ namespace occa {
 
     modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
                                                 const std::string &kernelName,
-                                                const occa::properties &kernelProps) {
+                                                const occa::json &kernelProps) {
       std::string buildFile = io::dirname(filename);
       buildFile += kc::buildFile;
 
@@ -398,7 +398,7 @@ namespace occa {
 
     modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
                                                 const std::string &kernelName,
-                                                const occa::properties &kernelProps,
+                                                const occa::json &kernelProps,
                                                 lang::kernelMetadata_t &metadata) {
       kernel &k = *(new kernel(this,
                                kernelName,
@@ -418,7 +418,7 @@ namespace occa {
     //---[ Memory ]-------------------
     modeMemory_t* device::malloc(const udim_t bytes,
                                  const void *src,
-                                 const occa::properties &props) {
+                                 const occa::json &props) {
       memory *mem = new memory(this, bytes, props);
 
       if (src && props.get("use_host_pointer", false)) {
@@ -436,7 +436,7 @@ namespace occa {
 
     modeMemory_t* device::wrapMemory(const void *ptr,
                                      const udim_t bytes,
-                                     const occa::properties &props) {
+                                     const occa::json &props) {
       memory *mem = new memory(this,
                                bytes,
                                props);

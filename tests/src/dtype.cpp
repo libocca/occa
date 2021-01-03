@@ -114,7 +114,7 @@ void testCasting() {
 }
 
 void testJsonMethods() {
-  ASSERT_EQ(occa::dtype::double_.toJson().toString(),
+  ASSERT_EQ(occa::dtype::toJson(occa::dtype::double_).toString(),
             occa::json::parse("{ type: 'builtin', name: 'double' }").toString());
 
   occa::dtype_t foo("foo");
@@ -133,9 +133,9 @@ void testJsonMethods() {
 
   occa::json fooJson = occa::json::parse(fooJsonStr);
   ASSERT_EQ(fooJson.toString(),
-            foo.toJson().toString());
+            occa::dtype::toJson(foo).toString());
 
-  occa::dtype_t foo2 = occa::dtype_t::fromJson(fooJsonStr);
+  occa::dtype_t foo2 = occa::dtype::fromJson(fooJsonStr);
   ASSERT_NEQ(foo, foo2);
   ASSERT_TRUE(foo.matches(foo2));
 }

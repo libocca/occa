@@ -2,18 +2,18 @@
 #define OCCA_INTERNAL_CORE_KERNEL_HEADER
 
 #include <occa/core/kernel.hpp>
-#include <occa/types/properties.hpp>
+#include <occa/types/json.hpp>
 #include <occa/internal/utils/gc.hpp>
 #include <occa/internal/lang/kernelMetadata.hpp>
 
 namespace occa {
   class modeKernel_t : public gc::ringEntry_t {
-  public:
+   public:
     // Information about the kernel
     occa::modeDevice_t *modeDevice;
     std::string name;
     std::string sourceFilename, binaryFilename;
-    occa::properties properties;
+    occa::json properties;
     hash_t hash;
 
     // Requirements to launch kernel
@@ -27,7 +27,7 @@ namespace occa {
     modeKernel_t(modeDevice_t *modeDevice_,
                  const std::string &name_,
                  const std::string &sourceFilename_,
-                 const occa::properties &properties_);
+                 const occa::json &json_);
 
     void dontUseRefs();
     void addKernelRef(kernel *ker);

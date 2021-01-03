@@ -3,7 +3,7 @@
 
 namespace occa {
   modeStream_t::modeStream_t(modeDevice_t *modeDevice_,
-                             const occa::properties &properties_) :
+                             const occa::json &properties_) :
     properties(properties_),
     modeDevice(modeDevice_) {
     modeDevice->addStreamRef(this);

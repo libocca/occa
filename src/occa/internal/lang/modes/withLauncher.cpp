@@ -12,7 +12,7 @@ namespace occa {
       static const std::string modeMemoryTypeName = "occa::modeMemory_t";
       static const std::string modeKernelTypeName = "occa::modeKernel_t";
 
-      withLauncher::withLauncher(const occa::properties &settings_) :
+      withLauncher::withLauncher(const occa::json &settings_) :
         parser_t(settings_),
         launcherParser(settings["launcher"]) {
         launcherParser.settings["okl/validate"] = false;
@@ -71,7 +71,7 @@ namespace occa {
 
       void withLauncher::setOklLoopIndices() {
         root.children
-            .forEachKernelStatement(okl::setOklLoopIndices);
+          .forEachKernelStatement(okl::setOklLoopIndices);
       }
 
       void withLauncher::setupLauncherParser() {
@@ -102,10 +102,10 @@ namespace occa {
 
         // Remove outer loops
         launcherParser.root.children
-            .forEachKernelStatement([&](functionDeclStatement &kernelSmnt) {
-                removeLauncherOuterLoops(kernelSmnt);
-                setupLauncherKernelArgs(kernelSmnt);
-              });
+          .forEachKernelStatement([&](functionDeclStatement &kernelSmnt) {
+            removeLauncherOuterLoops(kernelSmnt);
+            setupLauncherKernelArgs(kernelSmnt);
+          });
 
         setupLauncherHeaders();
       }
@@ -114,16 +114,16 @@ namespace occa {
         int kernelIndex = 0;
 
         statementArray::from(kernelSmnt)
-            .flatFilterByAttribute("outer")
-            .filterByStatementType(statementType::for_)
-            .filter([&](statement_t *smnt) {
-                return isOuterMostOuterLoop((forStatement&) *smnt);
-              })
-            .forEach([&](statement_t *smnt) {
-                setKernelLaunch(kernelSmnt,
-                                (forStatement&) *smnt,
-                                kernelIndex++);
-              });
+          .flatFilterByAttribute("outer")
+          .filterByStatementType(statementType::for_)
+          .filter([&](statement_t *smnt) {
+            return isOuterMostOuterLoop((forStatement&) *smnt);
+          })
+          .forEach([&](statement_t *smnt) {
+            setKernelLaunch(kernelSmnt,
+                            (forStatement&) *smnt,
+                            kernelIndex++);
+          });
 
         kernelSmnt.updateIdentifierReferences();
         kernelSmnt.updateVariableReferences();
@@ -259,16 +259,16 @@ namespace occa {
 
         // We need to insert them at the top in reverse order
         initSource.reverse().forEach([&](std::string str) {
-            launchBlock.addFirst(
-              *new sourceCodeStatement(&launchBlock, forSmnt.source, str)
-            );
-          });
+          launchBlock.addFirst(
+            *new sourceCodeStatement(&launchBlock, forSmnt.source, str)
+          );
+        });
 
         kernelLaunchSource.forEach([&](std::string str) {
-            launchBlock.add(
-              *new sourceCodeStatement(&launchBlock, forSmnt.source, str)
-            );
-          });
+          launchBlock.add(
+            *new sourceCodeStatement(&launchBlock, forSmnt.source, str)
+          );
+        });
 
         launchBlock.updateIdentifierReferences();
         launchBlock.updateVariableReferences();
@@ -335,16 +335,16 @@ namespace occa {
         forStatement *innerMostInnerLoop = NULL;
 
         statementArray::from(forSmnt)
-            .flatFilterByAttribute("inner")
-            .filterByStatementType(statementType::for_)
-            .forEach([&](statement_t *smnt) {
-                forStatement &innerSmnt = (forStatement&) *smnt;
-                const int level = getInnerLoopLevel(innerSmnt);
-                if (level > maxLevel) {
-                  maxLevel = level;
-                  innerMostInnerLoop = &innerSmnt;
-                }
-              });
+          .flatFilterByAttribute("inner")
+          .filterByStatementType(statementType::for_)
+          .forEach([&](statement_t *smnt) {
+            forStatement &innerSmnt = (forStatement&) *smnt;
+            const int level = getInnerLoopLevel(innerSmnt);
+            if (level > maxLevel) {
+              maxLevel = level;
+              innerMostInnerLoop = &innerSmnt;
+            }
+          });
 
         return innerMostInnerLoop;
       }
@@ -368,9 +368,9 @@ namespace occa {
 
       void withLauncher::splitKernels() {
         root.children
-            .forEachKernelStatement([&](functionDeclStatement &kernelSmnt) {
-                splitKernel(kernelSmnt);
-              });
+          .forEachKernelStatement([&](functionDeclStatement &kernelSmnt) {
+            splitKernel(kernelSmnt);
+          });
       }
 
       void withLauncher::splitKernel(functionDeclStatement &kernelSmnt) {
@@ -378,19 +378,19 @@ namespace occa {
         int kernelIndex = 0;
 
         statementArray::from(kernelSmnt)
-            .flatFilterByAttribute("outer")
-            .filterByStatementType(statementType::for_)
-            .forEach([&](statement_t *smnt) {
-                forStatement &forSmnt = (forStatement&) *smnt;
+          .flatFilterByAttribute("outer")
+          .filterByStatementType(statementType::for_)
+          .forEach([&](statement_t *smnt) {
+            forStatement &forSmnt = (forStatement&) *smnt;
 
-                if (isOuterMostOuterLoop(forSmnt)) {
-                  newKernelSmnts.push(
-                    extractLoopAsKernel(kernelSmnt,
-                                        forSmnt,
-                                        kernelIndex++)
-                  );
-                }
-              });
+            if (isOuterMostOuterLoop(forSmnt)) {
+              newKernelSmnts.push(
+                extractLoopAsKernel(kernelSmnt,
+                                    forSmnt,
+                                    kernelIndex++)
+              );
+            }
+          });
 
         int smntIndex = kernelSmnt.childIndex();
         for (int i = (kernelIndex - 1); i >= 0; --i) {
@@ -441,49 +441,49 @@ namespace occa {
 
       void withLauncher::setupKernels() {
         root.children
-            .forEachKernelStatement([&](functionDeclStatement &kernelSmnt) {
-                setupOccaFors(kernelSmnt);
-              });
+          .forEachKernelStatement([&](functionDeclStatement &kernelSmnt) {
+            setupOccaFors(kernelSmnt);
+          });
       }
 
       void withLauncher::setupOccaFors(functionDeclStatement &kernelSmnt) {
         statementArray::from(kernelSmnt)
-            .flatFilterByAttribute("outer")
-            .filterByStatementType(statementType::for_)
-            .forEach([&](statement_t *smnt) {
-                forStatement &outerSmnt = (forStatement&) *smnt;
-                replaceOccaFor(outerSmnt);
-              });
+          .flatFilterByAttribute("outer")
+          .filterByStatementType(statementType::for_)
+          .forEach([&](statement_t *smnt) {
+            forStatement &outerSmnt = (forStatement&) *smnt;
+            replaceOccaFor(outerSmnt);
+          });
 
         if (usesBarriers()) {
           statementArray::from(kernelSmnt)
-              .flatFilterByAttribute("inner")
-              .filterByStatementType(statementType::for_)
-              .forEach([&](statement_t *smnt) {
-                  forStatement &innerSmnt = (forStatement&) *smnt;
-
-                  //Only apply barriers when needed in the last inner-loop
-                  if (isOuterMostInnerLoop(innerSmnt)
-                      && (!isLastInnerLoop(innerSmnt) || isInsideLoop(innerSmnt)))
-                    addBarriersAfterInnerLoop(innerSmnt);
-                });
-        }
-
-        statementArray::from(kernelSmnt)
             .flatFilterByAttribute("inner")
             .filterByStatementType(statementType::for_)
             .forEach([&](statement_t *smnt) {
-                forStatement &innerSmnt = (forStatement&) *smnt;
-                replaceOccaFor(innerSmnt);
-              });
+              forStatement &innerSmnt = (forStatement&) *smnt;
+
+              //Only apply barriers when needed in the last inner-loop
+              if (isOuterMostInnerLoop(innerSmnt)
+                  && (!isLastInnerLoop(innerSmnt) || isInsideLoop(innerSmnt)))
+                addBarriersAfterInnerLoop(innerSmnt);
+            });
+        }
+
+        statementArray::from(kernelSmnt)
+          .flatFilterByAttribute("inner")
+          .filterByStatementType(statementType::for_)
+          .forEach([&](statement_t *smnt) {
+            forStatement &innerSmnt = (forStatement&) *smnt;
+            replaceOccaFor(innerSmnt);
+          });
       }
 
       void withLauncher::addBarriersAfterInnerLoop(forStatement &forSmnt) {
         const bool noSharedWrites = (
           statementArray::from(forSmnt)
           .flatFilter([&](smntExprNode smntExpr) {
-              return writesToShared(*smntExpr.node);
-            })
+            return writesToShared(*smntExpr.node);
+          })
           .isEmpty()
         );
 

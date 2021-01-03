@@ -2,20 +2,20 @@
 #define OCCA_INTERNAL_CORE_STREAM_HEADER
 
 #include <occa/core/stream.hpp>
-#include <occa/types/properties.hpp>
+#include <occa/types/json.hpp>
 #include <occa/internal/utils/gc.hpp>
 
 namespace occa {
   class modeStream_t : public gc::ringEntry_t {
-  public:
-    occa::properties properties;
+   public:
+    occa::json properties;
 
     gc::ring_t<stream> streamRing;
 
     modeDevice_t *modeDevice;
 
     modeStream_t(modeDevice_t *modeDevice_,
-                 const occa::properties &properties_);
+                 const occa::json &json_);
 
     void dontUseRefs();
     void addStreamRef(stream *s);

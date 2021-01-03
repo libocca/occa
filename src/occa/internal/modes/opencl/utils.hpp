@@ -72,7 +72,7 @@ namespace occa {
                                 const std::string &kernelName,
                                 const std::string &compilerFlags = "",
                                 const std::string &sourceFile = "",
-                                const occa::properties &properties = occa::properties(),
+                                const occa::json &properties = occa::json(),
                                 const io::lock_t &lock = io::lock_t());
 
     void buildProgramFromBinary(info_t &info,
@@ -102,12 +102,12 @@ namespace occa {
 
     occa::device wrapDevice(cl_device_id clDevice,
                             cl_context context,
-                            const occa::properties &props = occa::properties());
+                            const occa::json &props = occa::json());
 
     occa::memory wrapMemory(occa::device device,
                             cl_mem clMem,
                             const udim_t bytes,
-                            const occa::properties &props = occa::properties());
+                            const occa::json &props = occa::json());
 
     void warn(cl_int errorCode,
               const std::string &filename,
