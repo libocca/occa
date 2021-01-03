@@ -14,6 +14,14 @@ module occa_device_m
       type(occaType) :: info
     end function
 
+    ! occaDevice occaCreateDeviceFromString(const char *info);
+    type(occaDevice) function occaCreateDeviceFromString(info) &
+                              bind(C, name="occaCreateDeviceFromString")
+      import C_char, occaDevice
+      implicit none
+      character(len=1,kind=C_char), dimension(*), intent(in) :: info
+    end function
+
     ! bool occaDeviceIsInitialized(occaDevice device);
     logical(kind=C_bool) function occaDeviceIsInitialized(device) &
                                   bind(C, name="occaDeviceIsInitialized")

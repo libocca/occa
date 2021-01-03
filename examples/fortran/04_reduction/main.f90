@@ -18,10 +18,10 @@ program main
   type(occaJson)   :: reductionProps
 
   ! Set default OCCA device info
-  info = "mode: 'Serial'"
-  !info = "mode: 'OpenMP', schedule: 'compact', chunk: 10"
-  !info = "mode: 'CUDA'  , device_id: 0"
-  !info = "mode: 'OpenCL', platform_id: 0, device_id: 0"
+  info = "{mode: 'Serial'}"
+  !info = "{mode: 'OpenMP', schedule: 'compact', chunk: 10}"
+  !info = "{mode: 'CUDA'  , device_id: 0}"
+  !info = "{mode: 'OpenCL', platform_id: 0, device_id: 0}"
 
   ! Parse command arguments
   i = 1

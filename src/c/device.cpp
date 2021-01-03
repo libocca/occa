@@ -15,7 +15,7 @@ occaDevice occaCreateDevice(occaType info) {
     );
   }
   else {
-    OCCA_FORCE_ERROR("occaCreateDevice expects: occaJson, or occaString");
+    OCCA_FORCE_ERROR("occaCreateDevice expects: occaJson or occaString");
   }
   device.dontUseRefs();
 

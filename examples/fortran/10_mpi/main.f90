@@ -36,8 +36,8 @@ program main
   end if
 
   ! Set OCCA device info
-  !info = "mode: 'Serial'"
-  info = "mode: 'OpenMP', schedule: 'compact', chunk: 2"
+  !info = "{mode: 'Serial'}"
+  info = "{mode: 'OpenMP', schedule: 'compact', chunk: 2}"
 
   ! Print device infos
   if(myid == 0) then
@@ -57,7 +57,7 @@ program main
   ab = 0.0
 
   ! Create OCCA device
-  device = occaCreateDevice(occaString(info(myid)))
+  device = occaCreateDeviceFromString(F_C_str(info(myid)))
 
   ! Allocate memory on the device
   o_a  = occaTypedMalloc(entries, occaDtypeFloat, C_NULL_ptr, occaDefault)
