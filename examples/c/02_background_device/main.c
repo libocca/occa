@@ -106,10 +106,10 @@ occaJson parseArgs(int argc, const char **argv) {
     "}"
   );
 
-  occaProperties settings = occaSettings();
-  occaPropertiesSet(settings,
-                    "kernel/verbose",
-                    occaJsonObjectGet(args, "options/verbose", occaBool(0)));
+  occaJson settings = occaSettings();
+  occaJsonSet(settings,
+              "kernel/verbose",
+              occaJsonObjectGet(args, "options/verbose", occaBool(0)));
 
   return args;
 }

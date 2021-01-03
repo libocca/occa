@@ -54,10 +54,10 @@ int main(int argc, const char **argv) {
   occaMemory o_blockSum = occaTypedMalloc(blocks , occaDtypeFloat, NULL, occaDefault);
 
   // Pass value of 'block' at kernel compile-time
-  occaProperties reductionProps = occaCreateProperties();
-  occaPropertiesSet(reductionProps,
-                    "defines/block",
-                    occaInt(block));
+  occaJson reductionProps = occaCreateJson();
+  occaJsonSet(reductionProps,
+              "defines/block",
+              occaInt(block));
 
   occaKernel reduction = occaBuildKernel("reduction.okl",
                                          "reduction",
@@ -126,10 +126,10 @@ occaJson parseArgs(int argc, const char **argv) {
     "}"
   );
 
-  occaProperties settings = occaSettings();
-  occaPropertiesSet(settings,
-                    "kernel/verbose",
-                    occaJsonObjectGet(args, "options/verbose", occaBool(0)));
+  occaJson settings = occaSettings();
+  occaJsonSet(settings,
+              "kernel/verbose",
+              occaJsonObjectGet(args, "options/verbose", occaBool(0)));
 
   return args;
 }

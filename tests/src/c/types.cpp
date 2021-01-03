@@ -1,6 +1,6 @@
 #include <occa.hpp>
+#include <occa.h>
 #include <occa/internal/c/types.hpp>
-#include <occa/c/properties.h>
 #include <occa/internal/utils/testing.hpp>
 
 void testNewOccaTypes();
@@ -56,9 +56,9 @@ void testNewOccaTypes() {
   }
 
   occaJson cProps = (
-    occaCreatePropertiesFromString("a: 1, b: 2")
+    occaJsonParse("{a: 1, b: 2}")
   );
-  const occa::json &props = occa::c::constProperties(cProps);
+  const occa::json &props = occa::c::json(cProps);
   ASSERT_EQ((int) props["a"],
             1);
   ASSERT_EQ((int) props["b"],

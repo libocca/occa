@@ -77,8 +77,8 @@ int main(int argc, const char **argv) {
   o_ab = occaDeviceMalloc(device, entries * sizeof(float), NULL, occaDefault);
 
   // Setup properties that can be passed to the kernel
-  occaProperties props = occaCreateProperties();
-  occaPropertiesSet(props, "defines/TILE_SIZE", occaInt(10));
+  occaJson props = occaCreateJson();
+  occaJsonSet(props, "defines/TILE_SIZE", occaInt(10));
 
   // Compile the kernel at run-time
   addVectors = occaDeviceBuildKernel(device,
@@ -144,10 +144,10 @@ occaJson parseArgs(int argc, const char **argv) {
     "}"
   );
 
-  occaProperties settings = occaSettings();
-  occaPropertiesSet(settings,
-                    "kernel/verbose",
-                    occaJsonObjectGet(args, "options/verbose", occaBool(0)));
+  occaJson settings = occaSettings();
+  occaJsonSet(settings,
+              "kernel/verbose",
+              occaJsonObjectGet(args, "options/verbose", occaBool(0)));
 
   return args;
 }

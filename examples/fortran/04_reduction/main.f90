@@ -13,9 +13,9 @@ program main
   real(C_float) :: sig
 
   ! OCCA device, kernel, memory and property objects
-  type(occaKernel)     :: reduction
-  type(occaMemory)     :: o_vec, o_blockSum
-  type(occaProperties) :: reductionProps
+  type(occaKernel) :: reduction
+  type(occaMemory) :: o_vec, o_blockSum
+  type(occaJson)   :: reductionProps
 
   ! Set default OCCA device info
   info = "mode: 'Serial'"
@@ -30,7 +30,7 @@ program main
 
     select case (arg)
       case ("-v", "--verbose")
-        call occaPropertiesSet(occaSettings(), "kernel/verbose", occaTrue)
+        call occaJsonSet(occaSettings(), "kernel/verbose", occaTrue)
       case ("-d", "--device")
         i = i+1
         call get_command_argument(i, info)
@@ -64,8 +64,8 @@ program main
   o_blockSum = occaTypedMalloc(blks,    occaDtypeFloat, C_NULL_ptr, occaDefault)
 
   ! Pass value of 'block' at kernel compile-time
-  reductionProps = occaCreateProperties()
-  call occaPropertiesSet(reductionProps, F_C_str("defines/block"), occaInt(blk))
+  reductionProps = occaCreateJson()
+  call occaJsonSet(reductionProps, F_C_str("defines/block"), occaInt(blk))
 
   reduction = occaBuildKernel(F_C_str("reduction.okl"), &
                               F_C_str("reduction"), &

@@ -59,7 +59,7 @@ void testDeviceMethods() {
 void testMemoryMethods() {
   size_t bytes = 10 * sizeof(int);
   occaJson props = (
-    occaCreatePropertiesFromString("a: 1, b: 2")
+    occaJsonParse("{a: 1, b: 2}")
   );
 
   // malloc
@@ -99,8 +99,8 @@ void testKernelMethods() {
     occa::io::read(addVectorsFile)
   );
 
-  occaJson props = occaCreateProperties();
-  occaJsonSet(props, "defines/foo", occaInt(3));
+  occaJson props = occaCreateJson();
+  occaJsonObjectSet(props, "defines/foo", occaInt(3));
 
   // occaBuildKernel
   occaKernel addVectors = occaBuildKernel(addVectorsFile.c_str(),

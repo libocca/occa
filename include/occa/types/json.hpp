@@ -15,7 +15,7 @@ namespace occa {
   typedef std::map<std::string, json> jsonObject;
   typedef std::vector<json>           jsonArray;
 
-  // typedef json properties;
+  typedef json properties;
 
   typedef struct {
     bool boolean;

@@ -9,7 +9,6 @@
 #include <occa/c/kernel.h>
 #include <occa/c/kernelBuilder.h>
 #include <occa/c/memory.h>
-#include <occa/c/properties.h>
 #include <occa/c/scope.h>
 #include <occa/c/uva.h>
 
