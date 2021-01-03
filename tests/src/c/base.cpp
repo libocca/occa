@@ -41,8 +41,10 @@ void testDeviceMethods() {
   ASSERT_EQ(occa::c::device(occaGetDevice()),
             occa::getDevice());
 
-  occa::device fakeDevice("mode: 'Serial',"
-                          "key: 'value'");
+  occa::device fakeDevice({
+    {"mode", "Serial"},
+    {"key", "value"}
+  });
   occaSetDevice(occa::c::newOccaType(fakeDevice));
   ASSERT_EQ(occa::getDevice(),
             fakeDevice);

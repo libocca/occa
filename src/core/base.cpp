@@ -13,7 +13,9 @@ namespace occa {
     static tls<device> tdev;
     device &dev = tdev.value();
     if (!dev.isInitialized()) {
-      dev = occa::device("mode: 'Serial'");
+      dev = occa::device({
+        {"mode", "Serial"}
+      });
       dev.dontUseRefs();
     }
     return dev;

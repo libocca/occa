@@ -92,6 +92,7 @@ namespace occa {
       getObjectSpecificProps(mode_, "device", settings())
       + getModeSpecificProps(mode_, props)
     );
+
     deviceProps["kernel"] = initialObjectProps(mode_, "kernel", props);
     deviceProps["memory"] = initialObjectProps(mode_, "memory", props);
     deviceProps["stream"] = initialObjectProps(mode_, "stream", props);

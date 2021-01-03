@@ -33,7 +33,7 @@ Usage: ./main [OPTIONS]
 Example with custom dtypes
 
 Options:
-  -d, --device     Device properties (default: "mode: 'Serial'")
+  -d, --device     Device properties (default: "{mode: 'Serial'}")
   -h, --help       Print usage
   -v, --verbose    Compile kernels in verbose mode
 ```

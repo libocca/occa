@@ -52,7 +52,9 @@ void testSlice() {
     data[i] = i;
   }
 
-  occa::device device("mode: 'Serial'");
+  occa::device device({
+    {"mode", "Serial"}
+  });
   ASSERT_SAME_SIZE(device.memoryAllocated(), 0);
 
   {

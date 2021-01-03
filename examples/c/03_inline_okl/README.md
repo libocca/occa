@@ -18,7 +18,7 @@ Usage: ./main [OPTIONS]
 Example showing inline OKL code
 
 Options:
-  -d, --device     Device properties (default: "mode: 'Serial'")
+  -d, --device     Device properties (default: "{mode: 'Serial'}")
   -h, --help       Print usage
   -v, --verbose    Compile kernels in verbose mode
 ```

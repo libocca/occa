@@ -54,11 +54,11 @@ fi
 failed_examples=""
 for mode in $("${OCCA_DIR}/bin/occa" modes); do
     case "${mode}" in
-        Serial) device="mode: 'Serial'";;
-        OpenMP) device="mode: 'OpenMP'";;
-        CUDA)   device="mode: 'CUDA', device_id: 0";;
-        OpenCL) device="mode: 'OpenCL', platform_id: 0, device_id: 0";;
-        Metal)  device="mode: 'Metal', device_id: 0";;
+        Serial) device="{mode: 'Serial'}";;
+        OpenMP) device="{mode: 'OpenMP'}";;
+        CUDA)   device="{mode: 'CUDA', device_id: 0}";;
+        OpenCL) device="{mode: 'OpenCL', platform_id: 0, device_id: 0}";;
+        Metal)  device="{mode: 'Metal', device_id: 0}";;
     esac
 
     for example_dir in "${examples[@]}"; do

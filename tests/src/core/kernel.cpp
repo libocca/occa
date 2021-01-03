@@ -88,7 +88,7 @@ void testParsingFailure() {
 
   badKernel = occa::buildKernelFromString(badSource,
                                           "foo",
-                                          "silent: true");
+                                          {"silent", true});
   ASSERT_FALSE(badKernel.isInitialized());
 
   // Incorrect OKL
@@ -103,7 +103,7 @@ void testParsingFailure() {
 
   badKernel = occa::buildKernelFromString(badSource,
                                           "foo",
-                                          "silent: true");
+                                          {"silent", true});
   ASSERT_FALSE(badKernel.isInitialized());
 }
 
@@ -128,13 +128,13 @@ void testArgumentFailure() {
     "  for (int i = 0; i < N; ++i; @tile(16, @outer, @inner)) {}"
     "}",
     "foo",
-    "type_validation: false"
+    {"type_validation", false}
   );
 
   const int N = 10;
 
   // Use wrong device
-  occa::device dev("mode: 'Serial'");
+  occa::device dev({"mode", "Serial"});
   occa::memory arg = dev.malloc(N * sizeof(float));
 
   ASSERT_THROW(
@@ -148,7 +148,7 @@ void testRun() {
   );
   occa::kernel argKernel = occa::buildKernel(argKernelFile,
                                              "argKernel",
-                                             "type_validation: false");
+                                             {"type_validation", false});
 
   argKernel.setRunDims(occa::dim(1, 1, 1),
                        occa::dim(1, 1, 1));

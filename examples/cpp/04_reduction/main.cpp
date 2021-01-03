@@ -14,11 +14,6 @@ occa::json parseArgs(int argc, const char **argv);
 int main(int argc, const char **argv) {
   occa::json args = parseArgs(argc, argv);
 
-  // occa::setDevice("mode: 'Serial'");
-  // occa::setDevice("mode: 'OpenMP'");
-  // occa::setDevice("mode: 'CUDA'  , device_id: 0");
-  // occa::setDevice("mode: 'OpenCL', platform_id: 0, device_id: 0");
-  // occa::setDevice("mode: 'Metal', device_id: 0");
   occa::setDevice((std::string) args["options/device"]);
 
   // Choosing something not divisible by 256

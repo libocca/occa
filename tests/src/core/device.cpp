@@ -101,7 +101,9 @@ void testProperties() {
 }
 
 void testWrapMemory() {
-  occa::device device("mode: 'Serial'");
+  occa::device device({
+    {"mode", "Serial"}
+  });
 
   const occa::udim_t bytes = 1 * sizeof(int);
   int value = 4660;

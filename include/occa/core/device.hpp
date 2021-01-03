@@ -38,6 +38,8 @@ namespace occa {
     device(modeDevice_t *modeDevice_);
     device(const occa::json &props);
 
+    OCCA_JSON_CONSTRUCTOR(device);
+
     device(const occa::device &other);
     device& operator = (const occa::device &other);
     ~device();

@@ -14,6 +14,7 @@ namespace occa {
   }
 
   json::json(std::initializer_list<jsonKeyValue> entries) {
+    type = object_;
     for (auto &entry : entries) {
       (*this)[entry.name] = entry.value;
     }
@@ -677,6 +678,31 @@ namespace occa {
     }
     return vec;
   }
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const bool value_) :
+    name(name_),
+    value(value_) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const primitive &value_) :
+    name(name_),
+    value(value_) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const char *value_) :
+    name(name_),
+    value(value_) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const std::string &value_) :
+    name(name_),
+    value(value_.c_str()) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const jsonArray &value_) :
+    name(name_),
+    value(value_) {}
 
   template <>
   hash_t hash(const occa::json &json) {

@@ -105,7 +105,7 @@ contains
     write(*,'(a, /)') "Example of a reduction kernel which sums a vector in parallel"
     write(*,'(a, /)') "command-line options:"
     write(*,'(a)')    "  -v, --verbose     Compile kernels in verbose mode"
-    write(*,'(a)')    "  -d, --device      Device properties (default: ""mode: 'Serial'"")"
+    write(*,'(a)')    "  -d, --device      Device properties (default: ""{mode: 'Serial'}"")"
     write(*,'(a)')    "  -h, --help        Print this information and exit"
   end subroutine print_help
 end program main

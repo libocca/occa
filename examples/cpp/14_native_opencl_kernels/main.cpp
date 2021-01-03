@@ -40,7 +40,7 @@ int main(int argc, const char **argv) {
 
   // Compile a regular OpenCL kernel at run-time
   occa::json kernelProps({
-      {"okl/enabled", false}
+    {"okl/enabled", false}
   });
 
   occa::kernel addVectors = device.buildKernel("addVectors.cl",

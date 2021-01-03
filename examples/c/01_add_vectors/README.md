@@ -22,7 +22,7 @@ Usage: ./main [OPTIONS]
 Example adding two vectors
 
 Options:
-  -d, --device     Device properties (default: "mode: 'Serial'")
+  -d, --device     Device properties (default: "{mode: 'Serial'}")
   -h, --help       Print usage
   -v, --verbose    Compile kernels in verbose mode
 ```

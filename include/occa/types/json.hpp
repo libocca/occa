@@ -15,7 +15,12 @@ namespace occa {
   typedef std::map<std::string, json> jsonObject;
   typedef std::vector<json>           jsonArray;
 
+  // TODO(v2.0): Remove occa::properties
   typedef json properties;
+
+#define OCCA_JSON_CONSTRUCTOR(CLASS_NAME)                           \
+  inline CLASS_NAME(std::initializer_list<jsonKeyValue> entries) :  \
+    CLASS_NAME(json(entries)) {}                                    \
 
   typedef struct {
     bool boolean;
@@ -42,7 +47,7 @@ namespace occa {
     type_t type;
     jsonValue_t value_;
 
-    inline json(type_t type_ = object_) {
+    inline json(type_t type_ = none_) {
       clear();
       type = type_;
     }
@@ -621,29 +626,19 @@ namespace occa {
     json value;
 
     jsonKeyValue(const std::string &name_,
-                 const bool value) :
-      name(name_),
-      value(value) {}
+                 const bool value_);
 
     jsonKeyValue(const std::string &name_,
-                 const primitive &value) :
-      name(name_),
-      value(value) {}
+                 const primitive &value_);
 
     jsonKeyValue(const std::string &name_,
-                 const std::string &value) :
-      name(name_),
-      value(value) {}
+                 const char *value_);
 
     jsonKeyValue(const std::string &name_,
-                 const jsonArray &value) :
-      name(name_),
-      value(value) {}
+                 const std::string &value_);
 
     jsonKeyValue(const std::string &name_,
-                 const jsonObject &value) :
-      name(name_),
-      value(value) {}
+                 const jsonArray &value_);
   };
 
   template <>
