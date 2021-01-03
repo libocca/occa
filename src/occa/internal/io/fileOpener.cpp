@@ -79,30 +79,6 @@ namespace occa {
       static libraryPathMap_t libraryPaths;
       return libraryPaths;
     }
-
-    void addLibraryPath(const std::string &library,
-                        const std::string &path) {
-      std::string safeLibrary = library;
-      if (endsWith(safeLibrary, "/")) {
-        safeLibrary = safeLibrary.substr(0, safeLibrary.size() - 1);
-      }
-      OCCA_ERROR("Library name cannot be empty",
-                 safeLibrary.size());
-      OCCA_ERROR("Library name cannot have / characters",
-                 safeLibrary.find('/') == std::string::npos);
-
-      std::string safePath = path;
-      // Remove the trailing /
-      if (endsWith(safePath, "/")) {
-        safePath = safePath.substr(0, safePath.size() - 1);
-      }
-      if (!safePath.size()) {
-        return;
-      }
-
-      libraryPathMap_t &libraryPaths = getLibraryPathMap();
-      libraryPaths[safeLibrary] = safePath;
-    }
     //==================================
   }
 }

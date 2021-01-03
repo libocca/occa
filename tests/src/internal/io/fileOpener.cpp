@@ -1,3 +1,4 @@
+#include <occa/utils/io.hpp>
 #include <occa/internal/io.hpp>
 #include <occa/internal/utils/env.hpp>
 #include <occa/internal/utils/testing.hpp>

@@ -51,9 +51,6 @@ namespace occa {
     };
 
     libraryPathMap_t &getLibraryPathMap();
-
-    void addLibraryPath(const std::string &library,
-                        const std::string &path);
     //==================================
   }
 }
