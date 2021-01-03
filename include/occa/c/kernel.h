@@ -10,7 +10,7 @@ OCCA_START_EXTERN_C
 
 bool occaKernelIsInitialized(occaKernel kernel);
 
-occaProperties occaKernelGetProperties(occaKernel kernel);
+occaJson occaKernelGetProperties(occaKernel kernel);
 
 occaDevice occaKernelGetDevice(occaKernel kernel);
 

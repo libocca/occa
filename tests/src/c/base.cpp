@@ -30,7 +30,7 @@ int main(const int argc, const char **argv) {
 }
 
 void testGlobals() {
-  ASSERT_EQ(&occa::c::properties(occaSettings()),
+  ASSERT_EQ(&occa::c::json(occaSettings()),
             &occa::settings());
 }
 
@@ -49,7 +49,7 @@ void testDeviceMethods() {
 
   occaSetDeviceFromString("mode: 'Serial',"
                           "key: 'value'");
-  occa::json &fakeProps = occa::c::properties(occaDeviceProperties());
+  occa::json &fakeProps = occa::c::json(occaDeviceProperties());
   ASSERT_EQ((std::string) fakeProps["key"],
             "value");
 
@@ -58,7 +58,7 @@ void testDeviceMethods() {
 
 void testMemoryMethods() {
   size_t bytes = 10 * sizeof(int);
-  occaProperties props = (
+  occaJson props = (
     occaCreatePropertiesFromString("a: 1, b: 2")
   );
 
@@ -99,8 +99,8 @@ void testKernelMethods() {
     occa::io::read(addVectorsFile)
   );
 
-  occaProperties props = occaCreateProperties();
-  occaPropertiesSet(props, "defines/foo", occaInt(3));
+  occaJson props = occaCreateProperties();
+  occaJsonSet(props, "defines/foo", occaInt(3));
 
   // occaBuildKernel
   occaKernel addVectors = occaBuildKernel(addVectorsFile.c_str(),

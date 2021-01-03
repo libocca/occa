@@ -25,7 +25,7 @@ occaScope occaCreateScope(occaJson props) {
   if (occa::c::isDefault(props)) {
     scope = new occa::scope();
   } else {
-    scope = new occa::scope(occa::c::properties(props));
+    scope = new occa::scope(occa::c::json(props));
   }
   return occa::c::newOccaType(*scope);
 }

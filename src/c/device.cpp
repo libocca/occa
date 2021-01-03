@@ -6,10 +6,7 @@ OCCA_START_EXTERN_C
 
 occaDevice occaCreateDevice(occaType info) {
   occa::device device;
-  if (info.type == occa::c::typeType::properties) {
-    device = occa::device(occa::c::properties(info));
-  }
-  else if (info.type == occa::c::typeType::json) {
+  if (info.type == occa::c::typeType::json) {
     device = occa::device(occa::c::json(info));
   }
   else if (info.type == occa::c::typeType::string) {
@@ -81,7 +78,7 @@ occaStream occaDeviceCreateStream(occaDevice device,
   if (occa::c::isDefault(props)) {
     stream = device_.createStream();
   } else {
-    stream = device_.createStream(occa::c::properties(props));
+    stream = device_.createStream(occa::c::json(props));
   }
   stream.dontUseRefs();
 
@@ -136,7 +133,7 @@ occaKernel occaDeviceBuildKernel(occaDevice device,
   } else {
     kernel = device_.buildKernel(filename,
                                  kernelName,
-                                 occa::c::properties(props));
+                                 occa::c::json(props));
   }
   kernel.dontUseRefs();
 
@@ -156,7 +153,7 @@ occaKernel occaDeviceBuildKernelFromString(occaDevice device,
   } else {
     kernel = device_.buildKernelFromString(str,
                                            kernelName,
-                                           occa::c::properties(props));
+                                           occa::c::json(props));
   }
   kernel.dontUseRefs();
 
@@ -176,7 +173,7 @@ occaKernel occaDeviceBuildKernelFromBinary(occaDevice device,
   } else {
     kernel = device_.buildKernelFromBinary(filename,
                                            kernelName,
-                                           occa::c::properties(props));
+                                           occa::c::json(props));
   }
   kernel.dontUseRefs();
 
@@ -211,7 +208,7 @@ occaMemory occaDeviceTypedMalloc(occaDevice device,
     memory = device_.malloc(entries,
                             dtype_,
                             src,
-                            occa::c::properties(props));
+                            occa::c::json(props));
   }
   memory.dontUseRefs();
 
@@ -243,7 +240,7 @@ void* occaDeviceTypedUMalloc(occaDevice device,
   return device_.umalloc(entries,
                          dtype_,
                          src,
-                         occa::c::properties(props));
+                         occa::c::json(props));
 }
 
 occaMemory occaDeviceWrapMemory(occaDevice device,
@@ -269,7 +266,7 @@ occaMemory occaDeviceTypedWrapMemory(occaDevice device,
   if (occa::c::isDefault(props)) {
     memory = device_.wrapMemory(ptr, entries, dtype_);
   } else {
-    memory = device_.wrapMemory(ptr, entries, dtype_, occa::c::properties(props));
+    memory = device_.wrapMemory(ptr, entries, dtype_, occa::c::json(props));
   }
   memory.dontUseRefs();
 

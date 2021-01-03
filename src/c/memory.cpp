@@ -13,7 +13,7 @@ void* occaMemoryPtr(occaMemory memory,
   if (occa::c::isDefault(props)) {
     return mem.ptr();
   }
-  return mem.ptr(occa::c::properties(props));
+  return mem.ptr(occa::c::json(props));
 }
 
 occaDevice occaMemoryGetDevice(occaMemory memory) {
@@ -84,7 +84,7 @@ void occaMemcpy(void *dest, const void *src,
     occa::memcpy(dest, src, bytes);
   } else {
     occa::memcpy(dest, src, bytes,
-                 occa::c::properties(props));
+                 occa::c::json(props));
   }
 }
 
@@ -105,7 +105,7 @@ void occaCopyMemToMem(occaMemory dest, occaMemory src,
     occa::memcpy(dest_, src_,
                  bytes,
                  destOffset, srcOffset,
-                 occa::c::properties(props));
+                 occa::c::json(props));
   }
 }
 
@@ -124,7 +124,7 @@ void occaCopyPtrToMem(occaMemory dest, const void *src,
     occa::memcpy(dest_, src,
                  bytes,
                  offset,
-                 occa::c::properties(props));
+                 occa::c::json(props));
   }
 }
 
@@ -143,7 +143,7 @@ void occaCopyMemToPtr(void *dest, occaMemory src,
     occa::memcpy(dest, src_,
                  bytes,
                  offset,
-                 occa::c::properties(props));
+                 occa::c::json(props));
   }
 }
 

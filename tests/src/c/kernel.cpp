@@ -47,8 +47,8 @@ void testInit() {
 }
 
 void testInfo() {
-  occaProperties props = occaKernelGetProperties(addVectors);
-  occaType mode = occaPropertiesGet(props, "mode", occaUndefined);
+  occaJson props = occaKernelGetProperties(addVectors);
+  occaType mode = occaJsonGet(props, "mode", occaUndefined);
   ASSERT_FALSE(occaIsUndefined(mode));
   ASSERT_EQ((const char*) occaJsonGetString(mode),
             (const char*) "Serial");
@@ -86,7 +86,7 @@ void testRun() {
   std::string argKernelFile = (
     occa::env::OCCA_DIR + "tests/files/argKernel.okl"
   );
-  occaProperties kernelProps = occaCreatePropertiesFromString(
+  occaJson kernelProps = occaCreatePropertiesFromString(
     "type_validation: false"
   );
   occaKernel argKernel = (

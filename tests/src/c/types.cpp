@@ -45,17 +45,17 @@ void testNewOccaTypes() {
 
   {
     occaType v = occa::c::newOccaType(*(new occa::json()), true);
-    ASSERT_EQ(v.type, OCCA_PROPERTIES);
+    ASSERT_EQ(v.type, OCCA_JSON);
     occaFree(&v);
   }
   {
     occa::json props;
     occaType v = occa::c::newOccaType(props, false);
-    ASSERT_EQ(v.type, OCCA_PROPERTIES);
+    ASSERT_EQ(v.type, OCCA_JSON);
     occaFree(&v);
   }
 
-  occaProperties cProps = (
+  occaJson cProps = (
     occaCreatePropertiesFromString("a: 1, b: 2")
   );
   const occa::json &props = occa::c::constProperties(cProps);
