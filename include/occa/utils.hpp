@@ -4,6 +4,7 @@
 #include <occa/utils/env.hpp>
 #include <occa/utils/exception.hpp>
 #include <occa/utils/hash.hpp>
+#include <occa/utils/io.hpp>
 #include <occa/utils/logging.hpp>
 #include <occa/utils/uva.hpp>
 
