@@ -28,7 +28,7 @@ program main
 
     select case (arg)
       case ("-v", "--verbose")
-        call occaJsonSet(occaSettings(), "kernel/verbose", occaTrue)
+        call occaJsonObjectSet(occaSettings(), "kernel/verbose", occaTrue)
       case ("-d", "--device")
         i = i+1
         call get_command_argument(i, info)

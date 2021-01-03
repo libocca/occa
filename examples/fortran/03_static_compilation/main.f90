@@ -32,7 +32,7 @@ program main
 
     select case (arg)
       case ("-v", "--verbose")
-        call occaJsonSet(occaSettings(), "kernel/verbose", occaTrue)
+        call occaJsonObjectSet(occaSettings(), "kernel/verbose", occaTrue)
       case ("-d", "--device")
         i = i+1
         call get_command_argument(i, info)
@@ -78,7 +78,7 @@ program main
 
   ! Setup properties that can be passed to the kernel
   props = occaCreateJson()
-  call occaJsonSet(props, F_C_str("defines/TILE_SIZE"), occaInt(10))
+  call occaJsonObjectSet(props, F_C_str("defines/TILE_SIZE"), occaInt(10))
 
   ! Compile the kernel at run-time
   addVectors = occaDeviceBuildKernel(device, &

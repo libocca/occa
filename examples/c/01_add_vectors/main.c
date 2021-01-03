@@ -78,7 +78,7 @@ int main(int argc, const char **argv) {
 
   // Setup properties that can be passed to the kernel
   occaJson props = occaCreateJson();
-  occaJsonSet(props, "defines/TILE_SIZE", occaInt(10));
+  occaJsonObjectSet(props, "defines/TILE_SIZE", occaInt(10));
 
   // Compile the kernel at run-time
   addVectors = occaDeviceBuildKernel(device,
@@ -130,7 +130,7 @@ occaJson parseArgs(int argc, const char **argv) {
     "    {"
     "      name: 'device',"
     "      shortname: 'd',"
-    "      description: 'Device properties (default: \"mode: \\'Serial\\'\")',"
+    "      description: 'Device properties (default: \"{mode: \\'Serial\\'}\")',"
     "      with_arg: true,"
     "      default_value: { mode: 'Serial' },"
     "    },"
@@ -145,9 +145,9 @@ occaJson parseArgs(int argc, const char **argv) {
   );
 
   occaJson settings = occaSettings();
-  occaJsonSet(settings,
-              "kernel/verbose",
-              occaJsonObjectGet(args, "options/verbose", occaBool(0)));
+  occaJsonObjectSet(settings,
+                    "kernel/verbose",
+                    occaJsonObjectGet(args, "options/verbose", occaBool(0)));
 
   return args;
 }

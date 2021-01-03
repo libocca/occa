@@ -55,9 +55,9 @@ int main(int argc, const char **argv) {
 
   // Pass value of 'block' at kernel compile-time
   occaJson reductionProps = occaCreateJson();
-  occaJsonSet(reductionProps,
-              "defines/block",
-              occaInt(block));
+  occaJsonObjectSet(reductionProps,
+                    "defines/block",
+                    occaInt(block));
 
   occaKernel reduction = occaBuildKernel("reduction.okl",
                                          "reduction",
@@ -112,7 +112,7 @@ occaJson parseArgs(int argc, const char **argv) {
     "    {"
     "      name: 'device',"
     "      shortname: 'd',"
-    "      description: 'Device properties (default: \"mode: \\'Serial\\'\")',"
+    "      description: 'Device properties (default: \"{ mode: \\'Serial\\' }\")',"
     "      with_arg: true,"
     "      default_value: { mode: 'Serial' },"
     "    },"
@@ -127,9 +127,9 @@ occaJson parseArgs(int argc, const char **argv) {
   );
 
   occaJson settings = occaSettings();
-  occaJsonSet(settings,
-              "kernel/verbose",
-              occaJsonObjectGet(args, "options/verbose", occaBool(0)));
+  occaJsonObjectSet(settings,
+                    "kernel/verbose",
+                    occaJsonObjectGet(args, "options/verbose", occaBool(0)));
 
   return args;
 }
