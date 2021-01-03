@@ -5,11 +5,11 @@ namespace occa {
                                         const int tileSize) {
       return kernelBuilder::fromFile(env::OCCA_DIR + "include/occa/array/kernels/assignment.okl",
                                      kernelName,
-                                     "defines: {"
-                                     "  VTYPE_IN: '"  + primitiveinfo<VTYPE_IN>::name  + "',"
-                                     "  VTYPE_OUT: '" + primitiveinfo<VTYPE_OUT>::name + "',"
-                                     "  TILESIZE: '"  + std::to_string(tileSize) + "',"
-                                     "}");
+                                     {{"defines", {
+                                        {"VTYPE_IN", primitiveinfo<VTYPE_IN>::name},
+                                        {"VTYPE_OUT", primitiveinfo<VTYPE_OUT>::name},
+                                        {"TILESIZE", std::to_string(tileSize)}
+                                     }}});
     }
 
     template <class VTYPE_IN, class VTYPE_OUT>
@@ -26,28 +26,28 @@ namespace occa {
     kernelBuilder makeLinalgBuilder(const std::string &kernelName) {
       return kernelBuilder::fromFile(env::OCCA_DIR + "include/occa/array/kernels/linalg.okl",
                                      kernelName,
-                                     "defines: {"
-                                     "  VTYPE: '" + primitiveinfo<VTYPE>::name + "',"
-                                     "  VTYPE2: '" + primitiveinfo<VTYPE>::name + "',"
-                                     "  RETTYPE: '" + primitiveinfo<RETTYPE>::name + "',"
-                                     "  CPU_DOT_OUTER: 1024,"
-                                     "  GPU_DOT_OUTER: 1024,"
-                                     "  GPU_DOT_INNER: 128,"
-                                     "}");
+                                     {{"defines", {
+                                        {"VTYPE", primitiveinfo<VTYPE>::name},
+                                        {"VTYPE2", primitiveinfo<VTYPE>::name},
+                                        {"RETTYPE", primitiveinfo<RETTYPE>::name},
+                                        {"CPU_DOT_OUTER", 1024},
+                                        {"GPU_DOT_OUTER", 1024},
+                                        {"GPU_DOT_OUTER", 128}
+                                     }}});
     }
 
     template <class VTYPE1, class VTYPE2, class RETTYPE>
     kernelBuilder makeLinalgBuilder(const std::string &kernelName) {
       return kernelBuilder::fromFile(env::OCCA_DIR + "include/occa/array/kernels/linalg.okl",
                                      kernelName,
-                                     "defines: {"
-                                     "  VTYPE: '"   + primitiveinfo<VTYPE1>::name  + "',"
-                                     "  VTYPE2: '"  + primitiveinfo<VTYPE2>::name  + "',"
-                                     "  RETTYPE: '" + primitiveinfo<RETTYPE>::name + "',"
-                                     "  CPU_DOT_OUTER: 1024,"
-                                     "  GPU_DOT_OUTER: 1024,"
-                                     "  GPU_DOT_INNER: 128,"
-                                     "}");
+                                     {{"defines", {
+                                        {"VTYPE", primitiveinfo<VTYPE1>::name},
+                                        {"VTYPE2", primitiveinfo<VTYPE2>::name},
+                                        {"RETTYPE", primitiveinfo<RETTYPE>::name},
+                                        {"CPU_DOT_OUTER", 1024},
+                                        {"GPU_DOT_OUTER", 1024},
+                                        {"GPU_DOT_OUTER", 128}
+                                     }}});
     }
 
     //---[ Assignment ]-----------------
@@ -391,12 +391,12 @@ namespace occa {
           kernelBuilder kerb =
             customLinearMethod("axpy",
                                "v0[i] += c0 * v1[i];",
-                               "defines: {"
-                               "  CTYPE0: '" + primitiveinfo<TYPE_A>::name + "',"
-                               "  VTYPE0: '" + primitiveinfo<VTYPE_Y>::name + "',"
-                               "  VTYPE1: '" + primitiveinfo<VTYPE_X>::name + "',"
-                               "  TILESIZE: '" + std::to_string(usedTileSizes[i]) + "',"
-                               "}");
+                               {{"defines", {
+                                  {"CTYPE0", primitiveinfo<TYPE_A>::name},
+                                  {"VTYPE0", primitiveinfo<VTYPE_Y>::name},
+                                  {"VTYPE1", primitiveinfo<VTYPE_X>::name},
+                                  {"TILESIZE", std::to_string(usedTileSizes[i])}
+                               }}});
           builders.push_back(kerb);
         }
       }

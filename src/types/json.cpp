@@ -668,11 +668,6 @@ namespace occa {
   }
 
   jsonKeyValue::jsonKeyValue(const std::string &name_,
-                             const bool value_) :
-    name(name_),
-    value(value_) {}
-
-  jsonKeyValue::jsonKeyValue(const std::string &name_,
                              const primitive &value_) :
     name(name_),
     value(value_) {}
