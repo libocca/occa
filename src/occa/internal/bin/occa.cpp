@@ -50,9 +50,9 @@ namespace occa {
     }
 
     properties getOptionProperties(const json &opt) {
-      properties props;
+      json props;
       for (int i = 0; i < opt.size(); ++i) {
-        props += properties((std::string) opt[i]);
+        props += json((std::string) opt[i]);
       }
       return props;
     }
