@@ -3,7 +3,7 @@ namespace occa {
     template <class VTYPE_IN, class VTYPE_OUT>
     kernelBuilder makeAssignmentBuilder(const std::string &kernelName,
                                         const int tileSize) {
-      return kernelBuilder::fromFile(env::OCCA_DIR + "include/occa/array/kernels/assignment.okl",
+      return kernelBuilder::fromFile(env::OCCA_DIR + "include/occa/experimental/array/kernels/assignment.okl",
                                      kernelName,
                                      {{"defines", {
                                         {"VTYPE_IN", primitiveinfo<VTYPE_IN>::name},
@@ -24,7 +24,7 @@ namespace occa {
 
     template <class VTYPE, class RETTYPE>
     kernelBuilder makeLinalgBuilder(const std::string &kernelName) {
-      return kernelBuilder::fromFile(env::OCCA_DIR + "include/occa/array/kernels/linalg.okl",
+      return kernelBuilder::fromFile(env::OCCA_DIR + "include/occa/experimental/array/kernels/linalg.okl",
                                      kernelName,
                                      {{"defines", {
                                         {"VTYPE", primitiveinfo<VTYPE>::name},
@@ -38,7 +38,7 @@ namespace occa {
 
     template <class VTYPE1, class VTYPE2, class RETTYPE>
     kernelBuilder makeLinalgBuilder(const std::string &kernelName) {
-      return kernelBuilder::fromFile(env::OCCA_DIR + "include/occa/array/kernels/linalg.okl",
+      return kernelBuilder::fromFile(env::OCCA_DIR + "include/occa/experimental/array/kernels/linalg.okl",
                                      kernelName,
                                      {{"defines", {
                                         {"VTYPE", primitiveinfo<VTYPE1>::name},

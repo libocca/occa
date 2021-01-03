@@ -1,13 +1,13 @@
-#ifndef OCCA_ARRAY_LINALG_HEADER
-#define OCCA_ARRAY_LINALG_HEADER
+#ifndef OCCA_EXPERIMENTAL_ARRAY_LINALG_HEADER
+#define OCCA_EXPERIMENTAL_ARRAY_LINALG_HEADER
 
 #include <cmath>
 #include <string>
 
 #include <occa/defines.hpp>
 #include <occa/core/base.hpp>
-#include <occa/core/kernelBuilder.hpp>
 #include <occa/utils/env.hpp>
+#include <occa/experimental/kernelBuilder.hpp>
 
 namespace occa {
   namespace linalg {

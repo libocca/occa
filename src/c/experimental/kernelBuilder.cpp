@@ -1,6 +1,6 @@
 #include <occa/internal/c/types.hpp>
-#include <occa/c/kernelBuilder.h>
-#include <occa/core/kernelBuilder.hpp>
+#include <occa/c/experimental/kernelBuilder.h>
+#include <occa/experimental/kernelBuilder.hpp>
 
 OCCA_START_EXTERN_C
 

@@ -1,8 +1,9 @@
-#ifndef OCCA_C_KERNELBUILDER_HEADER
-#define OCCA_C_KERNELBUILDER_HEADER
+#ifndef OCCA_C_EXPERIMENTAL_KERNELBUILDER_HEADER
+#define OCCA_C_EXPERIMENTAL_KERNELBUILDER_HEADER
 
 #include <occa/c/defines.h>
 #include <occa/c/types.h>
+#include <occa/c/experimental/scope.h>
 
 OCCA_START_EXTERN_C
 

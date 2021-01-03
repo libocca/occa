@@ -1,8 +1,8 @@
 #include <occa/defines.hpp>
 
 #if OCCA_MPI_ENABLED
-#  ifndef OCCA_MPI_HEADER
-#  define OCCA_MPI_HEADER
+#  ifndef OCCA_EXPERIMENTAL_MPI_HEADER
+#  define OCCA_EXPERIMENTAL_MPI_HEADER
 
 #include <mpi.h>
 #include <vector>
