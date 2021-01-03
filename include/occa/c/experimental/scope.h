@@ -1,5 +1,5 @@
-#ifndef OCCA_C_SCOPE_HEADER
-#define OCCA_C_SCOPE_HEADER
+#ifndef OCCA_C_EXPERIMENTAL_SCOPE_HEADER
+#define OCCA_C_EXPERIMENTAL_SCOPE_HEADER
 
 #include <occa/c/defines.h>
 #include <occa/c/types.h>

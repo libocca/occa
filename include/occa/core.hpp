@@ -5,9 +5,7 @@
 #include <occa/core/device.hpp>
 #include <occa/core/kernel.hpp>
 #include <occa/core/kernelArg.hpp>
-#include <occa/core/kernelBuilder.hpp>
 #include <occa/core/memory.hpp>
-#include <occa/core/scope.hpp>
 #include <occa/core/stream.hpp>
 #include <occa/core/streamTag.hpp>
 

@@ -2,9 +2,9 @@
 #include <sstream>
 
 #include <occa/types.hpp>
-#include <occa/array/linalg.hpp>
 #include <occa/internal/utils/lex.hpp>
 #include <occa/internal/utils/string.hpp>
+#include <occa/experimental/array/linalg.hpp>
 
 namespace occa {
   namespace linalg {

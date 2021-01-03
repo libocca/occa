@@ -1,9 +1,9 @@
-#ifndef OCCA_ARRAY_ARRAY_HEADER
-#define OCCA_ARRAY_ARRAY_HEADER
+#ifndef OCCA_EXPERIMENTAL_ARRAY_ARRAY_HEADER
+#define OCCA_EXPERIMENTAL_ARRAY_ARRAY_HEADER
 
 #include <occa/defines.hpp>
 #include <occa/core/base.hpp>
-#include <occa/array/linalg.hpp>
+#include <occa/experimental/array/linalg.hpp>
 
 namespace occa {
   static const int copyOnHost          = (1 << 0);

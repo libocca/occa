@@ -1,5 +1,5 @@
-#ifndef OCCA_CORE_SCOPE_HEADER
-#define OCCA_CORE_SCOPE_HEADER
+#ifndef OCCA_EXPERIMENTAL_SCOPE_HEADER
+#define OCCA_EXPERIMENTAL_SCOPE_HEADER
 
 #include <initializer_list>
 #include <map>

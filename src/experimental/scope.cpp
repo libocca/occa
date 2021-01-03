@@ -1,6 +1,6 @@
 #include <sstream>
 
-#include <occa/core/scope.hpp>
+#include <occa/experimental/scope.hpp>
 
 namespace occa {
   scope::scope() {}

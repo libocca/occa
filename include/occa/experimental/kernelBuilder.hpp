@@ -1,8 +1,8 @@
-#ifndef OCCA_CORE_KERNELBUILDER_HEADER
-#define OCCA_CORE_KERNELBUILDER_HEADER
+#ifndef OCCA_EXPERIMENTAL_CORE_KERNELBUILDER_HEADER
+#define OCCA_EXPERIMENTAL_CORE_KERNELBUILDER_HEADER
 
 #include <occa/core/kernel.hpp>
-#include <occa/core/scope.hpp>
+#include <occa/experimental/scope.hpp>
 
 namespace occa {
   class kernelBuilder {
