@@ -151,7 +151,7 @@ namespace occa {
 
   //---[ Methods ]----------------------
   //   ---[ Context ]-------------------
-  inline cl_context clCreateContext(cl_context_properties *properties,
+  inline cl_context clCreateContext(cl_context_properties *props,
                                     cl_uint num_devices,
                                     const cl_device_id *devices,
                                     void *pfn_notify,
@@ -396,7 +396,7 @@ namespace occa {
 
   inline cl_command_queue clCreateCommandQueue(cl_context context,
                                                cl_device_id device,
-                                               cl_command_queue_properties properties,
+                                               cl_command_queue_properties props,
                                                cl_int *errcode_ret) {
     *errcode_ret = OCCA_OPENCL_IS_NOT_ENABLED;
     return NULL;
@@ -404,7 +404,7 @@ namespace occa {
 
   inline cl_command_queue clCreateCommandQueueWithProperties(cl_context context,
                                                              cl_device_id device,
-                                                             const cl_queue_properties *properties,
+                                                             const cl_queue_properties *props,
                                                              cl_int *errcode_ret) {
     *errcode_ret = OCCA_OPENCL_IS_NOT_ENABLED;
     return NULL;
