@@ -57,7 +57,7 @@ program main
   ab = 0.0
 
   ! Create OCCA device
-  device = occaCreateDeviceFromString(F_C_str(info(myid)))
+  device = occaCreateDevice(occaString(info(myid)))
 
   ! Allocate memory on the device
   o_a  = occaTypedMalloc(entries, occaDtypeFloat, C_NULL_ptr, occaDefault)

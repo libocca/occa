@@ -23,22 +23,22 @@ void testMalloc() {
   ASSERT_EQ(((int*) mem.ptr())[0], value);
   ASSERT_NEQ(mem.ptr<int>(), hostPtr);
 
-  mem = occa::malloc(bytes, hostPtr, "use_host_pointer: true");
+  mem = occa::malloc(bytes, hostPtr, {{"use_host_pointer", true}});
   ASSERT_EQ(mem.ptr<int>()[0], value);
   ASSERT_EQ(mem.ptr<int>(), hostPtr);
 
-  occa::setDevice(
-    "mode: 'Serial',"
-    "memory: {"
-    "  use_host_pointer: true,"
-    "}"
-  );
+  occa::setDevice({
+    {"mode", "Serial"},
+    {"memory", {
+      {"use_host_pointer", true}
+    }}
+  });
 
   mem = occa::malloc(bytes, hostPtr);
   ASSERT_EQ(((int*) mem.ptr())[0], value);
   ASSERT_EQ(mem.ptr<int>(), hostPtr);
 
-  mem = occa::malloc(bytes, hostPtr, "use_host_pointer: false");
+  mem = occa::malloc(bytes, hostPtr, {{"use_host_pointer", false}});
   ASSERT_EQ(mem.ptr<int>()[0], value);
   ASSERT_NEQ(mem.ptr<int>(), hostPtr);
 }

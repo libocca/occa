@@ -700,7 +700,7 @@ namespace occa {
     value(value_.c_str()) {}
 
   jsonKeyValue::jsonKeyValue(const std::string &name_,
-                             const jsonArray &value_) :
+                             std::initializer_list<jsonKeyValue> value_) :
     name(name_),
     value(value_) {}
 

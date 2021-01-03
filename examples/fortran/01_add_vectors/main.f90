@@ -61,7 +61,7 @@ program main
   call occaPrintModeInfo()
 
   ! Create OCCA device
-  device = occaCreateDeviceFromString(F_C_str(info))
+  device = occaCreateDevice(occaString(info))
 
   ! Print device mode
   ! Use an intermediate variable to avoid an ICE with the 2019 Intel compilers

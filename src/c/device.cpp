@@ -10,7 +10,9 @@ occaDevice occaCreateDevice(occaType info) {
     device = occa::device(occa::c::json(info));
   }
   else if (info.type == occa::c::typeType::string) {
-    device = occa::device(std::string(info.value.ptr));
+    device = occa::device(
+      occa::json::parse(info.value.ptr)
+    );
   }
   else {
     OCCA_FORCE_ERROR("occaCreateDevice expects: occaJson, or occaString");
@@ -21,7 +23,9 @@ occaDevice occaCreateDevice(occaType info) {
 }
 
 occaDevice occaCreateDeviceFromString(const char *info) {
-  occa::device device(info);
+  occa::device device(
+    occa::json::parse(info)
+  );
   device.dontUseRefs();
   return occa::c::newOccaType(device);
 }

@@ -87,7 +87,6 @@ namespace occa {
     }
 
     if (modeName.size()) {
-      throw 1;
       io::stderr << "[" << modeName << "] mode is not enabled, defaulting to [Serial] mode\n";
     } else {
       io::stderr << "No OCCA mode given, defaulting to [Serial] mode\n";

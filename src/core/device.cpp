@@ -22,6 +22,9 @@ namespace occa {
     setup(props);
   }
 
+  device::device(jsonInitializerList initializer) :
+    device(json(initializer)) {}
+
   device::device(const device &other) :
     modeDevice(NULL) {
     setModeDevice(other.modeDevice);

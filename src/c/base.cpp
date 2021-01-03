@@ -30,7 +30,9 @@ void occaSetDevice(occaDevice device) {
 }
 
 void occaSetDeviceFromString(const char *info) {
-  occa::setDevice(info);
+  occa::setDevice(
+    occa::json::parse(info)
+  );
 }
 
 occaJson occaDeviceProperties() {

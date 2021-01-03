@@ -26,6 +26,7 @@ namespace occa {
 
   void setDevice(device d);
   void setDevice(const occa::json &props);
+  void setDevice(jsonInitializerList initializer);
 
   const occa::json& deviceProperties();
 

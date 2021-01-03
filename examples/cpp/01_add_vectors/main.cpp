@@ -36,7 +36,9 @@ int main(int argc, const char **argv) {
   /*
    * Examples of setting up a device in other backend modes:
    *
-   * device.setup({"mode", "Serial"});
+   * device.setup({
+   *   {"mode", "Serial"}
+   * });
    *
    * device.setup({
    *   {"mode"    , "OpenMP"},

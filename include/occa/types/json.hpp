@@ -14,13 +14,10 @@ namespace occa {
 
   typedef std::map<std::string, json> jsonObject;
   typedef std::vector<json>           jsonArray;
+  typedef std::initializer_list<jsonKeyValue> jsonInitializerList;
 
   // TODO(v2.0): Remove occa::properties
   typedef json properties;
-
-#define OCCA_JSON_CONSTRUCTOR(CLASS_NAME)                           \
-  inline CLASS_NAME(std::initializer_list<jsonKeyValue> entries) :  \
-    CLASS_NAME(json(entries)) {}                                    \
 
   typedef struct {
     bool boolean;
@@ -638,7 +635,7 @@ namespace occa {
                  const std::string &value_);
 
     jsonKeyValue(const std::string &name_,
-                 const jsonArray &value_);
+                 std::initializer_list<jsonKeyValue> value_);
   };
 
   template <>
