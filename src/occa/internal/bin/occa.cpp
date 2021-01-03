@@ -49,7 +49,7 @@ namespace occa {
       return true;
     }
 
-    properties getOptionProperties(const json &opt) {
+    json getOptionProperties(const json &opt) {
       json props;
       for (int i = 0; i < opt.size(); ++i) {
         props += json((std::string) opt[i]);
@@ -137,7 +137,7 @@ namespace occa {
         ::exit(1);
       }
 
-      properties kernelProps = getOptionProperties(options["kernel-props"]);
+      json kernelProps = getOptionProperties(options["kernel-props"]);
       kernelProps["mode"] = mode;
       kernelProps["defines"].asObject() += getOptionDefines(options["define"]);
       kernelProps["okl/include_paths"] = options["include-path"];
@@ -172,7 +172,7 @@ namespace occa {
       }
 
       if (options["verbose"]) {
-        properties translationInfo;
+        json translationInfo;
         // Filename
         translationInfo["translate_info/filename"] = io::filename(filename);
         // Date information
@@ -219,9 +219,9 @@ namespace occa {
         ::exit(1);
       }
 
-      properties deviceProps = getOptionProperties(options["device-props"]);
+      json deviceProps = getOptionProperties(options["device-props"]);
 
-      properties kernelProps = getOptionProperties(options["kernel-props"]);
+      json kernelProps = getOptionProperties(options["kernel-props"]);
       kernelProps["verbose"] = kernelProps.get("verbose", true);
       kernelProps["okl/include_paths"] = options["include-path"];
       kernelProps["defines"].asObject() += getOptionDefines(options["define"]);

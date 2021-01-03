@@ -197,7 +197,7 @@ void testParser() {
     .withDescription(description)
     .addOption(
       occa::cli::option('d', "device",
-                        "Device properties (default: \"mode: 'Serial'\")")
+                        "Device properties (default: \"{mode: 'Serial'}\")")
       .withArg()
       .withDefaultValue("mode: 'Serial'")
     )

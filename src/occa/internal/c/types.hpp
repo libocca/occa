@@ -41,7 +41,6 @@ namespace occa {
       static const int dtype         = 23;
       static const int scope         = 24;
       static const int json          = 25;
-      static const int properties    = 26;
     }
 
     occaType defaultOccaType();
