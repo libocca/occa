@@ -36,6 +36,7 @@ namespace occa {
   public:
     device();
     device(modeDevice_t *modeDevice_);
+    device(const std::string &props);
     device(const occa::json &props);
     device(jsonInitializerList initializer);
 
@@ -58,6 +59,7 @@ namespace occa {
 
     modeDevice_t* getModeDevice() const;
 
+    void setup(const std::string &props);
     void setup(const occa::json &props);
 
     void free();

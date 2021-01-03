@@ -28,16 +28,19 @@ void testModeByName() {
 }
 
 void testModeByProps() {
-  occa::mode_t *serialMode = occa::getModeFromProps("mode: 'Serial'");
+  occa::mode_t *serialMode = occa::getModeFromProps({
+    {"mode", "Serial"}
+  });
+
   ASSERT_NEQ((void*) serialMode,
              (void*) NULL);
 
   ASSERT_EQ((void*) serialMode,
-            (void*) occa::getModeFromProps("mode: 'serial'"));
+            (void*) occa::getModeFromProps({{"mode", "Serial"}}));
 
   ASSERT_EQ(occa::getModeFromProps(""),
             serialMode);
 
-  ASSERT_EQ(occa::getModeFromProps("mode: 'Foo'"),
+  ASSERT_EQ(occa::getModeFromProps({{"mode", "Foo"}}),
             serialMode);
 }

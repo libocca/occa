@@ -236,12 +236,12 @@ void testKeywords() {
   j.load("true");
   ASSERT_TRUE(j.isBool());
   ASSERT_EQ(true,
-            j.value_.boolean);
+            (bool) j.value_.number);
 
   j.load("false");
   ASSERT_TRUE(j.isBool());
   ASSERT_EQ(false,
-            j.value_.boolean);
+            (bool) j.value_.number);
 
   j.load("null");
   ASSERT_TRUE(j.isNull());
@@ -370,11 +370,11 @@ void testTruthyValues() {
 void testComparisons() {
   occa::json data = occa::json::parse(
     "{"
-    "  zero: 0,"
-    "  one: 1,"
-    "  two: 2.0,"
     "  false: false,"
     "  true: true,"
+    "  two: 2,"
+    "  three: 3,"
+    "  four: 4.0,"
     "  null: null,"
     "  array: [1, 2],"
     "  object: { a: 1, b: 2},"

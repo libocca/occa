@@ -34,6 +34,10 @@ namespace occa {
     getDevice() = d;
   }
 
+  void setDevice(const std::string &props) {
+    getDevice() = device(props);
+  }
+
   void setDevice(const occa::json &props) {
     getDevice() = device(props);
   }

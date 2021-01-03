@@ -44,7 +44,7 @@ int main(int argc, const char **argv) {
 
   // Pass value of 'block' at kernel compile-time
   occa::json reductionProps({
-      {"defines/block", block},
+    {"defines/block", block},
   });
 
   occa::kernel reductionWithSharedMemory = (
@@ -121,7 +121,7 @@ occa::json parseArgs(int argc, const char **argv) {
       occa::cli::option('d', "device",
                         "Device properties (default: \"mode: 'Serial'\")")
       .withArg()
-      .withDefaultValue("mode: 'Serial'")
+      .withDefaultValue("{mode: 'Serial'}")
     )
     .addOption(
       occa::cli::option('v', "verbose",

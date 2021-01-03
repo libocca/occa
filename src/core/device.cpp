@@ -17,6 +17,9 @@ namespace occa {
     setModeDevice(modeDevice_);
   }
 
+  device::device(const std::string &props) :
+    device(json::parse(props)) {}
+
   device::device(const occa::json &props) :
     modeDevice(NULL) {
     setup(props);
@@ -84,6 +87,10 @@ namespace occa {
 
   modeDevice_t* device::getModeDevice() const {
     return modeDevice;
+  }
+
+  void device::setup(const std::string &props) {
+    setup(json::parse(props));
   }
 
   void device::setup(const occa::json &props) {

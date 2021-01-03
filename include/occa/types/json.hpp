@@ -20,7 +20,6 @@ namespace occa {
   typedef json properties;
 
   typedef struct {
-    bool boolean;
     primitive number;
     std::string string;
     jsonArray array;
@@ -34,11 +33,10 @@ namespace occa {
     enum type_t {
       none_    = (1 << 0),
       null_    = (1 << 1),
-      boolean_ = (1 << 2),
-      number_  = (1 << 3),
-      string_  = (1 << 4),
-      array_   = (1 << 5),
-      object_  = (1 << 6)
+      number_  = (1 << 2),
+      string_  = (1 << 3),
+      array_   = (1 << 4),
+      object_  = (1 << 5)
     };
 
     type_t type;
@@ -54,8 +52,8 @@ namespace occa {
       value_(j.value_) {}
 
     inline json(const bool value) :
-      type(boolean_) {
-      value_.boolean = value;
+      type(number_) {
+      value_.number = value;
     }
 
     inline json(const uint8_t value) :
@@ -157,8 +155,8 @@ namespace occa {
     }
 
     inline json& operator = (const bool value) {
-      type = boolean_;
-      value_.boolean = value;
+      type = number_;
+      value_.number = value;
       return *this;
     }
 
@@ -291,7 +289,10 @@ namespace occa {
     }
 
     inline bool isBool() const {
-      return (type == boolean_);
+      return (
+        (type == number_) &&
+        value_.number.isBool()
+      );
     }
 
     inline bool isNull() const {
@@ -302,8 +303,6 @@ namespace occa {
       switch (type) {
         case null_:
           return dtype::byte;
-        case boolean_:
-          return dtype::bool_;
         case number_:
           return value_.number.dtype();
         default:
@@ -320,10 +319,13 @@ namespace occa {
     }
 
     inline json& asBoolean() {
-      if (type & ~(none_ | boolean_)) {
+      if (type & number_) {
+        value_.number = (bool) value_.number;
+      } else {
         clear();
+        type = number_;
+        value_.number = false;
       }
-      type = boolean_;
       return *this;
     }
 
@@ -360,7 +362,7 @@ namespace occa {
     }
 
     inline bool& boolean() {
-      return value_.boolean;
+      return value_.number.value.bool_;
     }
 
     inline primitive& number() {
@@ -380,7 +382,7 @@ namespace occa {
     }
 
     inline bool boolean() const {
-      return value_.boolean;
+      return value_.number;
     }
 
     inline const primitive& number() const {
@@ -463,8 +465,6 @@ namespace occa {
         return true;
       case null_:
         return true;
-      case boolean_:
-        return value_.boolean == j.value_.boolean;
       case number_:
         return primitive::equal(value_.number, j.value_.number);
       case string_:
@@ -480,8 +480,6 @@ namespace occa {
 
     inline operator bool () const {
       switch (type) {
-      case boolean_:
-        return value_.boolean;
       case number_:
         return value_.number;
       case string_:
@@ -496,111 +494,81 @@ namespace occa {
     }
 
     inline operator uint8_t () const {
-      switch (type) {
-      case boolean_:
-        return value_.boolean;
-      case number_:
+      if (type & number_) {
         return (uint8_t) value_.number;
-      default:
+      } else {
         return 0;
       }
     }
 
     inline operator uint16_t () const {
-      switch (type) {
-      case boolean_:
-        return value_.boolean;
-      case number_:
+      if (type & number_) {
         return (uint16_t) value_.number;
-      default:
+      } else {
         return 0;
       }
     }
 
     inline operator uint32_t () const {
-      switch (type) {
-      case boolean_:
-        return value_.boolean;
-      case number_:
+      if (type & number_) {
         return (uint32_t) value_.number;
-      default:
+      } else {
         return 0;
       }
     }
 
     inline operator uint64_t () const {
-      switch (type) {
-      case boolean_:
-        return value_.boolean;
-      case number_:
+      if (type & number_) {
         return (uint64_t) value_.number;
-      default:
+      } else {
         return 0;
       }
     }
 
     inline operator int8_t () const {
-      switch (type) {
-      case boolean_:
-        return value_.boolean;
-      case number_:
+      if (type & number_) {
         return (int8_t) value_.number;
-      default:
+      } else {
         return 0;
       }
     }
 
     inline operator int16_t () const {
-      switch (type) {
-      case boolean_:
-        return value_.boolean;
-      case number_:
+      if (type & number_) {
         return (int16_t) value_.number;
-      default:
+      } else {
         return 0;
       }
     }
 
     inline operator int32_t () const {
-      switch (type) {
-      case boolean_:
-        return value_.boolean;
-      case number_:
+      if (type & number_) {
         return (int32_t) value_.number;
-      default:
+      } else {
         return 0;
       }
     }
 
     inline operator int64_t () const {
-      switch (type) {
-      case boolean_:
-        return value_.boolean;
-      case number_:
+      if (type & number_) {
         return (int64_t) value_.number;
-      default:
+      } else {
         return 0;
       }
     }
 
     inline operator float () const {
-      switch (type) {
-      case boolean_:
-        return value_.boolean;
-      case number_:
+      if (type & number_) {
         return (float) value_.number;
-      default:
+      } else {
         return 0;
       }
     }
 
     inline operator double () const {
-      switch (type) {
-      case boolean_:
-        return value_.boolean;
-      case number_:
+      if (type & number_) {
         return (double) value_.number;
-      default:
+      } else {
         return 0;
       }
     }
