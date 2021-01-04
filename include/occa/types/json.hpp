@@ -591,6 +591,39 @@ namespace occa {
     json value;
 
     jsonKeyValue(const std::string &name_,
+                 const bool value_);
+
+    jsonKeyValue(const std::string &name_,
+                 const uint8_t value_);
+
+    jsonKeyValue(const std::string &name_,
+                 const int8_t value_);
+
+    jsonKeyValue(const std::string &name_,
+                 const uint16_t value_);
+
+    jsonKeyValue(const std::string &name_,
+                 const int16_t value_);
+
+    jsonKeyValue(const std::string &name_,
+                 const uint32_t value_);
+
+    jsonKeyValue(const std::string &name_,
+                 const int32_t value_);
+
+    jsonKeyValue(const std::string &name_,
+                 const uint64_t value_);
+
+    jsonKeyValue(const std::string &name_,
+                 const int64_t value_);
+
+    jsonKeyValue(const std::string &name_,
+                 const float value_);
+
+    jsonKeyValue(const std::string &name_,
+                 const double value_);
+
+    jsonKeyValue(const std::string &name_,
                  const primitive &value_);
 
     jsonKeyValue(const std::string &name_,

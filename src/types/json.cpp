@@ -668,6 +668,61 @@ namespace occa {
   }
 
   jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const bool value_) :
+    name(name_),
+    value(value_) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const uint8_t value_) :
+    name(name_),
+    value(value_) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const int8_t value_) :
+    name(name_),
+    value(value_) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const uint16_t value_) :
+    name(name_),
+    value(value_) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const int16_t value_) :
+    name(name_),
+    value(value_) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const uint32_t value_) :
+    name(name_),
+    value(value_) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const int32_t value_) :
+    name(name_),
+    value(value_) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const uint64_t value_) :
+    name(name_),
+    value(value_) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const int64_t value_) :
+    name(name_),
+    value(value_) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const float value_) :
+    name(name_),
+    value(value_) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const double value_) :
+    name(name_),
+    value(value_) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
                              const primitive &value_) :
     name(name_),
     value(value_) {}
