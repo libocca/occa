@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include <occa.hpp>
-#include <occa/mpi.hpp>
+#include <occa/experimental/mpi.hpp>
 
 #if OCCA_MPI_ENABLED
 
