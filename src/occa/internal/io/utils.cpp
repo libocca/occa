@@ -51,20 +51,12 @@ namespace occa {
     static const unsigned char DT_DIR = 'd';
 #endif
 
-    const std::string& cachePath() {
-      static std::string path;
-      if (path.size() == 0) {
-        path = env::OCCA_CACHE_DIR + "cache/";
-      }
-      return path;
+    std::string cachePath() {
+      return env::OCCA_CACHE_DIR + "cache/";
     }
 
-    const std::string& libraryPath() {
-      static std::string path;
-      if (path.size() == 0) {
-        path = env::OCCA_CACHE_DIR + "libraries/";
-      }
-      return path;
+    std::string libraryPath() {
+      return env::OCCA_CACHE_DIR + "libraries/";
     }
 
     std::string currentWorkingDirectory() {

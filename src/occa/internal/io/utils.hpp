@@ -20,8 +20,8 @@ namespace occa {
   }
 
   namespace io {
-    const std::string& cachePath();
-    const std::string& libraryPath();
+    std::string cachePath();
+    std::string libraryPath();
 
     std::string currentWorkingDirectory();
 
