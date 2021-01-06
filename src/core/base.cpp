@@ -263,6 +263,10 @@ namespace occa {
     return getMode(mode);
   }
 
+  int getDeviceCount(const std::string &props) {
+    return getDeviceCount(json::parse(props));
+  }
+
   int getDeviceCount(const occa::json &props) {
     std::string modeName = props["mode"];
     mode_t *mode = getMode(modeName);
