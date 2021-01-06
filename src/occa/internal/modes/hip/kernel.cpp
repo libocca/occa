@@ -85,7 +85,7 @@ namespace occa {
           padding = 0;
         }
 
-        ::memcpy(dataPtr, arg.ptr(), bytes);
+        ::memcpy(dataPtr, &arg.value.value.int64_, bytes);
         dataPtr += bytes;
       }
 
