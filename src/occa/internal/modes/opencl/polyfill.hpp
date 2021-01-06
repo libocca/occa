@@ -5,6 +5,11 @@
 
 #if OCCA_OPENCL_ENABLED
 
+// Remove warnings due to CL_TARGET_OPENCL_VERSION not being set
+#  ifndef CL_TARGET_OPENCL_VERSION
+#    define CL_TARGET_OPENCL_VERSION 220
+#  endif
+
 #  if   (OCCA_OS & OCCA_LINUX_OS)
 #    include <CL/cl.h>
 #    include <CL/cl_gl.h>
