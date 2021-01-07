@@ -30,7 +30,7 @@ namespace occa {
                         cuDeviceGet(&cuDevice, deviceID));
 
         OCCA_CUDA_ERROR("Device: Creating Context",
-                        cuCtxCreate(&cuContext, CU_CTX_SCHED_AUTO, cuDevice));
+                        cuDevicePrimaryCtxRetain(&cuContext, cuDevice));
       }
 
       p2pEnabled = false;
@@ -81,7 +81,7 @@ namespace occa {
       if (cuContext) {
         OCCA_CUDA_DESTRUCTOR_ERROR(
           "Device: Freeing Context",
-          cuCtxDestroy(cuContext)
+          cuDevicePrimaryCtxRelease(cuDevice)
         );
         cuContext = NULL;
       }

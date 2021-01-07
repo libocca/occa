@@ -26,7 +26,6 @@ namespace occa {
   typedef struct _CUstream*             CUstream;
 
   //---[ Enums ]------------------------
-  static const int CU_CTX_SCHED_AUTO = 0;
   static const int CU_DEVICE_CPU = 0;
   static const int CU_EVENT_DEFAULT = 0;
   static const int CU_MEM_ATTACH_GLOBAL = 0;
@@ -118,11 +117,11 @@ namespace occa {
   }
 
   //   ---[ Context ]-------------------
-  inline CUresult cuCtxCreate(CUcontext *pctx, unsigned int flags, CUdevice dev) {
+  inline CUresult cuDevicePrimaryCtxRetain(CUcontext *pctx, CUdevice dev) {
     return OCCA_CUDA_IS_NOT_ENABLED;
   }
 
-  inline CUresult cuCtxDestroy(CUcontext ctx) {
+  inline CUresult cuDevicePrimaryCtxRelease(CUdevice dev) {
     return OCCA_CUDA_IS_NOT_ENABLED;
   }
 
