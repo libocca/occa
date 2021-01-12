@@ -95,7 +95,7 @@ namespace occa {
     }
 
     int getDeviceCountInPlatform(int pID, int type) {
-      cl_uint dCount;
+      cl_uint dCount=0;
 
       cl_platform_id clPID = platformID(pID);
       clGetDeviceIDs(clPID, deviceType(type),
