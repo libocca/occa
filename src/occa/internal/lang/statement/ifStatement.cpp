@@ -69,6 +69,9 @@ namespace occa {
     statementArray ifStatement::getInnerStatements() {
       statementArray arr;
 
+      if (condition) {
+        arr.push(condition);
+      }
       for (statement_t *elifSmnt : elifSmnts) {
         arr.push(elifSmnt);
       }
