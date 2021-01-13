@@ -95,16 +95,13 @@ namespace occa {
     }
 
     int getDeviceCountInPlatform(int pID, int type) {
-      cl_uint dCount;
-
       cl_platform_id clPID = platformID(pID);
+      cl_uint deviceCount = 0;
+      
+      clGetDeviceIDs(clPID, deviceType(type),
+                     0, NULL, &deviceCount);
 
-      OCCA_OPENCL_ERROR("OpenCL: Get Device ID Count",
-                        clGetDeviceIDs(clPID,
-                                       deviceType(type),
-                                       0, NULL, &dCount));
-
-      return dCount;
+      return deviceCount;
     }
 
     cl_device_id deviceID(int pID, int dID, int type) {
