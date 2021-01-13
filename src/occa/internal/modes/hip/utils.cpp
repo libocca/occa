@@ -57,9 +57,14 @@ namespace occa {
       OCCA_HIP_ERROR("Getting HIP device properties",
                      hipGetDeviceProperties(&hipProps, deviceId));
 
-      if (hipProps.gcnArch) {
+      if (hipProps.gcnArch) { // AMD or NVIDIA
+#if HIP_VERSION >= 306
+        return hipProps.gcnArchName;
+#else
         return "gfx" + toString(hipProps.gcnArch);
+#endif
       }
+
       std::string sm = "sm_";
       sm += toString(
         majorVersion >= 0
