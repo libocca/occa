@@ -4,31 +4,13 @@
 #include <iostream>
 
 #include <occa/defines.hpp>
-#include <occa/tools/gc.hpp>
+
+// Unfortunately we need to expose this in include
+#include <occa/utils/gc.hpp>
 
 namespace occa {
   class modeDevice_t; class device;
   class modeStreamTag_t; class streamTag;
-
-  //---[ modeStreamTag_t ]---------------------
-  class modeStreamTag_t : public gc::ringEntry_t {
-  public:
-    gc::ring_t<streamTag> streamTagRing;
-
-    modeDevice_t *modeDevice;
-
-    modeStreamTag_t(modeDevice_t *modeDevice_);
-
-    void dontUseRefs();
-    void addStreamTagRef(streamTag *s);
-    void removeStreamTagRef(streamTag *s);
-    bool needsFree() const;
-
-    //---[ Virtual Methods ]------------
-    virtual ~modeStreamTag_t();
-    //==================================
-  };
-  //====================================
 
   //---[ streamTag ]-----------------------
   class streamTag : public gc::ringEntry_t {

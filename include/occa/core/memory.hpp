@@ -5,9 +5,10 @@
 
 #include <occa/defines.hpp>
 #include <occa/dtype.hpp>
-#include <occa/io/output.hpp>
-#include <occa/tools/gc.hpp>
-#include <occa/tools/properties.hpp>
+#include <occa/types.hpp>
+
+// Unfortunately we need to expose this in include
+#include <occa/utils/gc.hpp>
 
 namespace occa {
   class modeMemory_t; class memory;
@@ -17,93 +18,6 @@ namespace occa {
   typedef std::map<hash_t,occa::memory>   hashedMemoryMap;
   typedef hashedMemoryMap::iterator       hashedMemoryMapIterator;
   typedef hashedMemoryMap::const_iterator cHashedMemoryMapIterator;
-
-  namespace uvaFlag {
-    static const int none      = 0;
-    static const int isManaged = (1 << 0);
-    static const int inDevice  = (1 << 1);
-    static const int isStale   = (1 << 2);
-  }
-
-  //---[ modeMemory_t ]---------------------
-  class modeMemory_t : public gc::ringEntry_t {
-  public:
-    int memInfo;
-    occa::properties properties;
-
-    gc::ring_t<memory> memoryRing;
-
-    char *ptr;
-    char *uvaPtr;
-
-    occa::modeDevice_t *modeDevice;
-
-    const dtype_t *dtype_;
-    udim_t size;
-    bool isOrigin;
-
-    modeMemory_t(modeDevice_t *modeDevice_,
-                 udim_t size_,
-                 const occa::properties &properties_);
-
-    void dontUseRefs();
-    void addMemoryRef(memory *mem);
-    void removeMemoryRef(memory *mem);
-    bool needsFree() const;
-
-    bool isManaged() const;
-    bool inDevice() const;
-    bool isStale() const;
-
-    //---[ Virtual Methods ]------------
-    virtual ~modeMemory_t() = 0;
-
-    virtual kernelArg makeKernelArg() const = 0;
-
-    virtual modeMemory_t* addOffset(const dim_t offset) = 0;
-
-    virtual void* getPtr(const occa::properties &props);
-
-    virtual void copyTo(void *dest,
-                        const udim_t bytes,
-                        const udim_t offset = 0,
-                        const occa::properties &props = occa::properties()) const = 0;
-
-    virtual void copyFrom(const void *src,
-                          const udim_t bytes,
-                          const udim_t offset = 0,
-                          const occa::properties &props = occa::properties()) = 0;
-
-    virtual void copyFrom(const modeMemory_t *src,
-                          const udim_t bytes,
-                          const udim_t destOffset = 0,
-                          const udim_t srcOffset = 0,
-                          const occa::properties &props = occa::properties()) = 0;
-
-    virtual void detach() = 0;
-    //==================================
-
-    //---[ Friend Functions ]-----------
-    friend void memcpy(void *dest, void *src,
-                       const dim_t bytes,
-                       const occa::properties &props);
-
-    friend void startManaging(void *ptr);
-    friend void stopManaging(void *ptr);
-
-    friend void syncToDevice(void *ptr, const dim_t bytes);
-    friend void syncToHost(void *ptr, const dim_t bytes);
-
-    friend void syncMemToDevice(occa::modeMemory_t *mem,
-                                const dim_t bytes,
-                                const dim_t offset);
-
-    friend void syncMemToHost(occa::modeMemory_t *mem,
-                              const dim_t bytes,
-                              const dim_t offset);
-  };
-  //====================================
-
 
   //---[ memory ]-----------------------
   class memory : public gc::ringEntry_t {
@@ -144,10 +58,10 @@ namespace occa {
     const TM* ptr() const;
 
     template <class TM = void>
-    TM* ptr(const occa::properties &props);
+    TM* ptr(const occa::json &props);
 
     template <class TM = void>
-    const TM* ptr(const occa::properties &props) const;
+    const TM* ptr(const occa::json &props) const;
 
     modeMemory_t* getModeMemory() const;
     modeDevice_t* getModeDevice() const;
@@ -157,7 +71,7 @@ namespace occa {
     operator kernelArg() const;
 
     const std::string& mode() const;
-    const occa::properties& properties() const;
+    const occa::json& properties() const;
 
     const dtype_t& dtype() const;
 
@@ -166,9 +80,7 @@ namespace occa {
 
     template <class TM>
     udim_t length() const {
-      return (modeMemory
-              ? (modeMemory->size / sizeof(TM))
-              : 0);
+      return size() / sizeof(TM);
     }
 
     //---[ UVA ]------------------------
@@ -200,36 +112,36 @@ namespace occa {
     void copyFrom(const void *src,
                   const dim_t bytes = -1,
                   const dim_t offset = 0,
-                  const occa::properties &props = occa::properties());
+                  const occa::json &props = occa::json());
 
     void copyFrom(const memory src,
                   const dim_t bytes = -1,
                   const dim_t destOffset = 0,
                   const dim_t srcOffset = 0,
-                  const occa::properties &props = occa::properties());
+                  const occa::json &props = occa::json());
 
     void copyTo(void *dest,
                 const dim_t bytes = -1,
                 const dim_t offset = 0,
-                const occa::properties &props = occa::properties()) const;
+                const occa::json &props = occa::json()) const;
 
     void copyTo(const memory dest,
                 const dim_t bytes = -1,
                 const dim_t destOffset = 0,
                 const dim_t srcOffset = 0,
-                const occa::properties &props = occa::properties()) const;
+                const occa::json &props = occa::json()) const;
 
     void copyFrom(const void *src,
-                  const occa::properties &props);
+                  const occa::json &props);
 
     void copyFrom(const memory src,
-                  const occa::properties &props);
+                  const occa::json &props);
 
     void copyTo(void *dest,
-                const occa::properties &props) const;
+                const occa::json &props) const;
 
     void copyTo(const memory dest,
-                const occa::properties &props) const;
+                const occa::json &props) const;
 
     occa::memory as(const dtype_t &dtype_) const;
 
@@ -246,13 +158,6 @@ namespace occa {
   std::ostream& operator << (std::ostream &out,
                            const occa::memory &memory);
 
-  namespace cpu {
-    occa::memory wrapMemory(occa::device dev,
-                            void *ptr,
-                            const udim_t bytes,
-                            const occa::properties &props = occa::properties());
-  }
-
   template <>
   void* memory::ptr<void>();
 
@@ -260,10 +165,10 @@ namespace occa {
   const void* memory::ptr<void>() const;
 
   template <>
-  void* memory::ptr<void>(const occa::properties &props);
+  void* memory::ptr<void>(const occa::json &props);
 
   template <>
-  const void* memory::ptr<void>(const occa::properties &props) const;
+  const void* memory::ptr<void>(const occa::json &props) const;
 }
 
 #include "memory.tpp"

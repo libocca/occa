@@ -13,7 +13,7 @@ PROJ_DIR := $(OCCA_DIR)
 %:   %.cpp
 %:   %.mm
 
-include $(OCCA_DIR)/scripts/Makefile
+include $(OCCA_DIR)/scripts/build/Makefile
 
 #---[ Working Paths ]-----------------------------
 ifeq ($(usingWinux),0)
@@ -23,9 +23,7 @@ else
   sharedFlag += $(picFlag)
 endif
 
-# [-L$OCCA_DIR/lib -locca] are kept for applications
-#   using $OCCA_DIR/scripts/Makefile
-paths += -I$(srcPath)
+# [-L$OCCA_DIR/lib -locca] are kept for examples using $OCCA_DIR/scripts/build/Makefile
 paths := $(filter-out -L$(OCCA_DIR)/lib,$(paths))
 linkerFlags := $(filter-out -locca,$(linkerFlags))
 
@@ -48,12 +46,9 @@ pthreadFlag := $(pthreadFlag)
 
 
 #---[ Compilation Variables ]---------------------
-srcToObject     = $(subst $(PROJ_DIR)/src,$(PROJ_DIR)/obj,$(1:.cpp=.o))
-
-dontCompile = $(OCCA_DIR)/src/core/kernelOperators.cpp $(OCCA_DIR)/src/tools/runFunction.cpp
+srcToObject  = $(subst $(PROJ_DIR)/src,$(PROJ_DIR)/obj,$(1:.cpp=.o))
 
 sources      = $(realpath $(shell find $(PROJ_DIR)/src -type f -name '*.cpp'))
-sources     := $(filter-out $(dontCompile),$(sources))
 headers      = $(realpath $(shell find $(PROJ_DIR)/include -type f -name '*.hpp' -o -name "*.h"))
 testSources  = $(realpath $(shell find $(PROJ_DIR)/tests/src -type f -name '*.cpp'))
 testSources := $(filter-out $(testPath)/src/fortran/%.cpp,$(testSources))
@@ -91,7 +86,7 @@ endif
 COMPILED_DEFINES     := $(OCCA_DIR)/include/occa/defines/compiledDefines.hpp
 NEW_COMPILED_DEFINES := $(OCCA_DIR)/.compiledDefines
 
-MAKE_COMPILED_DEFINES := $(shell cat "$(OCCA_DIR)/scripts/compiledDefinesTemplate.hpp" | \
+MAKE_COMPILED_DEFINES := $(shell cat "$(OCCA_DIR)/scripts/build/compiledDefinesTemplate.hpp" | \
                                  sed "s,@@OCCA_OS@@,$(OCCA_OS),g;\
                                       s,@@OCCA_USING_VS@@,$(OCCA_USING_VS),g;\
                                       s,@@OCCA_UNSAFE@@,$(OCCA_UNSAFE),g;\
@@ -112,9 +107,10 @@ MAKE_COMPILED_DEFINES := $(shell \
 MAKE_COMPILED_DEFINES := $(shell rm $(NEW_COMPILED_DEFINES))
 
 all: $(objects) $(outputs)
-	@(. $(OCCA_DIR)/include/occa/scripts/shellTools.sh && installOcca)
+	@(. $(OCCA_DIR)/scripts/build/shellTools.sh && installOcca)
 	@echo "> occa info"
-	@$(OCCA_DIR)/bin/occa info
+  # Don't break the build if [occa info] fails
+	@$(OCCA_DIR)/bin/occa info; true
 
 $(COMPILED_DEFINES_CHANGED):
 #=================================================
@@ -122,54 +118,57 @@ $(COMPILED_DEFINES_CHANGED):
 
 #---[ Builds ]------------------------------------
 #  ---[ libocca ]-------------
-$(libPath)/libocca.$(soExt):$(objects) $(headers) $(COMPILED_DEFINES)
-	mkdir -p $(libPath)
-	$(compiler) $(compilerFlags) $(sharedFlag) $(pthreadFlag) $(soNameFlag) -o $(libPath)/libocca.$(soExt) $(flags) $(objects) $(paths) $(linkerFlags)
+$(libPath)/libocca.$(soExt): $(objects) $(headers) $(COMPILED_DEFINES)
+	@mkdir -p $(libPath)
+	@echo " - [lib]  $@"
+	@$(compiler) $(compilerFlags) $(sharedFlag) $(pthreadFlag) $(soNameFlag) -o "$@" $(flags) $(objects) $(paths) $(linkerFlags)
 
 $(libPath)/libocca_fortran.$(soExt): $(fObjects) $(libPath)/libocca.$(soExt)
 	@mkdir -p $(libPath)
-	$(fCompiler) $(fCompilerFlags) $(sharedFlag) $(pthreadFlag) $(fSoNameFlag) -o $@ $^ $(flags) $(fPaths) $(filter-out -locca_fortran, $(fLinkerFlags))
+	@echo " - [lib]  $@"
+	@$(fCompiler) $(fCompilerFlags) $(sharedFlag) $(pthreadFlag) $(fSoNameFlag) -o "$@" $^ $(flags) $(fPaths) $(filter-out -locca_fortran, $(fLinkerFlags))
 
-$(binPath)/occa:$(OCCA_DIR)/bin/occa.cpp $(libPath)/libocca.$(soExt) $(COMPILED_DEFINES_CHANGED)
+$(binPath)/occa: $(OCCA_DIR)/bin/occa.cpp $(libPath)/libocca.$(soExt) $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(binPath)
-	$(compiler) $(compilerFlags) -o $(binPath)/occa -Wl,-rpath,$(libPath) $(flags) $(OCCA_DIR)/bin/occa.cpp $(paths) $(linkerFlags) -L$(OCCA_DIR)/lib -locca
+	@echo " - [bin]  $@"
+	@$(compiler) $(compilerFlags) -o $(binPath)/occa -Wl,-rpath,$(libPath) $(flags) $(OCCA_DIR)/bin/occa.cpp $(paths) $(linkerFlags) -L$(OCCA_DIR)/lib -locca
 #  ===========================
 
-# Sources with C++ headers and template headers
-$(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(OCCA_DIR)/include/occa/%.hpp $(OCCA_DIR)/include/occa/%.tpp $(COMPILED_DEFINES_CHANGED)
+#  ---[ Source ]--------------
+# C++
+$(OCCA_DIR)/obj/%.o: $(OCCA_DIR)/src/%.cpp \
+                     $(wildcard $(OCCA_DIR)/src/%.hpp) \
+                     $(wildcard $(OCCA_DIR)/src/%.tpp) \
+                     $(wildcard $(OCCA_DIR)/include/%.hpp) \
+                     $(wildcard $(OCCA_DIR)/include/%.tpp) \
+                     $(wildcard $(OCCA_DIR)/src/%.h) \
+                     $(wildcard $(OCCA_DIR)/include/%.h) \
+                     $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(abspath $(dir $@))
-	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
+	@echo " - [C++]  $<"
+	@$(compiler) $(compilerFlags) -o "$@" $(flags) -c $(paths) "$<"
 
-# Sources with C++ headers
-$(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(OCCA_DIR)/include/occa/%.hpp $(COMPILED_DEFINES_CHANGED)
+# Objective-C++
+$(OCCA_DIR)/obj/%.o: $(OCCA_DIR)/src/%.mm \
+                     $(OCCA_DIR)/src/%.hpp \
+                     $(OCCA_DIR)/include/%.hpp \
+                     $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(abspath $(dir $@))
-	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
+	@echo " - [ObjC] $<"
+	@clang++ -x objective-c++ -o "$@" $(flags) -c $(paths) "$<"
 
-# Sources with C headers
-$(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(OCCA_DIR)/include/occa/%.h $(COMPILED_DEFINES_CHANGED)
-	@mkdir -p $(abspath $(dir $@))
-	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
-
-# Objective-C++ sources
-$(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.mm $(OCCA_DIR)/include/occa/%.hpp $(COMPILED_DEFINES_CHANGED)
-	@mkdir -p $(abspath $(dir $@))
-	clang++ -x objective-c++ -o $@ $(flags) -c $(paths) $<
-
-# Header-less sources
-$(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.cpp $(COMPILED_DEFINES_CHANGED)
-	@mkdir -p $(abspath $(dir $@))
-	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
-
-# Fortran sources
-include $(OCCA_DIR)/scripts/Make.fortran_rules
-$(OCCA_DIR)/obj/%.o:$(OCCA_DIR)/src/%.f90
+# Fortran
+include $(OCCA_DIR)/scripts/build/Make.fortran_rules
+$(OCCA_DIR)/obj/%.o: $(OCCA_DIR)/src/%.f90
 	@mkdir -p $(modPath)
 	@mkdir -p $(abspath $(dir $@))
-	$(fCompiler) $(fCompilerFlags) -o $@ $(flags) -c $(fPaths) $<
+	@echo " - [F90]  $<"
+	@$(fCompiler) $(fCompilerFlags) -o "$@" $(flags) -c $(fPaths) "$<"
+#  ===========================
 #=================================================
 
 
-#---[ Test ]--------------------------------------
+#---[ Testing ]-----------------------------------
 tests: $(tests)
 
 test: unit-tests e2e-tests bin-tests
@@ -194,20 +193,24 @@ bin-tests: e2e-tests
 
 $(testPath)/bin/%:$(testPath)/src/%.cpp $(outputs)
 	@mkdir -p $(abspath $(dir $@))
-	$(compiler) $(testFlags) $(pthreadFlag) -o $@ -Wl,-rpath,$(libPath) $(flags) $< $(paths) $(linkerFlags) -L$(OCCA_DIR)/lib -locca
+	@echo " - [C++]  $<"
+	@$(compiler) $(testFlags) $(pthreadFlag) -o "$@" -Wl,-rpath,$(libPath) $(flags) "$<" $(paths) $(linkerFlags) -L$(OCCA_DIR)/lib -locca
 
-# Fortran tests
+#  ---[ Fortran ]-------------
 fTests: $(fTests)
 
 $(objPath)/%.o: $(testPath)/src/fortran/typedefs_helper.cpp
 	@mkdir -p $(abspath $(dir $@))
-	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
+	@echo " - [F90]  $<"
+	@$(compiler) $(compilerFlags) -o "$@" $(flags) -c $(paths) "$<"
 
 $(testPath)/bin/fortran/typedefs: $(objPath)/tests/fortran/typedefs_helper.o
 
 $(testPath)/bin/%: $(testPath)/src/%.f90 $(libPath)/libocca_fortran.$(soExt)
 	@mkdir -p $(abspath $(dir $@))
-	$(fCompiler) $(fCompilerFlags) -o $@ $^ -Wl,-rpath,$(libPath) $(flags) $(fPaths) $(fLinkerFlags)
+	@echo " - [F90]  $<"
+	@$(fCompiler) $(fCompilerFlags) -o "$@" $^ -Wl,-rpath,$(libPath) $(flags) $(fPaths) $(fLinkerFlags)
+#  ===========================
 #=================================================
 
 

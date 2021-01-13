@@ -1,7 +1,13 @@
 #include <iostream>
 
 #include <occa.hpp>
-#include <occa/types/fp.hpp>
+
+//---[ Internal Tools ]-----------------
+// Note: These headers are not officially supported
+//       Please don't rely on it outside of the occa examples
+#include <occa/internal/utils/cli.hpp>
+#include <occa/internal/utils/testing.hpp>
+//======================================
 
 occa::json parseArgs(int argc, const char **argv);
 
@@ -56,9 +62,6 @@ int main(int argc, const char **argv) {
   return 0;
 }
 occa::json parseArgs(int argc, const char **argv) {
-  // Note:
-  //   occa::cli is not supported yet, please don't rely on it
-  //   outside of the occa examples
   occa::cli::parser parser;
   parser
     .withDescription(
@@ -66,9 +69,9 @@ occa::json parseArgs(int argc, const char **argv) {
     )
     .addOption(
       occa::cli::option('d', "device",
-                        "Device properties (default: \"mode: 'Serial'\")")
+                        "Device properties (default: \"{mode: 'Serial'}\")")
       .withArg()
-      .withDefaultValue("mode: 'CUDA', device_id: 0")
+      .withDefaultValue("{mode: 'CUDA', device_id: 0}")
     )
     .addOption(
       occa::cli::option('v', "verbose",

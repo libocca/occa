@@ -3,5 +3,6 @@
 
 #include <occa/dtype/dtype.hpp>
 #include <occa/dtype/builtins.hpp>
+#include <occa/dtype/utils.hpp>
 
 #endif

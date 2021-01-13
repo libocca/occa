@@ -1,18 +1,18 @@
-#include <occa/c/types.hpp>
+#include <occa/internal/c/types.hpp>
 #include <occa/c/dtype.h>
 
 OCCA_START_EXTERN_C
 
 //-----[ Methods ]----------------------
-OCCA_LFUNC occaDtype OCCA_RFUNC occaCreateDtype(const char *name,
-                                                const int bytes) {
+occaDtype occaCreateDtype(const char *name,
+                          const int bytes) {
   return occa::c::newOccaType(
     *(new occa::dtype_t(name, bytes))
   );
 }
 
-OCCA_LFUNC occaDtype OCCA_RFUNC occaCreateDtypeTuple(occaDtype dtype,
-                                                     const int size) {
+occaDtype occaCreateDtypeTuple(occaDtype dtype,
+                               const int size) {
   return occa::c::newOccaType(
     *(new occa::dtype_t(
         occa::dtype_t::tuple(occa::c::dtype(dtype), size)
@@ -20,48 +20,48 @@ OCCA_LFUNC occaDtype OCCA_RFUNC occaCreateDtypeTuple(occaDtype dtype,
   );
 }
 
-OCCA_LFUNC const char* OCCA_RFUNC occaDtypeName(occaDtype dtype) {
+const char* occaDtypeName(occaDtype dtype) {
   return occa::c::dtype(dtype).name().c_str();
 }
 
-OCCA_LFUNC int OCCA_RFUNC occaDtypeBytes(occaDtype dtype) {
+int occaDtypeBytes(occaDtype dtype) {
   return occa::c::dtype(dtype).bytes();
 }
 
-OCCA_LFUNC void OCCA_RFUNC occaDtypeRegisterType(occaDtype dtype) {
+void occaDtypeRegisterType(occaDtype dtype) {
   occa::c::dtype(dtype).registerType();
 }
 
-OCCA_LFUNC bool OCCA_RFUNC occaDtypeIsRegistered(occaDtype dtype) {
+bool occaDtypeIsRegistered(occaDtype dtype) {
   return occa::c::dtype(dtype).isRegistered();
 }
 
-OCCA_LFUNC void OCCA_RFUNC occaDtypeAddField(occaDtype dtype,
-                                             const char *field,
-                                             occaDtype fieldType) {
+void occaDtypeAddField(occaDtype dtype,
+                       const char *field,
+                       occaDtype fieldType) {
   occa::dtype_t &dtype_ = occa::c::dtype(dtype);
   dtype_.addField(field,
                   occa::c::dtype(fieldType));
 }
 
-OCCA_LFUNC bool OCCA_RFUNC occaDtypesAreEqual(occaDtype a,
-                                              occaDtype b) {
+bool occaDtypesAreEqual(occaDtype a,
+                        occaDtype b) {
   return (occa::c::dtype(a) == occa::c::dtype(b));
 }
 
-OCCA_LFUNC bool OCCA_RFUNC occaDtypesMatch(occaDtype a,
-                                           occaDtype b) {
+bool occaDtypesMatch(occaDtype a,
+                     occaDtype b) {
   return occa::c::dtype(a).matches(occa::c::dtype(b));
 }
 
-OCCA_LFUNC occaDtype OCCA_RFUNC occaDtypeFromJson(occaJson json) {
+occaDtype occaDtypeFromJson(occaJson json) {
   return occa::c::newOccaType(
     *(new occa::dtype_t(
         occa::dtype_t::fromJson(occa::c::json(json))
       ))
   );
 }
-OCCA_LFUNC occaDtype OCCA_RFUNC occaDtypeFromJsonString(const char *str) {
+occaDtype occaDtypeFromJsonString(const char *str) {
   return occa::c::newOccaType(
     *(new occa::dtype_t(
         occa::dtype_t::fromJson(std::string(str))
@@ -69,10 +69,10 @@ OCCA_LFUNC occaDtype OCCA_RFUNC occaDtypeFromJsonString(const char *str) {
   );
 }
 
-OCCA_LFUNC occaJson OCCA_RFUNC occaDtypeToJson(occaDtype dtype) {
+occaJson occaDtypeToJson(occaDtype dtype) {
   occa::dtype_t &dtype_ = occa::c::dtype(dtype);
   return occa::c::newOccaType(
-    *(new occa::json(dtype_.toJson())),
+    *(new occa::json(occa::dtype::toJson(dtype_))),
     true
   );
 }

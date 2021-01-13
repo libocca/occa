@@ -1,20 +1,20 @@
 #include <iostream>
 
 #include <occa.hpp>
-#include <occa/types/fp.hpp>
+
+//---[ Internal Tools ]-----------------
+// Note: These headers are not officially supported
+//       Please don't rely on it outside of the occa examples
+#include <occa/internal/utils/cli.hpp>
+#include <occa/internal/utils/testing.hpp>
+//======================================
 
 occa::json parseArgs(int argc, const char **argv);
 
 int main(int argc, const char **argv) {
   occa::json args = parseArgs(argc, argv);
 
-  // occa::setDevice("mode: 'Serial'");
-  // occa::setDevice("mode: 'OpenMP'");
-  // occa::setDevice("mode: 'CUDA'  , device_id: 0");
-  // occa::setDevice("mode: 'OpenCL', platform_id: 0, device_id: 0");
-   occa::setDevice("mode: 'dpcpp', platform_id: 2, device_id: 0");
-  // occa::setDevice("mode: 'Metal', device_id: 0");
- // occa::setDevice((std::string) args["options/device"]);
+  occa::setDevice((std::string) args["options/device"]);
 
   // Choosing something not divisible by 256
   int entries = 10000;
@@ -23,6 +23,7 @@ int main(int argc, const char **argv) {
 
   float *vec      = new float[entries];
   float *blockSum = new float[blocks];
+  float atomicSum = 0;
 
   float sum = 0;
 
@@ -37,24 +38,36 @@ int main(int argc, const char **argv) {
   }
 
   // Allocate memory on the device
-  occa::memory o_vec      = occa::malloc<float>(entries);
-  occa::memory o_blockSum = occa::malloc<float>(blocks);
+  occa::memory o_vec       = occa::malloc<float>(entries);
+  occa::memory o_blockSum  = occa::malloc<float>(blocks);
+  occa::memory o_atomicSum = occa::malloc<float>(1, &atomicSum);
 
   // Pass value of 'block' at kernel compile-time
-  occa::properties reductionProps;
-  reductionProps["defines/block"] = block;
+  occa::json reductionProps({
+    {"defines/block", block},
+  });
 
-  occa::kernel reduction = occa::buildKernel("reduction.okl",
-                                             "reduction",
-                                             reductionProps);
+  occa::kernel reductionWithSharedMemory = (
+    occa::buildKernel("reduction.okl",
+                      "reductionWithSharedMemory",
+                      reductionProps)
+  );
+
+  occa::kernel reductionWithAtomics = (
+    occa::buildKernel("reduction.okl",
+                      "reductionWithAtomics",
+                      reductionProps)
+  );
 
   // Host -> Device
   o_vec.copyFrom(vec);
-  reduction.setRunDims(blocks, 1);
-  reduction(entries, o_vec, o_blockSum);
+
+  reductionWithSharedMemory(entries, o_vec, o_blockSum);
+  reductionWithAtomics(entries, o_vec, o_atomicSum);
 
   // Host <- Device
   o_blockSum.copyTo(blockSum);
+  o_atomicSum.copyTo(&atomicSum);
 
   // Finalize the reduction in the host
   for (int i = 1; i < blocks; ++i) {
@@ -62,15 +75,31 @@ int main(int argc, const char **argv) {
   }
 
   // Validate
+  bool hasError = false;
   if (!occa::areBitwiseEqual(blockSum[0], sum)) {
     std::cout << "sum      = " << sum << '\n'
               << "blockSum = " << blockSum[0] << '\n';
 
-    std::cout << "Reduction failed\n";
-    throw 1;
+    std::cout << "(Shared) Reduction failed\n";
+    hasError = true;
   }
   else {
-    std::cout << "Reduction = " << blockSum[0] << '\n';
+    std::cout << "(Shared) Reduction = " << blockSum[0] << '\n';
+  }
+
+  if (!occa::areBitwiseEqual(atomicSum, sum)) {
+    std::cout << "sum       = " << sum << '\n'
+              << "atomicSum = " << atomicSum << '\n';
+
+    std::cout << "(Atomic) Reduction failed\n";
+    hasError = true;
+  }
+  else {
+    std::cout << "(Atomic) Reduction = " << blockSum[0] << '\n';
+  }
+
+  if (hasError) {
+    throw 1;
   }
 
   // Free host memory
@@ -83,9 +112,6 @@ int main(int argc, const char **argv) {
 }
 
 occa::json parseArgs(int argc, const char **argv) {
-  // Note:
-  //   occa::cli is not supported yet, please don't rely on it
-  //   outside of the occa examples
   occa::cli::parser parser;
   parser
     .withDescription(
@@ -93,9 +119,9 @@ occa::json parseArgs(int argc, const char **argv) {
     )
     .addOption(
       occa::cli::option('d', "device",
-                        "Device properties (default: \"mode: 'Serial'\")")
+                        "Device properties (default: \"{mode: 'Serial'}\")")
       .withArg()
-      .withDefaultValue("mode: 'Serial'")
+      .withDefaultValue("{mode: 'Serial'}")
     )
     .addOption(
       occa::cli::option('v', "verbose",

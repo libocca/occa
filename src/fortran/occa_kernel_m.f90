@@ -1,8 +1,8 @@
 ! --------------[ DO NOT EDIT ]--------------
 !  THIS IS AN AUTOMATICALLY GENERATED FILE
 !  EDIT:
-!    scripts/create_fortran_kernel_module.py
-!    scripts/occa_kernel_m.f90.in
+!    scripts/codegen/create_fortran_kernel_module.py
+!    scripts/codegen/occa_kernel_m.f90.in
 ! ===========================================
 module occa_kernel_m
   ! occa/c/kernel.h
@@ -20,10 +20,10 @@ module occa_kernel_m
       type(occaKernel), value :: kernel
     end function
 
-    ! occaProperties occaKernelGetProperties(occaKernel kernel);
-    type(occaProperties) function occaKernelGetProperties(kernel) &
+    ! occaJson occaKernelGetProperties(occaKernel kernel);
+    type(occaJson) function occaKernelGetProperties(kernel) &
                                   bind(C, name="occaKernelGetProperties")
-      import occaKernel, occaProperties
+      import occaKernel, occaJson
       implicit none
       type(occaKernel), value :: kernel
     end function

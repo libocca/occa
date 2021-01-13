@@ -1,0 +1,31 @@
+#---[ Paths/Flags ]-------------------------------
+# OCCA (global) library path
+fPaths = -L$(OCCA_DIR)/lib
+
+# Extra (user-supplied) include and library paths
+fPaths += $(foreach path, $(subst :, ,$(OCCA_INCLUDE_PATH)), -I$(path))
+fPaths += $(foreach path, $(subst :, ,$(OCCA_LIBRARY_PATH)), -L$(path))
+
+# OCCA (global) Fortran module path - add as include path to allow for
+#   specifying a local project module path)
+fPaths += -I$(subst $(PROJ_DIR),$(OCCA_DIR),$(modPath))
+
+fLinkerFlags += $(fCppFlag) -locca -locca_fortran
+
+fSoNameFlag = $(subst libocca,libocca_fortran,$(soNameFlag))
+#=================================================
+
+
+#---[ Source/Object files ]-----------------------
+#  ---[ libocca_fortran ]-------------
+#  Fortran source files
+fSources     = $(shell find $(OCCA_DIR)/src/fortran -type f -iname '*.f90')
+fSrcToObject = $(subst $(OCCA_DIR)/src,$(objPath),$(1:.f90=.o))
+fObjects     = $(call fSrcToObject,$(fSources))
+#  ===================================
+
+#  ---[ Fortran tests ]---------------
+fTestSources = $(realpath $(shell find $(PROJ_DIR)/tests/src -type f -name '*.f90'))
+fTests       = $(subst $(testPath)/src,$(testPath)/bin,$(fTestSources:.f90=))
+#  ===================================
+#=================================================

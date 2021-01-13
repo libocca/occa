@@ -1,8 +1,12 @@
 #include <iostream>
 
 #include <occa.hpp>
-// Has OpenCL includes
-#include <occa/modes/opencl/utils.hpp>
+
+//---[ Internal Tools ]-----------------
+// Note: These headers are not officially supported
+//       Please don't rely on it outside of the occa examples
+#include <occa/internal/modes/opencl/utils.hpp>
+//======================================
 
 int main(int argc, char **argv) {
   int entries = 5;

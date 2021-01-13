@@ -36,8 +36,8 @@ program main
   end if
 
   ! Set OCCA device info
-  !info = "mode: 'Serial'"
-  info = "mode: 'OpenMP', schedule: 'compact', chunk: 2"
+  !info = "{mode: 'Serial'}"
+  info = "{mode: 'OpenMP', schedule: 'compact', chunk: 2}"
 
   ! Print device infos
   if(myid == 0) then

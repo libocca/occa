@@ -14,13 +14,13 @@ module occa_memory_m
       type(occaMemory), value :: memory
     end function
 
-    ! void* occaMemoryPtr(occaMemory memory, occaProperties props);
+    ! void* occaMemoryPtr(occaMemory memory, occaJson props);
     type(C_void_ptr) function occaMemoryPtr(memory, props) &
                               bind(C, name="occaMemoryPtr")
-      import occaMemory, occaProperties, C_void_ptr
+      import occaMemory, occaJson, C_void_ptr
       implicit none
       type(occaMemory), value :: memory
-      type(occaProperties), value :: props
+      type(occaJson), value :: props
     end function
 
     ! occaDevice occaMemoryGetDevice(occaMemory memory);
@@ -31,10 +31,10 @@ module occa_memory_m
       type(occaMemory), value :: memory
     end function
 
-    ! occaProperties occaMemoryGetProperties(occaMemory memory);
-    type(occaProperties) function occaMemoryGetProperties(memory) &
+    ! occaJson occaMemoryGetProperties(occaMemory memory);
+    type(occaJson) function occaMemoryGetProperties(memory) &
                                   bind(C, name="occaMemoryGetProperties")
-      import occaMemory, occaProperties
+      import occaMemory, occaJson
       implicit none
       type(occaMemory), value :: memory
     end function
@@ -125,15 +125,15 @@ module occa_memory_m
     ! void occaMemcpy(void *dest,
     !                 const void *src,
     !                 const occaUDim_t bytes,
-    !                 occaProperties props);
+    !                 occaJson props);
     subroutine occaMemcpy(dest, src, bytes, props) &
                bind(C, name="occaMemcpy")
-      import occaMemory, C_void_ptr, occaUDim_t, occaProperties
+      import occaMemory, C_void_ptr, occaUDim_t, occaJson
       implicit none
       type(occaMemory), value :: dest
       type(C_void_ptr), value, intent(in) :: src
       integer(occaUDim_t), value, intent(in) :: bytes
-      type(occaProperties), value :: props
+      type(occaJson), value :: props
     end subroutine
 
     ! void occaCopyMemToMem(occaMemory dest,
@@ -141,45 +141,45 @@ module occa_memory_m
     !                       const occaUDim_t bytes,
     !                       const occaUDim_t destOffset,
     !                       const occaUDim_t srcOffset,
-    !                       occaProperties props);
+    !                       occaJson props);
     subroutine occaCopyMemToMem(dest, src, bytes, destOffset, srcOffset, props) &
                bind(C, name="occaCopyMemToMem")
-      import occaMemory, C_void_ptr, occaUDim_t, occaProperties
+      import occaMemory, C_void_ptr, occaUDim_t, occaJson
       implicit none
       type(occaMemory), value :: dest
       type(C_void_ptr), value, intent(in) :: src
       integer(occaUDim_t), value, intent(in) :: bytes, destOffset, srcOffset
-      type(occaProperties), value :: props
+      type(occaJson), value :: props
     end subroutine
 
     ! void occaCopyPtrToMem(occaMemory dest,
     !                       const void *src,
     !                       const occaUDim_t bytes,
     !                       const occaUDim_t offset,
-    !                       occaProperties props);
+    !                       occaJson props);
     subroutine occaCopyPtrToMem(dest, src, bytes, offset, props) &
                bind(C, name="occaCopyPtrToMem")
-      import occaMemory, C_void_ptr, occaUDim_t, occaProperties
+      import occaMemory, C_void_ptr, occaUDim_t, occaJson
       implicit none
       type(occaMemory), value :: dest
       type(C_void_ptr), value, intent(in) :: src
       integer(occaUDim_t), value, intent(in) :: bytes, offset
-      type(occaProperties), value :: props
+      type(occaJson), value :: props
     end subroutine
 
     ! void occaCopyMemToPtr(void *dest,
     !                       occaMemory src,
     !                       const occaUDim_t bytes,
     !                       const occaUDim_t offset,
-    !                       occaProperties props);
+    !                       occaJson props);
     subroutine occaCopyMemToPtr(dest, src, bytes, offset, props) &
                bind(C, name="occaCopyMemToPtr")
-      import C_void_ptr, occaMemory, occaUDim_t, occaProperties
+      import C_void_ptr, occaMemory, occaUDim_t, occaJson
       implicit none
       type(C_void_ptr), value :: dest
       type(occaMemory), value :: src
       integer(occaUDim_t), value, intent(in) :: bytes, offset
-      type(occaProperties), value :: props
+      type(occaJson), value :: props
     end subroutine
 
 
@@ -201,15 +201,15 @@ module occa_memory_m
     ! occaMemory occaWrapCpuMemory(occaDevice device,
     !                              void *ptr,
     !                              occaUDim_t bytes,
-    !                              occaProperties props);
+    !                              occaJson props);
     type(occaMemory) function occaWrapCpuMemory(device, ptr, bytes, props) &
                               bind(C, name="occaWrapCpuMemory")
-      import occaMemory, occaDevice, C_void_ptr, occaUDim_t, occaProperties
+      import occaMemory, occaDevice, C_void_ptr, occaUDim_t, occaJson
       implicit none
       type(occaDevice), value :: device
       type(C_void_ptr), value :: ptr
       integer(occaUDim_t), value, intent(in) :: bytes
-      type(occaProperties), value :: props
+      type(occaJson), value :: props
     end function
   end interface
 

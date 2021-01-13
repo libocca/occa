@@ -2,19 +2,17 @@
 
 #include <occa.hpp>
 #include <occa.h>
-#include <occa/c/types.hpp>
-#include <occa/tools/testing.hpp>
+#include <occa/internal/c/types.hpp>
+#include <occa/internal/utils/testing.hpp>
 
 void testInit();
 void testUvaMethods();
 void testCopyMethods();
-void testInteropMethods();
 
 int main(const int argc, const char **argv) {
   testInit();
   testUvaMethods();
   testCopyMethods();
-  testInteropMethods();
 
   return 0;
 }
@@ -27,8 +25,8 @@ void testInit() {
   data[2] = 2;
 
   occaMemory mem = occaUndefined;
-  occaProperties props = (
-    occaCreatePropertiesFromString("foo: 'bar'")
+  occaJson props = (
+    occaJsonParse("{foo: 'bar'}")
   );
 
   ASSERT_TRUE(occaIsUndefined(mem));
@@ -53,8 +51,8 @@ void testInit() {
   ASSERT_EQ(occa::c::device(occaMemoryGetDevice(mem)),
             occa::host());
 
-  occaProperties memProps = occaMemoryGetProperties(mem);
-  occaType memMode = occaPropertiesGet(memProps, "foo", occaUndefined);
+  occaJson memProps = occaMemoryGetProperties(mem);
+  occaType memMode = occaJsonObjectGet(memProps, "foo", occaUndefined);
   ASSERT_EQ((const char*) occaJsonGetString(memMode),
             (const char*) "bar");
 
@@ -136,8 +134,8 @@ void testCopyMethods() {
   occaMemory mem2 = occaMalloc(bytes2, data2, occaDefault);
   occaMemory mem4 = occaMalloc(bytes4, data4, occaDefault);
 
-  occaProperties props = (
-    occaCreatePropertiesFromString("foo: 'bar'")
+  occaJson props = (
+    occaJsonParse("{foo: 'bar'}")
   );
 
   int *ptr2 = (int*) occaMemoryPtr(mem2, occaDefault);
@@ -228,54 +226,5 @@ void testCopyMethods() {
   delete [] data4;
   occaFreeUvaPtr(o_data2);
   occaFreeUvaPtr(o_data4);
-  occaFree(&props);
-}
-
-void testInteropMethods() {
-  const int entries = 10;
-  const size_t bytes = entries * sizeof(int);
-
-  occaMemory mem1 = occaMalloc(bytes, NULL, occaDefault);
-  occaMemory mem2 = occaMemoryClone(mem1);
-
-  ASSERT_EQ(occaMemorySize(mem1),
-            occaMemorySize(mem2));
-
-  ASSERT_NEQ(occa::c::memory(mem1),
-             occa::c::memory(mem2));
-
-  int *ptr = (int*) occaMemoryPtr(mem2, occaDefault);
-  occaMemoryDetach(mem2);
-
-  for (int i = 0; i < entries; ++i) {
-    ptr[i] = i;
-  }
-
-  mem2 = occaWrapCpuMemory(occaHost(),
-                           ptr,
-                           bytes,
-                           occaDefault);
-
-  mem2 = occaWrapCpuMemory(occaDefault,
-                           ptr,
-                           bytes,
-                           occaDefault);
-
-  occaProperties props = (
-    occaCreatePropertiesFromString("foo: 'bar'")
-  );
-
-  mem2 = occaWrapCpuMemory(occaHost(),
-                           ptr,
-                           bytes,
-                           props);
-
-  mem2 = occaWrapCpuMemory(occaDefault,
-                           ptr,
-                           bytes,
-                           props);
-
-  occaFree(&mem1);
-  occaFree(&mem2);
   occaFree(&props);
 }

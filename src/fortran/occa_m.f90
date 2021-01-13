@@ -4,7 +4,6 @@ module occa
   use occa_types_m
   use occa_base_m
   use occa_dtype_m
-  use occa_properties_m
   use occa_device_m
   use occa_memory_m
   use occa_kernel_m

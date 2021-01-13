@@ -2,8 +2,10 @@
 
 #include <occa.hpp>
 #include <occa.h>
-#include <occa/c/types.hpp>
-#include <occa/tools/testing.hpp>
+
+#include <occa/internal/io.hpp>
+#include <occa/internal/c/types.hpp>
+#include <occa/internal/utils/testing.hpp>
 
 occaKernel addVectors = occaUndefined;
 const std::string addVectorsFile = (
@@ -45,8 +47,8 @@ void testInit() {
 }
 
 void testInfo() {
-  occaProperties props = occaKernelGetProperties(addVectors);
-  occaType mode = occaPropertiesGet(props, "mode", occaUndefined);
+  occaJson props = occaKernelGetProperties(addVectors);
+  occaType mode = occaJsonObjectGet(props, "mode", occaUndefined);
   ASSERT_FALSE(occaIsUndefined(mode));
   ASSERT_EQ((const char*) occaJsonGetString(mode),
             (const char*) "Serial");
@@ -84,8 +86,8 @@ void testRun() {
   std::string argKernelFile = (
     occa::env::OCCA_DIR + "tests/files/argKernel.okl"
   );
-  occaProperties kernelProps = occaCreatePropertiesFromString(
-    "type_validation: false"
+  occaJson kernelProps = occaJsonParse(
+    "{type_validation: false}"
   );
   occaKernel argKernel = (
     occaBuildKernel(argKernelFile.c_str(),

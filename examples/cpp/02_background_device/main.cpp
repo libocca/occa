@@ -1,7 +1,13 @@
 #include <iostream>
 
 #include <occa.hpp>
-#include <occa/types/fp.hpp>
+
+//---[ Internal Tools ]-----------------
+// Note: These headers are not officially supported
+//       Please don't rely on it outside of the occa examples
+#include <occa/internal/utils/cli.hpp>
+#include <occa/internal/utils/testing.hpp>
+//======================================
 
 occa::json parseArgs(int argc, const char **argv);
 
@@ -9,14 +15,10 @@ int main(int argc, const char **argv) {
   occa::json args = parseArgs(argc, argv);
 
   // Other useful functions:
-  //   occa::setDevice("mode: 'OpenMP'")
+  //   occa::setDevice({
+  //    {"mode", "Serial"}
+  //   });
   //   occa::device = occa::getDevice();
-  // Options:
-  //   occa::setDevice("mode: 'Serial'");
-  //   occa::setDevice("mode: 'OpenMP'");
-  //   occa::setDevice("mode: 'CUDA'  , device_id: 0");
-  //   occa::setDevice("mode: 'OpenCL', platform_id: 0, device_id: 0");
-  //   occa::setDevice("mode: 'Metal', device_id: 0");
   //
   // The default device uses "mode: 'Serial'"
   occa::setDevice((std::string) args["options/device"]);
@@ -66,9 +68,6 @@ int main(int argc, const char **argv) {
 }
 
 occa::json parseArgs(int argc, const char **argv) {
-  // Note:
-  //   occa::cli is not supported yet, please don't rely on it
-  //   outside of the occa examples
   occa::cli::parser parser;
   parser
     .withDescription(
@@ -76,9 +75,9 @@ occa::json parseArgs(int argc, const char **argv) {
     )
     .addOption(
       occa::cli::option('d', "device",
-                        "Device properties (default: \"mode: 'Serial'\")")
+                        "Device properties (default: \"{mode: 'Serial'}\")")
       .withArg()
-      .withDefaultValue("mode: 'Serial'")
+      .withDefaultValue("{mode: 'Serial'}")
     )
     .addOption(
       occa::cli::option('v', "verbose",

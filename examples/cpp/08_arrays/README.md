@@ -19,7 +19,7 @@ Example using occa::array objects for easy allocation and host <-> device
 syncing
 
 Options:
-  -d, --device     Device properties (default: "mode: 'Serial'")
+  -d, --device     Device properties (default: "{mode: 'Serial'}")
   -h, --help       Print usage
   -v, --verbose    Compile kernels in verbose mode
 ```

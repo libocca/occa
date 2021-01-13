@@ -1,0 +1,151 @@
+module occa_kernel_m
+  ! occa/c/kernel.h
+
+  use occa_types_m
+
+  implicit none
+
+  interface
+    ! bool occaKernelIsInitialized(occaKernel kernel);
+    logical(kind=C_bool) function occaKernelIsInitialized(kernel) &
+                                  bind(C, name="occaKernelIsInitialized")
+      import occaKernel, C_bool
+      implicit none
+      type(occaKernel), value :: kernel
+    end function
+
+    ! occaJson occaKernelGetProperties(occaKernel kernel);
+    type(occaJson) function occaKernelGetProperties(kernel) &
+         bind(C, name="occaKernelGetProperties")
+      import occaKernel, occaJson
+      implicit none
+      type(occaKernel), value :: kernel
+    end function
+
+    ! occaDevice occaKernelGetDevice(occaKernel kernel);
+    type(occaDevice) function occaKernelGetDevice(kernel) &
+                              bind(C, name="occaKernelGetDevice")
+      import occaKernel, occaDevice
+      implicit none
+      type(occaKernel), value :: kernel
+    end function
+
+    ! const char* occaKernelName(occaKernel kernel);
+    type(C_char_ptr) function occaKernelName(kernel) &
+                              bind(C, name="occaKernelName")
+      import occaKernel, C_char_ptr
+      implicit none
+      type(occaKernel), value :: kernel
+    end function
+
+    ! const char* occaKernelSourceFilename(occaKernel kernel);
+    type(C_char_ptr) function occaKernelSourceFilename(kernel) &
+                              bind(C, name="occaKernelSourceFilename")
+      import occaKernel, C_char_ptr
+      implicit none
+      type(occaKernel), value :: kernel
+    end function
+
+    ! const char* occaKernelBinaryFilename(occaKernel kernel);
+    type(C_char_ptr) function occaKernelBinaryFilename(kernel) &
+                              bind(C, name="occaKernelBinaryFilename")
+      import occaKernel, C_char_ptr
+      implicit none
+      type(occaKernel), value :: kernel
+    end function
+
+    ! const char* occaKernelHash(occaKernel kernel);
+    type(C_char_ptr) function occaKernelHash(kernel) &
+                              bind(C, name="occaKernelHash")
+      import occaKernel, C_char_ptr
+      implicit none
+      type(occaKernel), value :: kernel
+    end function
+
+    ! const char* occaKernelFullHash(occaKernel kernel);
+    type(C_char_ptr) function occaKernelFullHash(kernel) &
+                              bind(C, name="occaKernelFullHash")
+      import occaKernel, C_char_ptr
+      implicit none
+      type(occaKernel), value :: kernel
+    end function
+
+    ! bool occaKernelMaxDims(occaKernel kernel);
+    logical(kind=C_bool) function occaKernelMaxDims(kernel) &
+                                  bind(C, name="occaKernelMaxDims")
+      import occaKernel, C_bool
+      implicit none
+      type(occaKernel), value :: kernel
+    end function
+
+    ! occaDim occaKernelMaxOuterDims(occaKernel kernel);
+    type(occaDim) function occaKernelMaxOuterDims(kernel) &
+                           bind(C, name="occaKernelMaxOuterDims")
+      import occaKernel, occaDim
+      implicit none
+      type(occaKernel), value :: kernel
+    end function
+
+    ! occaDim occaKernelMaxInnerDims(occaKernel kernel);
+    type(occaDim) function occaKernelMaxInnerDims(kernel) &
+                           bind(C, name="occaKernelMaxInnerDims")
+      import occaKernel, occaDim
+      implicit none
+      type(occaKernel), value :: kernel
+    end function
+
+    ! void occaKernelSetRunDims(occaKernel kernel,
+    !                           occaDim outerDims,
+    !                           occaDim innerDims);
+    subroutine occaKernelSetRunDims(kernel, outerDims, innerDims) &
+               bind(C, name="occaKernelSetRunDims")
+      import occaKernel, occaDim
+      implicit none
+      type(occaKernel), value :: kernel
+      type(occaDim), value :: outerDims, innerDims
+    end subroutine
+
+    ! void occaKernelPushArg(occaKernel kernel, occaType arg);
+    subroutine occaKernelPushArg(kernel, arg) bind(C, name="occaKernelPushArg")
+      import occaKernel, occaType
+      implicit none
+      type(occaKernel), value :: kernel
+      type(occaType), value :: arg
+    end subroutine
+
+    ! void occaKernelClearArgs(occaKernel kernel);
+    subroutine occaKernelClearArgs(kernel) bind(C, name="occaKernelClearArgs")
+      import occaKernel, occaType
+      implicit none
+      type(occaKernel), value :: kernel
+    end subroutine
+
+    ! void occaKernelRunFromArgs(occaKernel kernel);
+    subroutine occaKernelRunFromArgs(kernel) &
+               bind(C, name="occaKernelRunFromArgs")
+      import occaKernel
+      implicit none
+      type(occaKernel), value :: kernel
+    end subroutine
+
+    ! void occaKernelVaRun(occaKernel kernel, const int argc, va_list args);
+    ! NOTE: There is no clean way to implement this in Fortran as there is no
+    !       clean way to map va_list (https://en.wikipedia.org/wiki/Stdarg.h)
+  end interface
+
+  interface occaKernelRunN
+    ! `occaKernelRun` is a variadic macro in C:
+    ! void occaKernelRunN(occaKernel kernel, const int argc, ...);
+    !
+    @SUBROUTINE_occaKernelRunN@
+  end interface
+
+  interface occaKernelRun
+    @MODULE_PROCEDURE_occaKernelRun@
+  end interface
+
+contains
+
+  @SUBROUTINE_occaKernelRun@
+
+end module occa_kernel_m

@@ -1,4 +1,13 @@
+#include <iostream>
+
 #include <occa.hpp>
+#include <occa/experimental.hpp>
+
+//---[ Internal Tools ]-----------------
+// Note: These headers are not officially supported
+//       Please don't rely on it outside of the occa examples
+#include <occa/internal/utils/cli.hpp>
+//======================================
 
 template <class TM, const int TMi>
 void printVector(occa::array<TM, TMi> &a);
@@ -137,9 +146,6 @@ void printMatrix(occa::array<TM,TMi> &a) {
 }
 
 occa::json parseArgs(int argc, const char **argv) {
-  // Note:
-  //   occa::cli is not supported yet, please don't rely on it
-  //   outside of the occa examples
   occa::cli::parser parser;
   parser
     .withDescription(
@@ -147,9 +153,9 @@ occa::json parseArgs(int argc, const char **argv) {
     )
     .addOption(
       occa::cli::option('d', "device",
-                        "Device properties (default: \"mode: 'Serial'\")")
+                        "Device properties (default: \"{mode: 'Serial'}\")")
       .withArg()
-      .withDefaultValue("mode: 'Serial'")
+      .withDefaultValue("{mode: 'Serial'}")
     )
     .addOption(
       occa::cli::option('v', "verbose",

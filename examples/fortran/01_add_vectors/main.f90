@@ -14,16 +14,16 @@ program main
   real(C_float), allocatable, target :: a(:), b(:), ab(:)
 
   ! OCCA device, kernel, memory and property objects
-  type(occaDevice)     :: device
-  type(occaKernel)     :: addVectors
-  type(occaMemory)     :: o_a, o_b, o_ab
-  type(occaProperties) :: props
+  type(occaDevice) :: device
+  type(occaKernel) :: addVectors
+  type(occaMemory) :: o_a, o_b, o_ab
+  type(occaJson)   :: props
 
   ! Set default OCCA device info
-  info = "mode: 'Serial'"
-  !info = "mode: 'OpenMP', schedule: 'compact', chunk: 10"
-  !info = "mode: 'CUDA'  , device_id: 0"
-  !info = "mode: 'OpenCL', platform_id: 0, device_id: 0"
+  info = "{mode: 'Serial'}"
+  !info = "{mode: 'OpenMP', schedule: 'compact', chunk: 10}"
+  !info = "{mode: 'CUDA'  , device_id: 0}"
+  !info = "{mode: 'OpenCL', platform_id: 0, device_id: 0}"
 
   ! Parse command arguments
   i = 1
@@ -32,7 +32,7 @@ program main
 
     select case (arg)
       case ("-v", "--verbose")
-        call occaPropertiesSet(occaSettings(), "kernel/verbose", occaTrue)
+        call occaJsonObjectSet(occaSettings(), "kernel/verbose", occaTrue)
       case ("-d", "--device")
         i = i+1
         call get_command_argument(i, info)
@@ -77,8 +77,8 @@ program main
   o_ab = occaDeviceMalloc(device, entries*C_float, C_NULL_ptr, occaDefault)
 
   ! Setup properties that can be passed to the kernel
-  props = occaCreateProperties()
-  call occaPropertiesSet(props, F_C_str("defines/TILE_SIZE"), occaInt(10))
+  props = occaCreateJson()
+  call occaJsonObjectSet(props, F_C_str("defines/TILE_SIZE"), occaInt(10))
 
   ! Compile the kernel at run-time
   addVectors = occaDeviceBuildKernel(device, &
@@ -121,7 +121,7 @@ contains
     write(*,'(a, /)') "Example adding two vectors"
     write(*,'(a, /)') "command-line options:"
     write(*,'(a)')    "  -v, --verbose     Compile kernels in verbose mode"
-    write(*,'(a)')    "  -d, --device      Device properties (default: ""mode: 'Serial'"")"
+    write(*,'(a)')    "  -d, --device      Device properties (default: ""{mode: 'Serial'}"")"
     write(*,'(a)')    "  -h, --help        Print this information and exit"
   end subroutine print_help
 end program main

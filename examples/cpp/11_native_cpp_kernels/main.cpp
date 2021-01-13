@@ -1,7 +1,13 @@
 #include <iostream>
 
 #include <occa.hpp>
-#include <occa/types/fp.hpp>
+
+//---[ Internal Tools ]-----------------
+// Note: These headers are not officially supported
+//       Please don't rely on it outside of the occa examples
+#include <occa/internal/utils/cli.hpp>
+#include <occa/internal/utils/testing.hpp>
+//======================================
 
 occa::json parseArgs(int argc, const char **argv);
 
@@ -20,7 +26,9 @@ int main(int argc, const char **argv) {
     ab[i] = 0;
   }
 
-  occa::device device("mode: 'Serial'");
+  occa::device device({
+    {"mode", "Serial"}
+  });
 
   // Allocate memory on the device
   occa::memory o_a = device.malloc<float>(entries);
@@ -28,8 +36,10 @@ int main(int argc, const char **argv) {
   occa::memory o_ab = device.malloc<float>(entries);
 
   // Compile a regular C++ function at run-time
-  occa::properties kernelProps;
-  kernelProps["okl/enabled"] = false;
+  occa::json kernelProps({
+    {"okl/enabled", false}
+  });
+
   occa::kernel addVectors = device.buildKernel("addVectors.cpp",
                                                "addVectors",
                                                kernelProps);
@@ -63,9 +73,6 @@ int main(int argc, const char **argv) {
 }
 
 occa::json parseArgs(int argc, const char **argv) {
-  // Note:
-  //   occa::cli is not supported yet, please don't rely on it
-  //   outside of the occa examples
   occa::cli::parser parser;
   parser
     .withDescription(

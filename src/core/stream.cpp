@@ -1,45 +1,9 @@
 #include <occa/core/stream.hpp>
 #include <occa/core/device.hpp>
+#include <occa/internal/core/device.hpp>
+#include <occa/internal/core/stream.hpp>
 
 namespace occa {
-  //---[ modeStream_t ]-----------------
-  modeStream_t::modeStream_t(modeDevice_t *modeDevice_,
-                             const occa::properties &properties_) :
-    properties(properties_),
-    modeDevice(modeDevice_) {
-    modeDevice->addStreamRef(this);
-  }
-
-  modeStream_t::~modeStream_t() {
-    // NULL all wrappers
-    while (streamRing.head) {
-      stream *mem = (stream*) streamRing.head;
-      streamRing.removeRef(mem);
-      mem->modeStream = NULL;
-    }
-    // Remove ref from device
-    if (modeDevice) {
-      modeDevice->removeStreamRef(this);
-    }
-  }
-
-  void modeStream_t::dontUseRefs() {
-    streamRing.dontUseRefs();
-  }
-
-  void modeStream_t::addStreamRef(stream *s) {
-    streamRing.addRef(s);
-  }
-
-  void modeStream_t::removeStreamRef(stream *s) {
-    streamRing.removeRef(s);
-  }
-
-  bool modeStream_t::needsFree() const {
-    return streamRing.needsFree();
-  }
-
-  //---[ stream ]-----------------------
   stream::stream() :
     modeStream(NULL) {}
 
@@ -113,8 +77,8 @@ namespace occa {
             : noMode);
   }
 
-  const occa::properties& stream::properties() const {
-    static const occa::properties noProperties;
+  const occa::json& stream::properties() const {
+    static const occa::json noProperties;
     return (modeStream
             ? modeStream->properties
             : noProperties);

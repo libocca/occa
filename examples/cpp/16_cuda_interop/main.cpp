@@ -1,9 +1,13 @@
 #include <iostream>
 
 #include <occa.hpp>
-#include <occa/modes/cuda/utils.hpp>
-
 #include <cuda_runtime_api.h>
+
+//---[ Internal Tools ]-----------------
+// Note: These headers are not officially supported
+//       Please don't rely on it outside of the occa examples
+#include <occa/internal/modes/cuda/utils.hpp>
+//======================================
 
 int main(int argc, char **argv) {
   int entries = 5;

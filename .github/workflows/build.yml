@@ -21,6 +21,15 @@ jobs:
             OCCA_COVERAGE: 1
             OCCA_FORTRAN_ENABLED: 1
 
+          - name: (Ubuntu) CMake + gcc-8
+            os: ubuntu-18.04
+            CC: gcc-8
+            CXX: g++-8
+            CXXFLAGS: -Wno-maybe-uninitialized -Wno-cpp
+            GCOV: gcov-8
+            OCCA_COVERAGE: 1
+            useCMake: true
+
           - name: (Ubuntu) gcc-9
             os: ubuntu-18.04
             CC: gcc-9
@@ -78,20 +87,39 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Compiler info
+      if: ${{ !matrix.useCMake }}
       run: make -j 16 info
 
+    - name: CMake build
+      if: ${{ matrix.useCMake }}
+      run: |
+        mkdir -p ${{runner.workspace}}/occa/build
+        cd ${{runner.workspace}}/occa/build
+        cmake -DENABLE_TESTS=ON -DENABLE_EXAMPLES=ON ${{runner.workspace}}/occa
+        make -j 16
+
     - name: Compile library
+      if: ${{ !matrix.useCMake }}
       run: make -j 16
 
     - name: Compile tests
+      if: ${{ !matrix.useCMake }}
       run: make -j 16 tests
 
     - name: Run unit tests
+      if: ${{ !matrix.useCMake }}
       run: ./tests/run_tests
 
     - name: Run examples
+      if: ${{ !matrix.useCMake }}
       run: ./tests/run_examples
 
+    - name: Run CTests
+      if: ${{ matrix.useCMake }}
+      run: |
+        cd ${{runner.workspace}}/occa/build
+        CTEST_OUTPUT_ON_FAILURE=1 make test
+
     - name: Upload code coverage
-      run: bash <(curl --no-buffer -s https://codecov.io/bash) -x "${GCOV}"
       if: ${{ matrix.OCCA_COVERAGE }}
+      run: bash <(curl --no-buffer -s https://codecov.io/bash) -x "${GCOV}"

@@ -6,12 +6,12 @@ module occa_scope_m
   implicit none
 
   interface
-    ! occaScope occaCreateScope(occaProperties props);
+    ! occaScope occaCreateScope(occaJson props);
     type(occaScope) function occaCreateScope(props) &
                              bind(C, name="occaCreateScope")
-      import occaScope, occaProperties
+      import occaScope, occaJson
       implicit none
-      type(occaProperties), value :: props
+      type(occaJson), value :: props
     end function
 
     ! void occaScopeAdd(occaScope scope, const char *name, occaType value);

@@ -1,7 +1,9 @@
 #include <iostream>
 
 #include <occa.hpp>
-#include <occa/mpi.hpp>
+#include <occa/experimental/mpi.hpp>
+
+#if OCCA_MPI_ENABLED
 
 int main(int argc, char **argv) {
   MPI_Init(&argc, &argv);
@@ -78,3 +80,12 @@ int main(int argc, char **argv) {
 
   MPI_Finalize();
 }
+
+#else
+
+int main(int argc, char **argv) {
+  std::cout << "Warning: OCCA_MPI_ENABLED is set to false" << std::endl;
+  return 0;
+}
+
+#endif

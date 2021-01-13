@@ -1,7 +1,13 @@
 #include <iostream>
 
 #include <occa.hpp>
-#include <occa/types/fp.hpp>
+
+//---[ Internal Tools ]-----------------
+// Note: These headers are not officially supported
+//       Please don't rely on it outside of the occa examples
+#include <occa/internal/utils/cli.hpp>
+#include <occa/internal/utils/testing.hpp>
+//======================================
 
 occa::json parseArgs(int argc, const char **argv);
 
@@ -21,11 +27,11 @@ int main(int argc, const char **argv) {
   }
 
   // Setup the platform and device IDs
-  occa::properties deviceProps;
-  deviceProps["mode"] = "OpenCL";
-  deviceProps["platform_id"] = (int) args["options/platform-id"];
-  deviceProps["device_id"] = (int) args["options/device-id"];
-  occa::device device(deviceProps);
+  occa::device device({
+    {"mode", "OpenCL"},
+    {"platform_id", (int) args["options/platform-id"]},
+    {"device_id", (int) args["options/device-id"]}
+  });
 
   // Allocate memory on the device
   occa::memory o_a = device.malloc<float>(entries);
@@ -33,8 +39,10 @@ int main(int argc, const char **argv) {
   occa::memory o_ab = device.malloc<float>(entries);
 
   // Compile a regular OpenCL kernel at run-time
-  occa::properties kernelProps;
-  kernelProps["okl/enabled"] = false;
+  occa::json kernelProps({
+    {"okl/enabled", false}
+  });
+
   occa::kernel addVectors = device.buildKernel("addVectors.cl",
                                                "addVectors",
                                                kernelProps);
@@ -75,9 +83,6 @@ int main(int argc, const char **argv) {
 }
 
 occa::json parseArgs(int argc, const char **argv) {
-  // Note:
-  //   occa::cli is not supported yet, please don't rely on it
-  //   outside of the occa examples
   occa::cli::parser parser;
   parser
     .withDescription(

@@ -3,6 +3,13 @@
 #include <math.h>
 
 #include <occa.h>
+#include <occa/c/experimental.h>
+
+//---[ Internal Tools ]-----------------
+// Note: These headers are not officially supported
+//       Please don't rely on it outside of the occa examples
+#include <occa/internal/c/cli.h>
+//======================================
 
 occaJson parseArgs(int argc, const char **argv);
 
@@ -30,8 +37,8 @@ int main(int argc, const char **argv) {
     ab[i] = 0;
   }
 
-  occaProperties props = occaCreateProperties();
-  occaPropertiesSet(props,
+  occaJson props = occaCreateJson();
+  occaJsonObjectSet(props,
                     "defines/TILE_SIZE",
                     occaInt(16));
 
@@ -89,7 +96,7 @@ occaJson parseArgs(int argc, const char **argv) {
     "    {"
     "      name: 'device',"
     "      shortname: 'd',"
-    "      description: 'Device properties (default: \"mode: \\'Serial\\'\")',"
+    "      description: 'Device properties (default: \"{ mode: \\'Serial\\' }\")',"
     "      with_arg: true,"
     "      default_value: { mode: 'Serial' },"
     "    },"
@@ -103,8 +110,8 @@ occaJson parseArgs(int argc, const char **argv) {
     "}"
   );
 
-  occaProperties settings = occaSettings();
-  occaPropertiesSet(settings,
+  occaJson settings = occaSettings();
+  occaJsonObjectSet(settings,
                     "kernel/verbose",
                     occaJsonObjectGet(args, "options/verbose", occaBool(0)));
 
