@@ -1,9 +1,9 @@
 #ifndef OCCA_LANG_TYPE_LAMBDA_HEADER
 #define OCCA_LANG_TYPE_LAMBDA_HEADER
 
-#include <occa/lang/type/type.hpp>
-#include <occa/lang/expr/expr.hpp>
-#include <occa/lang/statement/blockStatement.hpp>
+#include <occa/internal/lang/type/type.hpp>
+#include <occa/internal/lang/expr/expr.hpp>
+#include <occa/internal/lang/statement/blockStatement.hpp>
 
 namespace occa {
   namespace lang {

@@ -1,12 +1,12 @@
 #include <stdio.h>
 
-#include <occa/modes/dpcpp/utils.hpp>
-#include <occa/modes/dpcpp/device.hpp>
-#include <occa/modes/dpcpp/memory.hpp>
-#include <occa/modes/dpcpp/kernel.hpp>
-#include <occa/modes/dpcpp/streamTag.hpp>
-#include <occa/io.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/modes/dpcpp/utils.hpp>
+#include <occa/internal/modes/dpcpp/device.hpp>
+#include <occa/internal/modes/dpcpp/memory.hpp>
+#include <occa/internal/modes/dpcpp/kernel.hpp>
+#include <occa/internal/modes/dpcpp/streamTag.hpp>
+#include <occa/internal/io.hpp>
+#include <occa/internal/utils/sys.hpp>
 #include <occa/core/base.hpp>
 
 namespace occa

@@ -1,8 +1,8 @@
 #ifndef OCCA_LANG_STATEMENT_DPCPPSTATEMENT_HEADER
 #define OCCA_LANG_STATEMENT_DPCPPSTATEMENT_HEADER
 
-#include <occa/lang/statement/blockStatement.hpp>
-#include <occa/lang/scope.hpp>
+#include <occa/internal/lang/statement/blockStatement.hpp>
+#include <occa/internal/lang/scope.hpp>
 
 namespace occa
 {

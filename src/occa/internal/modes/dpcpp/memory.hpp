@@ -1,10 +1,9 @@
 #ifndef OCCA_MODES_DPCPP_MEMORY_HEADER
 #define OCCA_MODES_DPCPP_MEMORY_HEADER
 
-#include <occa/core/memory.hpp>
-#include <occa/modes/dpcpp/polyfill.hpp>
-#include <occa/modes/dpcpp/device.hpp>
-#include <CL/sycl.hpp>
+#include <occa/internal/core/memory.hpp>
+#include <occa/internal/modes/dpcpp/polyfill.hpp>
+#include <occa/internal/modes/dpcpp/device.hpp>
 
 namespace occa
 {

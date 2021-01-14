@@ -1,9 +1,8 @@
 #ifndef OCCA_LANG_MODES_WITHLAUNCHERLAMBDA_HEADER
 #define OCCA_LANG_MODES_WITHLAUNCHERLAMBDA_HEADER
 
-#include <occa/lang/parser.hpp>
-#include <occa/lang/modes/serial.hpp>
-#include <occa/lang/transforms/builtins/finders.hpp>
+#include <occa/internal/lang/parser.hpp>
+#include <occa/internal/lang/modes/serial.hpp>
 
 namespace occa {
   namespace lang {

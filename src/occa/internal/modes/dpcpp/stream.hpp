@@ -1,9 +1,8 @@
 #ifndef OCCA_MODES_DPCPP_STREAM_HEADER
 #define OCCA_MODES_DPCPP_STREAM_HEADER
 
-#include <occa/core/stream.hpp>
-#include <occa/modes/dpcpp/polyfill.hpp>
-#include <CL/sycl.hpp>
+#include <occa/internal/core/stream.hpp>
+#include <occa/internal/modes/dpcpp/polyfill.hpp>
 
 namespace occa {
   namespace dpcpp {

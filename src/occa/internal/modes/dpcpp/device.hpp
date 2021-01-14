@@ -1,9 +1,8 @@
 #ifndef OCCA_MODES_DPCPP_DEVICE_HEADER
 #define OCCA_MODES_DPCPP_DEVICE_HEADER
 
-#include <CL/sycl.hpp>
-#include <occa/core/launchedDevice.hpp>
-#include <occa/modes/dpcpp/polyfill.hpp>
+#include <occa/internal/core/launchedDevice.hpp>
+#include <occa/internal/modes/dpcpp/polyfill.hpp>
 
 namespace occa {
   namespace dpcpp {

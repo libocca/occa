@@ -1,10 +1,10 @@
 #include <occa/core/base.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/io.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/modes/dpcpp/kernel.hpp>
-#include <occa/modes/dpcpp/device.hpp>
-#include <occa/modes/dpcpp/utils.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/io.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/internal/modes/dpcpp/kernel.hpp>
+#include <occa/internal/modes/dpcpp/device.hpp>
+#include <occa/internal/modes/dpcpp/utils.hpp>
 
 namespace occa
 {

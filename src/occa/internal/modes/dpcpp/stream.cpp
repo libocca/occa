@@ -1,5 +1,5 @@
-#include <occa/modes/dpcpp/stream.hpp>
-#include <occa/modes/dpcpp/utils.hpp>
+#include <occa/internal/modes/dpcpp/stream.hpp>
+#include <occa/internal/modes/dpcpp/utils.hpp>
 
 namespace occa {
   namespace dpcpp {

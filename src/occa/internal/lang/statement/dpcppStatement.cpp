@@ -1,7 +1,4 @@
-#include <occa/lang/statement/dpcppStatement.hpp>
-
-#include <occa/lang/transforms/builtins/fillExprIdentifiers.hpp>
-#include <occa/lang/transforms/builtins/replacer.hpp>
+#include <occa/internal/lang/statement/dpcppStatement.hpp>
 
 namespace occa {
   namespace lang {

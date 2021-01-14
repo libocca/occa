@@ -1,6 +1,6 @@
 #include <occa/defines.hpp>
-#include <occa/modes/dpcpp/utils.hpp>
-#include <occa/modes/dpcpp/registration.hpp>
+#include <occa/internal/modes/dpcpp/utils.hpp>
+#include <occa/internal/modes/dpcpp/registration.hpp>
 #include <iostream>
 namespace occa {
   namespace dpcpp {

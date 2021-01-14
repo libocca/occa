@@ -1,11 +1,13 @@
+#include <occa/defines.hpp>
+
 #ifndef OCCA_MODES_DPCPP_REGISTRATION_HEADER
 #define OCCA_MODES_DPCPP_REGISTRATION_HEADER
 
-#include <occa/modes.hpp>
-#include <occa/modes/dpcpp/device.hpp>
-#include <occa/modes/dpcpp/kernel.hpp>
-#include <occa/modes/dpcpp/memory.hpp>
-#include <occa/tools/styling.hpp>
+#include <occa/internal/modes.hpp>
+#include <occa/internal/modes/dpcpp/device.hpp>
+#include <occa/internal/modes/dpcpp/kernel.hpp>
+#include <occa/internal/modes/dpcpp/memory.hpp>
+#include <occa/internal/utils/styling.hpp>
 #include <occa/core/base.hpp>
 
 namespace occa {

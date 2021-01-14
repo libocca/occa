@@ -1,7 +1,7 @@
-#include <occa/modes/dpcpp/memory.hpp>
-#include <occa/modes/dpcpp/device.hpp>
-#include <occa/modes/dpcpp/utils.hpp>
-#include <occa/tools/sys.hpp>
+#include <occa/internal/modes/dpcpp/memory.hpp>
+#include <occa/internal/modes/dpcpp/device.hpp>
+#include <occa/internal/modes/dpcpp/utils.hpp>
+#include <occa/internal/utils/sys.hpp>
 
 namespace occa
 {

@@ -1,17 +1,17 @@
 #include <occa/core/base.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/modes/dpcpp/device.hpp>
-#include <occa/modes/dpcpp/kernel.hpp>
-#include <occa/modes/dpcpp/memory.hpp>
-#include <occa/modes/dpcpp/stream.hpp>
-#include <occa/modes/dpcpp/streamTag.hpp>
-#include <occa/modes/dpcpp/utils.hpp>
-#include <occa/modes/serial/device.hpp>
-#include <occa/modes/serial/kernel.hpp>
-#include <occa/lang/kernelMetadata.hpp>
-#include <occa/lang/primitive.hpp>
-#include <occa/lang/modes/dpcpp.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/internal/modes/dpcpp/device.hpp>
+#include <occa/internal/modes/dpcpp/kernel.hpp>
+#include <occa/internal/modes/dpcpp/memory.hpp>
+#include <occa/internal/modes/dpcpp/stream.hpp>
+#include <occa/internal/modes/dpcpp/streamTag.hpp>
+#include <occa/internal/modes/dpcpp/utils.hpp>
+#include <occa/internal/modes/serial/device.hpp>
+#include <occa/internal/modes/serial/kernel.hpp>
+#include <occa/types/primitive.hpp>
+#include <occa/internal/lang/kernelMetadata.hpp>
+#include <occa/internal/lang/modes/dpcpp.hpp>
 
 namespace occa
 {

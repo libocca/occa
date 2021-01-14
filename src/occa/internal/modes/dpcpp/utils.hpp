@@ -3,10 +3,9 @@
 
 #include <iostream>
 
-#include <occa/modes/dpcpp/polyfill.hpp>
-#include <occa/core/device.hpp>
-#include <occa/io/lock.hpp>
-#include <CL/sycl.hpp>
+#include <occa/internal/modes/dpcpp/polyfill.hpp>
+#include <occa/internal/core/device.hpp>
+#include <occa/internal/io/lock.hpp>
 
 namespace occa {
   class streamTag;

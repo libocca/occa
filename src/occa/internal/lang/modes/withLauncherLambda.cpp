@@ -1,10 +1,9 @@
-#include <occa/tools/string.hpp>
-#include <occa/lang/modes/withLauncherLambda.hpp>
-#include <occa/lang/modes/okl.hpp>
-#include <occa/lang/modes/oklForStatement.hpp>
-#include <occa/lang/builtins/attributes.hpp>
-#include <occa/lang/builtins/types.hpp>
-#include <occa/lang/transforms/builtins/replacer.hpp>
+#include <occa/internal/lang/modes/withLauncherLambda.hpp>
+#include <occa/internal/utils/string.hpp>
+#include <occa/internal/lang/modes/okl.hpp>
+#include <occa/internal/lang/modes/oklForStatement.hpp>
+#include <occa/internal/lang/builtins/attributes.hpp>
+#include <occa/internal/lang/builtins/types.hpp>
 
 namespace occa
 {
@@ -45,7 +44,7 @@ namespace occa
           return;
         if (settings.get("okl/validate", true))
         {
-          success = checkKernels(root);
+          success = kernelsAreValid(root);
         }
 
         if (!memoryType)
@@ -513,9 +512,9 @@ namespace occa
         const int argc = (int)newFunction.args.size();
         for (int i = 0; i < argc; ++i)
         {
-          variable_t *oldArg = oldFunction.args[i];
-          variable_t *newArg = newFunction.args[i];
-          replaceVariables(newForSmnt, *oldArg, *newArg);
+          newForSmnt.replaceVariable(
+              *oldFunction.args[i],
+              *newFunction.args[i]);
         }
 
         return &newKernelSmnt;

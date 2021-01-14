@@ -1,7 +1,7 @@
 #ifndef OCCA_LANG_MODES_DPCPP_HEADER
 #define OCCA_LANG_MODES_DPCPP_HEADER
 
-#include <occa/lang/modes/withLauncherLambda.hpp>
+#include <occa/internal/lang/modes/withLauncherLambda.hpp>
 
 namespace occa {
   namespace lang {
