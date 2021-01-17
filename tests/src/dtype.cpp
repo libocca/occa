@@ -3,11 +3,13 @@
 
 void testDtype();
 void testCasting();
+void testGet();
 void testJsonMethods();
 
 int main(const int argc, const char **argv) {
   testDtype();
   testCasting();
+  testGet();
   testJsonMethods();
 
   return 0;
@@ -111,6 +113,21 @@ void testCasting() {
   ASSERT_TRUE(
     occa::dtype::byte.canBeCastedTo(occa::dtype::double2)
   );
+}
+
+void testGet() {
+  ASSERT_EQ(occa::dtype::float_,
+            occa::dtype::get<float>());
+
+  occa::dtypeVector types = occa::dtype::getMany<float, double, int>();
+  ASSERT_EQ(3,
+            (int) types.size());
+  ASSERT_EQ(occa::dtype::float_,
+            types[0]);
+  ASSERT_EQ(occa::dtype::double_,
+            types[1]);
+  ASSERT_EQ(occa::dtype::int_,
+            types[2]);
 }
 
 void testJsonMethods() {
