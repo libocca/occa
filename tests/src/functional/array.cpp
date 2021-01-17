@@ -1,6 +1,6 @@
 #include <occa.hpp>
-#include <occa/experimental.hpp>
-#include <occa/internal/experimental/functional/functionStore.hpp>
+#include <occa/functional.hpp>
+#include <occa/internal/functional/functionStore.hpp>
 #include <occa/internal/utils/testing.hpp>
 
 class context {

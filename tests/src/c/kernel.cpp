@@ -1,7 +1,7 @@
 #define OCCA_DISABLE_VARIADIC_MACROS
 
-#include <occa.hpp>
 #include <occa.h>
+#include <occa.hpp>
 
 #include <occa/internal/io.hpp>
 #include <occa/internal/c/types.hpp>

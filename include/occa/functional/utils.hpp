@@ -1,5 +1,5 @@
-#ifndef OCCA_EXPERIMENTAL_FUNCTIONAL_UTILS_HEADER
-#define OCCA_EXPERIMENTAL_FUNCTIONAL_UTILS_HEADER
+#ifndef OCCA_FUNCTIONAL_UTILS_HEADER
+#define OCCA_FUNCTIONAL_UTILS_HEADER
 
 #define OCCA_FUNCTION(scope, lambda)             \
   ::occa::inferFunction(scope, lambda, #lambda)

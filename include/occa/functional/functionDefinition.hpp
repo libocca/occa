@@ -1,12 +1,12 @@
-#ifndef OCCA_EXPERIMENTAL_FUNCTIONAL_FUNCTIONDEFINITION_HEADER
-#define OCCA_EXPERIMENTAL_FUNCTIONAL_FUNCTIONDEFINITION_HEADER
+#ifndef OCCA_FUNCTIONAL_FUNCTIONDEFINITION_HEADER
+#define OCCA_FUNCTIONAL_FUNCTIONDEFINITION_HEADER
 
 #include <memory>
 #include <string>
 
 #include <occa/dtype.hpp>
 #include <occa/utils/hash.hpp>
-#include <occa/experimental/functional/scope.hpp>
+#include <occa/functional/scope.hpp>
 
 namespace occa {
   class functionDefinition;

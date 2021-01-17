@@ -1,4 +1,4 @@
-#include <occa/internal/experimental/functional/functionStore.hpp>
+#include <occa/internal/functional/functionStore.hpp>
 
 namespace occa {
   store_t<hash_t, functionDefinition> functionStore;

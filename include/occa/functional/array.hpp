@@ -1,17 +1,17 @@
-#ifndef OCCA_EXPERIMENTAL_FUNCTIONAL_ARRAY_HEADER
-#define OCCA_EXPERIMENTAL_FUNCTIONAL_ARRAY_HEADER
+#ifndef OCCA_FUNCTIONAL_ARRAY_HEADER
+#define OCCA_FUNCTIONAL_ARRAY_HEADER
 
 #include <vector>
 
 #include <occa/defines/okl.hpp>
 #include <occa/dtype.hpp>
-#include <occa/experimental/functional/function.hpp>
+#include <occa/functional/function.hpp>
 #include <occa/experimental/kernelBuilder.hpp>
 
 namespace occa {
   class kernelArg;
 
-  enum reductionType {
+  enum class reductionType {
     sum,
     multiply,
     bitOr,

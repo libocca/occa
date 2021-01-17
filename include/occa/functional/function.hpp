@@ -1,11 +1,11 @@
-#ifndef OCCA_EXPERIMENTAL_FUNCTIONAL_FUNCTION_HEADER
-#define OCCA_EXPERIMENTAL_FUNCTIONAL_FUNCTION_HEADER
+#ifndef OCCA_FUNCTIONAL_FUNCTION_HEADER
+#define OCCA_FUNCTIONAL_FUNCTION_HEADER
 
 #include <functional>
 
-#include <occa/experimental/functional/functionDefinition.hpp>
-#include <occa/experimental/functional/scope.hpp>
-#include <occa/experimental/functional/utils.hpp>
+#include <occa/functional/functionDefinition.hpp>
+#include <occa/functional/scope.hpp>
+#include <occa/functional/utils.hpp>
 #include <occa/utils/hash.hpp>
 #include <occa/dtype.hpp>
 

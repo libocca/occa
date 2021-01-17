@@ -1,5 +1,5 @@
-#include <occa/experimental/functional/functionDefinition.hpp>
-#include <occa/internal/experimental/functional/functionStore.hpp>
+#include <occa/functional/functionDefinition.hpp>
+#include <occa/internal/functional/functionStore.hpp>
 #include <occa/internal/utils/lex.hpp>
 #include <occa/internal/utils/string.hpp>
 

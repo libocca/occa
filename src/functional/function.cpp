@@ -1,5 +1,5 @@
-#include <occa/experimental/functional/function.hpp>
-#include <occa/internal/experimental/functional/functionStore.hpp>
+#include <occa/functional/function.hpp>
+#include <occa/internal/functional/functionStore.hpp>
 
 namespace occa {
   baseFunction::baseFunction(const occa::scope &scope_) :

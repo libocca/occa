@@ -3,7 +3,7 @@
 
 #include <occa/utils/hash.hpp>
 #include <occa/internal/utils/store.hpp>
-#include <occa/experimental/functional/functionDefinition.hpp>
+#include <occa/functional/functionDefinition.hpp>
 
 namespace occa {
   extern store_t<hash_t, functionDefinition> functionStore;

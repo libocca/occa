@@ -2,7 +2,7 @@
 #define OCCA_EXPERIMENTAL_CORE_KERNELBUILDER_HEADER
 
 #include <occa/core/kernel.hpp>
-#include <occa/experimental/functional/scope.hpp>
+#include <occa/functional/scope.hpp>
 
 namespace occa {
   class kernelBuilder {

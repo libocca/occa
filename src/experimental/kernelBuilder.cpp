@@ -5,7 +5,7 @@
 #include <occa/internal/utils/lex.hpp>
 #include <occa/internal/utils/string.hpp>
 #include <occa/experimental/kernelBuilder.hpp>
-#include <occa/experimental/functional/scope.hpp>
+#include <occa/functional/scope.hpp>
 
 namespace occa {
   kernelBuilder::kernelBuilder(const std::string &source_,

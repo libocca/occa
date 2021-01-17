@@ -8,7 +8,7 @@
 #include <occa/internal/lang/builtins/types.hpp>
 #include <occa/internal/lang/parser.hpp>
 #include <occa/internal/utils/sys.hpp>
-#include <occa/internal/experimental/functional/functionStore.hpp>
+#include <occa/internal/functional/functionStore.hpp>
 
 namespace occa {
   //---[ kernel ]-----------------------
