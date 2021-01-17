@@ -705,8 +705,8 @@ void testConcat(occa::device device) {
     h_three[i] = -1;
   }
 
-  two.memory().copyTo(h_two);
-  three.memory().copyTo(h_three);
+  two.copyTo(h_two);
+  three.copyTo(h_three);
 
   for (int i = 0; i < (2 * ctx.length); ++i) {
     ASSERT_EQ(i % ctx.length, h_two[i]);
@@ -728,14 +728,14 @@ void testFill(occa::device device) {
   }
 
   ctx.array.fill(5);
-  ctx.array.memory().copyTo(ctx.values);
+  ctx.array.copyTo(ctx.values);
 
   for (int i = 0; i < ctx.length; ++i) {
     ASSERT_EQ(5, ctx.values[i]);
   }
 
   ctx.array.fill(6);
-  ctx.array.memory().copyTo(ctx.values);
+  ctx.array.copyTo(ctx.values);
 
   for (int i = 0; i < ctx.length; ++i) {
     ASSERT_EQ(6, ctx.values[i]);
@@ -768,7 +768,7 @@ void testIndexOf(occa::device device) {
   for (int i = 0; i < ctx.length; ++i) {
     ctx.values[i] = i % 2;
   }
-  ctx.array.memory().copyFrom(ctx.values);
+  ctx.array.copyFrom(ctx.values);
 
   ASSERT_EQ(
     0,
@@ -792,7 +792,7 @@ void testLastIndexOf(occa::device device) {
   for (int i = 0; i < ctx.length; ++i) {
     ctx.values[i] = i % 2;
   }
-  ctx.array.memory().copyFrom(ctx.values);
+  ctx.array.copyFrom(ctx.values);
 
   ASSERT_EQ(
     ctx.length - 2,
@@ -846,7 +846,7 @@ void testReverse(occa::device device) {
 
   int *reversedValues = new int[ctx.length];
 
-  reversedArray.memory().copyTo(reversedValues);
+  reversedArray.copyTo(reversedValues);
 
   for (int i = 0; i < ctx.length; ++i) {
     ASSERT_EQ(
@@ -868,7 +868,7 @@ void testShiftLeft(occa::device device) {
   ASSERT_EQ(ctx.maxValue, ctx.array.max());
 
   int *shiftedValues = new int[ctx.length];
-  shiftedArray.memory().copyTo(shiftedValues);
+  shiftedArray.copyTo(shiftedValues);
 
   for (int i = 0; i < (ctx.length - 3); ++i) {
     ASSERT_EQ(
@@ -894,7 +894,7 @@ void testShiftRight(occa::device device) {
   ASSERT_EQ(ctx.maxValue, ctx.array.max());
 
   int *shiftedValues = new int[ctx.length];
-  shiftedArray.memory().copyTo(shiftedValues);
+  shiftedArray.copyTo(shiftedValues);
 
   for (int i = 0; i < 3; ++i) {
     ASSERT_EQ(-1, shiftedValues[i]);

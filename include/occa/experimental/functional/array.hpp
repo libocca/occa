@@ -313,6 +313,20 @@ namespace occa {
       tileSize(-1),
       tileIterations(-1) {}
 
+    array(const dim_t size) :
+      tileSize(-1),
+      tileIterations(-1) {
+
+      memory_ = occa::malloc<TM>(size);
+    }
+
+    array(occa::device device, const dim_t size) :
+      tileSize(-1),
+      tileIterations(-1) {
+
+      memory_ = device.malloc<TM>(size);
+    }
+
     array(occa::memory mem) :
       memory_(mem),
       tileSize(-1),
@@ -331,33 +345,9 @@ namespace occa {
       return *this;
     }
 
-    bool isInitialized() const {
-      return memory_.isInitialized();
-    }
-
-    array clone() const {
-      return array(memory_.clone());
-    }
-
-    occa::device getDevice() const {
-      return memory_.getDevice();
-    }
-
     bool usingNativeCpuMode() const {
       const std::string &mode = getDevice().mode();
       return (mode == "Serial" || mode == "OpenMP");
-    }
-
-    occa::memory memory() const {
-      return memory_;
-    }
-
-    occa::dtype_t dtype() const {
-      return memory_.dtype();
-    }
-
-    operator kernelArg() const {
-      return memory_;
     }
 
     void setTileSize(const int tileSize_) {
@@ -372,9 +362,83 @@ namespace occa {
       }
     }
 
+    //---[ Memory methods ]-------------
+    bool isInitialized() const {
+      return memory_.isInitialized();
+    }
+
+    occa::device getDevice() const {
+      return memory_.getDevice();
+    }
+
+    occa::memory memory() const {
+      return memory_;
+    }
+
+    operator occa::memory () const {
+      return memory_;
+    }
+
+    occa::dtype_t dtype() const {
+      return memory_.dtype();
+    }
+
+    operator kernelArg() const {
+      return memory_;
+    }
+
     udim_t length() const {
       return memory_.length<TM>();
     }
+
+    array clone() const {
+      return array(memory_.clone());
+    }
+
+    void copyFrom(const TM *src,
+                  const dim_t entries = -1) {
+      const dim_t safeEntries = (
+        entries <= 0
+        ? length()
+        : entries
+      );
+
+      memory_.copyFrom(src, safeEntries * sizeof(TM));
+    }
+
+  void copyFrom(const occa::memory src,
+                const dim_t entries = -1) {
+      const dim_t safeEntries = (
+        entries <= 0
+        ? length()
+        : entries
+      );
+
+      memory_.copyFrom(src, safeEntries * sizeof(TM));
+    }
+
+    void copyTo(TM *dest,
+                const dim_t entries = -1) const {
+      const dim_t safeEntries = (
+        entries <= 0
+        ? length()
+        : entries
+      );
+
+      memory_.copyTo(dest, safeEntries * sizeof(TM));
+    }
+
+    void copyTo(occa::memory dest,
+                const dim_t entries = -1) const {
+      const dim_t safeEntries = (
+        entries <= 0
+        ? length()
+        : entries
+      );
+
+      memory_.copyTo(dest, safeEntries * sizeof(TM));
+    }
+    //==================================
 
   private:
     //---[ Lambda methods ]-------------
@@ -783,7 +847,7 @@ namespace occa {
     array slice(const dim_t offset,
                 const dim_t count = -1) const {
       return array(
-        memory_.slice(offset, count).clone()
+        memory_.slice(offset, count)
       );
     }
 
