@@ -35,7 +35,8 @@ namespace occa {
     bool needsFree() const;
 
     void assertArgumentLimit() const;
-    void assertArgInDevice(const kernelArgData &arg) const;
+    void assertArgInDevice(const kernelArgData &arg,
+                          const int argIndex) const;
 
     void setArguments(kernelArg *args,
                       const int count);
