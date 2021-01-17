@@ -10,13 +10,13 @@ namespace occa {
   namespace lang {
     file_t::file_t(const std::string &filename_) :
       filename(filename_),
-      expandedFilename(io::filename(filename_)),
+      expandedFilename(io::expandFilename(filename_)),
       content(io::read(filename_)) {}
 
     file_t::file_t(const std::string &filename_,
                    const std::string &content_) :
       filename(filename_),
-      expandedFilename(io::filename(filename_)),
+      expandedFilename(io::expandFilename(filename_)),
       content(content_) {}
 
     file_t::file_t(const bool,

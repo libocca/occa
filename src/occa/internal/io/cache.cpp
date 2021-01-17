@@ -16,7 +16,7 @@ namespace occa {
         return false;
       }
 
-      std::string expFilename = io::filename(filename);
+      std::string expFilename = io::expandFilename(filename);
 
       // File is already cached
       const std::string &cPath = cachePath();
@@ -66,7 +66,7 @@ namespace occa {
                           const std::string &cachedName,
                           const hash_t &hash,
                           const std::string &header) {
-      const std::string expFilename = io::filename(filename);
+      const std::string expFilename = io::expandFilename(filename);
       const std::string hashDir     = io::hashDir(expFilename, hash);
       const std::string buildFile   = hashDir + kc::buildFile;
       const std::string sourceFile  = hashDir + cachedName;

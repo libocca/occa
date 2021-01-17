@@ -20,10 +20,13 @@ namespace occa {
   }
 
   namespace io {
+    typedef std::map<std::string, std::string> libraryPathMap_t;
+
     std::string cachePath();
     std::string libraryPath();
 
     std::string currentWorkingDirectory();
+    libraryPathMap_t &getLibraryPathMap();
 
     void endWithSlash(std::string &dir);
     std::string endWithSlash(const std::string &dir);
@@ -40,8 +43,10 @@ namespace occa {
 
     std::string expandEnvVariables(const std::string &filename);
 
-    std::string filename(const std::string &filename,
-                         bool makeAbsolute = true);
+    std::string expandFilename(const std::string &filename,
+                               bool makeAbsolute = true);
+
+    std::string expandOccaFilename(const std::string &filename);
 
     std::string binaryName(const std::string &filename);
 

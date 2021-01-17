@@ -57,7 +57,6 @@ namespace occa {
       loadConfig();
 
       setupCachePath();
-      registerFileOpeners();
 
       isInitialized = true;
     }
@@ -162,7 +161,7 @@ namespace occa {
         env::OCCA_CACHE_DIR = ss.str();
       }
 
-      env::OCCA_CACHE_DIR = io::filename(env::OCCA_CACHE_DIR);
+      env::OCCA_CACHE_DIR = io::expandFilename(env::OCCA_CACHE_DIR);
       io::endWithSlash(env::OCCA_CACHE_DIR);
 
       if (!io::isDir(env::OCCA_CACHE_DIR)) {
@@ -170,24 +169,7 @@ namespace occa {
       }
     }
 
-    void envInitializer_t::registerFileOpeners() {
-      io::fileOpener::add(new io::occaFileOpener());
-    }
-
-    void envInitializer_t::cleanFileOpeners() {
-      std::vector<io::fileOpener*> &openers = io::fileOpener::getOpeners();
-      const int count = (int) openers.size();
-      for (int i = 0; i < count; ++i) {
-        delete openers[i];
-      }
-      openers.clear();
-    }
-
-    envInitializer_t::~envInitializer_t() {
-      if (isInitialized) {
-        cleanFileOpeners();
-      }
-    }
+    envInitializer_t::~envInitializer_t() {}
 
     envInitializer_t envInitializer;
   }
