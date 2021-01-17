@@ -57,6 +57,8 @@ void testShiftLeft(occa::device device);
 void testShiftRight(occa::device device);
 void testMax(occa::device device);
 void testMin(occa::device device);
+void testDotProduct(occa::device device);
+void testClamp(occa::device device);
 
 int main(const int argc, const char **argv) {
   std::vector<occa::device> devices = {
@@ -102,6 +104,8 @@ int main(const int argc, const char **argv) {
     testShiftRight(device);
     testMax(device);
     testMin(device);
+    testDotProduct(device);
+    testClamp(device);
   }
 
   return 0;
@@ -918,4 +922,35 @@ void testMin(occa::device device) {
   context ctx(device);
 
   ASSERT_EQ(ctx.minValue, ctx.array.min());
+}
+
+void testDotProduct(occa::device device) {
+  context ctx(device);
+
+  int dotProduct = 0;
+  for (int i = 0; i < ctx.length; ++i) {
+    dotProduct += (ctx.values[i] * ctx.values[i]);
+  }
+
+  ASSERT_EQ(dotProduct,
+            ctx.array.dotProduct(ctx.array));
+}
+
+void testClamp(occa::device device) {
+  context ctx(device);
+
+  occa::array<int> clampedArray = ctx.array.clamp(4, 7);
+
+  ASSERT_EQ(4, clampedArray.min());
+  ASSERT_EQ(7, clampedArray.max());
+
+  clampedArray = ctx.array.clampMin(4);
+
+  ASSERT_EQ(4, clampedArray.min());
+  ASSERT_EQ(9, clampedArray.max());
+
+  clampedArray = ctx.array.clampMax(7);
+
+  ASSERT_EQ(0, clampedArray.min());
+  ASSERT_EQ(7, clampedArray.max());
 }
