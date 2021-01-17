@@ -290,7 +290,7 @@ namespace occa {
     }
 
     bool isSafeToRmrf(const std::string &filename) {
-      const std::string expFilename = io::filename(filename);
+      const std::string expFilename = io::expandFilename(filename);
       int depth = 0;
 
       strVector path = split(expFilename, '/', '\0');
@@ -330,7 +330,7 @@ namespace occa {
     }
 
     void mkpath(const std::string &dir) {
-      strVector path = split(io::filename(dir), '/', '\0');
+      strVector path = split(io::expandFilename(dir), '/', '\0');
 
       const int dirCount = (int) path.size();
       std::string sPath;
@@ -1089,49 +1089,5 @@ namespace occa {
       return std::string(symbol);
 #endif
     }
-  }
-
-  mutex::mutex() {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-    int error = pthread_mutex_init(&mutexHandle, NULL);
-#if OCCA_UNSAFE
-    ignoreResult(error);
-#endif
-
-    OCCA_ERROR("Error initializing mutex",
-               error == 0);
-#else
-    mutexHandle = CreateMutex(NULL, FALSE, NULL);
-#endif
-  }
-
-  void mutex::free() {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-    int error = pthread_mutex_destroy(&mutexHandle);
-#if OCCA_UNSAFE
-    ignoreResult(error);
-#endif
-
-    OCCA_ERROR("Error freeing mutex",
-               error == 0);
-#else
-    CloseHandle(mutexHandle);
-#endif
-  }
-
-  void mutex::lock() {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-    pthread_mutex_lock(&mutexHandle);
-#else
-    WaitForSingleObject(mutexHandle, INFINITE);
-#endif
-  }
-
-  void mutex::unlock() {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-    pthread_mutex_unlock(&mutexHandle);
-#else
-    ReleaseMutex(mutexHandle);
-#endif
   }
 }

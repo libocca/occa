@@ -171,21 +171,6 @@ namespace occa {
     std::string prettyStackSymbol(void *frame, const char *symbol);
     //==================================
   }
-
-  class mutex {
-  public:
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-    pthread_mutex_t mutexHandle;
-#else
-    void *mutexHandle;
-#endif
-
-    mutex();
-    void free();
-
-    void lock();
-    void unlock();
-  };
 }
 
 #endif
