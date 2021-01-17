@@ -79,6 +79,7 @@ namespace occa {
 
     bool operator == (const dtype_t &other) const;
     bool operator != (const dtype_t &other) const;
+    const dtype_t& operator || (const dtype_t &other) const;
 
     bool matches(const dtype_t &other) const;
 
