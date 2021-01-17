@@ -38,6 +38,8 @@ namespace occa {
     template <class TM>
     hash_t operator ^ (const TM &t) const;
 
+    int getInt() const;
+
     std::string getFullString() const;
     std::string getString() const;
     operator std::string () const;
@@ -51,6 +53,15 @@ namespace occa {
                            const hash_t &hash);
 
   hash_t hash(const void *ptr, udim_t bytes);
+
+  template <class TM>
+  inline hash_t hash(const std::vector<TM> &vec) {
+    hash_t h;
+    for (const TM &value : vec) {
+      h ^= hash(value);
+    }
+    return h;
+  }
 
   template <class TM>
   inline hash_t hash(const TM &t) {

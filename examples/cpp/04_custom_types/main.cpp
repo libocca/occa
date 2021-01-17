@@ -86,7 +86,7 @@ int main(int argc, const char **argv) {
 
   // Launch device kernel
   addVectors(entries,
-             o_a.as(occa::dtype::float_),
+             o_a.cast(occa::dtype::float_),
              o_b,
              o_ab);
 

@@ -174,7 +174,7 @@ namespace occa {
       if (options["verbose"]) {
         json translationInfo;
         // Filename
-        translationInfo["translate_info/filename"] = io::filename(filename);
+        translationInfo["translate_info/filename"] = io::expandFilename(filename);
         // Date information
         translationInfo["translate_info/date"] = sys::date();
         translationInfo["translate_info/human_date"] = sys::humanDate();

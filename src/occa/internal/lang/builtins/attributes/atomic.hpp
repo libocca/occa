@@ -44,6 +44,9 @@ namespace occa {
         );
 
         static bool isBasicExpression(expressionStatement &exprSmnt);
+        static bool isMinMaxExpression(expressionStatement &exprSmnt,
+                                       std::string &functionName,
+                                       exprNode *&argument);
       };
     }
   }

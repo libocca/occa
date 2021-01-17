@@ -5,7 +5,7 @@
 namespace occa {
   namespace io {
     bool exists(const std::string &filename) {
-      std::string expFilename = io::filename(filename);
+      std::string expFilename = io::expandFilename(filename);
       FILE *fp = fopen(expFilename.c_str(), "rb");
       if (fp == NULL) {
         return false;

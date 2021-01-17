@@ -4,10 +4,10 @@
 #include <occa/defines/compiledDefines.hpp>
 
 #define OCCA_MAJOR_VERSION 1
-#define OCCA_MINOR_VERSION 0
-#define OCCA_PATCH_VERSION 9
-#define OCCA_VERSION       10009
-#define OCCA_VERSION_STR   "1.0.9"
+#define OCCA_MINOR_VERSION 2
+#define OCCA_PATCH_VERSION 0
+#define OCCA_VERSION       10200
+#define OCCA_VERSION_STR   "1.2.0"
 
 #define OKL_MAJOR_VERSION 1
 #define OKL_MINOR_VERSION 0

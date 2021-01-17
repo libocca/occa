@@ -1311,7 +1311,7 @@ namespace occa {
       // Expand non-absolute path
       bool headerIsQuoted = tokenizer->loadingQuotedHeader();
       std::string header = io::findInPaths(
-        io::filename(tokenizer->getHeader(), false),
+        io::expandFilename(tokenizer->getHeader(), false),
         includePaths
       );
 

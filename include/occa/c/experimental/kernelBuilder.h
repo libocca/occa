@@ -3,12 +3,11 @@
 
 #include <occa/c/defines.h>
 #include <occa/c/types.h>
-#include <occa/c/experimental/scope.h>
+#include <occa/c/scope.h>
 
 OCCA_START_EXTERN_C
 
-occaKernelBuilder occaKernelBuilderFromInlinedOkl(
-  occaScope scope,
+occaKernelBuilder occaCreateKernelBuilder(
   const char *kernelSource,
   const char *kernelName
 );

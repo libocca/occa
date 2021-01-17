@@ -15,6 +15,8 @@ namespace occa {
     public:
       device(const occa::json &properties_);
 
+      virtual hash_t hash() const;
+
       virtual hash_t kernelHash(const occa::json &props) const;
 
       virtual bool parseFile(const std::string &filename,

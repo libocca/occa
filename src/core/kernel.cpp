@@ -1,13 +1,14 @@
 #include <occa/core/device.hpp>
 #include <occa/core/kernel.hpp>
 #include <occa/core/memory.hpp>
+#include <occa/utils/uva.hpp>
 #include <occa/internal/io.hpp>
 #include <occa/internal/core/device.hpp>
 #include <occa/internal/core/kernel.hpp>
 #include <occa/internal/lang/builtins/types.hpp>
 #include <occa/internal/lang/parser.hpp>
 #include <occa/internal/utils/sys.hpp>
-#include <occa/utils/uva.hpp>
+#include <occa/internal/functional/functionStore.hpp>
 
 namespace occa {
   //---[ kernel ]-----------------------
@@ -202,6 +203,7 @@ namespace occa {
   //---[ Kernel Properties ]------------
   // Properties:
   //   defines       : Object
+  //   functions     : Object
   //   includes      : Array
   //   headers       : Array
   //   include_paths : Array
@@ -209,49 +211,64 @@ namespace occa {
   hash_t kernelHeaderHash(const occa::json &props) {
     return (
       occa::hash(props["defines"])
+      ^ props["functions"]
       ^ props["includes"]
       ^ props["headers"]
     );
   }
 
   std::string assembleKernelHeader(const occa::json &props) {
-    std::string header;
+    std::string kernelHeader;
 
     // Add defines
-    const jsonObject &defines = props["defines"].object();
-    jsonObject::const_iterator it = defines.begin();
-    while (it != defines.end()) {
-      header += "#define ";
-      header += ' ';
-      header += it->first;
-      header += ' ';
-      header += (std::string) it->second;
-      header += '\n';
-      ++it;
+    for (const auto &entry : props["defines"].object()) {
+      if (entry.second.isString()) {
+        kernelHeader += "#define ";
+        kernelHeader += ' ';
+        kernelHeader += entry.first;
+        kernelHeader += ' ';
+        kernelHeader += (std::string) entry.second;
+        kernelHeader += '\n';
+      }
     }
 
     // Add includes
-    const jsonArray &includes = props["includes"].array();
-    const int includeCount = (int) includes.size();
-    for (int i = 0; i < includeCount; ++i) {
-      if (includes[i].isString()) {
-        header += "#include \"";
-        header += (std::string) includes[i];
-        header += "\"\n";
+    for (const auto &include : props["includes"].array()) {
+      if (include.isString()) {
+        kernelHeader += "#include \"";
+        kernelHeader += (std::string) include;
+        kernelHeader += "\"\n";
       }
     }
 
     // Add header
-    const jsonArray &lines = props["headers"].array();
-    const int lineCount = (int) lines.size();
-    for (int i = 0; i < lineCount; ++i) {
-      if (lines[i].isString()) {
-        header += (std::string) lines[i];
-        header += "\n";
+    for (const auto &header : props["headers"].array()) {
+      if (header.isString()) {
+        kernelHeader += (std::string) header;
+        kernelHeader += "\n";
       }
     }
 
-    return header;
+    // Add functions
+    for (const auto &entry : props["functions"].object()) {
+      if (entry.second.isString()) {
+        const std::string &functionName = entry.first;
+        const std::string &functionHashStr = entry.second;
+
+        functionDefinitionSharedPtr fnDefPtr = functionStore.get(
+          hash_t::fromString(functionHashStr)
+        );
+        if (!fnDefPtr) {
+          continue;
+        }
+
+        kernelHeader += fnDefPtr.get()->getFunctionSource(functionName);
+        kernelHeader += '\n';
+      }
+    }
+
+
+    return kernelHeader;
   }
   //====================================
 }

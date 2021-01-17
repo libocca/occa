@@ -4,19 +4,14 @@
 
 OCCA_START_EXTERN_C
 
-occaKernelBuilder occaKernelBuilderFromInlinedOkl(
-  occaScope scope,
+occaKernelBuilder occaCreateKernelBuilder(
   const char *kernelSource,
   const char *kernelName
 ) {
-  occa::kernelBuilder kb = occa::kernelBuilder::fromString(
-    occa::formatInlinedKernelFromScope(occa::c::scope(scope),
-                                       kernelSource,
-                                       kernelName),
-    kernelName
+  return occa::c::newOccaType(
+    *(new occa::kernelBuilder(kernelSource,
+                              kernelName))
   );
-
-  return occa::c::newOccaType(*(new occa::kernelBuilder(kb)));
 }
 
 void occaKernelBuilderRun(

@@ -2,6 +2,7 @@
 
 #include <occa/internal/c/types.hpp>
 #include <occa/internal/core/memory.hpp>
+#include <occa/utils/uva.hpp>
 
 namespace occa {
   namespace c {

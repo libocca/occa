@@ -74,6 +74,10 @@ namespace occa {
     }
 
     // Primitive types
+    template <> dtype_t get<bool>() {
+      return bool_;
+    }
+
     template <> dtype_t get<char>() {
       return char_;
     }

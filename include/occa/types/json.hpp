@@ -121,6 +121,11 @@ namespace occa {
       value_.string = value;
     }
 
+    inline json(const hash_t &value) :
+      type(string_) {
+      value_.string = value.getFullString();
+    }
+
     inline json(const jsonObject &value) :
       type(object_) {
       value_.object = value;
@@ -631,6 +636,9 @@ namespace occa {
 
     jsonKeyValue(const std::string &name_,
                  const std::string &value_);
+
+    jsonKeyValue(const std::string &name_,
+                 const hash_t &value_);
 
     jsonKeyValue(const std::string &name_,
                  std::initializer_list<jsonKeyValue> value_);

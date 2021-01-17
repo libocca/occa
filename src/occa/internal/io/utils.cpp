@@ -17,11 +17,11 @@
 #endif
 
 #include <occa/internal/io/cache.hpp>
-#include <occa/internal/io/fileOpener.hpp>
 #include <occa/internal/io/utils.hpp>
 #include <occa/internal/utils/env.hpp>
 #include <occa/internal/utils/lex.hpp>
 #include <occa/internal/utils/misc.hpp>
+#include <occa/internal/utils/string.hpp>
 #include <occa/internal/utils/sys.hpp>
 
 namespace occa {
@@ -71,6 +71,11 @@ namespace occa {
       );
 #endif
       return endWithSlash(std::string(cwdBuff));
+    }
+
+    libraryPathMap_t &getLibraryPathMap() {
+      static libraryPathMap_t libraryPaths;
+      return libraryPaths;
     }
 
     void endWithSlash(std::string &dir) {
@@ -177,16 +182,41 @@ namespace occa {
       return sys::expandEnvVariables(filename);
     }
 
-    std::string filename(const std::string &filename, bool makeAbsolute) {
-      std::string expFilename = convertSlashes(expandEnvVariables(filename));
+    std::string expandFilename(const std::string &filename, bool makeAbsolute) {
+      const std::string cleanFilename = convertSlashes(expandEnvVariables(filename));
 
-      fileOpener &fo = fileOpener::get(expFilename);
-      expFilename = fo.expand(expFilename);
+      std::string expFilename;
+      if (startsWith(cleanFilename, "occa://")) {
+        expFilename = expandOccaFilename(cleanFilename);
+      } else {
+        expFilename = cleanFilename;
+      }
 
       if (makeAbsolute && !isAbsolutePath(expFilename)) {
         return env::CWD + getRelativePath(expFilename);
       }
       return expFilename;
+    }
+
+    std::string expandOccaFilename(const std::string &filename) {
+      const std::string path = filename.substr(7);
+      const size_t firstSlash = path.find('/');
+
+      if ((firstSlash == 0) ||
+          (firstSlash == std::string::npos)) {
+        return "";
+      }
+
+      const std::string library = path.substr(0, firstSlash);
+      const std::string relativePath = path.substr(firstSlash);
+
+      libraryPathMap_t libraryPaths = getLibraryPathMap();
+      libraryPathMap_t::const_iterator it = libraryPaths.find(library);
+      if (it == libraryPaths.end()) {
+        return "";
+      }
+
+      return it->second + relativePath;
     }
 
     std::string binaryName(const std::string &filename) {
@@ -225,7 +255,7 @@ namespace occa {
     }
 
     std::string dirname(const std::string &filename) {
-      std::string expFilename = removeEndSlash(io::filename(filename));
+      std::string expFilename = removeEndSlash(io::expandFilename(filename));
       std::string basename = io::basename(expFilename);
       return expFilename.substr(0, expFilename.size() - basename.size());
     }
@@ -248,7 +278,7 @@ namespace occa {
     }
 
     std::string shortname(const std::string &filename) {
-      std::string expFilename = io::filename(filename);
+      std::string expFilename = io::expandFilename(filename);
 
       if (!startsWith(expFilename, env::OCCA_CACHE_DIR)) {
         return filename;
@@ -281,14 +311,14 @@ namespace occa {
     }
 
     bool isFile(const std::string &filename) {
-      const std::string expFilename = io::filename(filename);
+      const std::string expFilename = io::expandFilename(filename);
       struct stat statInfo;
       return ((stat(expFilename.c_str(), &statInfo) == 0) &&
               ((statInfo.st_mode & S_IFMT) == S_IFREG));
     }
 
     bool isDir(const std::string &filename) {
-      const std::string expFilename = io::filename(filename);
+      const std::string expFilename = io::expandFilename(filename);
       struct stat statInfo;
       return ((stat(expFilename.c_str(), &statInfo) == 0) &&
               ((statInfo.st_mode & S_IFMT) == S_IFDIR));
@@ -296,7 +326,7 @@ namespace occa {
 
     strVector filesInDir(const std::string &dir, const unsigned char fileType) {
       strVector files;
-      const std::string expDir = filename(dir);
+      const std::string expDir = expandFilename(dir);
 
       DIR *c_dir = ::opendir(expDir.c_str());
       if (!c_dir) {
@@ -333,7 +363,7 @@ namespace occa {
     char* c_read(const std::string &filename,
                  size_t *chars,
                  enums::FileType fileType) {
-      std::string expFilename = io::filename(filename);
+      std::string expFilename = io::expandFilename(filename);
 
       FILE *fp = fopen(
         expFilename.c_str(),
@@ -400,7 +430,7 @@ namespace occa {
 
     void write(const std::string &filename,
                const std::string &content) {
-      std::string expFilename = io::filename(filename);
+      std::string expFilename = io::expandFilename(filename);
       sys::mkpath(dirname(expFilename));
 
       FILE *fp = fopen(expFilename.c_str(), "w");

@@ -202,6 +202,14 @@ namespace occa {
     return !(*this == other);
   }
 
+  const dtype_t& dtype_t::operator || (const dtype_t &other) const {
+    return (
+      (*this == dtype::none)
+      ? other
+      : *this
+    );
+  }
+
   bool dtype_t::matches(const dtype_t &other) const {
     const dtype_t &a = self();
     const dtype_t &b = other.self();

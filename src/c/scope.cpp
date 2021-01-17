@@ -1,5 +1,5 @@
 #include <occa/internal/c/types.hpp>
-#include <occa/c/experimental/scope.h>
+#include <occa/c/scope.h>
 
 namespace occa {
   static void addToScope(occaScope scope,
