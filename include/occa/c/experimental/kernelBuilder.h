@@ -7,8 +7,7 @@
 
 OCCA_START_EXTERN_C
 
-occaKernelBuilder occaKernelBuilderFromInlinedOkl(
-  occaScope scope,
+occaKernelBuilder occaCreateKernelBuilder(
   const char *kernelSource,
   const char *kernelName
 );

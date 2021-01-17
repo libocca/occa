@@ -2,63 +2,29 @@
 #define OCCA_EXPERIMENTAL_CORE_KERNELBUILDER_HEADER
 
 #include <occa/core/kernel.hpp>
-#include <occa/experimental/scope.hpp>
+#include <occa/experimental/functional/scope.hpp>
 
 namespace occa {
   class kernelBuilder {
-  protected:
-    std::string source_;
-    std::string function_;
-    occa::json defaultProps;
-
+  private:
+    std::string source;
+    std::string kernelName;
     hashedKernelMap kernelMap;
 
-    bool buildingFromFile;
-
   public:
-    kernelBuilder();
-
-    kernelBuilder(const kernelBuilder &k);
-    kernelBuilder& operator = (const kernelBuilder &k);
-
-    const occa::json& defaultProperties() const;
-
-    static kernelBuilder fromFile(const std::string &filename,
-                                  const std::string &function,
-                                  const occa::json &defaultProps_ = occa::json());
-
-    static kernelBuilder fromString(const std::string &content,
-                                    const std::string &function,
-                                    const occa::json &defaultProps_ = occa::json());
+    kernelBuilder(const std::string &source_,
+                  const std::string &kernelName_);
 
     bool isInitialized();
 
-    occa::kernel build(occa::device device);
+    std::string buildKernelSource(const occa::scope &scope);
 
-    occa::kernel build(occa::device device,
-                       const occa::json &props);
+    occa::kernel getOrBuildKernel(const occa::scope &scope);
 
-    occa::kernel build(occa::device device,
-                       const hash_t &hash);
-
-    occa::kernel build(occa::device device,
-                       const hash_t &hash,
-                       const occa::json &props);
-
-    occa::kernel operator [] (occa::device device);
-
-    void run(occa::scope &scope);
+    void run(const occa::scope &scope);
 
     void free();
   };
-  //====================================
-
-
-  //---[ Inlined Kernel ]---------------
-  std::string formatInlinedKernelFromScope(occa::scope &scope,
-                                           const std::string &oklSource,
-                                           const std::string &kernelName);
-  //====================================
 }
 
 #endif

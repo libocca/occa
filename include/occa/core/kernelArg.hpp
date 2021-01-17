@@ -6,6 +6,7 @@
 #include <occa/defines.hpp>
 #include <occa/types/generic.hpp>
 #include <occa/types/primitive.hpp>
+#include <occa/utils/hash.hpp>
 #include <occa/dtype.hpp>
 
 namespace occa {
@@ -109,21 +110,19 @@ namespace occa {
     dtype_t dtype;
     bool isConst;
 
-    inline scopeKernelArg(const std::string &name_,
-                          const kernelArg &arg,
-                          const dtype_t &dtype_,
-                          const bool isConst_) :
-      kernelArg(arg),
-      name(name_),
-      dtype(dtype_),
-      isConst(isConst_) {}
+    scopeKernelArg(const std::string &name_,
+                   const kernelArg &arg,
+                   const dtype_t &dtype_,
+                   const bool isConst_);
 
-    inline scopeKernelArg(const std::string &name_,
-                          const primitive &value_) :
-      name(name_),
-      isConst(true) {
-      primitiveConstructor(value_);
-    }
+    scopeKernelArg(const std::string &name_,
+                   occa::memory &value_);
+
+    scopeKernelArg(const std::string &name_,
+                   const occa::memory &value_);
+
+    scopeKernelArg(const std::string &name_,
+                   const primitive &value_);
 
     template <class TM>
     inline scopeKernelArg(const std::string &name_,
@@ -142,6 +141,8 @@ namespace occa {
     }
 
     virtual ~scopeKernelArg();
+
+    hash_t hash() const;
 
     inline void primitiveConstructor(const primitive &value) {
       dtype = value.dtype();
@@ -168,6 +169,9 @@ namespace occa {
 
     std::string getDeclaration() const;
   };
+
+  template <>
+  hash_t hash(const occa::scopeKernelArg &arg);
   //====================================
 }
 

@@ -2,7 +2,8 @@
 #define OCCA_INTERNAL_C_TYPES_HEADER
 
 #include <occa/core.hpp>
-#include <occa/experimental.hpp>
+#include <occa/experimental/functional/scope.hpp>
+#include <occa/experimental/kernelBuilder.hpp>
 #include <occa/internal/utils/sys.hpp>
 
 #include <occa/c/types.h>
