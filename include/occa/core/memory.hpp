@@ -42,8 +42,6 @@ namespace occa {
     void setModeMemory(modeMemory_t *modeMemory_);
     void removeMemoryRef();
 
-    void setDtype(const dtype_t &dtype__);
-
   public:
     void dontUseRefs();
 
@@ -72,6 +70,8 @@ namespace occa {
 
     const std::string& mode() const;
     const occa::json& properties() const;
+
+    void setDtype(const dtype_t &dtype__);
 
     const dtype_t& dtype() const;
 
@@ -143,7 +143,7 @@ namespace occa {
     void copyTo(const memory dest,
                 const occa::json &props) const;
 
-    occa::memory as(const dtype_t &dtype_) const;
+    occa::memory cast(const dtype_t &dtype_) const;
 
     occa::memory clone() const;
 
