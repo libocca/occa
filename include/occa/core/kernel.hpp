@@ -8,7 +8,6 @@
 
 #include <occa/defines.hpp>
 #include <occa/core/kernelArg.hpp>
-#include <occa/utils.hpp>
 #include <occa/types.hpp>
 
 // Unfortunately we need to expose this in include
