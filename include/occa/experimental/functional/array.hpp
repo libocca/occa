@@ -14,11 +14,85 @@ namespace occa {
   enum reductionType {
     sum,
     multiply,
+    bitOr,
+    bitAnd,
+    bitXor,
     boolOr,
     boolAnd,
     min,
     max
   };
+
+  template <class TM>
+  TM hostReduction(reductionType type, occa::memory mem) {
+    const int entryCount = (int) mem.length();
+    TM *values = new TM[entryCount];
+    mem.copyTo(values);
+
+    TM reductionValue = values[0];
+    switch (type) {
+      case reductionType::sum:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue += values[i];
+        }
+        break;
+      case reductionType::multiply:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue *= values[i];
+        }
+        break;
+      case reductionType::bitOr:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue |= values[i];
+        }
+        break;
+      case reductionType::bitAnd:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue &= values[i];
+        }
+        break;
+      case reductionType::bitXor:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue ^= values[i];
+        }
+        break;
+      case reductionType::boolOr:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue = reductionValue || values[i];
+        }
+        break;
+      case reductionType::boolAnd:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue = reductionValue && values[i];
+        }
+        break;
+      case reductionType::min:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue = reductionValue < values[i] ? reductionValue : values[i];
+        }
+        break;
+      case reductionType::max:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue = reductionValue > values[i] ? reductionValue : values[i];
+        }
+        break;
+      default:
+        break;
+    }
+
+    delete [] values;
+
+    return reductionValue;
+  }
+
+  template <>
+  bool hostReduction<bool>(reductionType type, occa::memory mem);
+
+  template <>
+  float hostReduction<float>(reductionType type, occa::memory mem);
+
+  template <>
+  double hostReduction<double>(reductionType type, occa::memory mem);
 
   template <class TM>
   class array {
@@ -274,6 +348,12 @@ namespace occa {
           return "0";
         case reductionType::multiply:
           return "1";
+        case reductionType::bitOr:
+          return "0";
+        case reductionType::bitAnd:
+          return "occa_array_ptr[0]";
+        case reductionType::bitXor:
+          return "0";
         case reductionType::boolOr:
           return "0";
         case reductionType::boolAnd:
@@ -294,6 +374,12 @@ namespace occa {
           return "LEFT_VALUE + RIGHT_VALUE";
         case reductionType::multiply:
           return "LEFT_VALUE * RIGHT_VALUE";
+        case reductionType::bitOr:
+          return "LEFT_VALUE | RIGHT_VALUE";
+        case reductionType::bitAnd:
+          return "LEFT_VALUE & RIGHT_VALUE";
+        case reductionType::bitXor:
+          return "LEFT_VALUE ^ RIGHT_VALUE";
         case reductionType::boolOr:
           return "LEFT_VALUE || RIGHT_VALUE";
         case reductionType::boolAnd:
@@ -662,49 +748,7 @@ namespace occa {
 
     template <class TM2>
     TM2 finishReturnMemoryReduction(reductionType type) const {
-      const int entryCount = (int) returnMemory.length();
-      TM2 *values = new TM2[entryCount];
-      returnMemory.copyTo(values);
-
-      TM reductionValue = values[0];
-      switch (type) {
-        case reductionType::sum:
-          for (int i = 1; i < entryCount; ++i) {
-            reductionValue += values[i];
-          }
-          break;
-        case reductionType::multiply:
-          for (int i = 1; i < entryCount; ++i) {
-            reductionValue *= values[i];
-          }
-          break;
-        case reductionType::boolOr:
-          for (int i = 1; i < entryCount; ++i) {
-            reductionValue = reductionValue || values[i];
-          }
-          break;
-        case reductionType::boolAnd:
-          for (int i = 1; i < entryCount; ++i) {
-            reductionValue = reductionValue && values[i];
-          }
-          break;
-        case reductionType::min:
-          for (int i = 1; i < entryCount; ++i) {
-            reductionValue = reductionValue < values[i] ? reductionValue : values[i];
-          }
-          break;
-        case reductionType::max:
-          for (int i = 1; i < entryCount; ++i) {
-            reductionValue = reductionValue > values[i] ? reductionValue : values[i];
-          }
-          break;
-        default:
-          break;
-      }
-
-      delete [] values;
-
-      return reductionValue;
+      return hostReduction<TM2>(type, returnMemory);
     }
 
   public:
@@ -1021,6 +1065,148 @@ namespace occa {
     }
     //==================================
   };
+
+  template <>
+  inline bool hostReduction<bool>(reductionType type, occa::memory mem) {
+    const int entryCount = (int) mem.length();
+    bool *values = new bool[entryCount];
+    mem.copyTo(values);
+
+    bool reductionValue = values[0];
+    switch (type) {
+      case reductionType::bitOr:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue |= values[i];
+        }
+        break;
+      case reductionType::bitAnd:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue &= values[i];
+        }
+        break;
+      case reductionType::bitXor:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue ^= values[i];
+        }
+        break;
+      case reductionType::boolOr:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue = reductionValue || values[i];
+        }
+        break;
+      case reductionType::boolAnd:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue = reductionValue && values[i];
+        }
+        break;
+      case reductionType::sum:
+      case reductionType::multiply:
+        OCCA_FORCE_ERROR("Arithmetic operations not implemented for occa::array<bool>");
+        break;
+      case reductionType::min:
+      case reductionType::max:
+        OCCA_FORCE_ERROR("Comparison operations not implemented for occa::array<bool>");
+        break;
+      default:
+        break;
+    }
+
+    delete [] values;
+
+    return reductionValue;
+  }
+
+  template <>
+  inline float hostReduction<float>(reductionType type, occa::memory mem) {
+    const int entryCount = (int) mem.length();
+    float *values = new float[entryCount];
+    mem.copyTo(values);
+
+    float reductionValue = values[0];
+    switch (type) {
+      case reductionType::sum:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue += values[i];
+        }
+        break;
+      case reductionType::multiply:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue *= values[i];
+        }
+        break;
+      case reductionType::min:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue = reductionValue < values[i] ? reductionValue : values[i];
+        }
+        break;
+      case reductionType::max:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue = reductionValue > values[i] ? reductionValue : values[i];
+        }
+        break;
+      case reductionType::bitOr:
+      case reductionType::bitAnd:
+      case reductionType::bitXor:
+        OCCA_FORCE_ERROR("Bit operations not implemented for occa::array<float>");
+        break;
+      case reductionType::boolOr:
+      case reductionType::boolAnd:
+        OCCA_FORCE_ERROR("Boolean operations not implemented for occa::array<double>");
+        break;
+      default:
+        break;
+    }
+
+    delete [] values;
+
+    return reductionValue;
+  }
+
+  template <>
+  inline double hostReduction<double>(reductionType type, occa::memory mem) {
+    const int entryCount = (int) mem.length();
+    double *values = new double[entryCount];
+    mem.copyTo(values);
+
+    double reductionValue = values[0];
+    switch (type) {
+      case reductionType::sum:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue += values[i];
+        }
+        break;
+      case reductionType::multiply:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue *= values[i];
+        }
+        break;
+      case reductionType::min:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue = reductionValue < values[i] ? reductionValue : values[i];
+        }
+        break;
+      case reductionType::max:
+        for (int i = 1; i < entryCount; ++i) {
+          reductionValue = reductionValue > values[i] ? reductionValue : values[i];
+        }
+        break;
+      case reductionType::bitOr:
+      case reductionType::bitAnd:
+      case reductionType::bitXor:
+        OCCA_FORCE_ERROR("Bit operations not implemented for occa::array<double>");
+        break;
+      case reductionType::boolOr:
+      case reductionType::boolAnd:
+        OCCA_FORCE_ERROR("Boolean operations not implemented for occa::array<double>");
+        break;
+      default:
+        break;
+    }
+
+    delete [] values;
+
+    return reductionValue;
+  }
 }
 
 #endif
