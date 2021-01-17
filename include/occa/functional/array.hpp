@@ -888,6 +888,15 @@ namespace occa {
     }
     //==================================
 
+    //---[ Utility methods ]------------
+    TM operator [] (const dim_t index) const {
+      TM value;
+      memory_.copyTo(&value,
+                     1 * sizeof(TM),
+                     index * sizeof(TM));
+      return value;
+    }
+
     array slice(const dim_t offset,
                 const dim_t count = -1) const {
       return array(
@@ -1060,6 +1069,60 @@ namespace occa {
         reductionType::min,
         OCCA_FUNCTION({}, [=](TM currentMin, TM value) -> TM {
           return currentMin < value ? currentMin : value;
+        })
+      );
+    }
+    //==================================
+
+    //---[ Linear Algebra Methods ]-----
+    TM dotProduct(const array<TM> &other) {
+      occa::scope fnScope({
+        {"other", other}
+      });
+
+      return reduce<TM>(
+        reductionType::sum,
+        OCCA_FUNCTION(fnScope, [=](TM acc, TM value, int index) -> TM {
+          return acc + (value * other[index]);
+        })
+      );
+    }
+
+    array clamp(const TM minValue,
+                const TM maxValue) {
+      occa::scope fnScope({
+        {"minValue", minValue},
+        {"maxValue", maxValue},
+      });
+
+      return map<TM>(
+        OCCA_FUNCTION(fnScope, [=](TM value) -> TM {
+          const TM valueWithMaxClamp = value > maxValue ? maxValue : value;
+          return valueWithMaxClamp < minValue ? minValue : valueWithMaxClamp;
+        })
+      );
+    }
+
+    array clampMin(const TM minValue) {
+      occa::scope fnScope({
+        {"minValue", minValue},
+      });
+
+      return map<TM>(
+        OCCA_FUNCTION(fnScope, [=](TM value) -> TM {
+          return value < minValue ? minValue : value;
+        })
+      );
+    }
+
+    array clampMax(const TM maxValue) {
+      occa::scope fnScope({
+        {"maxValue", maxValue},
+      });
+
+      return map<TM>(
+        OCCA_FUNCTION(fnScope, [=](TM value) -> TM {
+          return value > maxValue ? maxValue : value;
         })
       );
     }
