@@ -151,4 +151,24 @@ void occaKernelVaRun(occaKernel kernel,
   kernel_.run();
 }
 
+void occaKernelRunWithArgs(occaKernel kernel,
+                           const int argc,
+                           occaType *args) {
+  occa::kernel kernel_ = occa::c::kernel(kernel);
+  OCCA_ERROR("Uninitialized kernel",
+             kernel_.isInitialized());
+
+  occa::modeKernel_t &modeKernel = *(kernel_.getModeKernel());
+  modeKernel.arguments.clear();
+  modeKernel.arguments.reserve(argc);
+
+  for (int i = 0; i < argc; ++i) {
+    modeKernel.pushArgument(
+      occa::c::kernelArg(args[i])
+    );
+  }
+
+  kernel_.run();
+}
+
 OCCA_END_EXTERN_C
