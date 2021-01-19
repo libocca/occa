@@ -45,19 +45,67 @@ namespace occa {
 
   std::string iteration::buildRangeForLoop(occa::scope &scope,
                                            const std::string &iteratorName) const {
+    const std::string startName = iteratorName + "_start";
+    const std::string endName   = iteratorName + "_end";
+    const std::string stepName  = iteratorName + "_step";
+
+    // Step compile-time defines on the common cases:
+    // - Starting at 0
+    // - Step of 1 or -1 (++/--)
+    if (range.start) {
+      scope.add(startName, range.start);
+    } else {
+      scope.props["defines"][startName] = 0;
+    }
+
+    if (range.step != 1 && range.step != -1) {
+      scope.add(stepName, range.step);
+    } else {
+      scope.props["defines"][stepName] = range.step;
+    }
+
+    scope.add(endName, range.end);
+
+    const char compOperator = (
+      range.step > 0
+      ? '<'
+      : '>'
+    );
+
+    const char stepOperator = (
+      range.step > 0
+      ? '+'
+      : '-'
+    );
+
     std::stringstream ss;
-    ss << "for (int " << iteratorName << " = 0;"
-       << " " << iteratorName << " < 10;"
-       << " ++" << iteratorName << ") {";
+
+    // for (int idx = 0; idx < N; idx += 1) {
+    ss << "for (int " << iteratorName << " = " << startName << ";"
+       << ' ' << iteratorName << ' ' << compOperator << ' ' << endName << ";"
+       << ' ' << iteratorName << " " << stepOperator << "= " << stepName << ") {";
+
     return ss.str();
   }
 
   std::string iteration::buildIndexForLoop(occa::scope &scope,
                                            const std::string &iteratorName) const {
+    const std::string iteratorIndexName = iteratorName + "_index";
+    const std::string iteratorLengthName = iteratorName + "_length";
+    const std::string iteratorPtrName = iteratorName + "_ptr";
+
+    scope.add(iteratorLengthName, indices.length());
+    scope.add(iteratorPtrName, indices);
+
     std::stringstream ss;
-    ss << "for (int " << iteratorName << " = 0;"
-       << " " << iteratorName << " < 10;"
-       << " ++" << iteratorName << ") {";
+
+    // for (int i = 0; i < N; i += 1) {
+    //   idx = idcPtr[i];
+    ss << "for (int " << iteratorIndexName << " = 0;"
+       << " " << iteratorIndexName << " < " << iteratorLengthName << ";"
+       << " ++" << iteratorIndexName << ") {"
+       << "  const int " << iteratorName << " = " << iteratorPtrName << "[" << iteratorIndexName << "];";
+
     return ss.str();
   }
 }
