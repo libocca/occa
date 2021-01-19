@@ -7,6 +7,7 @@ namespace occa {
   template <int outerN, class outerIntN,
             int innerN, class innerIntN>
   class innerForLoop : public typelessForLoop {
+  public:
     innerForLoop(typelessForLoop &other) :
       typelessForLoop(other) {}
 

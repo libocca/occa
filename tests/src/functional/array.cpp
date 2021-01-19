@@ -190,21 +190,21 @@ void testEvery(occa::device device) {
 
   ASSERT_TRUE(
     ctx.array
-      .every(OCCA_FUNCTION([](int value) -> bool {
+      .every(OCCA_FUNCTION([](const int &value) -> bool {
         return value >= 0;
       }))
   );
 
   ASSERT_TRUE(
     ctx.array
-      .every(OCCA_FUNCTION([](int value, int index) -> bool {
+      .every(OCCA_FUNCTION([](const int &value, const int index) -> bool {
         return value >= 0;
       }))
   );
 
   ASSERT_TRUE(
     ctx.array
-    .every(OCCA_FUNCTION([](int value, int index, const int *values) -> bool {
+    .every(OCCA_FUNCTION([](const int &value, const int index, const int *values) -> bool {
       return (
         (value == values[index]) &&
         (values[index] >= 0)
@@ -214,21 +214,21 @@ void testEvery(occa::device device) {
 
   ASSERT_FALSE(
     ctx.array
-      .every(OCCA_FUNCTION([](int value) -> bool {
+      .every(OCCA_FUNCTION([](const int &value) -> bool {
         return value >= 1;
       }))
   );
 
   ASSERT_FALSE(
     ctx.array
-      .every(OCCA_FUNCTION([](int value, int index) -> bool {
+      .every(OCCA_FUNCTION([](const int &value, const int index) -> bool {
         return value >= 1;
       }))
   );
 
   ASSERT_FALSE(
     ctx.array
-    .every(OCCA_FUNCTION([](int value, int index, const int *values) -> bool {
+    .every(OCCA_FUNCTION([](const int &value, const int index, const int *values) -> bool {
       return (
         (value == values[index]) &&
         (values[index] >= 1)
@@ -242,21 +242,21 @@ void testSome(occa::device device) {
 
   ASSERT_TRUE(
     ctx.array
-      .some(OCCA_FUNCTION([](int value) -> bool {
+      .some(OCCA_FUNCTION([](const int &value) -> bool {
         return value <= 0;
       }))
   );
 
   ASSERT_TRUE(
     ctx.array
-      .some(OCCA_FUNCTION([](int value, int index) -> bool {
+      .some(OCCA_FUNCTION([](const int &value, const int index) -> bool {
         return value <= 0;
       }))
   );
 
   ASSERT_TRUE(
     ctx.array
-    .some(OCCA_FUNCTION([](int value, int index, const int *values) -> bool {
+    .some(OCCA_FUNCTION([](const int &value, const int index, const int *values) -> bool {
       return (
         (value == values[index]) &&
         (values[index] <= 0)
@@ -266,21 +266,21 @@ void testSome(occa::device device) {
 
   ASSERT_FALSE(
     ctx.array
-      .some(OCCA_FUNCTION([](int value) -> bool {
+      .some(OCCA_FUNCTION([](const int &value) -> bool {
         return value < 0;
       }))
   );
 
   ASSERT_FALSE(
     ctx.array
-      .some(OCCA_FUNCTION([](int value, int index) -> bool {
+      .some(OCCA_FUNCTION([](const int &value, const int index) -> bool {
         return value < 0;
       }))
   );
 
   ASSERT_FALSE(
     ctx.array
-    .some(OCCA_FUNCTION([](int value, int index, const int *values) -> bool {
+    .some(OCCA_FUNCTION([](const int &value, const int index, const int *values) -> bool {
       return (
         (value == values[index]) &&
         (values[index] < 0)
@@ -297,7 +297,7 @@ void testFilter(occa::device device) {
 
   filteredArray = (
     ctx.array
-    .filter(OCCA_FUNCTION([](int value) -> bool {
+    .filter(OCCA_FUNCTION([](const int &value) -> bool {
       return value >= 5;
     }))
   );
@@ -312,7 +312,7 @@ void testFilter(occa::device device) {
 
   filteredArray = (
     ctx.array
-    .filter(OCCA_FUNCTION([](int value, int index) -> bool {
+    .filter(OCCA_FUNCTION([](const int &value, const int index) -> bool {
       return index >= 5;
     }))
   );
@@ -327,7 +327,7 @@ void testFilter(occa::device device) {
 
   filteredArray = (
     ctx.array
-    .filter(OCCA_FUNCTION([](int value, int index, const int *values) -> bool {
+    .filter(OCCA_FUNCTION([](const int &value, const int index, const int *values) -> bool {
       return values[index] >= 5;
     }))
   );
@@ -348,7 +348,7 @@ void testFindIndex(occa::device device) {
   ASSERT_EQ(
     5, (
       ctx.array
-      .findIndex(OCCA_FUNCTION([](int value) -> bool {
+      .findIndex(OCCA_FUNCTION([](const int &value) -> bool {
         return value == 5;
       }))
     )
@@ -357,7 +357,7 @@ void testFindIndex(occa::device device) {
   ASSERT_EQ(
     6, (
       ctx.array
-      .findIndex(OCCA_FUNCTION([](int value, int index) -> bool {
+      .findIndex(OCCA_FUNCTION([](const int &value, const int index) -> bool {
         return index == 6;
       }))
     )
@@ -366,7 +366,7 @@ void testFindIndex(occa::device device) {
   ASSERT_EQ(
     7, (
       ctx.array
-      .findIndex(OCCA_FUNCTION([](int value, int index, const int *values) -> bool {
+      .findIndex(OCCA_FUNCTION([](const int &value, const int index, const int *values) -> bool {
         return values[index] == 7;
       }))
     )
@@ -375,7 +375,7 @@ void testFindIndex(occa::device device) {
   ASSERT_EQ(
     -1, (
       ctx.array
-      .findIndex(OCCA_FUNCTION([](int value) -> bool {
+      .findIndex(OCCA_FUNCTION([](const int &value) -> bool {
         return value == -1;
       }))
     )
@@ -384,7 +384,7 @@ void testFindIndex(occa::device device) {
   ASSERT_EQ(
     -1, (
       ctx.array
-      .findIndex(OCCA_FUNCTION([](int value, int index) -> bool {
+      .findIndex(OCCA_FUNCTION([](const int &value, const int index) -> bool {
         return index == -1;
       }))
     )
@@ -393,7 +393,7 @@ void testFindIndex(occa::device device) {
   ASSERT_EQ(
     -1, (
       ctx.array
-      .findIndex(OCCA_FUNCTION([](int value, int index, const int *values) -> bool {
+      .findIndex(OCCA_FUNCTION([](const int &value, const int index, const int *values) -> bool {
         return values[index] == -1;
       }))
     )
@@ -404,17 +404,17 @@ void testForEach(occa::device device) {
   context ctx(device);
 
   ctx.array
-    .forEach(OCCA_FUNCTION([](int value) -> void {
+    .forEach(OCCA_FUNCTION([](const int &value) -> void {
       // Do nothing
     }));
 
   ctx.array
-    .forEach(OCCA_FUNCTION([](int value, int index) -> void {
+    .forEach(OCCA_FUNCTION([](const int &value, const int index) -> void {
       // Do nothing
     }));
 
   ctx.array
-    .forEach(OCCA_FUNCTION([](int value, int index, const int *values) -> void {
+    .forEach(OCCA_FUNCTION([](const int &value, const int index, const int *values) -> void {
       // Do nothing
     }));
 }
@@ -424,7 +424,7 @@ void testMap(occa::device device) {
 
   occa::array<float> floatArray = (
     ctx.array
-    .map<float>(OCCA_FUNCTION([](int value) -> float {
+    .map<float>(OCCA_FUNCTION([](const int &value) -> float {
       return value / 2.0;
     }))
   );
@@ -439,7 +439,7 @@ void testMap(occa::device device) {
 
   occa::array<double> doubleArray = (
     ctx.array
-    .map(OCCA_FUNCTION([](int value, int index) -> double {
+    .map(OCCA_FUNCTION([](const int &value, const int index) -> double {
       return 1.0 + (value + index);
     }))
   );
@@ -454,7 +454,7 @@ void testMap(occa::device device) {
 
   occa::array<char> charArray = (
     ctx.array
-    .map(OCCA_FUNCTION([](int value, int index, const int *values) -> char {
+    .map(OCCA_FUNCTION([](const int &value, const int index, const int *values) -> char {
       return 'a' + (char) values[index];
     }))
   );
@@ -472,7 +472,7 @@ void testMapTo(occa::device device) {
   context ctx(device);
 
   ctx.array
-    .mapTo(ctx.array, OCCA_FUNCTION([](int value) -> int {
+    .mapTo(ctx.array, OCCA_FUNCTION([](const int &value) -> int {
       return value / 2;
     }));
 
@@ -481,7 +481,7 @@ void testMapTo(occa::device device) {
   ASSERT_EQ(ctx.maxValue / 2, ctx.array.max());
 
   ctx.array
-    .mapTo(ctx.array, OCCA_FUNCTION([](int value, int index) -> int {
+    .mapTo(ctx.array, OCCA_FUNCTION([](const int &value, const int index) -> int {
       return index / 5;
     }));
 
@@ -490,7 +490,7 @@ void testMapTo(occa::device device) {
   ASSERT_EQ(1, ctx.array.max());
 
   ctx.array
-    .mapTo(ctx.array, OCCA_FUNCTION([](int value, int index, const int *values) -> int {
+    .mapTo(ctx.array, OCCA_FUNCTION([](const int &value, const int index, const int *values) -> int {
       return index + values[index];
     }));
 
@@ -526,7 +526,7 @@ void testReduce(occa::device device) {
     ctx.array
     .reduce<int>(
       occa::reductionType::sum,
-      OCCA_FUNCTION([](int acc, int value) -> int {
+      OCCA_FUNCTION([](const int &acc, const int &value) -> int {
         return acc + value;
       })
     )
@@ -537,7 +537,7 @@ void testReduce(occa::device device) {
     ctx.array
     .reduce<float>(
       occa::reductionType::sum,
-      OCCA_FUNCTION([](float acc, int value) -> float {
+      OCCA_FUNCTION([](const float &acc, const int &value) -> float {
         return acc - value;
       })
     )
@@ -548,7 +548,7 @@ void testReduce(occa::device device) {
     ctx.array
     .reduce<int>(
       occa::reductionType::multiply,
-      OCCA_FUNCTION([](int acc, int value) -> int {
+      OCCA_FUNCTION([](const int &acc, const int &value) -> int {
         return acc * value;
       })
     )
@@ -559,7 +559,7 @@ void testReduce(occa::device device) {
     ctx.array
     .reduce<bool>(
       occa::reductionType::boolOr,
-      OCCA_FUNCTION([](bool acc, int value) -> bool {
+      OCCA_FUNCTION([](const bool &acc, const int &value) -> bool {
         return acc || value;
       })
     )
@@ -570,7 +570,7 @@ void testReduce(occa::device device) {
     ctx.array
     .reduce<bool>(
       occa::reductionType::boolAnd,
-      OCCA_FUNCTION([](bool acc, int value) -> bool {
+      OCCA_FUNCTION([](const bool &acc, const int &value) -> bool {
         return acc && value;
       })
     )
@@ -581,7 +581,7 @@ void testReduce(occa::device device) {
     ctx.array
     .reduce<int>(
       occa::reductionType::min,
-      OCCA_FUNCTION([](int acc, int value) -> int {
+      OCCA_FUNCTION([](const int &acc, const int &value) -> int {
         return acc < value ? acc : value;
       })
     )
@@ -592,7 +592,7 @@ void testReduce(occa::device device) {
     ctx.array
     .reduce<int>(
       occa::reductionType::max,
-      OCCA_FUNCTION([](int acc, int value) -> int {
+      OCCA_FUNCTION([](const int &acc, const int &value) -> int {
         return acc > value ? acc : value;
       })
     )

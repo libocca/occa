@@ -164,72 +164,72 @@ namespace occa {
 
     //---[ Lambda methods ]-------------
   public:
-    bool every(const occa::function<bool(TM)> &fn) const {
+    bool every(const occa::function<bool(const TM&)> &fn) const {
       return typelessEvery(fn);
     }
 
-    bool every(const occa::function<bool(TM, int)> &fn) const {
+    bool every(const occa::function<bool(const TM&, const int)> &fn) const {
       return typelessEvery(fn);
     }
 
-    bool every(const occa::function<bool(TM, int, const TM*)> &fn) const {
+    bool every(const occa::function<bool(const TM&, const int, const TM*)> &fn) const {
       return typelessEvery(fn);
     }
 
-    bool some(const occa::function<bool(TM)> &fn) const {
+    bool some(const occa::function<bool(const TM&)> &fn) const {
       return typelessSome(fn);
     }
 
-    bool some(const occa::function<bool(TM, int)> &fn) const {
+    bool some(const occa::function<bool(const TM&, const int)> &fn) const {
       return typelessSome(fn);
     }
 
-    bool some(const occa::function<bool(TM, int, const TM*)> &fn) const {
+    bool some(const occa::function<bool(const TM&, const int, const TM*)> &fn) const {
       return typelessSome(fn);
     }
 
-    int findIndex(const occa::function<bool(TM)> &fn) const {
+    int findIndex(const occa::function<bool(const TM&)> &fn) const {
       return typelessFindIndex(fn);
     }
 
-    int findIndex(const occa::function<bool(TM, int)> &fn) const {
+    int findIndex(const occa::function<bool(const TM&, const int)> &fn) const {
       return typelessFindIndex(fn);
     }
 
-    int findIndex(const occa::function<bool(TM, int, const TM*)> &fn) const {
+    int findIndex(const occa::function<bool(const TM&, const int, const TM*)> &fn) const {
       return typelessFindIndex(fn);
     }
 
-    void forEach(const occa::function<void(TM)> &fn) const {
+    void forEach(const occa::function<void(const TM&)> &fn) const {
       return typelessForEach(fn);
     }
 
-    void forEach(const occa::function<void(TM, int)> &fn) const {
+    void forEach(const occa::function<void(const TM&, const int)> &fn) const {
       return typelessForEach(fn);
     }
 
-    void forEach(const occa::function<void(TM, int, const TM*)> &fn) const {
+    void forEach(const occa::function<void(const TM&, const int, const TM*)> &fn) const {
       return typelessForEach(fn);
     }
 
     template <class TM2>
-    array<TM2> map(const occa::function<TM2(TM)> &fn) const {
+    array<TM2> map(const occa::function<TM2(const TM&)> &fn) const {
       return typelessMap<TM2>(fn);
     }
 
     template <class TM2>
-    array<TM2> map(const occa::function<TM2(TM, int)> &fn) const {
+    array<TM2> map(const occa::function<TM2(const TM&, const int)> &fn) const {
       return typelessMap<TM2>(fn);
     }
 
     template <class TM2>
-    array<TM2> map(const occa::function<TM2(TM, int, const TM*)> &fn) const {
+    array<TM2> map(const occa::function<TM2(const TM&, const int, const TM*)> &fn) const {
       return typelessMap<TM2>(fn);
     }
 
     template <class TM2>
     array<TM2> mapTo(occa::array<TM2> &output,
-                     const occa::function<TM2(TM)> &fn) const {
+                     const occa::function<TM2(const TM&)> &fn) const {
       output.resize(length());
       typelessMapTo(output.memory_, fn);
       return output;
@@ -237,7 +237,7 @@ namespace occa {
 
     template <class TM2>
     array<TM2> mapTo(occa::array<TM2> &output,
-                     const occa::function<TM2(TM, int)> &fn) const {
+                     const occa::function<TM2(const TM&, const int)> &fn) const {
       output.resize(length());
       typelessMapTo(output.memory_, fn);
       return output;
@@ -245,47 +245,47 @@ namespace occa {
 
     template <class TM2>
     array<TM2> mapTo(occa::array<TM2> &output,
-                     const occa::function<TM2(TM, int, const TM*)> &fn) const {
+                     const occa::function<TM2(const TM&, const int, const TM*)> &fn) const {
       typelessMapTo(output.memory_, fn);
       return output;
     }
 
     template <class TM2>
     TM2 reduce(reductionType type,
-               const occa::function<TM2(TM2, TM)> &fn) const {
+               const occa::function<TM2(const TM2&, const TM&)> &fn) const {
       return typelessReduce<TM2>(type, TM2(), false, fn);
     }
 
     template <class TM2>
     TM2 reduce(reductionType type,
-               const occa::function<TM2(TM2, TM, int)> &fn) const {
+               const occa::function<TM2(const TM2&, const TM&, const int)> &fn) const {
       return typelessReduce<TM2>(type, TM2(), false, fn);
     }
 
     template <class TM2>
     TM2 reduce(reductionType type,
-               occa::function<TM2(TM2, TM, int, const TM*)> fn) const {
+               occa::function<TM2(const TM2&, const TM&, const int, const TM*)> fn) const {
       return typelessReduce<TM2>(type, TM2(), false, fn);
     }
 
     template <class TM2>
     TM2 reduce(reductionType type,
                const TM2 &localInit,
-               const occa::function<TM2(TM2, TM)> &fn) const {
+               const occa::function<TM2(const TM2&, const TM&)> &fn) const {
       return typelessReduce<TM2>(type, localInit, true, fn);
     }
 
     template <class TM2>
     TM2 reduce(reductionType type,
                const TM2 &localInit,
-               const occa::function<TM2(TM2, TM, int)> &fn) const {
+               const occa::function<TM2(const TM2&, const TM&, const int)> &fn) const {
       return typelessReduce<TM2>(type, localInit, true, fn);
     }
 
     template <class TM2>
     TM2 reduce(reductionType type,
                const TM2 &localInit,
-               occa::function<TM2(TM2, TM, int, const TM*)> fn) const {
+               occa::function<TM2(const TM2&, const TM&, const int, const TM*)> fn) const {
       return typelessReduce<TM2>(type, localInit, true, fn);
     }
     //==================================
@@ -332,7 +332,7 @@ namespace occa {
 
       return mapTo<TM>(
         *this,
-        OCCA_FUNCTION(fnScope, [=](TM value) -> TM {
+        OCCA_FUNCTION(fnScope, [=](const TM &value) -> TM {
           return fillValue;
         })
       );
@@ -344,7 +344,7 @@ namespace occa {
       });
 
       return some(
-        OCCA_FUNCTION(fnScope, [=](TM value) -> bool {
+        OCCA_FUNCTION(fnScope, [=](const TM &value) -> bool {
           return target == value;
         })
       );
@@ -360,7 +360,7 @@ namespace occa {
       const int returnValue = reduce<int>(
         reductionType::min,
         (int) _length,
-        OCCA_FUNCTION(fnScope, [=](int foundIndex, TM value, int index) -> int {
+        OCCA_FUNCTION(fnScope, [=](const int &foundIndex, const TM &value,const  int index) -> int {
           if ((target != value) || (foundIndex <= index)) {
             return foundIndex;
           }
@@ -379,7 +379,7 @@ namespace occa {
       return reduce<int>(
         reductionType::max,
         -1,
-        OCCA_FUNCTION(fnScope, [=](int foundIndex, TM value, int index) -> int {
+        OCCA_FUNCTION(fnScope, [=](const int &foundIndex, const TM &value, const int index) -> int {
           if ((target != value) || (foundIndex >= index)) {
             return foundIndex;
           }
@@ -395,7 +395,7 @@ namespace occa {
       });
 
       return map<TM2>(
-        OCCA_FUNCTION(fnScope, [=](TM value) -> TM2 {
+        OCCA_FUNCTION(fnScope, [=](const TM &value) -> TM2 {
           return (TM2) value;
         })
       );
@@ -409,7 +409,7 @@ namespace occa {
       });
 
       return map<TM>(
-        OCCA_FUNCTION(fnScope, [=](TM value, int index, const TM *values) -> TM {
+        OCCA_FUNCTION(fnScope, [=](const TM &value, const int index, const TM *values) -> TM {
           return values[size - index - 1];
         })
       );
@@ -430,7 +430,7 @@ namespace occa {
       });
 
       return map<TM>(
-        OCCA_FUNCTION(fnScope, [=](TM value, int index, const TM *values) -> TM {
+        OCCA_FUNCTION(fnScope, [=](const TM &value, const int index, const TM *values) -> TM {
           if (index < (size - offset)) {
             return values[index + offset];
           } else {
@@ -455,7 +455,7 @@ namespace occa {
       });
 
       return map<TM>(
-        OCCA_FUNCTION(fnScope, [=](TM value, int index, const TM *values) -> TM {
+        OCCA_FUNCTION(fnScope, [=](const TM &value, const int index, const TM *values) -> TM {
           if (index >= offset) {
             return values[index - offset];
           } else {
@@ -468,7 +468,7 @@ namespace occa {
     TM max() const {
       return reduce<TM>(
         reductionType::max,
-        OCCA_FUNCTION([=](TM currentMax, TM value) -> TM {
+        OCCA_FUNCTION([=](const TM &currentMax, const TM &value) -> TM {
           return currentMax > value ? currentMax : value;
         })
       );
@@ -477,7 +477,7 @@ namespace occa {
     TM min() const {
       return reduce<TM>(
         reductionType::min,
-        OCCA_FUNCTION([=](TM currentMin, TM value) -> TM {
+        OCCA_FUNCTION([=](const TM &currentMin, const TM &value) -> TM {
           return currentMin < value ? currentMin : value;
         })
       );
@@ -492,7 +492,7 @@ namespace occa {
 
       return reduce<TM>(
         reductionType::sum,
-        OCCA_FUNCTION(fnScope, [=](TM acc, TM value, int index) -> TM {
+        OCCA_FUNCTION(fnScope, [=](const TM &acc, const TM &value, const int index) -> TM {
           return acc + (value * other[index]);
         })
       );
@@ -506,7 +506,7 @@ namespace occa {
       });
 
       return map<TM>(
-        OCCA_FUNCTION(fnScope, [=](TM value) -> TM {
+        OCCA_FUNCTION(fnScope, [=](const TM &value) -> TM {
           const TM valueWithMaxClamp = value > maxValue ? maxValue : value;
           return valueWithMaxClamp < minValue ? minValue : valueWithMaxClamp;
         })
@@ -519,7 +519,7 @@ namespace occa {
       });
 
       return map<TM>(
-        OCCA_FUNCTION(fnScope, [=](TM value) -> TM {
+        OCCA_FUNCTION(fnScope, [=](const TM &value) -> TM {
           return value < minValue ? minValue : value;
         })
       );
@@ -531,7 +531,7 @@ namespace occa {
       });
 
       return map<TM>(
-        OCCA_FUNCTION(fnScope, [=](TM value) -> TM {
+        OCCA_FUNCTION(fnScope, [=](const TM &value) -> TM {
           return value > maxValue ? maxValue : value;
         })
       );
