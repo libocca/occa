@@ -44,7 +44,7 @@ namespace occa {
 
     virtual modeMemory_t* addOffset(const dim_t offset) = 0;
 
-    virtual void* getPtr(const occa::json &props);
+    virtual void* getPtr();
 
     virtual void copyTo(void *dest,
                         const udim_t bytes,

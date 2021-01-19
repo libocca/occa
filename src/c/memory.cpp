@@ -7,13 +7,9 @@ bool occaMemoryIsInitialized(occaMemory memory) {
   return occa::c::memory(memory).isInitialized();
 }
 
-void* occaMemoryPtr(occaMemory memory,
-                    occaJson props) {
+void* occaMemoryPtr(occaMemory memory) {
   occa::memory mem = occa::c::memory(memory);
-  if (occa::c::isDefault(props)) {
-    return mem.ptr();
-  }
-  return mem.ptr(occa::c::json(props));
+  return mem.ptr();
 }
 
 occaDevice occaMemoryGetDevice(occaMemory memory) {

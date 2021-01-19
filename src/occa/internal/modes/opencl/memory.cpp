@@ -11,16 +11,16 @@ namespace occa {
         occa::modeMemory_t(modeDevice_, size_, properties_),
         rootClMem(&clMem),
         rootOffset(0),
-        mappedPtr(NULL) {}
+        useHostPtr(NULL) {}
 
     memory::~memory() {
       if (isOrigin) {
         // Free mapped-host pointer
-        if (mappedPtr) {
+        if (useHostPtr) {
           OCCA_OPENCL_ERROR("Mapped Free: clEnqueueUnmapMemObject",
                             clEnqueueUnmapMemObject(getCommandQueue(),
                                                     clMem,
-                                                    mappedPtr,
+                                                    ptr,
                                                     0, NULL, NULL));
         }
       }
@@ -34,9 +34,10 @@ namespace occa {
       rootClMem = NULL;
       rootOffset = 0;
 
+      ptr = nullptr;
       clMem = NULL;
-      mappedPtr = NULL;
       size = 0;
+      useHostPtr=false;
     }
 
     cl_command_queue& memory::getCommandQueue() const {
@@ -66,15 +67,20 @@ namespace occa {
                                    &info,
                                    &error);
 
+      if (useHostPtr) {
+        m->ptr = ptr + offset;
+      }
+
       OCCA_OPENCL_ERROR("Device: clCreateSubBuffer", error);
       return m;
     }
 
-    void* memory::getPtr(const occa::json &props) {
-      if (props.get("mapped", false)) {
-        return mappedPtr;
+    void* memory::getPtr() {
+      if (useHostPtr) {
+        return ptr;
+      } else {
+        return static_cast<void*>(clMem); //dubious
       }
-      return ptr;
     }
 
     void memory::copyFrom(const void *src,
@@ -123,7 +129,9 @@ namespace occa {
     }
 
     void memory::detach() {
+      ptr=nullptr;
       size = 0;
+      useHostPtr=false;
     }
   }
 }

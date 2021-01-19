@@ -30,7 +30,7 @@ namespace occa {
     }
   }
 
-  void* modeMemory_t::getPtr(const occa::json &props) {
+  void* modeMemory_t::getPtr() {
     return ptr;
   }
 

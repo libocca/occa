@@ -287,7 +287,7 @@ void testWrapMemory() {
   ASSERT_NEQ(occa::c::memory(mem1),
              occa::c::memory(mem2));
 
-  int *ptr = (int*) occaMemoryPtr(mem2, occaDefault);
+  int *ptr = (int*) occaMemoryPtr(mem2);
   occaMemoryDetach(mem2);
 
   for (int i = 0; i < entries; ++i) {

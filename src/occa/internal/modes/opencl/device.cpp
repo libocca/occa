@@ -317,8 +317,8 @@ namespace occa {
                                  const void *src,
                                  const occa::json &props) {
 
-      if (props.get("mapped", false)) {
-        return mappedAlloc(bytes, src, props);
+      if (props.get("host", false)) {
+        return hostAlloc(bytes, src, props);
       }
 
       cl_int error;
@@ -344,9 +344,9 @@ namespace occa {
       return mem;
     }
 
-    modeMemory_t* device::mappedAlloc(const udim_t bytes,
-                                      const void *src,
-                                      const occa::json &props) {
+    modeMemory_t* device::hostAlloc(const udim_t bytes,
+                                    const void *src,
+                                    const occa::json &props) {
 
       cl_int error;
 
@@ -359,6 +359,8 @@ namespace occa {
                                   NULL, &error);
       mem->rootClMem = &mem->clMem;
 
+      mem->useHostPtr=true;
+
       OCCA_OPENCL_ERROR("Device: clCreateBuffer", error);
 
       if (src != NULL){
@@ -366,13 +368,13 @@ namespace occa {
       }
 
       // Map memory to read/write
-      mem->mappedPtr = clEnqueueMapBuffer(getCommandQueue(),
-                                          mem->clMem,
-                                          CL_TRUE,
-                                          CL_MAP_READ | CL_MAP_WRITE,
-                                          0, bytes,
-                                          0, NULL, NULL,
-                                          &error);
+      mem->ptr = (char*) clEnqueueMapBuffer(getCommandQueue(),
+                                            mem->clMem,
+                                            CL_TRUE,
+                                            CL_MAP_READ | CL_MAP_WRITE,
+                                            0, bytes,
+                                            0, NULL, NULL,
+                                            &error);
 
       OCCA_OPENCL_ERROR("Device: clEnqueueMapBuffer", error);
 
