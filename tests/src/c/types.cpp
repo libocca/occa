@@ -63,6 +63,9 @@ void testNewOccaTypes() {
             1);
   ASSERT_EQ((int) props["b"],
             2);
+
+  occaPrintTypeInfo(cProps);
+
   occaFree(&cProps);
 
 #undef TEST_OCCA_TYPE
@@ -83,6 +86,7 @@ void testCTypeWrappers() {
 #define TEST_OCCA_C_TYPE(VALUE, OCCA_TYPE)      \
   do {                                          \
     occaType value = VALUE;                     \
+    occaPrintTypeInfo(value);                   \
     ASSERT_EQ(value.type, OCCA_TYPE);           \
 } while (0)
 

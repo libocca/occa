@@ -61,6 +61,8 @@ void testInit() {
   ASSERT_EQ(device.type,
             OCCA_DEVICE);
 
+  occaPrintTypeInfo(device);
+
   occaFree(&device);
 
   device = occaCreateDevice(
@@ -117,6 +119,8 @@ void testMemoryMethods() {
   // Test malloc + umalloc
   occaMemory mem1 = occaDeviceMalloc(device, memBytes, NULL, occaDefault);
   allocatedBytes += memBytes;
+
+  occaPrintTypeInfo(mem1);
 
   ASSERT_EQ((size_t) occaDeviceMemoryAllocated(device),
             allocatedBytes);
@@ -188,6 +192,8 @@ void testKernelMethods() {
     occa::c::kernel(addVectors).binaryFilename()
   );
 
+  occaPrintTypeInfo(addVectors);
+
   occaFree(&addVectors);
 
   addVectors = occaDeviceBuildKernel(device,
@@ -231,6 +237,8 @@ void testStreamMethods() {
 
   occaStream cStream = occaDeviceCreateStream(device, occaDefault);
   occa::stream stream = occa::c::stream(cStream);
+
+  occaPrintTypeInfo(cStream);
 
   occaDeviceSetStream(device, cStream);
 

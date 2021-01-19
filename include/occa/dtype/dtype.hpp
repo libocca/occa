@@ -94,6 +94,7 @@ namespace occa {
 
     static const dtype_t& getBuiltin(const std::string &name);
 
+    json toJson(const std::string &name = "") const;
     void toJson(json &j, const std::string &name = "") const;
 
     static dtype_t fromJson(const std::string &str);

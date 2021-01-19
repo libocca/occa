@@ -17,6 +17,10 @@ namespace occa {
     return (0 < kernelName.size());
   }
 
+  std::string kernelBuilder::getKernelName() {
+    return kernelName;
+  }
+
   std::string kernelBuilder::buildKernelSource(const occa::scope &scope) {
     const int charCount = (int) source.size();
 

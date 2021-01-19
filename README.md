@@ -63,10 +63,28 @@ export DYLD_LIBRARY_PATH+=":${PWD}/lib"
 
 &nbsp;
 
-### Hello World
+### Examples
+
+#### Basics
+
+The basic 3 objects are covered in example `01_add_vectors`
+- `occa::device`
+- `occa::memory`
+- `occa::kernel`
 
 ```bash
-cd examples/cpp/1_add_vectors
+cd examples/cpp/01_add_vectors
+make
+./main
+```
+
+#### Functional Programming + Arrays
+
+The example `05_arrays` shows how to setup `occa::array` and use
+lambda methods to transform data
+
+```bash
+cd examples/cpp/05_arrays
 make
 ./main
 ```
@@ -80,24 +98,27 @@ There is an executable `occa` provided inside `bin`
 ```bash
 > occa --help
 
-Usage: occa COMMAND
+Usage: occa [OPTIONS] COMMAND [COMMAND...]
 
-Can be used to display information of cache kernels.
+Helpful utilities related to OCCA workflows
 
 Commands:
   autocomplete    Prints shell functions to autocomplete occa
                   commands and arguments
-  cache           Cache kernels
   clear           Clears cached files and cache locks
   compile         Compile kernels
   env             Print environment variables used in OCCA
   info            Prints information about available backend modes
   modes           Prints available backend modes
   translate       Translate kernels
-  version         Prints OCCA library version
+  version         Prints OCCA version
 
 Arguments:
   COMMAND    Command to run
+
+Options:
+  -h, --help    Print usage
+
 ```
 
 &nbsp;

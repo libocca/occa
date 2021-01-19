@@ -641,6 +641,9 @@ namespace occa {
                  const hash_t &value_);
 
     jsonKeyValue(const std::string &name_,
+                 const json &value_);
+
+    jsonKeyValue(const std::string &name_,
                  std::initializer_list<jsonKeyValue> value_);
   };
 

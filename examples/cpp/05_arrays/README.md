@@ -1,6 +1,6 @@
 ### Example: Arrays
 
-We show the use of `occa::array<>` to simplifiy array operations along with auto syncs between host and device data
+Example using `occa::array` with inline lambdas
 
 ### Compiling the Example
 
@@ -15,8 +15,7 @@ make
 
 Usage: ./main [OPTIONS]
 
-Example using occa::array objects for easy allocation and host <-> device
-syncing
+Example using occa::array with inline lambdas
 
 Options:
   -d, --device     Device properties (default: "{mode: 'Serial'}")
