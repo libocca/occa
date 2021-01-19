@@ -3,6 +3,7 @@
 
 #include <occa/functional/array.hpp>
 #include <occa/functional/function.hpp>
+#include <occa/functional/range.hpp>
 #include <occa/functional/scope.hpp>
 #include <occa/functional/utils.hpp>
 
