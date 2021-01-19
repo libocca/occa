@@ -633,10 +633,10 @@ void testSpecialMacros() {
                    token->type());
 
   // OKL
-  ASSERT_EQ_BINARY(123,
-                   (int) nextTokenPrimitiveValue());
-  ASSERT_EQ_BINARY("456",
-                   nextTokenStringValue());
+  ASSERT_EQ(123,
+            (int) nextTokenPrimitiveValue());
+  ASSERT_EQ("456",
+            nextTokenStringValue());
 
   while(!tokenStream.isEmpty()) {
     getToken();
