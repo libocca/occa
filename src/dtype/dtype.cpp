@@ -391,6 +391,12 @@ namespace occa {
     return dtype::none;
   }
 
+  json dtype_t::toJson(const std::string &name) const {
+    json output;
+    toJson(output, name);
+    return output;
+  }
+
   void dtype_t::toJson(json &j, const std::string &name) const {
     if (ref) {
       return ref->toJson(j, name);

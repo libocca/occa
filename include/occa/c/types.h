@@ -139,6 +139,8 @@ occaType occaString(const char *str);
 
 void occaFree(occaType *value);
 
+void occaPrintTypeInfo(occaType value);
+
 OCCA_END_EXTERN_C
 
 #endif

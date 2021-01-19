@@ -17,6 +17,8 @@ namespace occa {
 
     bool isInitialized();
 
+    std::string getKernelName();
+
     std::string buildKernelSource(const occa::scope &scope);
 
     occa::kernel getOrBuildKernel(const occa::scope &scope);

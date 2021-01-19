@@ -743,6 +743,11 @@ namespace occa {
     value(value_.getFullString()) {}
 
   jsonKeyValue::jsonKeyValue(const std::string &name_,
+                             const json &value_) :
+    name(name_),
+    value(value_) {}
+
+  jsonKeyValue::jsonKeyValue(const std::string &name_,
                              std::initializer_list<jsonKeyValue> value_) :
     name(name_),
     value(value_) {}
