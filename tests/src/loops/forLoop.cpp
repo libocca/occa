@@ -27,6 +27,7 @@ int main(const int argc, const char **argv) {
   };
 
   for (auto &device : devices) {
+    std::cout << "Testing mode: " << device.mode() << '\n';
     testOuterForLoops(device);
     testFullForLoops(device);
   }
@@ -94,6 +95,25 @@ void testOuterForLoops(occa::device device) {
   ASSERT_EQ((float) 0, output[0]);
   ASSERT_EQ((float) (2 * length * length * length) - 1,
             output[(2 * length * length * length) - 1]);
+
+  occa::forLoop()
+    .outer(length)
+    .run(OCCA_FUNCTION(scope, [=](const int outerIndex) -> void {
+      OKL("@shared"); int array[2];
+
+      OKL("@inner");
+      for (int i = 0; i < 2; ++i) {
+        array[i] = i;
+      }
+
+      OKL("@inner");
+      for (int i = 0; i < 2; ++i) {
+        output[i] = array[1 - i];
+      }
+    }));
+
+  ASSERT_EQ((float) 1, output[0]);
+  ASSERT_EQ((float) 0, output[1]);
 }
 
 void testFullForLoops(occa::device device) {
