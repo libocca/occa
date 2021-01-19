@@ -23,7 +23,7 @@ namespace occa {
       OCCA_LOOP_INIT_OUTER_INDEX(outerIndex)
       OCCA_LOOP_INIT_INNER_INDEX(innerIndex)
 
-      OCCA_LOOP_FUNCTION(outerIndex, innerIndex);
+      OCCA_LOOP_FUNCTION
 
       OCCA_LOOP_END_INNER_LOOPS
       OCCA_LOOP_END_OUTER_LOOPS
@@ -37,11 +37,8 @@ namespace occa {
       loopScope.device = device;
     }
 
-    // Temporary until issue #175 is resolved
-    loopScope.props["okl/validate"] = false;
-
     // Inject the function
-    loopScope.props["functions/occa_loop_function"] = fn;
+    loopScope.props["defines/OCCA_LOOP_FUNCTION"] = fn.definition().bodySource;
 
     // Setup @outer loops
     std::string outerForLoopsStart, outerForLoopsEnd;
@@ -75,17 +72,6 @@ namespace occa {
       loopScope.props["defines/OCCA_LOOP_END_INNER_LOOPS"] = "";
       loopScope.props["defines/OCCA_LOOP_INIT_INNER_INDEX(INDEX)"] = "";
     }
-
-    // Define function call
-    strVector argumentValues;
-    if (innerIterationCount) {
-      argumentValues = {"OUTER_INDEX", "INNER_INDEX"};
-    } else {
-      argumentValues = {"OUTER_INDEX"};
-    }
-    loopScope.props["defines/OCCA_LOOP_FUNCTION(OUTER_INDEX, INNER_INDEX)"] = (
-      fn.buildFunctionCall("occa_loop_function", argumentValues)
-    );
 
     return loopScope;
   }

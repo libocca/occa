@@ -6,6 +6,11 @@
 #include <occa/utils/hash.hpp>
 #include <occa/types/typedefs.hpp>
 
+// Macro-like function used to expand source code in captured lambdas
+// - Host: No-op function
+// - OKL : Macro to expand source code
+inline void OKL(const std::string &sourceCode) {}
+
 namespace occa {
   class baseFunction {
   public:
@@ -15,6 +20,8 @@ namespace occa {
     baseFunction(const occa::scope &scope_);
 
     functionDefinition& definition();
+
+    const functionDefinition& definition() const;
 
     virtual int argumentCount() const = 0;
 

@@ -272,8 +272,27 @@ namespace occa {
         return;
       }
 
+      // Check if the next argument is an empty semicolon to remove
+      //
+      // Example:
+      //   OKL("@inner");
+      //   for(...)
+      // ->
+      //   @inner
+      //   for(...)
+      //
+      token_t *nextToken = pp.getSourceToken();
+      if (nextToken) {
+        if (token_t::safeOperatorType(nextToken) == operatorType::semicolon) {
+          delete nextToken;
+        } else {
+          pp.pushInput(nextToken);
+        }
+      }
+
       const std::string &content = token->to<stringToken>().value;
       pp.injectSourceCode(*token, strip(content));
+
     }
   }
 }

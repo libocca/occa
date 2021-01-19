@@ -10,6 +10,11 @@ namespace occa {
     return *functionStore.get(hash_);
   }
 
+  const functionDefinition& baseFunction::definition() const {
+    // Should be initialized at this point
+    return *functionStore.get(hash_);
+  }
+
   hash_t baseFunction::hash() const {
     return hash_;
   }

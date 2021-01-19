@@ -41,58 +41,58 @@ void testOuterForLoops(occa::device device) {
 
   occa::scope scope({
     {"output", output}
-    }, {
+  }, {
     {"defines/length", length}
   });
 
   occa::forLoop()
     .outer(length)
     .run(OCCA_FUNCTION(scope, [=](const int outerIndex) -> void {
-      OKL("@inner")
-        for (int i = 0; i < 2; ++i) {
-          const int globalIndex = i + (2 * outerIndex);
-          output[globalIndex] = globalIndex;
-        }
+      OKL("@inner");
+      for (int i = 0; i < 2; ++i) {
+        const int globalIndex = i + (2 * outerIndex);
+        output[globalIndex] = globalIndex;
+      }
     }));
 
-  ASSERT_EQ(0, output[0]);
-  ASSERT_EQ((2 * length) - 1,
+  ASSERT_EQ((float) 0, output[0]);
+  ASSERT_EQ((float) (2 * length) - 1,
             output[(2 * length) - 1]);
-  ASSERT_EQ(-1,
+  ASSERT_EQ((float) -1,
             output[2 * length]);
 
   occa::forLoop()
     .outer(length, occa::range(length))
     .run(OCCA_FUNCTION(scope, [=](const int2 outerIndex) -> void {
-      OKL("@inner")
-        for (int i = 0; i < 2; ++i) {
-          const int globalIndex = (
-            i + (2 * (outerIndex.y + length * outerIndex.x))
-          );
-          output[globalIndex] = -globalIndex;
-        }
+      OKL("@inner");
+      for (int i = 0; i < 2; ++i) {
+        const int globalIndex = (
+          i + (2 * (outerIndex.y + length * outerIndex.x))
+        );
+        output[globalIndex] = -globalIndex;
+      }
     }));
 
-  ASSERT_EQ(0, output[0]);
-  ASSERT_EQ(-((2 * length * length) - 1),
+  ASSERT_EQ((float) 0, output[0]);
+  ASSERT_EQ((float) -((2 * length * length) - 1),
             output[2 * length * length - 1]);
-  ASSERT_EQ(-1,
+  ASSERT_EQ((float) -1,
             output[2 * length * length]);
 
   occa::forLoop()
     .outer(length, occa::range(length), indexArray)
     .run(OCCA_FUNCTION(scope, [=](const int3 outerIndex) -> void {
-      OKL("@inner")
-        for (int i = 0; i < 2; ++i) {
-          const int globalIndex = (
-            i + (2 * (outerIndex.z + length * (outerIndex.y + length * outerIndex.x)))
-          );
-          output[globalIndex] = globalIndex;
-        }
+      OKL("@inner");
+      for (int i = 0; i < 2; ++i) {
+        const int globalIndex = (
+          i + (2 * (outerIndex.z + length * (outerIndex.y + length * outerIndex.x)))
+        );
+        output[globalIndex] = globalIndex;
+      }
     }));
 
-  ASSERT_EQ(0, output[0]);
-  ASSERT_EQ((2 * length * length * length) - 1,
+  ASSERT_EQ((float) 0, output[0]);
+  ASSERT_EQ((float) (2 * length * length * length) - 1,
             output[(2 * length * length * length) - 1]);
 }
 
@@ -117,10 +117,10 @@ void testFullForLoops(occa::device device) {
       output[globalIndex] = globalIndex;
     }));
 
-  ASSERT_EQ(0, output[0]);
-  ASSERT_EQ((2 * length) - 1,
+  ASSERT_EQ((float) 0, output[0]);
+  ASSERT_EQ((float) (2 * length) - 1,
             output[(2 * length) - 1]);
-  ASSERT_EQ(-1,
+  ASSERT_EQ((float) -1,
             output[2 * length]);
 
   occa::forLoop()
@@ -133,10 +133,10 @@ void testFullForLoops(occa::device device) {
       output[globalIndex] = -globalIndex;
     }));
 
-  ASSERT_EQ(0, output[0]);
-  ASSERT_EQ(-((2 * length * length) - 1),
+  ASSERT_EQ((float) 0, output[0]);
+  ASSERT_EQ((float) -((2 * length * length) - 1),
             output[2 * length * length - 1]);
-  ASSERT_EQ(-1,
+  ASSERT_EQ((float) -1,
             output[2 * length * length]);
 
   occa::forLoop()
@@ -149,7 +149,7 @@ void testFullForLoops(occa::device device) {
       output[globalIndex] = globalIndex;
     }));
 
-  ASSERT_EQ(0, output[0]);
-  ASSERT_EQ((2 * length * length * length) - 1,
+  ASSERT_EQ((float) 0, output[0]);
+  ASSERT_EQ((float) (2 * length * length * length) - 1,
             output[(2 * length * length * length) - 1]);
 }

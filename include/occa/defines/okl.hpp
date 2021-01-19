@@ -5,8 +5,6 @@
 #  undef OCCA_JIT
 #endif
 
-#define OKL(SOURCE_CODE)
-
 #define OCCA_JIT(OKL_SCOPE, OKL_SOURCE)                 \
   do {                                                  \
     static ::occa::kernelBuilder _occaJitKernelBuilder( \
