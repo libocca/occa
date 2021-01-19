@@ -8,10 +8,8 @@ namespace occa {
   public:
     occa::device device;
 
-    occa::iteration outerIterations[3];
-    occa::iteration innerIterations[3];
-    int outerIterationCount;
-    int innerIterationCount;
+    std::vector<occa::iteration> outerIterations;
+    std::vector<occa::iteration> innerIterations;
 
     typelessForLoop(occa::device device_);
 

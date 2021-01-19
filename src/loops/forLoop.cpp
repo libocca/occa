@@ -9,9 +9,9 @@ namespace occa {
   outerForLoop1 forLoop::outer(occa::iteration outerIteration0) {
     outerForLoop1 loop(device);
 
-    loop.outerIterationCount = 1;
-
-    loop.outerIterations[0] = outerIteration0;
+    loop.outerIterations = {
+      outerIteration0
+    };
 
     return loop;
   }
@@ -20,10 +20,10 @@ namespace occa {
                                occa::iteration outerIteration1) {
     outerForLoop2 loop(device);
 
-    loop.outerIterationCount = 2;
-
-    loop.outerIterations[0] = outerIteration0;
-    loop.outerIterations[1] = outerIteration1;
+    loop.outerIterations = {
+      outerIteration0,
+      outerIteration1
+    };
 
     return loop;
   }
@@ -33,11 +33,11 @@ namespace occa {
                                occa::iteration outerIteration2) {
     outerForLoop3 loop(device);
 
-    loop.outerIterationCount = 3;
-
-    loop.outerIterations[0] = outerIteration0;
-    loop.outerIterations[1] = outerIteration1;
-    loop.outerIterations[2] = outerIteration2;
+    loop.outerIterations = {
+      outerIteration0,
+      outerIteration1,
+      outerIteration2
+    };
 
     return loop;
   }

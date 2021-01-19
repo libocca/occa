@@ -3,16 +3,12 @@
 
 namespace occa {
   typelessForLoop::typelessForLoop(occa::device device_) :
-    device(device_),
-    outerIterationCount(0),
-    innerIterationCount(0) {}
+    device(device_) {}
 
   typelessForLoop::typelessForLoop(const typelessForLoop &other) :
     device(other.device),
     outerIterations(other.outerIterations),
-    innerIterations(other.innerIterations),
-    outerIterationCount(other.outerIterationCount),
-    innerIterationCount(other.innerIterationCount) {}
+    innerIterations(other.innerIterations) {}
 
   void typelessForLoop::typelessRun(const occa::scope &scope,
                                     const baseFunction &fn) const {
@@ -37,7 +33,10 @@ namespace occa {
       loopScope.device = device;
     }
 
-    // Inject the function
+    const int outerIterationCount = (int) outerIterations.size();
+    const int innerIterationCount = (int) innerIterations.size();
+
+    // Inject the function body
     loopScope.props["defines/OCCA_LOOP_FUNCTION"] = fn.definition().bodySource;
 
     // Setup @outer loops

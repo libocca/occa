@@ -20,19 +20,19 @@ namespace occa {
       typelessForLoop(other) {}
 
     innerForLoop1 inner(occa::iteration innerIteration0) {
-      innerIterationCount = 1;
-
-      innerIterations[0] = innerIteration0;
+      innerIterations = {
+        innerIteration0
+      };
 
       return *this;
     }
 
     innerForLoop2 inner(occa::iteration innerIteration0,
                         occa::iteration innerIteration1) {
-      innerIterationCount = 2;
-
-      innerIterations[0] = innerIteration0;
-      innerIterations[1] = innerIteration1;
+      innerIterations = {
+        innerIteration0,
+        innerIteration1
+      };
 
       return *this;
     }
@@ -40,11 +40,11 @@ namespace occa {
     innerForLoop3 inner(occa::iteration innerIteration0,
                         occa::iteration innerIteration1,
                         occa::iteration innerIteration2) {
-      innerIterationCount = 3;
-
-      innerIterations[0] = innerIteration0;
-      innerIterations[1] = innerIteration1;
-      innerIterations[2] = innerIteration2;
+      innerIterations = {
+        innerIteration0,
+        innerIteration1,
+        innerIteration2
+      };
 
       return *this;
     }
