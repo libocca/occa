@@ -35,11 +35,11 @@ class context {
   }
 };
 
+void testFunctionStore();
 void testBaseMethods(occa::device device);
 void testEvery(occa::device device);
 void testSome(occa::device device);
 void testFilter(occa::device device);
-void testFind(occa::device device);
 void testFindIndex(occa::device device);
 void testForEach(occa::device device);
 void testMap(occa::device device);
@@ -78,15 +78,14 @@ int main(const int argc, const char **argv) {
     })
   };
 
-  // No need to test base methods for all modes
-  testBaseMethods(devices[0]);
+  testFunctionStore();
 
   for (auto &device : devices) {
     std::cout << "Testing mode: " << device.mode() << '\n';
+    testBaseMethods(device);
     testEvery(device);
     testSome(device);
     testFilter(device);
-    testFind(device);
     testFindIndex(device);
     testForEach(device);
     testMap(device);
@@ -111,20 +110,7 @@ int main(const int argc, const char **argv) {
   return 0;
 }
 
-void testBaseMethods(occa::device device) {
-  context ctx(device);
-
-  occa::array<int> array = ctx.device.malloc<int>(ctx.length);
-
-  ASSERT_EQ(ctx.length,
-            (int) array.length());
-
-  ASSERT_EQ(ctx.device,
-            array.getDevice());
-
-  ASSERT_EQ(array.memory(),
-            occa::array<int>(array).memory());
-
+void testFunctionStore() {
   // Test that we inserted a new function in the functionStore only once
   const size_t initialStoreSize = occa::functionStore.size();
   for (int i = 0; i < 10; ++i) {
@@ -171,6 +157,32 @@ void testBaseMethods(occa::device device) {
 
   // Test the lambda call
   ASSERT_EQ(7, func1(3));
+}
+
+void testBaseMethods(occa::device device) {
+  context ctx(device);
+
+  ASSERT_EQ(ctx.length,
+            (int) ctx.array.length());
+
+  ASSERT_EQ(ctx.device,
+            ctx.array.getDevice());
+
+  ASSERT_EQ(ctx.array.memory(),
+            occa::array<int>(ctx.array).memory());
+
+  ASSERT_EQ(0, ctx.array[0]);
+  ASSERT_EQ(4, ctx.array[4]);
+
+  ctx.array.resize(5);
+  ASSERT_EQ(5, (int) ctx.array.length());
+  ASSERT_EQ(0, ctx.array[0]);
+  ASSERT_EQ(4, ctx.array[4]);
+
+  ctx.array.resize(10);
+  ASSERT_EQ(10, (int) ctx.array.length());
+  ASSERT_EQ(0, ctx.array[0]);
+  ASSERT_EQ(4, ctx.array[4]);
 }
 
 void testEvery(occa::device device) {
@@ -328,66 +340,6 @@ void testFilter(occa::device device) {
   ASSERT_EQ(5, filteredArray.min());
   ASSERT_EQ(ctx.maxValue, filteredArray.max());
 #endif
-}
-
-void testFind(occa::device device) {
-  context ctx(device);
-
-  const int notFound = -1;
-
-  ASSERT_EQ(
-    5, (
-      ctx.array
-      .find(notFound, OCCA_FUNCTION({}, [](int value) -> bool {
-        return value == 5;
-      }))
-    )
-  );
-
-  ASSERT_EQ(
-    6, (
-      ctx.array
-      .find(notFound, OCCA_FUNCTION({}, [](int value, int index) -> bool {
-        return index == 6;
-      }))
-    )
-  );
-
-  ASSERT_EQ(
-    7, (
-      ctx.array
-      .find(notFound, OCCA_FUNCTION({}, [](int value, int index, const int *values) -> bool {
-        return values[index] == 7;
-      }))
-    )
-  );
-
-  ASSERT_EQ(
-    notFound, (
-      ctx.array
-      .find(notFound, OCCA_FUNCTION({}, [](int value) -> bool {
-        return value == -1;
-      }))
-    )
-  );
-
-  ASSERT_EQ(
-    notFound, (
-      ctx.array
-      .find(notFound, OCCA_FUNCTION({}, [](int value, int index) -> bool {
-        return index == -1;
-      }))
-    )
-  );
-
-  ASSERT_EQ(
-    notFound, (
-      ctx.array
-      .find(notFound, OCCA_FUNCTION({}, [](int value, int index, const int *values) -> bool {
-        return values[index] == -1;
-      }))
-    )
-  );
 }
 
 void testFindIndex(occa::device device) {
