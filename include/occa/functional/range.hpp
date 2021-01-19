@@ -43,21 +43,13 @@ namespace occa {
     udim_t length() const;
 
     //---[ Lambda methods ]-------------
-    inline bool every(const occa::function<bool(int)> &fn) const {
-      return typelessEvery(fn);
-    }
+    bool every(const occa::function<bool(int)> &fn) const;
 
-    inline bool some(const occa::function<bool(int)> &fn) const {
-      return typelessSome(fn);
-    }
+    bool some(const occa::function<bool(int)> &fn) const;
 
-    inline int findIndex(const occa::function<bool(int)> &fn) const {
-      return typelessFindIndex(fn);
-    }
+    int findIndex(const occa::function<bool(int)> &fn) const;
 
-    inline void forEach(const occa::function<void(int)> &fn) const {
-      return typelessForEach(fn);
-    }
+    void forEach(const occa::function<void(int)> &fn) const;
 
     template <class TM>
     array<TM> map(const occa::function<TM(int)> &fn) const {
@@ -84,6 +76,10 @@ namespace occa {
               const occa::function<TM(TM, int)> &fn) const {
       return typelessReduce<TM>(type, localInit, true, fn);
     }
+    //==================================
+
+    //---[ Utility methods ]------------
+    array<int> toArray() const;
     //==================================
   };
 }

@@ -291,8 +291,16 @@ namespace occa {
     //==================================
 
     //---[ Utility methods ]------------
-    TM operator [] (const dim_t index) const {
-      TM value;
+    TM& operator [] (const dim_t index) {
+      static TM value;
+      memory_.copyTo(&value,
+                     sizeof(TM),
+                     index * sizeof(TM));
+      return value;
+    }
+
+    TM& operator [] (const dim_t index) const {
+      static TM value;
       memory_.copyTo(&value,
                      sizeof(TM),
                      index * sizeof(TM));

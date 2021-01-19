@@ -9,6 +9,7 @@ void testForEach();
 void testMap();
 void testMapTo();
 void testReduce();
+void testToArray();
 
 int main(const int argc, const char **argv) {
   occa::setDevice(occa::host());
@@ -21,6 +22,7 @@ int main(const int argc, const char **argv) {
   testMap();
   testMapTo();
   testReduce();
+  testToArray();
 
   return 0;
 }
@@ -305,4 +307,21 @@ void testReduce() {
       })
     )
   );
+}
+
+void testToArray() {
+  occa::array<int> arr = occa::range(10).toArray();
+  ASSERT_EQ(10, arr.length());
+  ASSERT_EQ(0, arr.min());
+  ASSERT_EQ(9, arr.max());
+
+  arr = occa::range(0, -10).toArray();
+  ASSERT_EQ(10, arr.length());
+  ASSERT_EQ(-9, arr.min());
+  ASSERT_EQ(0, arr.max());
+
+  arr = occa::range(0, 10, 2).toArray();
+  ASSERT_EQ(5, arr.length());
+  ASSERT_EQ(0, arr.min());
+  ASSERT_EQ(8, arr.max());
 }

@@ -3,31 +3,13 @@
 
 #include <functional>
 
-#include <occa/functional/functionDefinition.hpp>
-#include <occa/functional/scope.hpp>
+#include <occa/functional/baseFunction.hpp>
 #include <occa/functional/utils.hpp>
-#include <occa/utils/hash.hpp>
 #include <occa/dtype.hpp>
 
 namespace occa {
   template <class Function>
   class function;
-
-  class baseFunction {
-  public:
-    occa::scope scope;
-    hash_t hash_;
-
-    baseFunction(const occa::scope &scope_);
-
-    functionDefinition& definition();
-
-    virtual int argumentCount() const = 0;
-
-    hash_t hash() const;
-
-    operator hash_t () const;
-  };
 
   template <class ReturnType, class ...ArgTypes>
   class function<ReturnType(ArgTypes...)> : public baseFunction {

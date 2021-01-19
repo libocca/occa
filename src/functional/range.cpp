@@ -106,4 +106,30 @@ namespace occa {
       : (end - start + step + 1) / step
     );
   }
+
+  //---[ Lambda methods ]---------------
+  bool range::every(const occa::function<bool(int)> &fn) const {
+    return typelessEvery(fn);
+  }
+
+  bool range::some(const occa::function<bool(int)> &fn) const {
+    return typelessSome(fn);
+  }
+
+  int range::findIndex(const occa::function<bool(int)> &fn) const {
+    return typelessFindIndex(fn);
+  }
+
+  void range::forEach(const occa::function<void(int)> &fn) const {
+    return typelessForEach(fn);
+  }
+  //====================================
+
+  //---[ Utility methods ]--------------
+  array<int> range::toArray() const {
+    return map(OCCA_FUNCTION({}, [=](int index) -> int {
+      return index;
+    }));
+  }
+  //====================================
 }
