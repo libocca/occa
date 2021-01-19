@@ -18,9 +18,9 @@ namespace occa {
                                     const baseFunction &fn) const {
     OCCA_JIT(getForLoopScope(scope, fn), (
       OCCA_LOOP_START_OUTER_LOOPS
-      OCCA_LOOP_INIT_OUTER_INDEX(outerIndex)
-
       OCCA_LOOP_START_INNER_LOOPS
+
+      OCCA_LOOP_INIT_OUTER_INDEX(outerIndex)
       OCCA_LOOP_INIT_INNER_INDEX(innerIndex)
 
       OCCA_LOOP_FUNCTION(outerIndex, innerIndex);
@@ -32,7 +32,7 @@ namespace occa {
 
   occa::scope typelessForLoop::getForLoopScope(const occa::scope &scope,
                                                const baseFunction &fn) const {
-    occa::scope loopScope = scope;
+    occa::scope loopScope = scope + fn.scope;
     if (!loopScope.device.isInitialized()) {
       loopScope.device = device;
     }
@@ -113,14 +113,14 @@ namespace occa {
     if (iterationCount == 1) {
       ss << "const int " << indexName << " = " << indexName << "_0;";
     } else if (iterationCount == 2) {
-      ss << "int2 " << indexName << ";\n"
-         << "" << indexName << ".x = " << indexName << "_0;"
-         << "" << indexName << ".y = " << indexName << "_1;";
+      ss << "int2 " << indexName << ";"
+         << " " << indexName << ".x = " << indexName << "_0;"
+         << " " << indexName << ".y = " << indexName << "_1;";
     } else if (iterationCount == 3) {
-      ss << "int3 " << indexName << ";\n"
-         << "" << indexName << ".x = " << indexName << "_0;"
-         << "" << indexName << ".y = " << indexName << "_1;"
-         << "" << indexName << ".z = " << indexName << "_2;";
+      ss << "int3 " << indexName << "; "
+         << " " << indexName << ".x = " << indexName << "_0;"
+         << " " << indexName << ".y = " << indexName << "_1;"
+         << " " << indexName << ".z = " << indexName << "_2;";
     }
 
     return ss.str();

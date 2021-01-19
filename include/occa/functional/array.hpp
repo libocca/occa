@@ -82,6 +82,10 @@ namespace occa {
       return memory_;
     }
 
+    operator kernelArg() {
+      return memory_;
+    }
+
     operator kernelArg() const {
       return memory_;
     }

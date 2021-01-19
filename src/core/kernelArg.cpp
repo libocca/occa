@@ -204,7 +204,7 @@ namespace occa {
     kernelArg(value_),
     name(name_),
     dtype(value_.dtype()),
-    isConst(true) {}
+    isConst(false) {}
 
   scopeKernelArg::scopeKernelArg(const std::string &name_,
                                  const primitive &value_) :

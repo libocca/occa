@@ -31,7 +31,7 @@ namespace occa {
     add({name, mem, mem.dtype(), true});
   }
 
-  scope scope::operator + (const scope &other) {
+  scope scope::operator + (const scope &other) const {
     scope ret = *this;
     ret += other;
     return ret;

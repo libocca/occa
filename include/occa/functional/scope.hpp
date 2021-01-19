@@ -100,7 +100,7 @@ namespace occa {
       add({name, value});
     }
 
-    scope operator + (const scope &other);
+    scope operator + (const scope &other) const;
     scope& operator += (const scope &other);
 
     occa::device getDevice() const;
