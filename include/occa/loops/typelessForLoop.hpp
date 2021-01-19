@@ -1,25 +1,9 @@
 #ifndef OCCA_LOOPS_TYPELESSFORLOOP_HEADER
 #define OCCA_LOOPS_TYPELESSFORLOOP_HEADER
 
-#include <occa/functional/array.hpp>
-#include <occa/functional/range.hpp>
+#include <occa/loops/iteration.hpp>
 
 namespace occa {
-  class iteration {
-  public:
-    inline iteration() {}
-
-    inline iteration(const int) {}
-
-    inline iteration(const range &) {}
-
-    inline iteration(const array<int> &) {}
-
-    inline std::string buildForLoop(const std::string &iterationName) const {
-      return "";
-    }
-  };
-
   class typelessForLoop {
   public:
     occa::device device;
@@ -39,12 +23,14 @@ namespace occa {
     occa::scope getForLoopScope(const occa::scope &scope,
                                 const baseFunction &fn) const;
 
-    std::string buildOuterLoop(const int index) const;
+    std::string buildOuterLoop(occa::scope &scope,
+                               const int index) const;
 
-    std::string buildInnerLoop(const int index) const;
+    std::string buildInnerLoop(occa::scope &scope,
+                               const int index) const;
 
     std::string buildIndexInitializer(const std::string &indexName,
-                                      const int count) const;
+                                      const int iterationCount) const;
   };
 }
 

@@ -6,9 +6,9 @@
 namespace occa {
   class range : public typelessArray {
   public:
-    const dim_t start;
-    const dim_t end;
-    const dim_t step;
+    dim_t start;
+    dim_t end;
+    dim_t step;
 
     range(const dim_t end_);
 
@@ -30,6 +30,10 @@ namespace occa {
           const dim_t start_,
           const dim_t end_,
           const dim_t step);
+
+    range(const range &other);
+
+    range& operator = (const range &other);
 
   private:
     void setupArrayScopeOverrides(occa::scope &scope) const;

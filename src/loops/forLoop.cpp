@@ -18,7 +18,7 @@ namespace occa {
 
   outerForLoop2 forLoop::outer(occa::iteration outerIteration0,
                                occa::iteration outerIteration1) {
-    outerForLoop1 loop(device);
+    outerForLoop2 loop(device);
 
     loop.outerIterationCount = 2;
 
@@ -31,7 +31,7 @@ namespace occa {
   outerForLoop3 forLoop::outer(occa::iteration outerIteration0,
                                occa::iteration outerIteration1,
                                occa::iteration outerIteration2) {
-    outerForLoop1 loop(device);
+    outerForLoop3 loop(device);
 
     loop.outerIterationCount = 3;
 

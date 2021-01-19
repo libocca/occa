@@ -37,13 +37,16 @@ namespace occa {
       loopScope.device = device;
     }
 
+    // Temporary until issue #175 is resolved
+    loopScope.props["okl/validate"] = false;
+
     // Inject the function
     loopScope.props["functions/occa_loop_function"] = fn;
 
     // Setup @outer loops
     std::string outerForLoopsStart, outerForLoopsEnd;
     for (int i = 0; i < outerIterationCount; ++i) {
-      outerForLoopsStart += buildOuterLoop(i);
+      outerForLoopsStart += buildOuterLoop(loopScope, i);
       outerForLoopsEnd += "}";
     }
     loopScope.props["defines/OCCA_LOOP_START_OUTER_LOOPS"] = outerForLoopsStart;
@@ -57,7 +60,7 @@ namespace occa {
       // Setup @inner loops
       std::string innerForLoopsStart, innerForLoopsEnd;
       for (int i = 0; i < innerIterationCount; ++i) {
-        innerForLoopsStart += buildInnerLoop(i);
+        innerForLoopsStart += buildInnerLoop(loopScope, i);
         innerForLoopsEnd += "}";
       }
       loopScope.props["defines/OCCA_LOOP_START_INNER_LOOPS"] = innerForLoopsStart;
@@ -87,33 +90,37 @@ namespace occa {
     return loopScope;
   }
 
-  std::string typelessForLoop::buildOuterLoop(const int index) const {
-    return outerIterations[index].buildForLoop(
+  std::string typelessForLoop::buildOuterLoop(occa::scope &scope,
+                                              const int index) const {
+    return "@outer " + outerIterations[index].buildForLoop(
+      scope,
       "OUTER_INDEX_" + std::to_string(index)
     );
   }
 
-  std::string typelessForLoop::buildInnerLoop(const int index) const {
-    return innerIterations[index].buildForLoop(
+  std::string typelessForLoop::buildInnerLoop(occa::scope &scope,
+                                              const int index) const {
+    return "@inner " + innerIterations[index].buildForLoop(
+      scope,
       "INNER_INDEX_" + std::to_string(index)
     );
   }
 
   std::string typelessForLoop::buildIndexInitializer(const std::string &indexName,
-                                                     const int count) const {
+                                                     const int iterationCount) const {
     std::stringstream ss;
 
-    if (innerIterationCount == 1) {
-      ss << "const int " << indexName << " = " << indexName << "_1;";
-    } else if (innerIterationCount == 2) {
+    if (iterationCount == 1) {
+      ss << "const int " << indexName << " = " << indexName << "_0;";
+    } else if (iterationCount == 2) {
       ss << "int2 " << indexName << ";\n"
-         << "" << indexName << ".x = " << indexName << "_1;"
-         << "" << indexName << ".y = " << indexName << "_2;";
-    } else if (innerIterationCount == 3) {
+         << "" << indexName << ".x = " << indexName << "_0;"
+         << "" << indexName << ".y = " << indexName << "_1;";
+    } else if (iterationCount == 3) {
       ss << "int3 " << indexName << ";\n"
-         << "" << indexName << ".x = " << indexName << "_1;"
-         << "" << indexName << ".y = " << indexName << "_2;"
-         << "" << indexName << ".z = " << indexName << "_3;";
+         << "" << indexName << ".x = " << indexName << "_0;"
+         << "" << indexName << ".y = " << indexName << "_1;"
+         << "" << indexName << ".z = " << indexName << "_2;";
     }
 
     return ss.str();
