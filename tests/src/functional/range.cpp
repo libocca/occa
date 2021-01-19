@@ -311,17 +311,17 @@ void testReduce() {
 
 void testToArray() {
   occa::array<int> arr = occa::range(10).toArray();
-  ASSERT_EQ(10, arr.length());
+  ASSERT_EQ(10, (int) arr.length());
   ASSERT_EQ(0, arr.min());
   ASSERT_EQ(9, arr.max());
 
   arr = occa::range(0, -10).toArray();
-  ASSERT_EQ(10, arr.length());
+  ASSERT_EQ(10, (int) arr.length());
   ASSERT_EQ(-9, arr.min());
   ASSERT_EQ(0, arr.max());
 
   arr = occa::range(0, 10, 2).toArray();
-  ASSERT_EQ(5, arr.length());
+  ASSERT_EQ(5, (int) arr.length());
   ASSERT_EQ(0, arr.min());
   ASSERT_EQ(8, arr.max());
 }
