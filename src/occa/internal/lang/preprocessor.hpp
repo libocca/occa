@@ -134,6 +134,10 @@ namespace occa {
 
       void loadTokenizer();
 
+      void injectSourceCode(token_t &sourceToken,
+                            const std::string &source,
+                            const bool addNewlineAfterSource = true);
+
       bool expandDefinedToken(token_t *token,
                               tokenVector &outputTokens);
 

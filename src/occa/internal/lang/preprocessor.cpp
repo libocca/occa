@@ -68,7 +68,7 @@ namespace occa {
       incrementNewline();
       expandingMacros = true;
 
-      const int specialMacroCount = 7;
+      const int specialMacroCount = 8;
       macro_t *specialMacros[specialMacroCount] = {
         new definedMacro(*this),    // defined()
         new hasIncludeMacro(*this), // __has_include()
@@ -76,7 +76,8 @@ namespace occa {
         new lineMacro(*this),       // __LINE__
         new dateMacro(*this),       // __DATE__
         new timeMacro(*this),       // __TIME__
-        new counterMacro(*this)     // __COUNTER__
+        new counterMacro(*this),    // __COUNTER__
+        new oklMacro(*this)         // OKL
       };
       for (int i = 0; i < specialMacroCount; ++i) {
         compilerMacros[specialMacros[i]->name()] = specialMacros[i];
@@ -493,6 +494,31 @@ namespace occa {
       }
     }
 
+    void preprocessor_t::injectSourceCode(token_t &sourceToken,
+                                          const std::string &source,
+                                          const bool addNewlineAfterSource) {
+      // Make sure we have a tokenizer
+      loadTokenizer();
+      if (!tokenizer) {
+        warningOn(&sourceToken,
+                  "Unable to apply @directive due to the lack of a tokenizer");
+        return;
+      }
+
+      tokenVector newTokens;
+      tokenizer->tokenize(newTokens,
+                          sourceToken.origin,
+                          source);
+
+      if (addNewlineAfterSource) {
+        incrementNewline();
+        pushInput(new newlineToken(sourceToken.origin));
+      }
+      const int newTokenCount = (int) newTokens.size();
+      for (int i = (newTokenCount - 1); i >= 0; --i) {
+        pushInput(newTokens[i]);
+      }
+    }
 
     bool preprocessor_t::expandDefinedToken(token_t *token, tokenVector &tokens) {
       if (!(token_t::safeType(token) & tokenType::identifier)) {
@@ -934,17 +960,7 @@ namespace occa {
                                            prevOutputCache);
       }
 
-      tokenVector newTokens;
-      tokenizer->tokenize(newTokens,
-                          sourceToken.origin,
-                          source);
-
-      incrementNewline();
-      pushInput(new newlineToken(sourceToken.origin));
-      const int newTokenCount = (int) newTokens.size();
-      for (int i = (newTokenCount - 1); i >= 0; --i) {
-        pushInput(newTokens[i]);
-      }
+      injectSourceCode(sourceToken, source);
 
       delete &opToken;
       delete directiveToken;
