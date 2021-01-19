@@ -11,7 +11,7 @@ namespace occa {
         occa::modeMemory_t(modeDevice_, size_, properties_),
         rootClMem(&clMem),
         rootOffset(0),
-        useHostPtr(NULL) {}
+        useHostPtr(false) {}
 
     memory::~memory() {
       if (isOrigin) {
