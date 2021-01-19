@@ -23,6 +23,7 @@ namespace occa {
 
     occa::kernel getOrBuildKernel(const occa::scope &scope);
 
+    void run();
     void run(const occa::scope &scope);
 
     void free();

@@ -127,7 +127,7 @@ namespace occa {
 
   //---[ Utility methods ]--------------
   array<int> range::toArray() const {
-    return map(OCCA_FUNCTION({}, [=](int index) -> int {
+    return map(OCCA_FUNCTION([=](int index) -> int {
       return index;
     }));
   }

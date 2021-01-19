@@ -5,6 +5,9 @@
 namespace occa {
   scope::scope() {}
 
+  scope::scope(occa::device device_) :
+    device(device_) {}
+
   scope::scope(scopeKernelArgInitializerList args_,
                const occa::json &props_) :
     props(props_) {

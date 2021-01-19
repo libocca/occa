@@ -47,7 +47,7 @@ void testOuterForLoops(occa::device device) {
 
   occa::forLoop()
     .outer(length)
-    .run(scope, OCCA_FUNCTION({}, [=](int outerIndex) -> void {
+    .run(scope, OCCA_FUNCTION([=](int outerIndex) -> void {
       OKL("@inner")
       for (int i = 0; i < 2; ++i) {
         const int globalIndex = i + (2 * outerIndex);
@@ -63,7 +63,7 @@ void testOuterForLoops(occa::device device) {
 
   occa::forLoop()
     .outer(length, occa::range(length))
-    .run(scope, OCCA_FUNCTION({}, [=](int2 outerIndex) -> void {
+    .run(scope, OCCA_FUNCTION([=](int2 outerIndex) -> void {
       OKL("@inner")
       for (int i = 0; i < 2; ++i) {
         const int globalIndex = (
@@ -81,7 +81,7 @@ void testOuterForLoops(occa::device device) {
 
   occa::forLoop()
     .outer(length, occa::range(length), indexArray)
-    .run(scope, OCCA_FUNCTION({}, [=](int3 outerIndex) -> void {
+    .run(scope, OCCA_FUNCTION([=](int3 outerIndex) -> void {
       OKL("@inner")
       for (int i = 0; i < 2; ++i) {
         const int globalIndex = (

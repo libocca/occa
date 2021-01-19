@@ -468,7 +468,7 @@ namespace occa {
     TM max() const {
       return reduce<TM>(
         reductionType::max,
-        OCCA_FUNCTION({}, [=](TM currentMax, TM value) -> TM {
+        OCCA_FUNCTION([=](TM currentMax, TM value) -> TM {
           return currentMax > value ? currentMax : value;
         })
       );
@@ -477,7 +477,7 @@ namespace occa {
     TM min() const {
       return reduce<TM>(
         reductionType::min,
-        OCCA_FUNCTION({}, [=](TM currentMin, TM value) -> TM {
+        OCCA_FUNCTION([=](TM currentMin, TM value) -> TM {
           return currentMin < value ? currentMin : value;
         })
       );

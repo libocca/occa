@@ -1,11 +1,27 @@
 #ifndef OCCA_FUNCTIONAL_UTILS_HEADER
 #define OCCA_FUNCTIONAL_UTILS_HEADER
 
+#include <occa/defines/macros.hpp>
 #include <occa/functional/types.hpp>
 #include <occa/functional/scope.hpp>
 
-#define OCCA_FUNCTION(scope, lambda)                        \
+#define OCCA_FUNCTION_2(scope, lambda)                      \
   ::occa::functional::inferFunction(scope, lambda, #lambda)
+
+#define OCCA_FUNCTION_1(lambda)                           \
+  ::occa::functional::inferFunction({}, lambda, #lambda)
+
+#define OCCA_FUNCTION(...)                                          \
+  OCCA_FUNCTION_EXPAND_1(OCCA_ARG_COUNT(__VA_ARGS__), __VA_ARGS__)
+
+#define OCCA_FUNCTION_EXPAND_1(ARG_COUNT, ...)    \
+  OCCA_FUNCTION_EXPAND_2(ARG_COUNT, __VA_ARGS__)
+
+#define OCCA_FUNCTION_EXPAND_2(ARG_COUNT, ...)    \
+  OCCA_FUNCTION_EXPAND_3(ARG_COUNT, __VA_ARGS__)
+
+#define OCCA_FUNCTION_EXPAND_3(ARG_COUNT, ...)  \
+  OCCA_FUNCTION_ ## ARG_COUNT (__VA_ARGS__)
 
 namespace occa {
   template <class Function>

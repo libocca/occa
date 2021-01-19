@@ -52,6 +52,8 @@ namespace occa {
 
     scope();
 
+    scope(occa::device device_);
+
     scope(scopeKernelArgInitializerList args_,
           const occa::json &props_ = occa::json());
 
