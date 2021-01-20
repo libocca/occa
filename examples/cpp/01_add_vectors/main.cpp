@@ -77,8 +77,7 @@ int main(int argc, const char **argv) {
   o_ab = device.malloc(entries * sizeof(float));
 
   // Compile the kernel at run-time
-  occa::kernel addVectors = device.buildKernel("addVectors.okl",
-                                  "addVectors", kernelProps);
+  occa::kernel addVectors = device.buildKernel("addVectors.okl","addVectors");
   addVectors.setRunDims(4, entries);
 
   // Copy memory to the device

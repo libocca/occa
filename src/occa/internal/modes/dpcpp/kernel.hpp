@@ -5,13 +5,15 @@
 #include <occa/internal/modes/dpcpp/polyfill.hpp>
 #include <occa/internal/modes/dpcpp/utils.hpp>
 
-namespace occa {
-  namespace dpcpp {
+namespace occa
+{
+  namespace dpcpp
+  {
     class device;
 
-    class kernel : public occa::modeKernel_t {
+    class kernel : public occa::launchedModeKernel_t
+    {
       friend class device;
-      friend cl_kernel getCLKernel(occa::kernel kernel);
 
     private:
       ::sycl::device *dpcppDevice;
@@ -19,25 +21,30 @@ namespace occa {
       void *dlHandle;
 
     public:
-	      bool isLauncherKernel;
+      kernel(modeDevice_t *modeDevice_,
+             const std::string &name_,
+             const std::string &sourceFilename_,
+             const occa::json &properties_);
 
       kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
-             const occa::properties &properties_);
+             ::sycl::device *dpcppDevice_,
+             functionPtr_t function_,
+             const occa::json &properties_);
 
       ~kernel();
 
-      ::sycl::queue* getCommandQueue() const;
-      const lang::kernelMetadata_t& getMetadata() const;
+      ::sycl::queue *getCommandQueue() const;
+      const lang::kernelMetadata_t &getMetadata() const;
 
       int maxDims() const;
       dim maxOuterDims() const;
       dim maxInnerDims() const;
 
-      void run() const;
+      void deviceRun() const;
     };
-  }
-}
+  } // namespace dpcpp
+} // namespace occa
 
 #endif

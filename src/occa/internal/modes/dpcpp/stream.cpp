@@ -4,7 +4,7 @@
 namespace occa {
   namespace dpcpp {
     stream::stream(modeDevice_t *modeDevice_,
-                   const occa::properties &properties_,
+                   const occa::json &properties_,
                    ::sycl::queue* commandQueue_) :
       modeStream_t(modeDevice_, properties_),
       commandQueue(commandQueue_) {}

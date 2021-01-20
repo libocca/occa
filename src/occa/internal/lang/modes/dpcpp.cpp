@@ -11,12 +11,13 @@ namespace occa
   {
     namespace okl
     {
-      dpcppParser::dpcppParser(const occa::properties &settings_)
-          : withLauncherLambda(settings_),
+      dpcppParser::dpcppParser(const occa::json &settings_)
+          : withLauncher(settings_),
+            kernel(externC),
             device("SYCL_EXTERNAL", qualifierType::custom),
-            shared("__shared__", qualifierType::custom)
+            shared("auto", qualifierType::custom)
       {
-        okl::addAttributes(*this);
+        okl::addOklAttributes(*this);
       }
 
       void dpcppParser::onClear()
@@ -31,14 +32,15 @@ namespace occa
 
       void dpcppParser::beforeKernelSplit()
       {
-        updateConstToConstant();
+        if (!success) return;
+        addExtensions();
 
-        if (!success)
-          return;
+        // updateConstToConstant();
+
+        if (!success) return;
         setFunctionQualifiers();
 
-        if (!success)
-          return;
+        if (!success) return;
         setSharedQualifiers();
       }
 
@@ -46,247 +48,178 @@ namespace occa
       {
         addBarriers();
 
-        if (!success)
-          return;
+        if (!success) return;
         setupKernels();
+
+        //  if (!success) return;
+        // setupAtomics();
       }
 
       std::string dpcppParser::getOuterIterator(const int loopIndex)
       {
         std::string name = "i_dpcpp_iterator.get_group(";
-        name += (char)('2' - loopIndex);
-        // name +=  (char)('1'-loopIndex);
-        name = name.append(")");
+        name += occa::toString(dpcppDimensionOrder(loopIndex));
+        name += ")";
         return name;
       }
 
       std::string dpcppParser::getInnerIterator(const int loopIndex)
       {
         std::string name = "i_dpcpp_iterator.get_local_id(";
-        //name += (char)('0'+loopIndex);
-        name += (char)('2' - loopIndex);
-        name = name.append(")");
+        name += occa::toString(dpcppDimensionOrder(loopIndex));
+        name += ")";
         return name;
       }
 
-      void dpcppParser::updateConstToConstant()
+      void dpcppParser::addExtensions()
       {
-        /*        const int childCount = (int) root.children.size();
-        for (int i = 0; i < childCount; ++i) {
-          statement_t &child = *(root.children[i]);
-          if (child.type() != statementType::declaration) {
-            continue;
-          }
-          declarationStatement &declSmnt = ((declarationStatement&) child);
-          const int declCount = declSmnt.declarations.size();
-          for (int di = 0; di < declCount; ++di) {
-            variable_t &var = *(declSmnt.declarations[di].variable);
-            if (var.has(const_) && !var.has(typedef_)) {
-              var -= const_;
-              var += constant;
-            }
-          }
-        }*/
-      }
-
-      void dpcppParser::setFunctionQualifiers()
-      {
-        statementPtrVector funcSmnts;
-        findStatementsByType(statementType::functionDecl,
-                             root,
-                             funcSmnts);
-
-        const int funcCount = (int)funcSmnts.size();
-        for (int i = 0; i < funcCount; ++i)
+        if (!settings.has("extensions"))
         {
-          functionDeclStatement &funcSmnt = (*((functionDeclStatement *)funcSmnts[i]));
-          if (funcSmnt.hasAttribute("kernel"))
-          {
-            continue;
-          }
-          vartype_t &vartype = funcSmnt.function.returnType;
-          vartype.qualifiers.addFirst(vartype.origin(),
-                                      device);
+          return;
         }
-      }
 
-      void dpcppParser::setSharedQualifiers()
-      {
-        /*        statementExprMap exprMap;
-        findStatements(statementType::declaration,
-                       exprNodeType::variable,
-                       root,
-                       sharedVariableMatcher,
-                       exprMap);
-
-        statementExprMap::iterator it = exprMap.begin();
-        while (it != exprMap.end()) {
-          declarationStatement &declSmnt = *((declarationStatement*) it->first);
-          const int declCount = declSmnt.declarations.size();
-          for (int i = 0; i < declCount; ++i) {
-            variable_t &var = *(declSmnt.declarations[i].variable);
-            if (!var.hasAttribute("shared")) {
-              continue;
-            }
-            var += shared;
-          }
-          ++it;
+        occa::json &extensions = settings["extensions"];
+        if (!extensions.isObject())
+        {
+          return;
         }
-*/
-        /*	      root.addToScope(*memoryType);
-        std::cout<<"DOING SOME TESTS"<<std::endl;
-        std::cout<<root.toString()<<std::endl;
-        std::cout<<"ENDING SOME TESTS"<<std::endl;
-        statementExprMap exprMap;
-        findStatements(statementType::declaration,
-                       root,
-                       sharedVariableMatcher,
-                       exprMap);
 
-        //handle shared variables
-        for(auto e : exprMap){
-        for(auto *v : e.second){
-                std::cout<<"ExpressionNode : "<<v->toString()<<std::endl;
-                variable_t *var = v->getVariable();
-                if(var->hasAttribute("shared")){
-                        std::cout<<"Variable has statement Shared : "<<var->name()<<std::endl;
-                }
-        }
-        }
-*/
-        /*	                     root.addToScope(*memoryType);
-        std::cout<<"DOING SOME TESTS"<<std::endl;
-//        std::cout<<root.toString()<<std::endl;
-        std::cout<<"ENDING SOME TESTS"<<std::endl;
-
-        statementExprMap exprMap;
-        findStatements(statementType::all,
-                       root,
-                       sharedVariableMatcher,
-                       exprMap);
-
-        //handle shared variables
-        //td::map<statement_t*, exprNodeVector>
-        for(auto e : exprMap){
-		if(e.first->type()==statementType::declaration){
-			//At this stage we know that we handle a shared local variable declaration
-			//So we need to extract the type, the number of elements and the name.
-			declarationStatement* decVariable = (declarationStatement*)e.first;
-			variableDeclarationVector decVector = decVariable->declarations;
-			for(auto f : decVector){
-				std::cout<<f.variable->name()<<std::endl;//Variable name
-				std::cout<<f.variable->vartype.name()<<std::endl;//Variable type
-				std::cout<<f.variable->vartype.arrays[0].size->toString()<<std::endl;//Variable type
-				std::cout<<f.variable->vartype.arrays[1].size->toString()<<std::endl;//Variable type
-
-				
-				//std::cout<<f.value->type()<<std::endl;
-			}	
-                	//std::cout<<"Statement : "<<e.first->toString()<<std::endl;
-                	//std::cout<<"StatementName : "<<e.first->statementName()<<std::endl;
-		}
-		
-        }
-*/
+        // jsonObject &extensionObj = extensions.object();
+        // jsonObject::iterator it = extensionObj.begin();
+        // while (it != extensionObj.end()) {
+        //   const std::string &extension = it->first;
+        //   const bool enabled = it->second;
+        //   if (enabled) {
+        //     root.addFirst(
+        //       *(new pragmaStatement(
+        //           &root,
+        //           pragmaToken(root.source->origin,
+        //                       "OPENCL EXTENSION "+ extension + " : enable\n")
+        //         ))
+        //     );
+        //   }
+        //   ++it;
+        // }
       }
 
       void dpcppParser::addBarriers()
       {
+        statementArray::from(root)
+            .flatFilterByStatementType(statementType::empty, "barrier")
+            .forEach([&](statement_t *smnt) {
+              // TODO 1.1: Implement proper barriers
+              emptyStatement &emptySmnt = (emptyStatement &)*smnt;
 
-        statementPtrVector statements;
-        findStatementsByAttr(statementType::empty,
-                             "barrier",
-                             root,
-                             statements);
+              statement_t &barrierSmnt = (*(new sourceCodeStatement(
+                  emptySmnt.up,
+                  emptySmnt.source,
+                  "i_dpcpp_iterator.barrier(sycl::access::fence_space::local_space);")));
 
-        const int count = (int)statements.size();
-        for (int i = 0; i < count; ++i)
-        {
-          // TODO 1.1: Implement proper barriers
-          emptyStatement &smnt = *((emptyStatement *)statements[i]);
+              emptySmnt.replaceWith(barrierSmnt);
 
-          statement_t &barrierSmnt = (*(new expressionStatement(
-              smnt.up,
-              *(new identifierNode(smnt.source,
-                                   "i_dpcpp_iterator.barrier(sycl::access::fence_space::local_space)")))));
-
-          smnt.up->addBefore(smnt,
-                             barrierSmnt);
-
-          smnt.up->remove(smnt);
-          delete &smnt;
-        }
+              delete &emptySmnt;
+            });
       }
 
       void dpcppParser::setupKernels()
       {
-        statementPtrVector kernelSmnts;
-        findStatementsByAttr(statementType::functionDecl,
-                             "kernel",
-                             root,
-                             kernelSmnts);
+        statementArray::from(root)
+            .flatFilterByStatementType(
+              statementType::functionDecl | statementType::function,
+              "kernel"
+            )
+            .forEach([&](statement_t *smnt) {
+                function_t *function;
 
-        const int kernelCount = (int)kernelSmnts.size();
-        for (int i = 0; i < kernelCount; ++i)
-        {
-          functionDeclStatement &kernelSmnt = (*((functionDeclStatement *)kernelSmnts[i]));
-          setKernelQualifiers(kernelSmnt);
-          if (!success)
-            return;
-        }
-        // const bool includingStd = settings.get("serial/include_std", true);
-        strVector headers;
-        headers.push_back("include <CL/sycl.hpp>\n");
+                if (smnt->type() & statementType::functionDecl) {
+                  function = &(((functionDeclStatement*) smnt)->function());
 
-        const int headerCount = (int)headers.size();
-        for (int i = 0; i < headerCount; ++i)
-        {
-          std::string header = headers[i];
-          // TODO 1.1: Remove hack after methods are properly added
-          if (0 == i)
-          {
-            header += "\nusing namespace cl::sycl;";
-          }
-          directiveToken token(root.source->origin, header);
+                  migrateLocalDecls((functionDeclStatement&) *smnt);
+                  if (!success) return;
+                } else {
+                  function = &(((functionStatement*) smnt)->function());
+                }
 
-          root.addFirst(*(new directiveStatement(&root, token)));
-        }
+                setKernelQualifiers(*function);
+            });
       }
 
-      void dpcppParser::setKernelQualifiers(functionDeclStatement &kernelSmnt)
+      void dpcppParser::setFunctionQualifiers()
       {
-        vartype_t &vartype = kernelSmnt.function.returnType;
-        vartype.qualifiers.addFirst(vartype.origin(),
-                                    externC);
+        root.children
+            .filterByStatementType(statementType::functionDecl)
+            .forEach([&](statement_t *smnt) {
+              functionDeclStatement &funcDeclSmnt = (functionDeclStatement &)*smnt;
 
-        function_t &func = kernelSmnt.function;
+              // Only add __device__ to non-kernel functions
+              if (funcDeclSmnt.hasAttribute("kernel"))
+              {
+                return;
+              }
 
-        const int argCount = (int)func.args.size();
+              vartype_t &vartype = funcDeclSmnt.function().returnType;
+              vartype.qualifiers.addFirst(vartype.origin(),
+                                          device);
+            });
+      }
+
+      void dpcppParser::setSharedQualifiers()
+      {
+        statementArray::from(root)
+            .nestedForEachDeclaration([&](variableDeclaration &decl) {
+              variable_t &var = decl.variable();
+              if (var.hasAttribute("shared"))
+              {
+                var.add(0, shared);
+              }
+            });
+      }
+
+      void dpcppParser::setKernelQualifiers(function_t &function)
+      {
+        function.returnType.add(0, kernel);
 
         variable_t queueArg(syclQueuePtr, "q_");
-
-        func.addArgument(queueArg); //const identifierToken &typeToken_, const type_t &type_
+        function.addArgument(queueArg); //const identifierToken &typeToken_, const type_t &type_
+        
         variable_t ndRangeArg(syclNdRangePtr, "ndrange");
+        function.addArgument(ndRangeArg); //const identifierToken &typeToken_, const type_t &type_
 
-        func.addArgument(ndRangeArg); //const identifierToken &typeToken_, const type_t &type_
+        const int argCount = (int) function.args.size();
+        for (int ai = 0; ai < argCount; ++ai) {
+          variable_t arg(*function.removeArgument(0));
 
-        for (int i = 0; i < argCount; ++i)
-        {
-          variable_t arg(*func.removeArgument(0));
           vartype_t &type = arg.vartype;
           if (!(type.isPointerType() || type.referenceToken))
           {
             operatorToken opToken(arg.source->origin, op::bitAnd);
             type.setReferenceToken(&opToken);
           }
-          func.addArgument(arg);
+          function.addArgument(arg);
         }
       }
 
-      bool dpcppParser::sharedVariableMatcher(exprNode &expr)
+      void dpcppParser::migrateLocalDecls(functionDeclStatement &kernelSmnt)
       {
-        return expr.hasAttribute("shared");
+        statementArray::from(kernelSmnt)
+            .nestedForEachDeclaration([&](variableDeclaration &decl, declarationStatement &declSmnt) {
+                variable_t &var = decl.variable();
+                if (var.hasAttribute("shared")) {
+                  declSmnt.removeFromParent();
+                  kernelSmnt.addFirst(declSmnt);
+                }
+              });
       }
+
+      // static bool transformBlockStatement(blockStatement &blockSmnt)
+      // {
+      //   return false;
+      // }
+      // static bool transformBasicExpressionStatement(expressionStatement &exprSmnt)
+      // {
+      //   return false;
+      // }
+
     } // namespace okl
   }   // namespace lang
 } // namespace occa

@@ -52,10 +52,10 @@ namespace occa {
 
         forStatement* getInnerMostInnerLoop(forStatement &forSmnt);
 
-        exprNode& setDim(token_t *source,
-                         const std::string &name,
-                         const int index,
-                         exprNode *value);
+        // exprNode& setDim(token_t *source,
+        //                  const std::string &name,
+        //                  const int index,
+        //                  exprNode *value);
 
         void splitKernels();
 

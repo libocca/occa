@@ -13,13 +13,25 @@ namespace occa
     kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
-                   const occa::properties &properties_) : occa::modeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
-                                                          dlHandle(NULL),
-                                                          function(NULL),
-                                                          isLauncherKernel(true)
+                   const occa::json &properties_)
+        : occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
+          dpcppDevice{nullptr},
+          function{nullptr},
+          dlHandle{nullptr}
     {
-      properties["compiler"] = "dpcpp";
-      properties["compiler_linker_flags"] = "-shared -fPIC";
+    }
+
+    kernel::kernel(modeDevice_t *modeDevice_,
+                   const std::string &name_,
+                   const std::string &sourceFilename_,
+                   ::sycl::device *dpcppDevice_,
+                   functionPtr_t function_,
+                   const occa::json &properties_)
+        : occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
+          dpcppDevice(dpcppDevice_),
+          function(function_),
+          dlHandle(nullptr)
+    {
     }
 
     kernel::~kernel()
@@ -74,7 +86,7 @@ namespace occa
       return maxInnerDims_;
     }
 
-    void kernel::run() const
+    void kernel::deviceRun() const
     {
       // Setup kernel dimensions
       occa::dim fullDims = (outerDims * innerDims);

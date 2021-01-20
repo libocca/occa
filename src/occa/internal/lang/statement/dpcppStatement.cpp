@@ -50,7 +50,7 @@ namespace occa {
 
 
     void dpcppStatement::print(printer &pout) const {
-      bool hasChildren = children.size();
+      bool hasChildren = children.length();
       if (!hasChildren) {
         if (up) {
           pout.printStartIndentation();
@@ -85,7 +85,7 @@ namespace occa {
     }
 
     void dpcppStatement::printChildren(printer &pout) const {
-      const int count = (int) children.size();
+      const int count = (int) children.length();
       for (int i = 0; i < count; ++i) {
         pout << *(children[i]);
       }

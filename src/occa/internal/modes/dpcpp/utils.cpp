@@ -13,9 +13,6 @@ namespace occa
 {
   namespace dpcpp
   {
-    info_t::info_t() : dpcppDevice(NULL),
-                       dpcppQueue(NULL) {}
-
     namespace info
     {
       std::string deviceType(int type)
@@ -47,6 +44,7 @@ namespace occa
         return "N/A";
       }
     } // namespace info
+
     /* Returns true if any DPC++ device is enabled on the machine */
     bool isEnabled()
     {
@@ -76,6 +74,25 @@ namespace occa
 
       return ::sycl::info::device_type::all;
     }
+
+    int getPlatformID(const occa::json &properties)
+    {
+      OCCA_ERROR("[DPCPP] No integer [platform_id] given",
+                 properties.has("platform_id") &&
+                     properties["platform_id"].isNumber());
+
+      return properties.get<int>("platform_id");
+    }
+
+    int getDeviceID(const occa::json &properties)
+    {
+      OCCA_ERROR("[DPCPP] No integer [device_id] given",
+                 properties.has("device_id") &&
+                     properties["device_id"].isNumber());
+
+      return properties.get<int>("device_id");
+    }
+
     /* Returns the number of DPC++ platforms*/
     int getPlatformCount()
     {
@@ -148,32 +165,32 @@ namespace occa
       return ::sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::global_mem_size>();
     }
 
-    void buildProgramFromSource(info_t &info,
-                                const std::string &source,
-                                const std::string &kernelName,
-                                const std::string &compilerFlags,
-                                const std::string &sourceFile,
-                                const occa::properties &properties,
-                                const io::lock_t &lock) {}
+    // void buildProgramFromSource(info_t &info,
+    //                             const std::string &source,
+    //                             const std::string &kernelName,
+    //                             const std::string &compilerFlags,
+    //                             const std::string &sourceFile,
+    //                             const occa::properties &properties,
+    //                             const io::lock_t &lock) {}
 
-    void buildProgramFromBinary(info_t &info,
-                                const std::string &binaryFilename,
-                                const std::string &kernelName,
-                                const std::string &compilerFlags,
-                                const io::lock_t &lock) {}
+    // void buildProgramFromBinary(info_t &info,
+    //                             const std::string &binaryFilename,
+    //                             const std::string &kernelName,
+    //                             const std::string &compilerFlags,
+    //                             const io::lock_t &lock) {}
 
-    void buildProgram(info_t &info,
-                      const std::string &kernelName,
-                      const std::string &compilerFlags,
-                      const io::lock_t &lock) {}
+    // void buildProgram(info_t &info,
+    //                   const std::string &kernelName,
+    //                   const std::string &compilerFlags,
+    //                   const io::lock_t &lock) {}
 
-    void buildKernelFromProgram(info_t &info,
-                                const std::string &kernelName,
-                                const io::lock_t &lock) {}
+    // void buildKernelFromProgram(info_t &info,
+    //                             const std::string &kernelName,
+    //                             const io::lock_t &lock) {}
 
-    bool saveProgramBinary(info_t &info,
-                           const std::string &binaryFile,
-                           const io::lock_t &lock) { return true; }
+    // bool saveProgramBinary(info_t &info,
+    //                        const std::string &binaryFile,
+    //                        const io::lock_t &lock) { return true; }
 
     void warn(cl_int errorCode,
               const std::string &filename,

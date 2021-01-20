@@ -1,6 +1,7 @@
 #include <occa/defines.hpp>
 #include <occa/internal/modes/dpcpp/utils.hpp>
 #include <occa/internal/modes/dpcpp/registration.hpp>
+#include <occa/internal/utils/string.hpp>
 #include <iostream>
 namespace occa {
   namespace dpcpp {
@@ -40,8 +41,14 @@ namespace occa {
       return section;
     }
 
-    modeDevice_t* dpcppMode::newDevice(const occa::properties &props) {
+    modeDevice_t* dpcppMode::newDevice(const occa::json &props) {
       return new device(setModeProp(props));
+    }
+
+    int dpcppMode::getDeviceCount(const occa::json& props) {
+      int platformId{getPlatformID(props)};
+
+      return getDeviceCountInPlatform(platformId);
     }
 
     dpcppMode mode;

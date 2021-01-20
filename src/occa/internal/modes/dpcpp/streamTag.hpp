@@ -4,15 +4,22 @@
 #include <occa/internal/core/streamTag.hpp>
 #include <occa/internal/modes/dpcpp/polyfill.hpp>
 
-namespace occa {
-  namespace dpcpp {
-    class streamTag : public occa::modeStreamTag_t {
+namespace occa
+{
+  namespace dpcpp
+  {
+    class streamTag : public occa::modeStreamTag_t
+    {
     public:
-    streamTag(modeDevice_t *modeDevice_);
-      virtual ~streamTag();
+      ::sycl::event dpcppEvent;
+
+      streamTag(modeDevice_t *modeDevice_,
+                ::sycl::event dpcppEvent_);
+
+      virtual ~streamTag() = default;
       double getTime();
     };
-  }
-}
+  } // namespace dpcpp
+} // namespace occa
 
 #endif

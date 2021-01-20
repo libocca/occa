@@ -11,7 +11,7 @@ namespace occa
     class dpcppStatement : public blockStatement
     {
     public:
-      statementPtrVector children;
+      statementArray children;
       scope_t scope;
 
       dpcppStatement(blockStatement *up_,

@@ -11,12 +11,6 @@ namespace occa {
   class streamTag;
 
   namespace dpcpp {
-    class info_t {
-    public:
-  	::sycl::device *dpcppDevice;
-	::sycl::queue *dpcppQueue;
-      info_t();
-    };
 
     namespace info {
       static const int CPU     = (1 << 0);
@@ -41,54 +35,51 @@ namespace occa {
 
     ::sycl::info::device_type deviceType(int type);
 
+    int getPlatformID(const occa::json &properties);
+    int getDeviceID(const occa::json &properties);
+
     int getPlatformCount();
-
     ::sycl::platform getPlatformByID(int pID);
-
 
     int getDeviceCount(int type = info::anyType);
     int getDeviceCountInPlatform(int pID, int type = info::anyType);
-
     ::sycl::device getDeviceByID(int pID, int dID, int type = info::anyType);
-
 
     std::string deviceName(int pID, int dID);
 
     int deviceType(int pID, int dID);
-
     int deviceVendor(int pID, int dID);
-
     int deviceCoreCount(int pID, int dID);
 
     udim_t getDeviceMemorySize(const ::sycl::device &devPtr);
     udim_t getDeviceMemorySize(int pID, int dID);
 
-    void buildProgramFromSource(info_t &info,
-                                const std::string &source,
-                                const std::string &kernelName,
-                                const std::string &compilerFlags = "",
-                                const std::string &sourceFile = "",
-                                const occa::properties &properties = occa::properties(),
-                                const io::lock_t &lock = io::lock_t());
+    // void buildProgramFromSource(info_t &info,
+    //                             const std::string &source,
+    //                             const std::string &kernelName,
+    //                             const std::string &compilerFlags = "",
+    //                             const std::string &sourceFile = "",
+    //                             const occa::properties &properties = occa::properties(),
+    //                             const io::lock_t &lock = io::lock_t());
 
-    void buildProgramFromBinary(info_t &info,
-                                const std::string &binaryFilename,
-                                const std::string &kernelName,
-                                const std::string &compilerFlags = "",
-                                const io::lock_t &lock = io::lock_t());
+    // void buildProgramFromBinary(info_t &info,
+    //                             const std::string &binaryFilename,
+    //                             const std::string &kernelName,
+    //                             const std::string &compilerFlags = "",
+    //                             const io::lock_t &lock = io::lock_t());
 
-    void buildProgram(info_t &info,
-                      const std::string &kernelName,
-                      const std::string &compilerFlags,
-                      const io::lock_t &lock = io::lock_t());
+    // void buildProgram(info_t &info,
+    //                   const std::string &kernelName,
+    //                   const std::string &compilerFlags,
+    //                   const io::lock_t &lock = io::lock_t());
 
-    void buildKernelFromProgram(info_t &info,
-                                const std::string &kernelName,
-                                const io::lock_t &lock = io::lock_t());
+    // void buildKernelFromProgram(info_t &info,
+    //                             const std::string &kernelName,
+    //                             const io::lock_t &lock = io::lock_t());
 
-    bool saveProgramBinary(info_t &info,
-                           const std::string &binaryFile,
-                           const io::lock_t &lock = io::lock_t());
+    // bool saveProgramBinary(info_t &info,
+    //                        const std::string &binaryFile,
+    //                        const io::lock_t &lock = io::lock_t());
 
 //    cl_context getCLContext(occa::device device);
 
@@ -96,15 +87,6 @@ namespace occa {
 
 //    cl_kernel getCLKernel(occa::kernel kernel);
 
-/*    occa::device wrapDevice(cl_device_id clDevice,
-                            cl_context context,
-                            const occa::properties &props = occa::properties());
-
-    occa::memory wrapMemory(occa::device device,
-                            void* dpcppMem,
-                            const udim_t bytes,
-                            const occa::properties &props = occa::properties());
-*/
     void warn(cl_int errorCode,
               const std::string &filename,
               const std::string &function,
