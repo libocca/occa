@@ -27,7 +27,7 @@ namespace occa {
 
       const api::metal::buffer_t& getMetalBuffer();
 
-      void* getPtr(const occa::json &props);
+      void* getPtr();
 
       udim_t getOffset() const;
 

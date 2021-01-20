@@ -13,20 +13,21 @@ namespace occa {
                    const occa::json &properties_) :
       occa::modeMemory_t(modeDevice_, size_, properties_),
       hipPtr(reinterpret_cast<hipDeviceptr_t&>(ptr)),
-      mappedPtr(NULL) {}
+      useHostPtr(false) {}
 
     memory::~memory() {
       if (isOrigin) {
-        if (mappedPtr) {
-          OCCA_HIP_ERROR("Device: mappedFree()",
-                         hipHostFree(mappedPtr));
+        if (useHostPtr) {
+          OCCA_HIP_ERROR("Device: hostFree()",
+                         hipHostFree(ptr));
         } else if (hipPtr) {
           hipFree((void*) hipPtr);
         }
       }
+      ptr = nullptr;
       hipPtr = 0;
-      mappedPtr = NULL;
       size = 0;
+      useHostPtr = false;
     }
 
     hipStream_t& memory::getHipStream() const {
@@ -42,17 +43,19 @@ namespace occa {
                              size - offset,
                              properties);
       m->hipPtr = addHipPtrOffset(hipPtr, offset);
-      if (mappedPtr) {
-        m->mappedPtr = mappedPtr + offset;
+      if (useHostPtr) {
+        m->ptr = ptr + offset;
       }
+      m->useHostPtr = useHostPtr;
       return m;
     }
 
-    void* memory::getPtr(const occa::json &props) {
-      if (props.get("mapped", false)) {
-        return mappedPtr;
+    void* memory::getPtr() {
+      if (useHostPtr) {
+        return ptr;
+      } else {
+        return static_cast<void*>(hipPtr);
       }
-      return ptr;
     }
 
     void memory::copyFrom(const void *src,
@@ -61,17 +64,21 @@ namespace occa {
                           const occa::json &props) {
       const bool async = props.get("async", false);
 
-      if (!async) {
-        OCCA_HIP_ERROR("Memory: Copy From",
-                       hipMemcpyHtoD(addHipPtrOffset(hipPtr, offset),
-                                     const_cast<void*>(src),
-                                     bytes) );
+      if (useHostPtr) {
+        ::memcpy(ptr+offset, src, bytes);
       } else {
-        OCCA_HIP_ERROR("Memory: Async Copy From",
-                       hipMemcpyHtoDAsync(addHipPtrOffset(hipPtr, offset),
-                                          const_cast<void*>(src),
-                                          bytes,
-                                          getHipStream()) );
+        if (!async) {
+          OCCA_HIP_ERROR("Memory: Copy From",
+                         hipMemcpyHtoD(addHipPtrOffset(hipPtr, offset),
+                                       const_cast<void*>(src),
+                                       bytes) );
+        } else {
+          OCCA_HIP_ERROR("Memory: Async Copy From",
+                         hipMemcpyHtoDAsync(addHipPtrOffset(hipPtr, offset),
+                                            const_cast<void*>(src),
+                                            bytes,
+                                            getHipStream()) );
+        }
       }
     }
 
@@ -82,17 +89,51 @@ namespace occa {
                           const occa::json &props) {
       const bool async = props.get("async", false);
 
-      if (!async) {
-        OCCA_HIP_ERROR("Memory: Copy From",
-                       hipMemcpyDtoD(addHipPtrOffset(hipPtr, destOffset),
-                                     addHipPtrOffset(((memory*) src)->hipPtr, srcOffset),
-                                     bytes) );
+      if (useHostPtr && ((memory*) src)->useHostPtr) {
+        // src: host, dest: host
+        ::memcpy(ptr + destOffset, src->ptr + srcOffset, bytes);
+      } else if (((memory*) src)->useHostPtr) {
+        // src: host, dest: device
+        if (!async) {
+          OCCA_HIP_ERROR("Memory: Copy From",
+                         hipMemcpyHtoD(addHipPtrOffset(hipPtr, destOffset),
+                                       src->ptr + srcOffset,
+                                       bytes));
+        } else {
+          OCCA_HIP_ERROR("Memory: Async Copy From",
+                         hipMemcpyHtoDAsync(addHipPtrOffset(hipPtr, destOffset),
+                                            src->ptr + srcOffset,
+                                            bytes,
+                                            getHipStream()));
+        }
+      } else if (useHostPtr) {
+        // src: device, dest: host
+        if (!async) {
+          OCCA_HIP_ERROR("Memory: Copy From",
+                         hipMemcpyDtoH(ptr + destOffset,
+                                       addHipPtrOffset(((memory*) src)->hipPtr, srcOffset),
+                                       bytes));
+        } else {
+          OCCA_HIP_ERROR("Memory: Async Copy From",
+                         hipMemcpyDtoHAsync(ptr + destOffset,
+                                            addHipPtrOffset(((memory*) src)->hipPtr, srcOffset),
+                                            bytes,
+                                            getHipStream()));
+        }
       } else {
-        OCCA_HIP_ERROR("Memory: Async Copy From",
-                       hipMemcpyDtoDAsync(addHipPtrOffset(hipPtr, destOffset),
-                                          addHipPtrOffset(((memory*) src)->hipPtr, srcOffset),
-                                          bytes,
-                                          getHipStream()) );
+        // src: device, dest: device
+        if (!async) {
+          OCCA_HIP_ERROR("Memory: Copy From",
+                         hipMemcpyDtoD(addHipPtrOffset(hipPtr, destOffset),
+                                       addHipPtrOffset(((memory*) src)->hipPtr, srcOffset),
+                                       bytes) );
+        } else {
+          OCCA_HIP_ERROR("Memory: Async Copy From",
+                         hipMemcpyDtoDAsync(addHipPtrOffset(hipPtr, destOffset),
+                                            addHipPtrOffset(((memory*) src)->hipPtr, srcOffset),
+                                            bytes,
+                                            getHipStream()) );
+        }
       }
     }
 
@@ -102,23 +143,29 @@ namespace occa {
                         const occa::json &props) const {
       const bool async = props.get("async", false);
 
-      if (!async) {
-        OCCA_HIP_ERROR("Memory: Copy From",
-                       hipMemcpyDtoH(dest,
-                                     addHipPtrOffset(hipPtr, offset),
-                                     bytes) );
+      if (useHostPtr) {
+        ::memcpy(dest, ptr+offset, bytes);
       } else {
-        OCCA_HIP_ERROR("Memory: Async Copy From",
-                       hipMemcpyDtoHAsync(dest,
-                                          addHipPtrOffset(hipPtr, offset),
-                                          bytes,
-                                          getHipStream()) );
+        if (!async) {
+          OCCA_HIP_ERROR("Memory: Copy From",
+                         hipMemcpyDtoH(dest,
+                                       addHipPtrOffset(hipPtr, offset),
+                                       bytes) );
+        } else {
+          OCCA_HIP_ERROR("Memory: Async Copy From",
+                         hipMemcpyDtoHAsync(dest,
+                                            addHipPtrOffset(hipPtr, offset),
+                                            bytes,
+                                            getHipStream()) );
+        }
       }
     }
 
     void memory::detach() {
+      ptr = 0;
       hipPtr = 0;
       size = 0;
+      useHostPtr = false;
     }
   }
 }

@@ -16,11 +16,9 @@ namespace occa {
                                      const udim_t bytes,
                                      const occa::json &props);
 
-      friend void* getMappedPtr(occa::memory mem);
-
     public:
       hipDeviceptr_t &hipPtr;
-      char *mappedPtr;
+      bool useHostPtr;
 
       memory(modeDevice_t *modeDevice_,
              udim_t size_,
@@ -33,7 +31,7 @@ namespace occa {
 
       modeMemory_t* addOffset(const dim_t offset);
 
-      void* getPtr(const occa::json &props);
+      void* getPtr();
 
       void copyTo(void *dest,
                   const udim_t bytes,

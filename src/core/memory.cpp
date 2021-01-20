@@ -85,28 +85,14 @@ namespace occa {
   template <>
   void* memory::ptr<void>() {
     return (modeMemory
-            ? modeMemory->ptr
+            ? modeMemory->getPtr()
             : NULL);
   }
 
   template <>
   const void* memory::ptr<void>() const {
     return (modeMemory
-            ? modeMemory->ptr
-            : NULL);
-  }
-
-  template <>
-  void* memory::ptr<void>(const occa::json &props) {
-    return (modeMemory
-            ? modeMemory->getPtr(props)
-            : NULL);
-  }
-
-  template <>
-  const void* memory::ptr<void>(const occa::json &props) const {
-    return (modeMemory
-            ? modeMemory->getPtr(props)
+            ? modeMemory->getPtr()
             : NULL);
   }
 

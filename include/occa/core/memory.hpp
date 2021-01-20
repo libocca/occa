@@ -55,12 +55,6 @@ namespace occa {
     template <class TM = void>
     const TM* ptr() const;
 
-    template <class TM = void>
-    TM* ptr(const occa::json &props);
-
-    template <class TM = void>
-    const TM* ptr(const occa::json &props) const;
-
     modeMemory_t* getModeMemory() const;
     modeDevice_t* getModeDevice() const;
 
@@ -163,12 +157,6 @@ namespace occa {
 
   template <>
   const void* memory::ptr<void>() const;
-
-  template <>
-  void* memory::ptr<void>(const occa::json &props);
-
-  template <>
-  const void* memory::ptr<void>(const occa::json &props) const;
 }
 
 #include "memory.tpp"
