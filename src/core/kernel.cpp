@@ -222,7 +222,8 @@ namespace occa {
 
     // Add defines
     for (const auto &entry : props["defines"].object()) {
-      if (entry.second.isString()) {
+      if (entry.second.isString() || entry.second.isNumber() ||
+        entry.second.isBool() || entry.second.isNull()) {
         kernelHeader += "#define ";
         kernelHeader += ' ';
         kernelHeader += entry.first;
