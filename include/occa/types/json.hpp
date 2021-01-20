@@ -231,6 +231,12 @@ namespace occa {
       return *this;
     }
 
+    inline json& operator = (const hash_t &value) {
+      type = string_;
+      value_.string = value.getFullString();
+      return *this;
+    }
+
     inline json& operator = (const jsonObject &value) {
       type = object_;
       value_.object = value;

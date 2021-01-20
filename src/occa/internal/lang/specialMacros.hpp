@@ -84,6 +84,17 @@ namespace occa {
       virtual void expand(tokenVector &tokens,
                           identifierToken &source);
     };
+
+    // OKL
+    class oklMacro : public macro_t {
+    public:
+      oklMacro(preprocessor_t &pp_);
+
+      virtual macro_t& clone(preprocessor_t &pp_) const;
+
+      virtual void expand(tokenVector &tokens,
+                          identifierToken &source);
+    };
   }
 }
 

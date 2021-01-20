@@ -223,5 +223,76 @@ namespace occa {
                                           value,
                                           occa::toString(value)));
     }
+
+    // OKL
+    oklMacro::oklMacro(preprocessor_t &pp_) :
+      macro_t(pp_, "OKL") {
+      isFunctionLike = true;
+      argNames["SOURCE_CODE"] = 0;
+    }
+
+    macro_t& oklMacro::clone(preprocessor_t &pp_) const {
+      return *(new oklMacro(pp_));
+    }
+
+    void oklMacro::expand(tokenVector &tokens,
+                          identifierToken &source) {
+      std::vector<tokenVector> allArgs;
+      pp.expandingMacros = false;
+      if (!loadArgs(source, allArgs) ||
+          !checkArgs(source, allArgs)) {
+        pp.expandingMacros = true;
+        return;
+      }
+      pp.expandingMacros = true;
+
+      if (!allArgs.size()) {
+        pp.errorOn(&source, "Expected source code");
+        return;
+      }
+
+      // We only expect 1 argument
+      tokenVector &args = allArgs[0];
+      if (args.size() > 1) {
+        args[1]->origin
+          .from(false, thisToken.origin)
+          .printError("Expected only one source code string");
+
+        freeTokenVector(args);
+        return;
+      }
+
+      token_t *token = args[0];
+      if (!(token->type() & tokenType::string)) {
+        token->origin
+          .from(false, thisToken.origin)
+          .printError("Expected a source code string");
+
+        freeTokenVector(args);
+        return;
+      }
+
+      // Check if the next argument is an empty semicolon to remove
+      //
+      // Example:
+      //   OKL("@inner");
+      //   for(...)
+      // ->
+      //   @inner
+      //   for(...)
+      //
+      token_t *nextToken = pp.getSourceToken();
+      if (nextToken) {
+        if (token_t::safeOperatorType(nextToken) == operatorType::semicolon) {
+          delete nextToken;
+        } else {
+          pp.pushInput(nextToken);
+        }
+      }
+
+      const std::string &content = token->to<stringToken>().value;
+      pp.injectSourceCode(*token, strip(content));
+
+    }
   }
 }

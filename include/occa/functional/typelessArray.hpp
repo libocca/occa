@@ -215,36 +215,16 @@ namespace occa {
 
     std::string buildFunctionCall(const baseFunction &fn,
                                   const bool forMapFunction) const {
-      std::string call = "occa_array_function(";
-
-      // Add the required arguments
-      int requiredArgumentCount;
+      strVector argumentValues;
       if (forMapFunction) {
-        requiredArgumentCount = 1;
-        call += "VALUE";
+        argumentValues = {"VALUE", "INDEX", "VALUES_PTR"};
       } else {
-        requiredArgumentCount = 2;
-        call += "ACC, VALUE";
+        argumentValues = {"ACC", "VALUE", "INDEX", "VALUES_PTR"};
       }
+      argumentValues.resize(fn.argumentCount());
 
-      // Add the optional arguments
-      const std::string optionalArgumentNames[2] = {
-        "INDEX", "VALUES_PTR"
-      };
-      for (int i = 0; i < (fn.argumentCount() - requiredArgumentCount); ++i) {
-        call += ", ";
-        call += optionalArgumentNames[i];
-      }
-
-      // Add the scope-injected arguments
-      for (const scopeKernelArg &arg : fn.scope.args) {
-        call += ", ";
-        call += arg.name;
-      }
-
-      call += ")";
-
-      return call;
+      return fn.buildFunctionCall("occa_array_function",
+                                  argumentValues);
     }
 
     void buildMapTiledForLoops(std::string &tileForLoop,

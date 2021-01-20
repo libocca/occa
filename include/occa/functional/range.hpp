@@ -6,9 +6,9 @@
 namespace occa {
   class range : public typelessArray {
   public:
-    const dim_t start;
-    const dim_t end;
-    const dim_t step;
+    dim_t start;
+    dim_t end;
+    dim_t step;
 
     range(const dim_t end_);
 
@@ -31,6 +31,10 @@ namespace occa {
           const dim_t end_,
           const dim_t step);
 
+    range(const range &other);
+
+    range& operator = (const range &other);
+
   private:
     void setupArrayScopeOverrides(occa::scope &scope) const;
 
@@ -43,30 +47,22 @@ namespace occa {
     udim_t length() const;
 
     //---[ Lambda methods ]-------------
-    inline bool every(const occa::function<bool(int)> &fn) const {
-      return typelessEvery(fn);
-    }
+    bool every(const occa::function<bool(const int)> &fn) const;
 
-    inline bool some(const occa::function<bool(int)> &fn) const {
-      return typelessSome(fn);
-    }
+    bool some(const occa::function<bool(const int)> &fn) const;
 
-    inline int findIndex(const occa::function<bool(int)> &fn) const {
-      return typelessFindIndex(fn);
-    }
+    int findIndex(const occa::function<bool(const int)> &fn) const;
 
-    inline void forEach(const occa::function<void(int)> &fn) const {
-      return typelessForEach(fn);
-    }
+    void forEach(const occa::function<void(const int)> &fn) const;
 
     template <class TM>
-    array<TM> map(const occa::function<TM(int)> &fn) const {
+    array<TM> map(const occa::function<TM(const int)> &fn) const {
       return typelessMap<TM>(fn);
     }
 
     template <class TM>
     array<TM> mapTo(occa::array<TM> &output,
-                    const occa::function<TM(int)> &fn) const {
+                    const occa::function<TM(const int)> &fn) const {
       output.resize(length());
       typelessMapTo(output.memory(), fn);
       return output;
@@ -74,16 +70,20 @@ namespace occa {
 
     template <class TM>
     TM reduce(reductionType type,
-              const occa::function<TM(TM, int)> &fn) const {
+              const occa::function<TM(const TM&, const int)> &fn) const {
       return typelessReduce<TM>(type, TM(), false, fn);
     }
 
     template <class TM>
     TM reduce(reductionType type,
               const TM &localInit,
-              const occa::function<TM(TM, int)> &fn) const {
+              const occa::function<TM(const TM&, const int)> &fn) const {
       return typelessReduce<TM>(type, localInit, true, fn);
     }
+    //==================================
+
+    //---[ Utility methods ]------------
+    array<int> toArray() const;
     //==================================
   };
 }

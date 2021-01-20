@@ -9,6 +9,7 @@ void testForEach();
 void testMap();
 void testMapTo();
 void testReduce();
+void testToArray();
 
 int main(const int argc, const char **argv) {
   occa::setDevice(occa::host());
@@ -21,6 +22,7 @@ int main(const int argc, const char **argv) {
   testMap();
   testMapTo();
   testReduce();
+  testToArray();
 
   return 0;
 }
@@ -94,21 +96,21 @@ void testBaseMethods() {
 void testEvery() {
   ASSERT_TRUE(
     occa::range(10)
-      .every(OCCA_FUNCTION({}, [](int index) -> bool {
+      .every(OCCA_FUNCTION([](const int index) -> bool {
         return index >= 0;
       }))
   );
 
   ASSERT_TRUE(
     occa::range(-9, -1)
-      .every(OCCA_FUNCTION({}, [](int index) -> bool {
+      .every(OCCA_FUNCTION([](const int index) -> bool {
         return index <= 0;
       }))
   );
 
   ASSERT_FALSE(
     occa::range(10)
-      .every(OCCA_FUNCTION({}, [](int index) -> bool {
+      .every(OCCA_FUNCTION([](const int index) -> bool {
         return index >= 1;
       }))
   );
@@ -117,21 +119,21 @@ void testEvery() {
 void testSome() {
   ASSERT_TRUE(
     occa::range(10)
-      .some(OCCA_FUNCTION({}, [](int index) -> bool {
+      .some(OCCA_FUNCTION([](const int index) -> bool {
         return index <= 0;
       }))
   );
 
   ASSERT_TRUE(
     occa::range(-9, 0)
-      .some(OCCA_FUNCTION({}, [](int index) -> bool {
+      .some(OCCA_FUNCTION([](const int index) -> bool {
         return index >= -1;
       }))
   );
 
   ASSERT_FALSE(
     occa::range(10)
-      .some(OCCA_FUNCTION({}, [](int index) -> bool {
+      .some(OCCA_FUNCTION([](const int index) -> bool {
         return index < 0;
       }))
   );
@@ -141,7 +143,7 @@ void testFindIndex() {
   ASSERT_EQ(
     5, (
       occa::range(10)
-      .findIndex(OCCA_FUNCTION({}, [](int index) -> bool {
+      .findIndex(OCCA_FUNCTION([](const int index) -> bool {
         return index == 5;
       }))
     )
@@ -150,7 +152,7 @@ void testFindIndex() {
   ASSERT_EQ(
     1, (
       occa::range(0, 10, 4)
-      .findIndex(OCCA_FUNCTION({}, [](int index) -> bool {
+      .findIndex(OCCA_FUNCTION([](const int index) -> bool {
         return index == 4;
       }))
     )
@@ -159,7 +161,7 @@ void testFindIndex() {
   ASSERT_EQ(
     9, (
       occa::range(-10, 0)
-      .findIndex(OCCA_FUNCTION({}, [](int index) -> bool {
+      .findIndex(OCCA_FUNCTION([](const int index) -> bool {
         return index == -1;
       }))
     )
@@ -168,7 +170,7 @@ void testFindIndex() {
   ASSERT_EQ(
     -1, (
       occa::range(10)
-      .findIndex(OCCA_FUNCTION({}, [](int index) -> bool {
+      .findIndex(OCCA_FUNCTION([](const int index) -> bool {
         return index == -1;
       }))
     )
@@ -177,7 +179,7 @@ void testFindIndex() {
 
 void testForEach() {
   occa::range(10)
-    .forEach(OCCA_FUNCTION({}, [](int index) -> void {
+    .forEach(OCCA_FUNCTION([](const int index) -> void {
       // Do nothing
     }));
 }
@@ -185,7 +187,7 @@ void testForEach() {
 void testMap() {
   occa::array<float> floatArray = (
     occa::range(10)
-    .map<float>(OCCA_FUNCTION({}, [](int index) -> float {
+    .map<float>(OCCA_FUNCTION([](const int index) -> float {
       return index / 2.0;
     }))
   );
@@ -199,7 +201,7 @@ void testMapTo() {
   occa::array<float> floatArray(10);
 
   occa::range(10)
-    .mapTo<float>(floatArray, OCCA_FUNCTION({}, [](int index) -> float {
+    .mapTo<float>(floatArray, OCCA_FUNCTION([](const int index) -> float {
       return index / 2.0;
     }));
 
@@ -234,7 +236,7 @@ void testReduce() {
     occa::range(length)
     .reduce<int>(
       occa::reductionType::sum,
-      OCCA_FUNCTION({}, [](int acc, int index) -> int {
+      OCCA_FUNCTION([](const int &acc, const int index) -> int {
         return acc + index;
       })
     )
@@ -245,7 +247,7 @@ void testReduce() {
     occa::range(length)
     .reduce<float>(
       occa::reductionType::sum,
-      OCCA_FUNCTION({}, [](float acc, int index) -> float {
+      OCCA_FUNCTION([](const float &acc, const int index) -> float {
         return acc - index;
       })
     )
@@ -256,7 +258,7 @@ void testReduce() {
     occa::range(length)
     .reduce<int>(
       occa::reductionType::multiply,
-      OCCA_FUNCTION({}, [](int acc, int index) -> int {
+      OCCA_FUNCTION([](const int &acc, const int index) -> int {
         return acc * index;
       })
     )
@@ -267,7 +269,7 @@ void testReduce() {
     occa::range(length)
     .reduce<bool>(
       occa::reductionType::boolOr,
-      OCCA_FUNCTION({}, [](bool acc, int index) -> bool {
+      OCCA_FUNCTION([](const bool &acc, const int index) -> bool {
         return acc || index;
       })
     )
@@ -278,7 +280,7 @@ void testReduce() {
     occa::range(length)
     .reduce<bool>(
       occa::reductionType::boolAnd,
-      OCCA_FUNCTION({}, [](bool acc, int index) -> bool {
+      OCCA_FUNCTION([](const bool &acc, const int index) -> bool {
         return acc && index;
       })
     )
@@ -289,7 +291,7 @@ void testReduce() {
     occa::range(length)
     .reduce<int>(
       occa::reductionType::min,
-      OCCA_FUNCTION({}, [](int acc, int index) -> int {
+      OCCA_FUNCTION([](const int &acc, const int index) -> int {
         return acc < index ? acc : index;
       })
     )
@@ -300,9 +302,26 @@ void testReduce() {
     occa::range(length)
     .reduce<int>(
       occa::reductionType::max,
-      OCCA_FUNCTION({}, [](int acc, int index) -> int {
+      OCCA_FUNCTION([](const int &acc, const int index) -> int {
         return acc > index ? acc : index;
       })
     )
   );
+}
+
+void testToArray() {
+  occa::array<int> arr = occa::range(10).toArray();
+  ASSERT_EQ(10, (int) arr.length());
+  ASSERT_EQ(0, arr.min());
+  ASSERT_EQ(9, arr.max());
+
+  arr = occa::range(0, -10).toArray();
+  ASSERT_EQ(10, (int) arr.length());
+  ASSERT_EQ(-9, arr.min());
+  ASSERT_EQ(0, arr.max());
+
+  arr = occa::range(0, 10, 2).toArray();
+  ASSERT_EQ(5, (int) arr.length());
+  ASSERT_EQ(0, arr.min());
+  ASSERT_EQ(8, arr.max());
 }

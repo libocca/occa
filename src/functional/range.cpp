@@ -49,6 +49,22 @@ namespace occa {
     setupTypelessArray(device__, dtype::get<int>());
   }
 
+  range::range(const range &other) :
+    typelessArray(other),
+    start(other.start),
+    end(other.end),
+    step(other.step) {}
+
+  range& range::operator = (const range &other) {
+    typelessArray::operator = (other);
+
+    start = other.start;
+    end = other.end;
+    step = other.step;
+
+    return *this;
+  }
+
   void range::setupArrayScopeOverrides(occa::scope &scope) const {
     // Step compile-time defines on the common cases:
     // - Starting at 0
@@ -106,4 +122,30 @@ namespace occa {
       : (end - start + step + 1) / step
     );
   }
+
+  //---[ Lambda methods ]---------------
+  bool range::every(const occa::function<bool(const int)> &fn) const {
+    return typelessEvery(fn);
+  }
+
+  bool range::some(const occa::function<bool(const int)> &fn) const {
+    return typelessSome(fn);
+  }
+
+  int range::findIndex(const occa::function<bool(const int)> &fn) const {
+    return typelessFindIndex(fn);
+  }
+
+  void range::forEach(const occa::function<void(const int)> &fn) const {
+    return typelessForEach(fn);
+  }
+  //====================================
+
+  //---[ Utility methods ]--------------
+  array<int> range::toArray() const {
+    return map(OCCA_FUNCTION([=](const int index) -> int {
+      return index;
+    }));
+  }
+  //====================================
 }

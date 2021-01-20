@@ -44,7 +44,7 @@ int main(int argc, const char **argv) {
 
   occa::array<float> array_ab = array_a.map(OCCA_FUNCTION(
     scope,
-    [=](float value, int index) -> float {
+    [=](const float &value, const int index) -> float {
       return value + b[index];
     }
   ));

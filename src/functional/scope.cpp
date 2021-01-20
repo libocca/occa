@@ -5,6 +5,9 @@
 namespace occa {
   scope::scope() {}
 
+  scope::scope(occa::device device_) :
+    device(device_) {}
+
   scope::scope(scopeKernelArgInitializerList args_,
                const occa::json &props_) :
     props(props_) {
@@ -28,7 +31,7 @@ namespace occa {
     add({name, mem, mem.dtype(), true});
   }
 
-  scope scope::operator + (const scope &other) {
+  scope scope::operator + (const scope &other) const {
     scope ret = *this;
     ret += other;
     return ret;
