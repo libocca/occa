@@ -37,51 +37,51 @@ namespace occa {
     return ss.str();
   }
 
-  hash_t functionDefinition::getHash(const occa::scope &scope,
-                                     const std::string &source,
-                                     const dtype_t &returnType) {
-    hash_t hash = (
-      occa::hash(scope)
-      ^ occa::hash(source)
-      ^ occa::hash(returnType.name())
+  hash_t functionDefinition::getHash(const occa::scope &scope_,
+                                     const std::string &source_,
+                                     const dtype_t &returnType_) {
+    hash_t hash_ = (
+      occa::hash(scope_)
+      ^ occa::hash(source_)
+      ^ occa::hash(returnType_.name())
     );
-    return hash;
+    return hash_;
   }
 
   functionDefinitionSharedPtr functionDefinition::cache(
-    const occa::scope &scope,
-    const std::string &source,
-    const dtype_t &returnType,
-    const dtypeVector &argTypes
+    const occa::scope &scope_,
+    const std::string &source_,
+    const dtype_t &returnType_,
+    const dtypeVector &argTypes_
   ) {
-    hash_t hash = getHash(
-      scope,
-      source,
-      returnType
+    hash_t hash_ = getHash(
+      scope_,
+      source_,
+      returnType_
     );
 
-    functionStore.lock(hash);
+    functionStore.lock(hash_);
 
     std::shared_ptr<functionDefinition> fnDefPtr;
-    const bool createdPtr = functionStore.unsafeGetOrCreate(hash, fnDefPtr);
+    const bool createdPtr = functionStore.unsafeGetOrCreate(hash_, fnDefPtr);
 
     // Create the function definition
     if (createdPtr) {
       functionDefinition &fnDef = *(fnDefPtr.get());
 
       // Constructor args
-      fnDef.scope      = scope;
-      fnDef.source     = source;
-      fnDef.returnType = returnType;
-      fnDef.argTypes   = argTypes;
+      fnDef.scope      = scope_;
+      fnDef.source     = source_;
+      fnDef.returnType = returnType_;
+      fnDef.argTypes   = argTypes_;
 
       // Generated args
-      fnDef.hash           = hash;
-      fnDef.argumentSource = getArgumentSource(source, scope);
-      fnDef.bodySource     = getBodySource(source);
+      fnDef.hash           = hash_;
+      fnDef.argumentSource = getArgumentSource(source_, scope_);
+      fnDef.bodySource     = getBodySource(source_);
     }
 
-    functionStore.unlock(hash);
+    functionStore.unlock(hash_);
 
     return fnDefPtr;
   }
@@ -91,9 +91,9 @@ namespace occa {
     occa::lex::skipTo(c, ']');
   }
 
-  std::string functionDefinition::getArgumentSource(const std::string &source,
-                                                    const occa::scope &scope) {
-    const char *root = source.c_str();
+  std::string functionDefinition::getArgumentSource(const std::string &source_,
+                                                    const occa::scope &scope_) {
+    const char *root = source_.c_str();
     const char *start = root;
     const char *end = root;
 
@@ -107,10 +107,10 @@ namespace occa {
     return strip(std::string(start, end - start));
   }
 
-  std::string functionDefinition::getBodySource(const std::string &source) {
-    const char *root = source.c_str();
+  std::string functionDefinition::getBodySource(const std::string &source_) {
+    const char *root = source_.c_str();
     const char *start = root;
-    const char *end = root + source.size();
+    const char *end = root + source_.size();
 
     skipLambdaCapture(start);
     occa::lex::skipTo(start, '{');
