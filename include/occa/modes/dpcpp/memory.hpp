@@ -6,14 +6,17 @@
 #include <occa/modes/dpcpp/device.hpp>
 #include <CL/sycl.hpp>
 
-namespace occa {
-  namespace dpcpp {
-    class memory : public occa::modeMemory_t {
+namespace occa
+{
+  namespace dpcpp
+  {
+    class memory : public occa::modeMemory_t
+    {
       friend class dpcpp::device;
-/* check these friend functions*/
+      /* check these friend functions*/
       friend cl_mem getCLMemory(occa::memory memory);
 
-      friend void* getMappedPtr(occa::memory memory);
+      friend void *getMappedPtr(occa::memory memory);
 
       friend occa::memory wrapMemory(occa::device device,
                                      void *dpcppMem,
@@ -21,11 +24,8 @@ namespace occa {
                                      const occa::properties &props);
 
     private:
-      void *rootDpcppMem;
-      dim_t rootOffset;
+      bool is_mapped{false};
 
-      void *dpcppMem;
-      void *mappedPtr;
     public:
       memory(modeDevice_t *modeDevice_,
              udim_t size_,
@@ -34,9 +34,9 @@ namespace occa {
 
       kernelArg makeKernelArg() const;
       ::sycl::queue *getCommandQueue() const;
-      modeMemory_t* addOffset(const dim_t offset);
+      modeMemory_t *addOffset(const dim_t offset);
 
-      void* getPtr(const occa::properties &props);
+      void *getPtr(const occa::properties &props);
 
       void copyTo(void *dest,
                   const udim_t bytes,
@@ -55,7 +55,7 @@ namespace occa {
                     const occa::properties &props = occa::properties());
       void detach();
     };
-  }
-}
+  } // namespace dpcpp
+} // namespace occa
 
 #endif

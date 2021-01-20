@@ -13,57 +13,67 @@
 #include <occa/lang/primitive.hpp>
 #include <occa/lang/modes/dpcpp.hpp>
 
-namespace occa {
-  namespace dpcpp {
-    device::device(const occa::properties &properties_) :
-      occa::modeDevice_t(properties_) {
-      if (!properties.has("wrapped")) {
+namespace occa
+{
+  namespace dpcpp
+  {
+    device::device(const occa::properties &properties_) : occa::modeDevice_t(properties_)
+    {
+      if (!properties.has("wrapped"))
+      {
         int error;
         OCCA_ERROR("[DPCPP] device not given a [platform_id] integer",
                    properties.has("platform_id") &&
-                   properties["platform_id"].isNumber());
+                       properties["platform_id"].isNumber());
 
         OCCA_ERROR("[DPCPP] device not given a [device_id] integer",
                    properties.has("device_id") &&
-                   properties["device_id"].isNumber());
+                       properties["device_id"].isNumber());
 
         platformID = properties.get<int>("platform_id");
-        deviceID   = properties.get<int>("device_id");
+        deviceID = properties.get<int>("device_id");
         dpcppDevice = ::sycl::device(getDeviceByID(platformID, deviceID));
-	std::cout<<"Target Device is: "<<dpcppDevice.get_info<::sycl::info::device::name>()<<"\n";
-//        dpcppContext = clCreateContext(NULL, 1, &clDevice, NULL, NULL, &error);
-//        OCCA_DPCPP_ERROR("Device: Creating Context", error);
+        std::cout << "Target Device is: " << dpcppDevice.get_info<::sycl::info::device::name>() << "\n";
+        //        dpcppContext = clCreateContext(NULL, 1, &clDevice, NULL, NULL, &error);
+        //        OCCA_DPCPP_ERROR("Device: Creating Context", error);
       }
 
       occa::json &kernelProps = properties["kernel"];
       std::string compilerFlags;
 
       // Use "-cl-opt-disable" for debug-mode
-      if (env::var("OCCA_DPCPP_COMPILER_FLAGS").size()) {
+      if (env::var("OCCA_DPCPP_COMPILER_FLAGS").size())
+      {
         compilerFlags = env::var("OCCA_DPCPP_COMPILER_FLAGS");
-      } else if (kernelProps.has("compiler_flags")) {
-        compilerFlags = (std::string) kernelProps["compiler_flags"];
+      }
+      else if (kernelProps.has("compiler_flags"))
+      {
+        compilerFlags = (std::string)kernelProps["compiler_flags"];
       }
 
       kernelProps["compiler_flags"] = compilerFlags;
       kernelProps["compiler"] = "dpcpp";
       kernelProps["compiler_linker_flags"] = "-shared -fPIC";
-
     }
 
-    device::~device() {
+    device::~device()
+    {
     }
 
-    void device::finish() const {
+    void device::finish() const
+    {
       getCommandQueue()->wait();
     }
 
-    bool device::hasSeparateMemorySpace() const {
+    bool device::hasSeparateMemorySpace() const
+    {
       return true;
     }
 
-    hash_t device::hash() const {
-      if (!hash_.initialized) {
+    hash_t device::hash() const
+    {
+      if (!hash_.initialized)
+      {
         std::stringstream ss;
         ss << "platform: " << platformID << ' '
            << "device: " << deviceID;
@@ -72,11 +82,12 @@ namespace occa {
       return hash_;
     }
 
-    hash_t device::kernelHash(const occa::properties &props) const {
+    hash_t device::kernelHash(const occa::properties &props) const
+    {
       return occa::hash(props["compiler_flags"]);
     }
 
-/*
+    /*
     bool device::parseFile(const std::string &filename,
                            const std::string &outputFile,
                            const occa::properties &kernelProps,
@@ -105,22 +116,26 @@ namespace occa {
     }
 
 */
-    lang::okl::withLauncherLambda* device::createParser(const occa::properties &props) const {
+    lang::okl::withLauncherLambda *device::createParser(const occa::properties &props) const
+    {
       return new lang::okl::dpcppParser(props);
     }
 
     //---[ Stream ]---------------------
-    modeStream_t* device::createStream(const occa::properties &props) {
-      ::sycl::queue* q = new ::sycl::queue(dpcppDevice);
+    modeStream_t *device::createStream(const occa::properties &props)
+    {
+      ::sycl::queue *q = new ::sycl::queue(dpcppDevice);
       return new stream(this, props, q);
     }
 
-    occa::streamTag device::tagStream() {
+    occa::streamTag device::tagStream()
+    {
       return new occa::dpcpp::streamTag(this);
     }
 
-    void device::waitFor(occa::streamTag tag) {
-/*      occa::opencl::streamTag *clTag = (
+    void device::waitFor(occa::streamTag tag)
+    {
+      /*      occa::opencl::streamTag *clTag = (
         dynamic_cast<occa::opencl::streamTag*>(tag.getModeStreamTag())
       );
       OCCA_OPENCL_ERROR("Device: Waiting For Tag",
@@ -128,45 +143,47 @@ namespace occa {
     }
 
     double device::timeBetween(const occa::streamTag &startTag,
-                               const occa::streamTag &endTag) {
-      occa::dpcpp::streamTag *dpcppStartTag = (
-        dynamic_cast<occa::dpcpp::streamTag*>(startTag.getModeStreamTag())
-      );
-      occa::dpcpp::streamTag *dpcppEndTag = (
-        dynamic_cast<occa::dpcpp::streamTag*>(endTag.getModeStreamTag())
-      );
+                               const occa::streamTag &endTag)
+    {
+      occa::dpcpp::streamTag *dpcppStartTag = (dynamic_cast<occa::dpcpp::streamTag *>(startTag.getModeStreamTag()));
+      occa::dpcpp::streamTag *dpcppEndTag = (dynamic_cast<occa::dpcpp::streamTag *>(endTag.getModeStreamTag()));
 
       finish();
 
       return (dpcppEndTag->getTime() - dpcppStartTag->getTime());
     }
 
-    ::sycl::queue *device::getCommandQueue() const {
-      occa::dpcpp::stream *stream = (occa::dpcpp::stream*) currentStream.getModeStream();
+    ::sycl::queue *device::getCommandQueue() const
+    {
+      occa::dpcpp::stream *stream = (occa::dpcpp::stream *)currentStream.getModeStream();
       return stream->commandQueue;
     }
     //==================================
 
     //---[ Kernel ]---------------------
-  
-   bool device::parseFile(const std::string &filename,
+
+    bool device::parseFile(const std::string &filename,
                            const std::string &outputFile,
                            const occa::properties &kernelProps,
-                           lang::sourceMetadata_t &metadata) {
+                           lang::sourceMetadata_t &metadata)
+    {
       lang::okl::dpcppParser parser(kernelProps);
       parser.parseFile(filename);
 
       // Verify if parsing succeeded
-      if (!parser.succeeded()) {
+      if (!parser.succeeded())
+      {
         OCCA_ERROR("Unable to transform OKL kernel",
                    kernelProps.get("silent", false));
         return false;
       }
 
-      if (!io::isFile(outputFile)) {
+      if (!io::isFile(outputFile))
+      {
         hash_t hash = occa::hash(outputFile);
         io::lock_t lock(hash, "serial-parser");
-        if (lock.isMine()) {
+        if (lock.isMine())
+        {
           parser.writeToFile(outputFile);
         }
       }
@@ -176,48 +193,49 @@ namespace occa {
       return true;
     }
 
-    modeKernel_t* device::buildKernel(const std::string &filename,
+    modeKernel_t *device::buildKernel(const std::string &filename,
                                       const std::string &kernelName,
                                       const hash_t kernelHash,
-                                      const occa::properties &kernelProps) {
+                                      const occa::properties &kernelProps)
+    {
       return buildKernel(filename, kernelName, kernelHash, kernelProps, false);
     }
 
-    modeKernel_t* device::buildLauncherKernel(const std::string &filename,
+    modeKernel_t *device::buildLauncherKernel(const std::string &filename,
                                               const std::string &kernelName,
-                                              const hash_t kernelHash) {
+                                              const hash_t kernelHash)
+    {
       return buildKernel(filename, kernelName, kernelHash, properties["kernel"], true);
     }
 
-    modeKernel_t* device::buildKernel(const std::string &filename,
+    modeKernel_t *device::buildKernel(const std::string &filename,
                                       const std::string &kernelName,
                                       const hash_t kernelHash,
                                       const occa::properties &kernelProps,
-                                      const bool isLauncherKernel) {
+                                      const bool isLauncherKernel)
+    {
       const std::string hashDir = io::hashDir(filename, kernelHash);
 
-      const std::string &kcBinaryFile = (
-        isLauncherKernel
-        ? kc::launcherBinaryFile
-        : kc::binaryFile
-      );
+      const std::string &kcBinaryFile = (isLauncherKernel
+                                             ? kc::launcherBinaryFile
+                                             : kc::binaryFile);
       std::string binaryFilename = hashDir + kcBinaryFile;
 
       // Check if binary exists and is finished
-      bool foundBinary = (
-        io::cachedFileIsComplete(hashDir, kcBinaryFile)
-        && io::isFile(binaryFilename)
-      );
+      bool foundBinary = (io::cachedFileIsComplete(hashDir, kcBinaryFile) && io::isFile(binaryFilename));
 
       io::lock_t lock;
-      if (!foundBinary) {
+      if (!foundBinary)
+      {
         lock = io::lock_t(kernelHash, "serial-kernel");
         foundBinary = !lock.isMine();
       }
 
       const bool verbose = kernelProps.get("verbose", false);
-      if (foundBinary) {
-        if (verbose) {
+      if (foundBinary)
+      {
+        if (verbose)
+        {
           io::stdout << "Loading cached ["
                      << kernelName
                      << "] from ["
@@ -227,7 +245,8 @@ namespace occa {
         modeKernel_t *k = buildKernelFromBinary(binaryFilename,
                                                 kernelName,
                                                 kernelProps);
-        if (k) {
+        if (k)
+        {
           k->sourceFilename = filename;
         }
         return k;
@@ -236,34 +255,33 @@ namespace occa {
       std::string sourceFilename;
       lang::sourceMetadata_t metadata;
       const bool compilingOkl = kernelProps.get("okl/enabled", true);
-      const bool compilingCpp = (
-        ((int) kernelProps["compiler_language"]) == sys::language::CPP
-      );
+      const bool compilingCpp = (((int)kernelProps["compiler_language"]) == sys::language::CPP);
 
-      if (isLauncherKernel) {
+      if (isLauncherKernel)
+      {
         sourceFilename = filename;
-      } else {
-        const std::string &rawSourceFile = (
-          compilingCpp
-          ? kc::cppRawSourceFile
-          : kc::cRawSourceFile
-        );
+      }
+      else
+      {
+        const std::string &rawSourceFile = (compilingCpp
+                                                ? kc::cppRawSourceFile
+                                                : kc::cRawSourceFile);
 
         // Cache raw origin
-        sourceFilename = (
-          io::cacheFile(filename,
-                        rawSourceFile,
-                        kernelHash,
-                        assembleKernelHeader(kernelProps))
-        );
+        sourceFilename = (io::cacheFile(filename,
+                                        rawSourceFile,
+                                        kernelHash,
+                                        assembleKernelHeader(kernelProps)));
 
-        if (compilingOkl) {
+        if (compilingOkl)
+        {
           const std::string outputFile = hashDir + kc::sourceFile;
           bool valid = parseFile(sourceFilename,
                                  outputFile,
                                  kernelProps,
                                  metadata);
-          if (!valid) {
+          if (!valid)
+          {
             return NULL;
           }
           sourceFilename = outputFile;
@@ -277,7 +295,8 @@ namespace occa {
 
       std::stringstream command;
       std::string compilerEnvScript = kernelProps["compiler_env_script"];
-      if (compilerEnvScript.size()) {
+      if (compilerEnvScript.size())
+      {
         command << compilerEnvScript << " && ";
       }
 
@@ -288,20 +307,21 @@ namespace occa {
 
       sys::addCompilerFlags(compilerFlags, compilerSharedFlags);
 
-      if (!compilingOkl) {
+      if (!compilingOkl)
+      {
         sys::addCompilerIncludeFlags(compilerFlags);
         sys::addCompilerLibraryFlags(compilerFlags);
       }
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       command << compiler
-              << ' '    << compilerFlags
-              << ' '    << sourceFilename
+              << ' ' << compilerFlags
+              << ' ' << sourceFilename
               << " -o " << binaryFilename
-              << " -I"  << env::OCCA_DIR << "include"
-              << " -I"  << env::OCCA_INSTALL_DIR << "include"
-              << " -L"  << env::OCCA_INSTALL_DIR << "lib -locca"
-              << ' '    << compilerLinkerFlags
+              << " -I" << env::OCCA_DIR << "include"
+              << " -I" << env::OCCA_INSTALL_DIR << "include"
+              << " -L" << env::OCCA_INSTALL_DIR << "lib -locca"
+              << ' ' << compilerLinkerFlags
               << std::endl;
 #else
       command << kernelProps["compiler"]
@@ -309,53 +329,60 @@ namespace occa {
               << " /D OCCA_OS=OCCA_WINDOWS_OS"
               << " /EHsc"
               << " /wd4244 /wd4800 /wd4804 /wd4018"
-              << ' '       << compilerFlags
-              << " /I"     << env::OCCA_DIR << "include"
-              << " /I"     << env::OCCA_INSTALL_DIR << "include"
-              << ' '       << sourceFilename
+              << ' ' << compilerFlags
+              << " /I" << env::OCCA_DIR << "include"
+              << " /I" << env::OCCA_INSTALL_DIR << "include"
+              << ' ' << sourceFilename
               << " /link " << env::OCCA_INSTALL_DIR << "lib/libocca.lib",
-              << ' '       << compilerLinkerFlags
-              << " /OUT:"  << binaryFilename
-              << std::endl;
+          << ' ' << compilerLinkerFlags
+          << " /OUT:" << binaryFilename
+          << std::endl;
 #endif
 
       const std::string &sCommand = strip(command.str());
 
-      if (verbose) {
-        io::stdout << "Compiling [" << kernelName << "]\n" << sCommand << "\n";
+      if (verbose)
+      {
+        io::stdout << "Compiling [" << kernelName << "]\n"
+                   << sCommand << "\n";
       }
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       const int compileError = system(sCommand.c_str());
 #else
-      const int compileError = system(("\"" +  sCommand + "\"").c_str());
+      const int compileError = system(("\"" + sCommand + "\"").c_str());
 #endif
 
       lock.release();
-      if (compileError) {
+      if (compileError)
+      {
         OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
-                         " Command: [" << sCommand << ']');
+                                                              " Command: ["
+                                             << sCommand << ']');
       }
 
       modeKernel_t *k = buildKernelFromBinary(binaryFilename,
                                               kernelName,
                                               kernelProps,
                                               metadata.kernelsMetadata[kernelName]);
-      if (k) {
+      if (k)
+      {
         io::markCachedFileComplete(hashDir, kcBinaryFile);
         k->sourceFilename = filename;
       }
       return k;
     }
 
-    modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
+    modeKernel_t *device::buildKernelFromBinary(const std::string &filename,
                                                 const std::string &kernelName,
-                                                const occa::properties &kernelProps) {
+                                                const occa::properties &kernelProps)
+    {
       std::string buildFile = io::dirname(filename);
       buildFile += kc::buildFile;
 
       lang::kernelMetadata_t metadata;
-      if (io::isFile(buildFile)) {
+      if (io::isFile(buildFile))
+      {
         lang::sourceMetadata_t sourceMetadata = lang::sourceMetadata_t::fromBuildFile(buildFile);
         metadata = sourceMetadata.kernelsMetadata[kernelName];
       }
@@ -366,13 +393,14 @@ namespace occa {
                                    metadata);
     }
 
-    modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
+    modeKernel_t *device::buildKernelFromBinary(const std::string &filename,
                                                 const std::string &kernelName,
                                                 const occa::properties &kernelProps,
-                                                lang::kernelMetadata_t &metadata) {
+                                                lang::kernelMetadata_t &metadata)
+    {
 
       //Need to set initialized to false to prevent argument number verification
-      metadata.initialized=false;
+      metadata.initialized = false;
       kernel &k = *(new kernel(this,
                                kernelName,
                                filename,
@@ -387,74 +415,53 @@ namespace occa {
       return &k;
     }
 
-
     //==================================
 
     //---[ Memory ]---------------------
-    modeMemory_t* device::malloc(const udim_t bytes,
+    modeMemory_t *device::malloc(const udim_t bytes,
                                  const void *src,
-                                 const occa::properties &props) {
-      ::sycl::queue* q = getCommandQueue();
-/*      if (props.get("mapped", false)) {
+                                 const occa::properties &props)
+    {
+      if (props.get("mapped", false))
         return mappedAlloc(bytes, src, props);
-      }
-*/
 
       memory *mem = new memory(this, bytes, props);
 
-      if (src == NULL) {
-        mem->dpcppMem = malloc_device(bytes, q->get_device(), q->get_context());
-      } else {
-	mem->dpcppMem = malloc_device(bytes, q->get_device(), q->get_context());
-	q->memcpy(mem->dpcppMem, src, bytes);
-        finish();
+      ::sycl::queue *q = getCommandQueue();
+
+      mem->ptr = static_cast<char *>(malloc_device(bytes, *q));
+
+      if (nullptr != src)
+      {
+        q->memcpy(mem->ptr, src, bytes);
+        q->wait();
       }
-      mem->rootDpcppMem = mem->dpcppMem;
+
       return mem;
     }
 
-    modeMemory_t* device::mappedAlloc(const udim_t bytes,
+    modeMemory_t *device::mappedAlloc(const udim_t bytes,
                                       const void *src,
-                                      const occa::properties &props) {
-	return malloc(bytes, src, props);
-/*
-      opencl::memory *mem = new opencl::memory(this, bytes, props);
+                                      const occa::properties &props)
+    {
+      memory *mem = new memory(this, bytes, props);
 
-      // Alloc pinned host buffer
-      mem->clMem = clCreateBuffer(clContext,
-                                  CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR,
-                                  bytes,
-                                  NULL, &error);
-      mem->rootClMem = &mem->clMem;
+      ::sycl::queue *q = getCommandQueue();
 
-      OCCA_OPENCL_ERROR("Device: clCreateBuffer", error);
+      mem->ptr = static_cast<char *>(malloc_host(bytes, *q));
 
-      if (src != NULL){
-        mem->copyFrom(src, mem->size);
+      if (nullptr != src)
+      {
+        q->memcpy(mem->ptr, src, bytes);
+        finish();
       }
-
-      // Map memory to read/write
-      mem->mappedPtr = clEnqueueMapBuffer(getCommandQueue(),
-                                          mem->clMem,
-                                          CL_TRUE,
-                                          CL_MAP_READ | CL_MAP_WRITE,
-                                          0, bytes,
-                                          0, NULL, NULL,
-                                          &error);
-
-      OCCA_OPENCL_ERROR("Device: clEnqueueMapBuffer", error);
-
-      // Sync memory mapping
-      finish();
-
       return mem;
-*/
-	    return NULL;
-      }
+    }
 
-    udim_t device::memorySize() const {
+    udim_t device::memorySize() const
+    {
       return dpcpp::getDeviceMemorySize(dpcppDevice);
     }
     //==================================
-  }
-}
+  } // namespace dpcpp
+} // namespace occa
