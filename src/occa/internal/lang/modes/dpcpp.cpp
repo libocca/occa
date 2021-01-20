@@ -32,15 +32,18 @@ namespace occa
 
       void dpcppParser::beforeKernelSplit()
       {
-        if (!success) return;
+        if (!success)
+          return;
         addExtensions();
 
         // updateConstToConstant();
 
-        if (!success) return;
+        if (!success)
+          return;
         setFunctionQualifiers();
 
-        if (!success) return;
+        if (!success)
+          return;
         setSharedQualifiers();
       }
 
@@ -48,7 +51,8 @@ namespace occa
       {
         addBarriers();
 
-        if (!success) return;
+        if (!success)
+          return;
         setupKernels();
 
         //  if (!success) return;
@@ -125,22 +129,25 @@ namespace occa
       {
         statementArray::from(root)
             .flatFilterByStatementType(
-              statementType::functionDecl | statementType::function,
-              "kernel"
-            )
+                statementType::functionDecl | statementType::function,
+                "kernel")
             .forEach([&](statement_t *smnt) {
-                function_t *function;
+              function_t *function;
 
-                if (smnt->type() & statementType::functionDecl) {
-                  function = &(((functionDeclStatement*) smnt)->function());
+              if (smnt->type() & statementType::functionDecl)
+              {
+                function = &(((functionDeclStatement *)smnt)->function());
 
-                  migrateLocalDecls((functionDeclStatement&) *smnt);
-                  if (!success) return;
-                } else {
-                  function = &(((functionStatement*) smnt)->function());
-                }
+                migrateLocalDecls((functionDeclStatement &)*smnt);
+                if (!success)
+                  return;
+              }
+              else
+              {
+                function = &(((functionStatement *)smnt)->function());
+              }
 
-                setKernelQualifiers(*function);
+              setKernelQualifiers(*function);
             });
       }
 
@@ -179,14 +186,19 @@ namespace occa
       {
         function.returnType.add(0, kernel);
 
+        variableVector args;
         variable_t queueArg(syclQueuePtr, "q_");
-        function.addArgument(queueArg); //const identifierToken &typeToken_, const type_t &type_
-        
-        variable_t ndRangeArg(syclNdRangePtr, "ndrange");
-        function.addArgument(ndRangeArg); //const identifierToken &typeToken_, const type_t &type_
+        args.push_back(queueArg);
 
-        const int argCount = (int) function.args.size();
-        for (int ai = 0; ai < argCount; ++ai) {
+        // function.addArgument(queueArg); //const identifierToken &typeToken_, const type_t &type_
+
+        variable_t ndRangeArg(syclNdRangePtr, "ndrange");
+        args.push_back(ndRangeArg);
+        // function.addArgument(ndRangeArg); //const identifierToken &typeToken_, const type_t &type_
+
+        const int argCount = (int)function.args.size();
+        for (int ai = 0; ai < argCount; ++ai)
+        {
           variable_t arg(*function.removeArgument(0));
 
           vartype_t &type = arg.vartype;
@@ -195,20 +207,24 @@ namespace occa
             operatorToken opToken(arg.source->origin, op::bitAnd);
             type.setReferenceToken(&opToken);
           }
-          function.addArgument(arg);
+          // function.addArgument(arg);
+          args.push_back(arg);
         }
+
+        function.addArguments(args);
       }
 
       void dpcppParser::migrateLocalDecls(functionDeclStatement &kernelSmnt)
       {
         statementArray::from(kernelSmnt)
             .nestedForEachDeclaration([&](variableDeclaration &decl, declarationStatement &declSmnt) {
-                variable_t &var = decl.variable();
-                if (var.hasAttribute("shared")) {
-                  declSmnt.removeFromParent();
-                  kernelSmnt.addFirst(declSmnt);
-                }
-              });
+              variable_t &var = decl.variable();
+              if (var.hasAttribute("shared"))
+              {
+                declSmnt.removeFromParent();
+                kernelSmnt.addFirst(declSmnt);
+              }
+            });
       }
 
       // static bool transformBlockStatement(blockStatement &blockSmnt)
