@@ -37,7 +37,7 @@ namespace occa {
       ptr = nullptr;
       clMem = NULL;
       size = 0;
-      useHostPtr=false;
+      useHostPtr = false;
     }
 
     cl_command_queue& memory::getCommandQueue() const {
@@ -79,7 +79,7 @@ namespace occa {
       if (useHostPtr) {
         return ptr;
       } else {
-        return static_cast<void*>(clMem); //dubious
+        return static_cast<void*>(clMem); // Dubious...
       }
     }
 
@@ -129,9 +129,9 @@ namespace occa {
     }
 
     void memory::detach() {
-      ptr=nullptr;
+      ptr = nullptr;
       size = 0;
-      useHostPtr=false;
+      useHostPtr = false;
     }
   }
 }

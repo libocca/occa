@@ -27,7 +27,7 @@ namespace occa {
       ptr = nullptr;
       hipPtr = 0;
       size = 0;
-      useHostPtr=false;
+      useHostPtr = false;
     }
 
     hipStream_t& memory::getHipStream() const {
@@ -90,8 +90,10 @@ namespace occa {
       const bool async = props.get("async", false);
 
       if (useHostPtr && ((memory*) src)->useHostPtr) {
+        // src: host, dest: host
         ::memcpy(ptr + destOffset, src->ptr + srcOffset, bytes);
       } else if (((memory*) src)->useHostPtr) {
+        // src: host, dest: device
         if (!async) {
           OCCA_HIP_ERROR("Memory: Copy From",
                          hipMemcpyHtoD(addHipPtrOffset(hipPtr, destOffset),
@@ -105,6 +107,7 @@ namespace occa {
                                             getHipStream()));
         }
       } else if (useHostPtr) {
+        // src: device, dest: host
         if (!async) {
           OCCA_HIP_ERROR("Memory: Copy From",
                          hipMemcpyDtoH(ptr + destOffset,
@@ -118,6 +121,7 @@ namespace occa {
                                             getHipStream()));
         }
       } else {
+        // src: device, dest: device
         if (!async) {
           OCCA_HIP_ERROR("Memory: Copy From",
                          hipMemcpyDtoD(addHipPtrOffset(hipPtr, destOffset),
@@ -161,7 +165,7 @@ namespace occa {
       ptr = 0;
       hipPtr = 0;
       size = 0;
-      useHostPtr=false;
+      useHostPtr = false;
     }
   }
 }

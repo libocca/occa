@@ -26,7 +26,7 @@ namespace occa {
       ptr = nullptr;
       cuPtr = 0;
       size = 0;
-      useHostPtr=false;
+      useHostPtr = false;
     }
 
     CUstream& memory::getCuStream() const {
@@ -54,7 +54,7 @@ namespace occa {
       if (useHostPtr) {
         return ptr;
       } else {
-        return (void*)cuPtr;
+        return (void*) cuPtr;
       }
     }
 
@@ -90,8 +90,10 @@ namespace occa {
       const bool async = props.get("async", false);
 
       if (useHostPtr && ((memory*) src)->useHostPtr) {
+        // src: host, dest: host
         ::memcpy(ptr + destOffset, src->ptr + srcOffset, bytes);
       } else if (((memory*) src)->useHostPtr) {
+        // src: host, dest: device
         if (!async) {
           OCCA_CUDA_ERROR("Memory: Copy From",
                           cuMemcpyHtoD(cuPtr + destOffset,
@@ -105,6 +107,7 @@ namespace occa {
                                             getCuStream()));
         }
       } else if (useHostPtr) {
+        // src: device, dest: host
         if (!async) {
           OCCA_CUDA_ERROR("Memory: Copy From",
                           cuMemcpyDtoH(ptr + destOffset,
@@ -118,6 +121,7 @@ namespace occa {
                                             getCuStream()));
         }
       } else {
+        // src: device, dest: device
         if (!async) {
           OCCA_CUDA_ERROR("Memory: Copy From",
                           cuMemcpyDtoD(cuPtr + destOffset,
@@ -161,7 +165,7 @@ namespace occa {
       ptr = nullptr;
       cuPtr = 0;
       size = 0;
-      useHostPtr=false;
+      useHostPtr = false;
     }
   }
 }

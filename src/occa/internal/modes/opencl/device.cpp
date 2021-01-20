@@ -359,7 +359,7 @@ namespace occa {
                                   NULL, &error);
       mem->rootClMem = &mem->clMem;
 
-      mem->useHostPtr=true;
+      mem->useHostPtr = true;
 
       OCCA_OPENCL_ERROR("Device: clCreateBuffer", error);
 
