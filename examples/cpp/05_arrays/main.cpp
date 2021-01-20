@@ -30,8 +30,8 @@ int main(int argc, const char **argv) {
   }
 
   // Uses the background device
-  occa::array<float> array_a(10);
-  occa::array<float> array_b(10);
+  occa::array<float> array_a(entries);
+  occa::array<float> array_b(entries);
 
   // Copy over host data
   array_a.copyFrom(a);
