@@ -450,10 +450,8 @@ namespace occa {
         return clone();
       }
 
-      const int size = (int) length();
-
       occa::scope fnScope({
-        {"size", size},
+        {"size", (int) length()},
         {"offset", offset},
         {"emptyValue", emptyValue},
       });
