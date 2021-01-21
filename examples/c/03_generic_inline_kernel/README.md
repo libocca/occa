@@ -1,14 +1,14 @@
-### Example: Inlined Kernels
+# Example: Generic Inline Kernels
 
 We give an example with inline OKL code
 
-### Compiling the Example
+# Compiling the Example
 
 ```bash
 make
 ```
 
-### Usage
+## Usage
 
 ```
 > ./main --help

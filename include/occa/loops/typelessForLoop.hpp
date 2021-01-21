@@ -28,6 +28,7 @@ namespace occa {
                                const int index) const;
 
     std::string buildIndexInitializer(const std::string &indexName,
+                                      const std::string &loopIndexNamePrefix,
                                       const int iterationCount) const;
   };
 }

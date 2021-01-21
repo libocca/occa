@@ -1,16 +1,16 @@
-### Example: Unified Memory
+# Example: Unified Memory
 
 We show unified memory which automatically syncs data between host and device
 
 Transfers are dome between kernel launches and device synchronization (`occa::device::finish()`) when needed
 
-### Compiling the Example
+# Compiling the Example
 
 ```bash
 make
 ```
 
-### Usage
+## Usage
 
 ```
 > ./main --help

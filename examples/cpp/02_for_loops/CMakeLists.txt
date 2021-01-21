@@ -1,0 +1,1 @@
+compile_cpp_example_with_modes(for_loops main.cpp)

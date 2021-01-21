@@ -9,31 +9,29 @@ int main(int argc, char **argv) {
   float *b  = new float[entries];
   float *ab = new float[entries];
 
-  occa::device device;
-  occa::kernel addVectors;
-  occa::memory o_a, o_b, o_ab;
-
   for (int i = 0; i < entries; ++i) {
     a[i]  = i;
     b[i]  = 1 - i;
     ab[i] = 0;
   }
 
-  device.setup("mode: 'OpenMP'");
 
-  o_a  = occa::cpu::wrapMemory(device, a , entries * sizeof(float));
-  o_b  = occa::cpu::wrapMemory(device, b , entries * sizeof(float));
-  o_ab = occa::cpu::wrapMemory(device, ab, entries * sizeof(float));
+  //---[ OCCA ]-------------------------
+  occa::setDevice({
+    {"mode", "OpenMP"}
+  });
 
-  addVectors = device.buildKernel("addVectors.okl",
-                                  "addVectors");
+  occa::memory o_a  = occa::wrapMemory<float>(a , entries);
+  occa::memory o_b  = occa::wrapMemory<float>(b , entries);
+  occa::memory o_ab = occa::wrapMemory<float>(ab, entries);
 
-  o_a.copyFrom(a);
-  o_b.copyFrom(b);
+  occa::kernel addVectors = (
+    occa::buildKernel("addVectors.okl",
+                       "addVectors")
+  );
 
   addVectors(entries, o_a, o_b, o_ab);
-
-  o_ab.copyTo(ab);
+  //====================================
 
   for (int i = 0; i < entries; ++i) {
     std::cout << i << ": " << ab[i] << '\n';

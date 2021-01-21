@@ -1,16 +1,16 @@
-### Example: Streams
+# Example: Streams
 
 GPU devices introduce `streams`, which potentially allow parallel queueing of instructions
 
 This example shows how to setup `occa::streams` which mirror GPU `streams`
 
-### Compiling the Example
+# Compiling the Example
 
 ```bash
 make
 ```
 
-### Usage
+## Usage
 
 ```
 > ./main --help
