@@ -26,10 +26,10 @@ In a nutshell, OCCA (like *oca*-rina) is an open-source library which aims to
 ### Links
 
 - [Documentation](https://libocca.org)
-- **Want to contribute?** Checkout the ['beginner' issues](https://github.com/libocca/occa/labels/beginner)
-- 🌟 Who is using OCCA?
-  - [Gallery](https://libocca.org/#/gallery)
-  - [Publications](https://libocca.org/#/publications)
+  - [:notebook:	Guide](https://libocca.org/#/guide)
+  - [:gear: API](https://libocca.org/#/api)
+  - [🌟 Who is using OCCA?](https://libocca.org/#/gallery)
+  - [:lab_coat: Publications](https://libocca.org/#/publications)
 
 &nbsp;
 
@@ -67,7 +67,7 @@ export DYLD_LIBRARY_PATH+=":${PWD}/lib"
 
 #### Basics
 
-The basic 3 objects are covered in example `01_add_vectors`
+The occa library is based on 3 different objects, all covered in the [01_add_vectors](/examples/cpp/01_add_vectors) example:
 - `occa::device`
 - `occa::memory`
 - `occa::kernel`
@@ -80,8 +80,7 @@ make
 
 #### Functional Programming + Arrays
 
-The example `05_arrays` shows how to setup `occa::array` and use
-lambda methods to transform data
+Learn how to use `occa::array` in a functional way in example [05_arrays](/examples/cpp/05_arrays):
 
 ```bash
 cd examples/cpp/05_arrays
@@ -96,7 +95,7 @@ make
 There is an executable `occa` provided inside `bin`
 
 ```bash
-> occa --help
+> occa
 
 Usage: occa [OPTIONS] COMMAND [COMMAND...]
 
@@ -118,7 +117,6 @@ Arguments:
 
 Options:
   -h, --help    Print usage
-
 ```
 
 &nbsp;
@@ -126,5 +124,7 @@ Options:
 ### Bash Autocomplete
 
 ```bash
-. <(occa autocomplete bash)
+if which occa > /dev/null 2>&1; then
+    eval "$(occa autocomplete bash)"
+fi
 ```
