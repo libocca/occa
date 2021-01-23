@@ -1,21 +1,21 @@
-### Example: Arrays
+# Example: Generic Inlined Kernel
 
-Example using `occa::array` with inline lambdas
+We give an example with inline OKL code
 
-### Compiling the Example
+# Compiling the Example
 
 ```bash
 make
 ```
 
-### Usage
+## Usage
 
 ```
 > ./main --help
 
 Usage: ./main [OPTIONS]
 
-Example using occa::array with inline lambdas
+Example showing inline OKL code
 
 Options:
   -d, --device     Device properties (default: "{mode: 'Serial'}")

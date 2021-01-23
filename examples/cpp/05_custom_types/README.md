@@ -1,10 +1,10 @@
-### Example: Runtime Type Checking
+# Example: Runtime Type Checking
 
 Example with custom dtypes, showcasing runtime type checking
 
 - Create basic, struct, and dtuple dtypes
 
-### Explanation for dtypes
+## Explanation for dtypes
 
 occa::memory can have a dtype to enable runtime type checking
 
@@ -17,13 +17,13 @@ NOTE:
 - Don't deallocate used dtype_t
 - Don't use local dtype_t objects
 
-### Compiling the Example
+# Compiling the Example
 
 ```bash
 make
 ```
 
-### Usage
+## Usage
 
 ```
 > ./main --help

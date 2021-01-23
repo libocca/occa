@@ -1,4 +1,5 @@
 #include <occa/loops/typelessForLoop.hpp>
+#include <occa/internal/utils/string.hpp>
 #include <occa/experimental/kernelBuilder.hpp>
 
 namespace occa {
@@ -16,8 +17,8 @@ namespace occa {
       OCCA_LOOP_START_OUTER_LOOPS
       OCCA_LOOP_START_INNER_LOOPS
 
-      OCCA_LOOP_INIT_OUTER_INDEX(outerIndex)
-      OCCA_LOOP_INIT_INNER_INDEX(innerIndex)
+      OCCA_LOOP_INIT_OUTER_INDEX
+      OCCA_LOOP_INIT_INNER_INDEX
 
       OCCA_LOOP_FUNCTION
 
@@ -36,8 +37,34 @@ namespace occa {
     const int outerIterationCount = (int) outerIterations.size();
     const int innerIterationCount = (int) innerIterations.size();
 
-    // Inject the function body
-    loopScope.props["defines/OCCA_LOOP_FUNCTION"] = fn.definition().bodySource;
+    // Inject the function information
+    const functionDefinition &fnDefinition = fn.definition();
+
+    loopScope.props["defines/OCCA_LOOP_FUNCTION"] = fnDefinition.bodySource;
+
+    // TODO: This is a hack, we should really be parsing the content
+    //       and finding the argument names
+    strVector arguments = split(fnDefinition.argumentSource, ',');
+
+    const std::string outerIndexName = strip(
+      split(arguments[0], ' ').back()
+    );
+    loopScope.props["defines/OCCA_LOOP_OUTER_INDEX_NAME"] = (
+      outerIndexName.size()
+      ? outerIndexName
+      : "_loopOuterIndex"
+    );
+
+    if (innerIterationCount) {
+      const std::string innerIndexName = strip(
+        split(arguments[1], ' ').back()
+      );
+      loopScope.props["defines/OCCA_LOOP_INNER_INDEX_NAME"] = (
+        innerIndexName.size()
+        ? innerIndexName
+        : "_loopInnerIndex"
+      );
+    }
 
     // Setup @outer loops
     std::string outerForLoopsStart, outerForLoopsEnd;
@@ -48,8 +75,10 @@ namespace occa {
     loopScope.props["defines/OCCA_LOOP_START_OUTER_LOOPS"] = outerForLoopsStart;
     loopScope.props["defines/OCCA_LOOP_END_OUTER_LOOPS"] = outerForLoopsEnd;
 
-    loopScope.props["defines/OCCA_LOOP_INIT_OUTER_INDEX(OUTER_INDEX)"] = (
-      buildIndexInitializer("OUTER_INDEX", outerIterationCount)
+    loopScope.props["defines/OCCA_LOOP_INIT_OUTER_INDEX"] = (
+      buildIndexInitializer("OCCA_LOOP_OUTER_INDEX_NAME",
+                            "OUTER_INDEX",
+                            outerIterationCount)
     );
 
     if (innerIterationCount) {
@@ -62,14 +91,16 @@ namespace occa {
       loopScope.props["defines/OCCA_LOOP_START_INNER_LOOPS"] = innerForLoopsStart;
       loopScope.props["defines/OCCA_LOOP_END_INNER_LOOPS"] = innerForLoopsEnd;
 
-      loopScope.props["defines/OCCA_LOOP_INIT_INNER_INDEX(INNER_INDEX)"] = (
-        buildIndexInitializer("INNER_INDEX", innerIterationCount)
+      loopScope.props["defines/OCCA_LOOP_INIT_INNER_INDEX"] = (
+        buildIndexInitializer("OCCA_LOOP_INNER_INDEX_NAME",
+                              "INNER_INDEX",
+                              innerIterationCount)
       );
     } else {
       // Nothing to setup for @inner loops
       loopScope.props["defines/OCCA_LOOP_START_INNER_LOOPS"] = "";
       loopScope.props["defines/OCCA_LOOP_END_INNER_LOOPS"] = "";
-      loopScope.props["defines/OCCA_LOOP_INIT_INNER_INDEX(INDEX)"] = "";
+      loopScope.props["defines/OCCA_LOOP_INIT_INNER_INDEX"] = "";
     }
 
     return loopScope;
@@ -77,7 +108,8 @@ namespace occa {
 
   std::string typelessForLoop::buildOuterLoop(occa::scope &scope,
                                               const int index) const {
-    return "@outer " + outerIterations[index].buildForLoop(
+    return outerIterations[index].buildForLoop(
+      forLoopType::outer,
       scope,
       "OUTER_INDEX_" + std::to_string(index)
     );
@@ -85,27 +117,29 @@ namespace occa {
 
   std::string typelessForLoop::buildInnerLoop(occa::scope &scope,
                                               const int index) const {
-    return "@inner " + innerIterations[index].buildForLoop(
+    return innerIterations[index].buildForLoop(
+      forLoopType::inner,
       scope,
       "INNER_INDEX_" + std::to_string(index)
     );
   }
 
   std::string typelessForLoop::buildIndexInitializer(const std::string &indexName,
+                                                     const std::string &loopIndexNamePrefix,
                                                      const int iterationCount) const {
     std::stringstream ss;
 
     if (iterationCount == 1) {
-      ss << "const int " << indexName << " = " << indexName << "_0;";
+      ss << "const int " << indexName << " = " << loopIndexNamePrefix << "_0;";
     } else if (iterationCount == 2) {
       ss << "int2 " << indexName << ";"
-         << " " << indexName << ".x = " << indexName << "_0;"
-         << " " << indexName << ".y = " << indexName << "_1;";
+         << " " << indexName << ".x = " << loopIndexNamePrefix << "_0;"
+         << " " << indexName << ".y = " << loopIndexNamePrefix << "_1;";
     } else if (iterationCount == 3) {
       ss << "int3 " << indexName << "; "
-         << " " << indexName << ".x = " << indexName << "_0;"
-         << " " << indexName << ".y = " << indexName << "_1;"
-         << " " << indexName << ".z = " << indexName << "_2;";
+         << " " << indexName << ".x = " << loopIndexNamePrefix << "_0;"
+         << " " << indexName << ".y = " << loopIndexNamePrefix << "_1;"
+         << " " << indexName << ".z = " << loopIndexNamePrefix << "_2;";
     }
 
     return ss.str();

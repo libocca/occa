@@ -1,14 +1,14 @@
-### Example: Using the Background Device
+# Example: Using the Background Device
 
 This example shows how to avoid passing an `occa::device` object around by using the _background device_.
 
-### Compiling the Example
+# Compiling the Example
 
 ```bash
 make
 ```
 
-### Usage
+## Usage
 
 ```
 > ./main --help

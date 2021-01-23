@@ -2,6 +2,7 @@
 #define OCCA_LOOPS_FORLOOP_HEADER
 
 #include <occa/loops/outerForLoop.hpp>
+#include <occa/loops/innerForLoop.hpp>
 
 namespace occa {
   class forLoop {
@@ -20,6 +21,15 @@ namespace occa {
     outerForLoop3 outer(occa::iteration iteration0,
                         occa::iteration iteration1,
                         occa::iteration iteration2);
+
+    outerForLoop1 tile(occa::tileIteration iteration0);
+
+    outerForLoop2 tile(occa::tileIteration iteration0,
+                       occa::tileIteration iteration1);
+
+    outerForLoop3 tile(occa::tileIteration iteration0,
+                       occa::tileIteration iteration1,
+                       occa::tileIteration iteration2);
   };
 }
 

@@ -41,4 +41,19 @@ namespace occa {
 
     return loop;
   }
+
+  outerForLoop1 forLoop::tile(occa::tileIteration iteration0) {
+    return outer(iteration0);
+  }
+
+  outerForLoop2 forLoop::tile(occa::tileIteration iteration0,
+                              occa::tileIteration iteration1) {
+    return outer(iteration0, iteration1);
+  }
+
+  outerForLoop3 forLoop::tile(occa::tileIteration iteration0,
+                              occa::tileIteration iteration1,
+                              occa::tileIteration iteration2) {
+    return outer(iteration0, iteration1, iteration2);
+  }
 }

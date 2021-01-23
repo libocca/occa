@@ -3,44 +3,12 @@
 #include <occa.hpp>
 #include <cuda_runtime_api.h>
 
-//---[ Internal Tools ]-----------------
-// Note: These headers are not officially supported
-//       Please don't rely on it outside of the occa examples
-#include <occa/internal/modes/cuda/utils.hpp>
-//======================================
-
 int main(int argc, char **argv) {
   int entries = 5;
-
-  //---[ Init CUDA ]------------------
-  int cuDeviceID = 0;
-  cudaStream_t cuStream;
-  void *cu_a, *cu_b, *cu_ab;
-
-  // Default: cuStream = 0
-  cudaStreamCreate(&cuStream);
-
-  cudaMalloc(&cu_a , entries * sizeof(float));
-  cudaMalloc(&cu_b , entries * sizeof(float));
-  cudaMalloc(&cu_ab, entries * sizeof(float));
-
-  //  ---[ Get CUDA Info ]----
-  CUdevice cuDevice;
-  CUcontext cuContext;
-
-  cuDeviceGet(&cuDevice, cuDeviceID);
-  cuCtxGetCurrent(&cuContext);
-  //  ========================
-  //====================================
 
   float *a  = new float[entries];
   float *b  = new float[entries];
   float *ab = new float[entries];
-
-  occa::device device = occa::cuda::wrapDevice(cuDevice, cuContext);
-
-  occa::kernel addVectors;
-  occa::memory o_a, o_b, o_ab;
 
   for (int i = 0; i < entries; ++i) {
     a[i]  = i;
@@ -48,19 +16,38 @@ int main(int argc, char **argv) {
     ab[i] = 0;
   }
 
-  o_a  = occa::cuda::wrapMemory(device, cu_a , entries * sizeof(float));
-  o_b  = occa::cuda::wrapMemory(device, cu_b , entries * sizeof(float));
-  o_ab = occa::cuda::wrapMemory(device, cu_ab, entries * sizeof(float));
+  //---[ CUDA ]-------------------------
+  float *cu_a, *cu_b, *cu_ab;
 
-  addVectors = device.buildKernel("addVectors.okl",
-                                  "addVectors");
+  cudaMalloc((void**) &cu_a , entries * sizeof(float));
+  cudaMalloc((void**) &cu_b , entries * sizeof(float));
+  cudaMalloc((void**) &cu_ab, entries * sizeof(float));
 
-  o_a.copyFrom(a);
-  o_b.copyFrom(b);
+
+  cudaMemcpy(cu_a, a, entries * sizeof(float), cudaMemcpyHostToDevice);
+  cudaMemcpy(cu_b, b, entries * sizeof(float), cudaMemcpyHostToDevice);
+  //====================================
+
+
+  //---[ OCCA ]-------------------------
+  occa::setDevice({
+    {"mode", "CUDA"},
+    {"device_id", 0}
+  });
+
+  occa::memory o_a  = occa::wrapMemory<float>(cu_a , entries);
+  occa::memory o_b  = occa::wrapMemory<float>(cu_b , entries);
+  occa::memory o_ab = occa::wrapMemory<float>(cu_ab, entries);
+
+  occa::kernel addVectors = (
+    occa::buildKernel("addVectors.okl",
+                       "addVectors")
+  );
 
   addVectors(entries, o_a, o_b, o_ab);
 
   o_ab.copyTo(ab);
+  //====================================
 
   for (int i = 0; i < entries; ++i) {
     std::cout << i << ": " << ab[i] << '\n';

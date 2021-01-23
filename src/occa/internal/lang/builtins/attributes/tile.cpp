@@ -126,6 +126,10 @@ namespace occa {
                                     blockForSmnt, innerForSmnt);
 
                 forSmnt.replaceWith(blockForSmnt);
+
+                // Float @outer loop up if there are nested @tile loops
+                floatOuterLoopUp(blockForSmnt);
+
                 delete &forSmnt;
               });
 
@@ -313,6 +317,58 @@ namespace occa {
         ifSmnt.setCondition(
           check.createStatement(&ifSmnt, false)
         );
+      }
+
+      void tile::floatOuterLoopUp(forStatement &outerForSmnt) {
+        // TODO: This should probably be a generic @outer/@inner transformation
+        //       and not just done by @tile
+        if (!outerForSmnt.hasAttribute("outer")) {
+          return;
+        }
+
+        // We can swap the loops as long as there is only 1 child in the parents
+        // This is because @outer and @inner iterators should not be depending on
+        // intermidate state that hasn't been defined
+        blockStatement *newUp = outerForSmnt.up;
+        while (newUp &&
+               (newUp->size() == 1) &&
+               !newUp->hasAttribute("outer")) {
+          newUp = newUp->up;
+        }
+
+        if (!newUp ||
+            (newUp == outerForSmnt.up) ||
+            !newUp->hasAttribute("outer")) {
+          return;
+        }
+
+        // newUp > inner1 > if > outerForSmnt > [children]
+        // newUp > inner1 > outerForSmnt > if > [children]
+        // newUp > outerForSmnt > inner1 > if > [children]
+        blockStatement *up = outerForSmnt.up;
+        while (up != newUp) {
+          blockStatement *upUp = up->up;
+
+          // State:
+          //   upUp > []
+          //   up > []
+          //   outerForSmnt > [children]
+          up->children.clear();
+          upUp->children.clear();
+
+          // State:
+          //   upUp > []
+          //   outerForSmnt > []
+          //   up > [children]
+          outerForSmnt.swapChildren(*up);
+
+          // State:
+          //   upUp > outerForSmnt > up > [children]
+          upUp->add(outerForSmnt);
+          outerForSmnt.add(*up);
+
+          up = upUp;
+        }
       }
     }
   }

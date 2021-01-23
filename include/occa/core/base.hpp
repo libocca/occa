@@ -130,7 +130,7 @@ namespace occa {
   template <class TM = void>
   occa::memory wrapMemory(const TM *ptr,
                           const dim_t entries,
-                          const occa::json &props);
+                          const occa::json &props = occa::json());
 
   template <>
   occa::memory wrapMemory<void>(const void *ptr,

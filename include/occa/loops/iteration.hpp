@@ -11,11 +11,19 @@ namespace occa {
     indexArray
   };
 
+  enum class forLoopType {
+    inner,
+    outer
+  };
+
   class iteration {
+    friend class tileIteration;
+
   private:
     iterationType type;
     occa::range range;
     occa::array<int> indices;
+    int tileSize;
 
   public:
     iteration();
@@ -30,14 +38,28 @@ namespace occa {
 
     iteration& operator = (const iteration &other);
 
-    std::string buildForLoop(occa::scope &scope,
+    std::string buildForLoop(forLoopType loopType,
+                             occa::scope &scope,
                              const std::string &iteratorName) const;
 
     std::string buildRangeForLoop(occa::scope &scope,
-                                  const std::string &iteratorName) const;
+                                  const std::string &iteratorName,
+                                  const std::string &forAttribute) const;
 
     std::string buildIndexForLoop(occa::scope &scope,
-                                  const std::string &iteratorName) const;
+                                  const std::string &iteratorName,
+                                  const std::string &forAttribute) const;
+  };
+
+  class tileIteration {
+  private:
+    iteration it;
+
+  public:
+    tileIteration(occa::iteration it_,
+                  const int tileSize);
+
+    operator iteration () const;
   };
 }
 

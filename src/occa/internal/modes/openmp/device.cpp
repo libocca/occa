@@ -34,7 +34,7 @@ namespace occa {
       // Verify if parsing succeeded
       if (!parser.succeeded()) {
         if (!kernelProps.get("silent", false)) {
-          OCCA_FORCE_ERROR("Unable to transform OKL kernel");
+          OCCA_FORCE_ERROR("Unable to transform OKL kernel [" << filename << "]");
         }
         return false;
       }
