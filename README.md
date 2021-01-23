@@ -64,7 +64,7 @@ occa::forLoop()
   .tile({entries, 16})
   .run(OCCA_FUNCTION(scope, [=](const int i) -> void {
     ab[i] = a[i] + b[i];
-}));
+  }));
 ```
 
 Or we can use a more functional way by using `occa::array`
