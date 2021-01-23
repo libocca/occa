@@ -62,8 +62,7 @@ occa::scope scope({
 
 occa::forLoop()
   .tile({entries, 16})
-  .run(OCCA_FUNCTION(scope, [=](const int outerIndex, const int innerIndex) -> void {
-    const int i = innerIndex + (2 * outerIndex);
+  .run(OCCA_FUNCTION(scope, [=](const int i) -> void {
     ab[i] = a[i] + b[i];
 }));
 ```
