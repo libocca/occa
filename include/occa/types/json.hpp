@@ -26,6 +26,107 @@ namespace occa {
     jsonObject object;
   } jsonValue_t;
 
+  /**
+   * @id{json}
+   *
+   * @descriptionStart
+   *
+   * # Description
+   *
+   * A [[json]] object stores data in the same way specified by the JSON standard.
+   * It's used across the OCCA library as a way to flexibly pass user configurations.
+   *
+   * # Types
+   *
+   * There are 6 basic types a json object can be at a time:
+   * - String
+   * - Number
+   * - Boolean
+   * - NULL
+   * - Array of json objects
+   * - Map of string keys to json objects
+   *
+   * # Type checking
+   *
+   * There is a method provided check for each type
+   *
+   * - [[json.isString]]
+   * - [[json.isNumber]]
+   * - [[json.isBool]]
+   * - [[json.isNull]]
+   * - [[json.isObject]]
+   * - [[json.isArray]]
+   *
+   * # Type casting
+   *
+   *  There is also a method to enforce the json object to be a specific type
+   *
+   * - [[json.asString]]
+   * - [[json.asNumber]]
+   * - [[json.asBool]]
+   * - [[json.asNull]]
+   * - [[json.asObject]]
+   * - [[json.asArray]]
+   *
+   * # Data access
+   *
+   * Accessing and setting data can be done through the [[json.brackets]].
+   * To make it simpler to access nested structures, we support passing `/`-delimited paths
+   *
+   * For example, if we wanted to build
+   *
+   * ```js
+   * {
+   *   "a": {
+   *     "b": {
+   *       "c": "hello world"
+   *     }
+   *   }
+   * }
+   * ```
+   *
+   * we could do it two ways:
+   *
+   * ```cpp
+   * occa::json j;
+   * j["a"]["b"]["c"] = "hello world';
+   * ```
+   *
+   * or a the more compact way:
+   *
+   * ```cpp
+   * occa::json j;
+   * j["a/b/c"] = "hello world';
+   * ```
+   *
+   * If for some reason there needs to be a `/` in the key name, use the [[json.set]] method instead
+   *
+   * For example, building
+   *
+   * ```js
+   * {
+   *   "a/b/c": "hello world"
+   * }
+   * ```
+   *
+   * would be done through
+   *
+   * ```cpp
+   * occa::json j;
+   * j.set("a/b/c", "hello world');
+   * ```
+   *
+   * # Decoding
+   *
+   * - [[json.parse]] can be used to parse a string to a json object.
+   * - [[json.read]] is the same as [[json.parse]] but reads and parses a file instead.
+   *
+   * # Encoding
+   * - [[json.dump]] produces the JSON string associated with the stored data.
+   * - [[json.write]] is the same as [[json.dump]] but saves the output in a file.
+   *
+   * @descriptionEnd
+   */
   class json {
   public:
     static const char objectKeyEndChars[];

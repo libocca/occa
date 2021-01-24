@@ -19,7 +19,49 @@ namespace occa {
   typedef hashedMemoryMap::iterator       hashedMemoryMapIterator;
   typedef hashedMemoryMap::const_iterator cHashedMemoryMapIterator;
 
-  //---[ memory ]-----------------------
+  /**
+   * @id{memory}
+   *
+   * @descriptionStart
+   *
+   * # Description
+   *
+   * A [[memory]] object is a handle to memory allocated by a device.
+   * For example, in `Serial` and `OpenMP` modes it is analogous to a `void*` pointer that comes out of `malloc` or `new`.
+   * Check [[device.malloc]] for more information about how to allocate memory and build a memory object.
+   *
+   * # Data transfer
+   *
+   * There are 2 helper methods to help with data transfer:
+   * - [[memory.copyTo]] which helpes copy data from the memory object to the input.
+   * - [[memory.copyFrom]] which helpes copy data from the input to the memory object.
+   *
+   * ?> Note that because we know the type and size of the underlying data allocated, passing the bytes to copy defaults to the full array.
+   *
+   * # Transformations
+   *
+   * ## Slices
+
+   * Sometimes we want to pass a subsection of the memory to a kernel.
+   * Rather than passing the memory and the offset to the kernel, we support slicing the memory object through [[memory.slice]].
+   * The returned memory object will be a reference to the original but will keep track of the offset and size change.
+   *
+   * ## Cloning
+   *
+   * The [[memory.clone]] method is a quick way to create a copy of a memory object.
+   *
+   * ## Casting
+   *
+   * Calling [[memory.cast]] will return a reference to the original memory object but with a different type.
+   * This can be used to assert type at runtime when passed to kernel as arguments.
+   *
+   * # Garbage collection
+   *
+   * The [[memory.free]] function can be called to free the memory.
+   * OCCA implemented reference counting by default so calling [[memory.free]] is not required.
+   *
+   * @descriptionEnd
+   */
   class memory : public gc::ringEntry_t {
     friend class occa::modeMemory_t;
     friend class occa::device;
@@ -147,7 +189,6 @@ namespace occa {
   };
 
   extern memory null;
-  //====================================
 
   std::ostream& operator << (std::ostream &out,
                            const occa::memory &memory);
