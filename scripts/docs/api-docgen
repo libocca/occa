@@ -1,0 +1,91 @@
+#!/usr/bin/env python3
+'''
+Automates the API documentation:
+- Runs Doxygen to build an .xml file of the headers found in `include/`
+- Looks for file that have an output from our own custom Doxygen ALIASES
+- Parse through the classes and functions that have been documented
+
+Dependencies:
+- sudo apt install doxygen
+- pip install lxml
+'''
+# Local modules
+from api_docgen import *
+
+
+def alias_path(path, node_id, ordered_path_aliases):
+    for [alias_path, alias_id] in ordered_path_aliases:
+        if path.startswith(alias_path):
+            return [
+                path.replace(path, alias_id),
+                f'{alias_id}.{node_id}',
+            ]
+
+    return [path, node_id]
+
+
+def get_global_id_map(tree, nodes):
+    paths = sorted([
+        [tree.getpath(node), NodeInfo.parse(node)]
+        for node in nodes
+    ])
+
+    global_id_map = {}
+    ordered_path_ids = []
+    for [path, node_info] in paths:
+        # Build aliases from short names -> long names
+        [aliased_path, aliased_id] = alias_path(
+            path,
+            node_info.get_id(),
+            ordered_path_ids
+        )
+
+        # Build the ids backwards to match longer -> shorter to find
+        # the longest alias possible
+        ordered_path_ids.insert(0, [aliased_path, aliased_id])
+
+        global_id_map[path] = aliased_id
+
+    return global_id_map
+
+
+def get_doc_tree(filename):
+    [tree, root] = parse_xml_file(filename)
+
+    nodes = get_documented_definition_nodes(root)
+    global_id_map = get_global_id_map(tree, nodes)
+
+    doc_tree = {}
+    for node in nodes:
+        doc_node = nested_get(
+            doc_tree,
+            global_id_map[tree.getpath(node)].split('.')
+        )
+
+        if INFO_FIELD not in doc_node:
+            doc_node[INFO_FIELD] = {}
+            doc_node[ALIASES_FIELD] = []
+
+        definition = Definition.parse(node)
+        if definition.is_alias():
+            doc_node[ALIASES_FIELD].append(definition)
+        else:
+            doc_node[INFO_FIELD] = definition
+
+    return doc_tree
+
+
+def load_documentation():
+    doc_tree = {}
+    for documented_file in find_documented_files():
+        doc_tree.update(
+            get_doc_tree(documented_file)
+        )
+
+    return doc_tree
+
+
+if '__main__' == __name__:
+    run_doxygen()
+    doc_tree = load_documentation()
+    pp_json(doc_tree)
