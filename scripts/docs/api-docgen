@@ -4,10 +4,6 @@ Automates the API documentation:
 - Runs Doxygen to build an .xml file of the headers found in `include/`
 - Looks for file that have an output from our own custom Doxygen ALIASES
 - Parse through the classes and functions that have been documented
-
-Dependencies:
-- sudo apt install doxygen
-- pip install lxml
 '''
 # Local modules
 from api_docgen import *
@@ -26,7 +22,7 @@ def alias_path(path, node_id, ordered_path_aliases):
 
 def get_global_id_map(tree, nodes):
     paths = sorted([
-        [tree.getpath(node), NodeInfo.parse(node)]
+        [tree.getpath(node), Documentation.parse(node)]
         for node in nodes
     ])
 

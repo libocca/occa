@@ -75,7 +75,7 @@ def find_documented_files():
     all Doxygen-output files
     '''
     output = subprocess.check_output(
-        ['grep', '-Rl', ID_TAG, DOXYGEN_OUTPUT]
+        ['grep', '-Rl', OCCA_DOC_TAG, DOXYGEN_OUTPUT]
     ).decode('utf-8')
 
     return [

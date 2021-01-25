@@ -27,16 +27,11 @@ TAB_SIZE               = 2
 ALIASES =
 ALIASES += rawXmlStart="<![CDATA["
 ALIASES += rawXmlEnd="]]>"
-ALIASES += raw_xml{1}="@rawXmlStart \1 @rawXmlEnd"
 
-ALIASES += id{1}="\xmlonly <occa-id>\1</occa-id> \endxmlonly"
-ALIASES += alias{1}="\xmlonly <occa-id is_alias=\"true\">\1</occa-id> \endxmlonly"
+ALIASES += startDoc{1}="\xmlonly <occa-doc id=\"\1\">@rawXmlStart "
+ALIASES += endDoc=" @rawXmlEnd</occa-doc> \endxmlonly"
 
-ALIASES += descriptionStart="\xmlonly <occa-description>@rawXmlStart"
-ALIASES += descriptionEnd="@rawXmlEnd</occa-description> \endxmlonly"
-
-ALIASES += instanceDescriptionStart="\xmlonly <occa-instance-description>@rawXmlStart"
-ALIASES += instanceDescriptionEnd="@rawXmlEnd</occa-instance-description> \endxmlonly"
+ALIASES += doc="\xmlonly <occa-doc id=\"\1\"></occa-doc> \endxmlonly"
 #=======================================
 
 

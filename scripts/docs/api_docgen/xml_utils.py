@@ -55,17 +55,23 @@ def get_bool_attr(attrs, attr, default_value='no'):
 
 def get_documented_definition_nodes(root):
     '''
-    Find all nodes that have an ID_TAG child at a specific depth
+    Find all nodes that have an OCCA_DOC_TAG child at a specific depth
     This helps us only look at the documented classes/methods instead of everything
     '''
-    return [*root.findall(f'.//{ID_TAG}/../../..')]
+    return [*root.findall(f'.//{OCCA_DOC_TAG}/../../..')]
 
 
-def parse_description(markdown):
+def get_documentation_node(node):
+    return node.find(f'./*/*/{OCCA_DOC_TAG}')
+
+
+def expand_hyperlinks(markdown):
     '''
     Separate the hyperlink and markdown content
     '''
     from .types import Markdown, Hyperlink
+
+    markdown = markdown.strip()
 
     if not markdown:
         return []
@@ -82,19 +88,41 @@ def parse_description(markdown):
     ]
 
 
-def get_node_description(node):
+def get_documentation_sections(content):
     '''
-    Find the description tag and extract its contents
-    '''
-    return parse_description(
-        get_node_text(node, f'./*/*/{DESCRIPTION_TAG}')
-    )
+    Find the sections given by header and and indentation
+    For example:
 
+    "
+    Section Header 1:
+      line1
 
-def get_node_instance_description(node):
+      line3
+
+    Section Header 2:
+      line1
+
+    Section Header 3:
+      line1
+    "
+
+    ->
+
+    {
+      "Section Header 1": "line1\n\nline3",
+      "Section Header 2": "line1",
+      "Section Header 3": "line1",
+    }
     '''
-    Find the instance description tag and extract its contents
-    '''
-    return parse_description(
-        get_node_text(node, f'./*/*/{INSTANCE_DESCRIPTION_TAG}')
-    )
+    content = content.strip()
+
+    parts = re.split(f'(?:^|\n+)([^\s].*?[^\s]):\n', content)
+
+    # Content starts with ^ so we want to ignore parts[0]
+    headers = parts[1::2]
+    contents = parts[2::2]
+
+    return {
+        header: expand_hyperlinks(contents[index])
+        for index, header in enumerate(headers)
+    }

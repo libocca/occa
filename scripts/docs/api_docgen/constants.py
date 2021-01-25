@@ -11,13 +11,7 @@ OCCA_DIR = os.environ.get(
 DOXYGEN_OUTPUT = f'{OCCA_DIR}/.doxygen_output'
 
 # Each unique class/method should have a @id{id-name}
-ID_TAG = 'occa-id'
-
-# Where the raw Markdown is stored
-DESCRIPTION_TAG = 'occa-description'
-
-# If there the function is overloaded, we can provide specific information for each instance
-INSTANCE_DESCRIPTION_TAG = 'occa-instance-description'
+OCCA_DOC_TAG = 'occa-doc'
 
 # Where the class/method information is stored inside the doc tree
 INFO_FIELD = '__info__'

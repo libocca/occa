@@ -25,90 +25,87 @@ namespace occa {
   typedef cachedKernelMap::const_iterator cCachedKernelMapIterator;
 
   /**
-   * @id{device}
+   * @startDoc{device}
    *
-   * @descriptionStart
+   * Description:
+   *   A [[device]] object maps to a physical device we want to program on.
+   *   Examples include a CPU, GPU, or other physical accelerator like an FPGA.
    *
-   * # Description
+   *   There are 2 main uses of a device:
+   *   - Memory allocation ([[memory]])
+   *   - Compile and run code ([[kernel]])
    *
-   * A [[device]] object maps to a physical device we want to program on.
-   * Examples include a CPU, GPU, or other physical accelerator like an FPGA.
+   *   ## Setup
    *
-   * There are 2 main uses of a device:
-   * - Memory allocation ([[memory]])
-   * - Compile and run code ([[kernel]])
+   *   Setting up [[device]] objects is done through JSON properties.
+   *   Here's an example of a CUDA device picking device `0` through its [[device.constructor]]:
    *
-   * # Setup
+   *   ```cpp
+   *   occa::device device({
+   *     {"mode", "CUDA"},
+   *     {"device_id", 0}
+   *   })
+   *   ```
    *
-   * Setting up [[device]] objects is done through JSON properties.
-   * Here's an example of a CUDA device picking device `0` through its [[device.constructor]]:
+   *   JSON formatted strings can also be passed directly, which can be useful when loading from a config file.
    *
-   * ```cpp
-   * occa::device device({
-   *   {"mode", "CUDA"},
-   *   {"device_id", 0}
-   * })
-   * ```
+   *   ```cpp
+   *   occa::device device(
+   *     "{ mode: 'CUDA", device_id: 0 }"
+   *   );
+   *   ```
    *
-   * JSON formatted strings can also be passed directly, which can be useful when loading from a config file.
+   *   We can achieve the same using the [[device.setup]] method which take similar arguments as the constructors.
+   *   For example:
    *
-   * ```cpp
-   * occa::device device(
-   *   "{ mode: 'CUDA", device_id: 0 }"
-   * );
-   * ```
+   *   ```cpp
+   *   occa::device device;
+   *   // ...
+   *   device.setup({
+   *     {"mode", "CUDA"},
+   *     {"device_id", 0}
+   *   })
+   *   ```
    *
-   * We can achieve the same using the [[device.setup]] method which take similar arguments as the constructors.
-   * For example:
+   *   ## Memory allocation
    *
-   * ```cpp
-   * occa::device device;
-   * // ...
-   * device.setup({
-   *   {"mode", "CUDA"},
-   *   {"device_id", 0}
-   * })
-   * ```
+   *   We suggest allocating through the templated [[device.malloc]] method which will keep type information around.
+   *   Here's an example which allocates memory on the device to fit a `float` array of size 10:
    *
-   * # Memory allocation
+   *   ```cpp
+   *   occa::memory mem = device.malloc<float>(10);
+   *   ```
    *
-   * We suggest allocating through the templated [[device.malloc]] method which will keep type information around.
-   * Here's an example which allocates memory on the device to fit a `float` array of size 10:
+   *   ## Kernel compilation
    *
-   * ```cpp
-   * occa::memory mem = device.malloc<float>(10);
-   * ```
+   *   Kernel allocation can be done two ways, through [[a file|device.buildKernel]]) or [[string source|device.buildKernelFromString]].
+   *   Here's an example which builds a [[kernel]] from a file:
    *
-   * # Kernel compilation
+   *   ```cpp
+   *   occa::kernel addVectors = (
+   *     device.buildKernel("addVectors.okl",
+   *                        "addVectors")
+   *   );
+   *   ```
    *
-   * Kernel allocation can be done two ways, through [[a file|device.buildKernel]]) or [[string source|device.buildKernelFromString]].
-   * Here's an example which builds a [[kernel]] from a file:
+   *   ## Interoperability
    *
-   * ```cpp
-   * occa::kernel addVectors = (
-   *   device.buildKernel("addVectors.okl",
-   *                      "addVectors")
-   * );
-   * ```
+   *   Lastly, we allow for interoperability with supported backends/libraries by wrapping and unwrapping memory objects.
    *
-   * # Interoperability
+   *   Here's an example which takes a native pointer and wraps it as a [[memory]] object through the [[device.wrapMemory]] method:
    *
-   * Lastly, we allow for interoperability with supported backends/libraries by wrapping and unwrapping memory objects.
+   *   ```cpp
+   *   occa::memory occaPtr = (
+   *     device.wrapMemory<float>(ptr, 10)
+   *   );
+   *   ```
    *
-   * Here's an example which takes a native pointer and wraps it as a [[memory]] object through the [[device.wrapMemory]] method:
+   *   ## Garbage collection
    *
-   * ```cpp
-   * occa::memory occaPtr = (
-   *   device.wrapMemory<float>(ptr, 10)
-   * );
-   * ```
+   *   The [[device.free]] function can be called to free the device along with any other object allocated by it, such as [[memory]] and [[kernel] objects.
+   *   OCCA implemented reference counting by default so calling [[device.free]] is not required.   *
    *
-   * # Garbage collection
-   *
-   * The [[device.free]] function can be called to free the device along with any other object allocated by it, such as [[memory]] and [[kernel] objects.
-   * OCCA implemented reference counting by default so calling [[device.free]] is not required.   *
-   *
-   * @descriptionEnd
+   * @endDoc
    */
   class device : public gc::ringEntry_t {
     friend class modeDevice_t;
@@ -120,41 +117,41 @@ namespace occa {
 
   public:
     /**
-     * @id{constructor}
+     * @startDoc{constructor[0]}
      *
-     * @descriptionStart
+     * Description:
+     *   Creates a handle to a physical device we want to program on, such as a CPU, GPU, or other accelerator.
      *
-     * Creates a handle to a physical device we want to program on, such as a CPU, GPU, or other accelerator.
+     * Overloaded Description:
+     *   Default constructor
      *
-     * @descriptionEnd
-     *
-     * @instanceDescriptionStart
-     *
-     * Default constructor
-     *
-     * @instanceDescriptionEnd
+     * @endDoc
      */
     device();
 
     /**
-     * @alias{constructor}
+     * @startDoc{constructor[1]}
      *
-     * @instanceDescriptionStart
+     * Overloaded Description:
+     *   Takes a JSON-formatted string for the device props.
      *
-     * Takes a JSON-formatted string for the device props.
+     * Arguments:
+     *   props: JSON-formatted string that defines the device properties
      *
-     * @instanceDescriptionEnd
+     * @endDoc
      */
     device(const std::string &props);
 
     /**
-     * @alias{constructor}
+     * @startDoc{constructor[2]}
      *
-     * @instanceDescriptionStart
+     * Overloaded Description:
+     *   Takes an [[json]] argument for the device props.
      *
-     * Takes an [[json]] argument for the device props.
+     * Arguments:
+     *   props: Device properties
      *
-     * @instanceDescriptionEnd
+     * @endDoc
      */
     device(const occa::json &props);
 
@@ -175,95 +172,108 @@ namespace occa {
 
   public:
     /**
-     * @id{dontUseRefs}
+     * @startDoc{dontUseRefs}
      *
-     * @descriptionStart
+     * Description:
+     *   By default, a [device] will automatically call [[device.free]] through reference counting.
+     *   Turn off automatic garbage collection through this method.
      *
-     * By default, a [device] will automatically call [[device.free]] through reference counting.
-     * Turn off automatic garbage collection through this method.
-     *
-     * @descriptionEnd
+     * @endDoc
      */
     void dontUseRefs();
 
     /**
-     * @id{==}
+     * @startDoc{comparison[0]}
      *
-     * @descriptionStart
+     * Description:
+     *   Compare if two devices have the same references.
      *
-     * Comparison operators
+     * Returns:
+     *   If the references are the same, this returns `true` otherwise `false`.
      *
-     * @descriptionEnd
+     * @endDoc
      */
     bool operator == (const occa::device &other) const;
 
     /**
-     * @alias{==}
+     * @startDoc{comparison[1]}
+     *
+     * Description:
+     *   Compare if two devices have different references.
+     *
+     * Returns:
+     *   If the references are different, this returns `true` otherwise `false`.
+     *
+     * @endDoc
      */
     bool operator != (const occa::device &other) const;
 
     /**
-     * @id{isInitialized}
+     * @startDoc{isInitialized}
      *
-     * @descriptionStart
+     * Description:
+     *   Check whether the device has been intialized.
      *
-     * Returns `true` if the device has been intialized, through either the [[device.constructor]] or [[device.setup]].
+     * Returns:
+     *   Returns `true` if the device has been intialized, through either the [[device.constructor]] or [[device.setup]].
      *
-     * @descriptionEnd
+     * @endDoc
      */
     bool isInitialized();
 
     modeDevice_t* getModeDevice() const;
 
     /**
-     * @id{setup}
+     * @startDoc{setup[0]}
      *
-     * @descriptionStart
+     * Description:
+     *   Similar to [[device.constructor]] but can be called after creating the initial [[device]] object.
      *
-     * Similar to [[device.constructor]] but can be called after creating the initial [[device]] object.
-     *
-     * @descriptionEnd
+     * @endDoc
      */
     void setup(const std::string &props);
 
     /**
-     * @alias{setup}
+     * @doc{setup[1]}
      */
     void setup(const occa::json &props);
 
     /**
-     * @id{free}
+     * @startDoc{free}
      *
-     * @descriptionStart
+     * Description:
+     *   Free the device, which will also free:
+     *   - Allocated [[memory]]
+     *   - Built [[kernel]]
+     *   - Created [[stream]] and [[streamTag]]
      *
-     * Free the device, which will also free:
-     * - Allocated [[memory]]
-     * - Built [[kernel]]
-     * - Created [[stream]] and [[streamTag]]
-     *
-     * @descriptionEnd
+     * @endDoc
      */
     void free();
 
     /**
-     * @id{mode}
+     * @startDoc{mode}
      *
-     * @descriptionStart
+     * Description:
+     *   Returns the device mode, matching the backend the device is targeting.
      *
-     * Returns the device `mode`, such as `"CUDA"` or `"HIP"`.
+     * Returns:
+     *   The `mode` string, such as `"Serial"`, `"CUDA"`, or `"HIP"`.
      *
-     * @descriptionEnd
+     * @endDoc
      */
     const std::string& mode() const;
 
     /**
-     * @id{properties}
+     * @startDoc{properties}
      *
-     * @descriptionStart
+     * Description:
+     *   Get the properties used to build the device.
      *
-     * Returns the properties used to build the [[device]].
+     * Description:
+     *   Returns the properties used to build the [[device]].
      *
-     * @descriptionEnd
+     * @endDoc
      */
     const occa::json& properties() const;
 
@@ -277,125 +287,147 @@ namespace occa {
     occa::json streamProperties(const occa::json &additionalProps) const;
 
     /**
-     * @id{hash}
+     * @startDoc{hash}
      *
-     * @descriptionStart
+     * Description:
+     *   Gets the [[hash|hash_t]] of the device.
+     *   Two devices should have the same hash if they point to the same hardware device
+     *   and setup with the same properties.
      *
-     * Two devices should have the same [[hash|hash_t]] if they point to the same hardware device and setup with the same properties.
+     * Returns:
+     *   The device [[hash|hash_t]]
      *
-     * @descriptionEnd
+     * @endDoc
      */
     hash_t hash() const;
 
     /**
-     * @id{memorySize}
+     * @startDoc{memorySize}
      *
-     * @descriptionStart
+     * Description:
+     *   Finds the device's memory capacity, not accounting for allocated memory.
      *
-     * Returns the memory size of the device, not accounting for allocated memory.
+     * Description:
+     *   Returns the memory capacity in bytes.
      *
-     * @descriptionEnd
+     * @endDoc
      */
     udim_t memorySize() const;
 
     /**
-     * @id{memoryAllocated}
+     * @startDoc{memoryAllocated}
      *
-     * @descriptionStart
+     * Description:
+     *   Find how much memory has been allocated by this specific device.
      *
-     * Returns the memory allocated using just this [[device]].
+     * Description:
+     *   Returns the memory allocated in bytes.
      *
-     * @descriptionEnd
+     * @endDoc
      */
     udim_t memoryAllocated() const;
 
     /**
-     * @id{finish}
+     * @startDoc{finish}
      *
-     * @descriptionStart
+     * Description:
+     *   Finishes any asynchronous operation queued up on the device, such as
+     *   [[async memory allocations|malloc]] or [[kernel calls|kernel.()]].
      *
-     * Finishes any asynchronous operation queued up on the device, such as [[async memory allocations|malloc]] or [[kernel calls|kernel.()]].
-     *
-     * @descriptionEnd
+     * @endDoc
      */
     void finish();
 
     /**
-     * @id{hasSeparateMemorySpace}
+     * @startDoc{hasSeparateMemorySpace}
      *
-     * @descriptionStart
+     * Description:
+     *   Checks if the device memory is in a separate memory space than the host.
+     *   If they are not in a separate space, it should be safe to access the memory directly
+     *   in the host application.
+     *   For example, accesses of the [[memory.ptr]] return pointer.
      *
-     * Returns `true` if the memory is directly accesible through the host.
+     * Returns:
+     *   Returns `true` if the memory is directly accesible through the host.
      *
-     * @descriptionEnd
+     * @endDoc
      */
     bool hasSeparateMemorySpace();
 
     //  |---[ Stream ]------------------
     /**
-     * @id{createStream}
+     * @startDoc{createStream}
      *
-     * @descriptionStart
+     * Description:
+     *   Creates and returns a new [[steam]] to queue operations on.
+     *   If the backend supports streams, out-of-order work can be achieved through
+     *   the use of streams.
      *
-     * Creates a new [[steam]] to queue operations on.
-     * If the backend supports streams, out-of-order work can be achieved through the use of streams.
+     *   ?> Note that the stream is created but not set as the active stream.
      *
-     * @descriptionEnd
+     * Returns:
+     *   Newly created [[stream]]
+     *
+     * @endDoc
      */
     stream createStream(const occa::json &props = occa::json());
 
     /**
-     * @id{getStream}
+     * @startDoc{getStream}
      *
-     * @descriptionStart
+     * Description:
+     *   Returns the active [[stream]].
      *
-     * Returns the active [[stream]].
+     * Returns:
+     *   Returns the active [[stream]].
      *
-     * @descriptionEnd
+     * @endDoc
      */
     stream getStream();
 
     /**
-     * @id{setStream}
+     * @startDoc{setStream}
      *
-     * @descriptionStart
+     * Description:
+     *   Sets the active [[stream]].
      *
-     * Sets the active [[stream]].
-     *
-     * @descriptionEnd
+     * @endDoc
      */
     void setStream(stream s);
 
     /**
-     * @id{tagStream}
+     * @startDoc{tagStream}
      *
-     * @descriptionStart
+     * Description:
+     *   Tag the active stream and return the created [[streamTag]].
      *
-     * Tag the stream and returns the created [[streamTag]].
+     * Returns:
+     *   The created [[streamTag]].
      *
-     * @descriptionEnd
+     * @endDoc
      */
     streamTag tagStream();
 
     /**
-     * @id{waitFor}
+     * @startDoc{waitFor}
      *
-     * @descriptionStart
+     * Description:
+     *   Wait for all operations queued up until the [[tag|streamTag]].
      *
-     * Wait for all operations queued up until the [[tag|streamTag]].
-     *
-     * @descriptionEnd
+     * @endDoc
      */
     void waitFor(streamTag tag);
 
     /**
-     * @id{timeBetween}
+     * @startDoc{timeBetween}
      *
-     * @descriptionStart
+     * Description:
+     *   Returns the time taken between two [[tags|streamTag]].
      *
-     * Returns the time taken in seconds between the two [[tags|streamTag]].
+     * Returns:
+     *   Returns the time in seconds.
      *
-     * @descriptionEnd
+     * @endDoc
      */
     double timeBetween(const streamTag &startTag,
                        const streamTag &endTag);
@@ -410,31 +442,76 @@ namespace occa {
     hash_t applyDependencyHash(const hash_t &kernelHash) const;
 
     /**
-     * @id{buildKernel}
+     * @startDoc{buildKernel}
      *
-     * @descriptionStart
+     * Description:
+     *   Builds a [[kernel]] given a filename, kernel name, and optional properties.
      *
-     * Builds a [[kernel]] given a filename, kernel name, and optional properties
+     *   ## Defines
      *
-     * defines
-     * includes
-     * headers
-     * functions
+     *   Compile-time definitions can be passed through the `defines` path.
+     *   For example:
      *
-     * @descriptionEnd
+     *   ```cpp
+     *   occa::json props;
+     *   props["defines/TWO"] = 2;
+     *   ```
+     *
+     *   ## Includes
+     *
+     *   Headers can be `#include`-ed through the `includes` path.
+     *   For example:
+     *
+     *   ```cpp
+     *   occa::json props;
+     *   props["includes"].asArray();
+     *   props["includes"] += "my_header.hpp";
+     *   ```
+     *
+     *   ## Headers
+     *
+     *   Source code can be injected through the `headers` path.
+     *   For example:
+     *
+     *   ```cpp
+     *   occa::json props;
+     *   props["headers"].asArray();
+     *   props["headers"] += "#define TWO 2";
+     *   ```
+     *
+     *   ## Functions
+     *
+     *   Lastly, [[function]]'s can be captured through the `functions` path.
+     *   For example:
+     *
+     *   ```cpp
+     *   occa::json props;
+     *   props["functions/add"] = (
+     *     OCCA_FUNCTION({}, [=](float a, float b) -> float {
+     *       return a + b;
+     *     }
+     *   );
+     *   ```
+     *
+     * Returns:
+     *   The compiled [[kernel]].
+     *
+     * @endDoc
      */
     occa::kernel buildKernel(const std::string &filename,
                              const std::string &kernelName,
                              const occa::json &props = occa::json()) const;
 
     /**
-     * @id{buildkernelFromString}
+     * @startDoc{buildkernelFromString}
      *
-     * @descriptionStart
+     * Description:
+     *   Same as [[device.buildKernel]] but given the kernel source code rather than the filename.
      *
-     * Same as [[device.buildKernel]] but given the kernel source code rather than the filename.
+     * Returns:
+     *   The compiled [[kernel]].
      *
-     * @descriptionEnd
+     * @endDoc
      */
     occa::kernel buildKernelFromString(const std::string &content,
                                        const std::string &kernelName,
@@ -447,27 +524,26 @@ namespace occa {
 
     //  |---[ Memory ]------------------
     /**
-     * @id{malloc}
+     * @startDoc{malloc[0]}
      *
-     * @descriptionStart
+     * Description:
+     *   Allocates memory on the device and returns the [[memory]] handle.
+     *   If a `src` pointer is passed, its data will be automatically copied to the allocated [[memory]].
      *
-     * Allocates memory on the device and returns the [[memory]] handle.
-     * If a `src` pointer is passed, its data will be automatically copied to the allocated [[memory]].
+     *   The `props` argument is dependent on the backend.
+     *   For example, we can pass the following on `CUDA` and `HIP` backends to use a shared host pointer:
      *
-     * The `props` argument is dependent on the backend.
-     * For example, we can pass the following on `CUDA` and `HIP` backends to use a shared host pointer:
+     *   ```cpp
+     *   {"host", true}
+     *   ```
      *
-     * ```cpp
-     * {"host", true}
-     * ```
+     * Overloaded Description:
+     *   Uses the templated type to determine the type and bytes.
      *
-     * @descriptionEnd
+     * Returns:
+     *   The allocated [[memory]]
      *
-     * @instanceDescriptionStart
-     *
-     * Uses the templated type to determine the type and bytes.
-     *
-     * @instanceDescriptionEnd
+     * @endDoc
      */
     template <class TM = void>
     occa::memory malloc(const dim_t entries,
@@ -475,7 +551,7 @@ namespace occa {
                         const occa::json &props = occa::json());
 
     /**
-     * @alias{malloc}
+     * @doc{malloc[1]}
      */
     template <class TM = void>
     occa::memory malloc(const dim_t entries,
@@ -483,20 +559,19 @@ namespace occa {
                         const occa::json &props = occa::json());
 
     /**
-     * @alias{malloc}
+     * @doc{malloc[2]}
      */
     template <class TM = void>
     occa::memory malloc(const dim_t entries,
                         const occa::json &props);
 
     /**
-     * @alias{malloc}
+     * @startDoc{malloc[3]}
      *
-     * @instanceDescriptionStart
+     * Overloaded Description:
+     *   Same but takes a [[dtype_t]] rather than a template parameter.
      *
-     * Same but takes a [[dtype_t]] rather than a template parameter.
-     *
-     * @instanceDescriptionEnd
+     * @endDoc
      */
     occa::memory malloc(const dim_t entries,
                         const dtype_t &dtype,
@@ -504,7 +579,7 @@ namespace occa {
                         const occa::json &props = occa::json());
 
     /**
-     * @alias{malloc}
+     * @doc{malloc[4]}
      */
     occa::memory malloc(const dim_t entries,
                         const dtype_t &dtype,
@@ -512,7 +587,7 @@ namespace occa {
                         const occa::json &props = occa::json());
 
     /**
-     * @alias{malloc}
+     * @doc{malloc[5]}
      */
     occa::memory malloc(const dim_t entries,
                         const dtype_t &dtype,
@@ -547,21 +622,22 @@ namespace occa {
                 const occa::json &props);
 
     /**
-     * @id{wrapMemory}
+     * @startDoc{wrapMemory}
      *
-     * @descriptionStart
+     * Description:
+     *   Wrap a native backend pointer inside a [[memory]] for the device.
+     *   The simplest example would be on a `Serial` or `OpenMP` device, where a regular pointer allocated through `malloc` or `new` is passed in.
+     *   For other modes, such as CUDA or HIP, it takes the pointer allocated through their API.
      *
-     * Wrap a native backend pointer inside a [[memory]] for the device.
-     * The simplest example would be on a `Serial` or `OpenMP` device, where a regular pointer allocated through `malloc` or `new` is passed in.
-     * For other modes, such as CUDA or HIP, it takes the pointer allocated through their API.
+     *   ?> Note that automatic garbage collection is not set for wrapped memory objects.
      *
-     * @descriptionEnd
+     * Overloaded Description:
+     *   Uses the templated type to determine the type and bytes.
      *
-     * @instanceDescriptionStart
+     * Returns:
+     *   The wrapped [[memory]]
      *
-     * Uses the templated type to determine the type and bytes.
-     *
-     * @instanceDescriptionEnd
+     * @endDoc
      */
     template <class TM = void>
     occa::memory wrapMemory(const TM *ptr,
@@ -569,14 +645,12 @@ namespace occa {
                             const occa::json &props = occa::json());
 
     /**
-     * @alias{wrapMemory}
+     * @startDoc{wrapMemory}
      *
-     * @instanceDescriptionStart
+     * Overloaded Description:
+     *   Same but takes a [[dtype_t]] rather than a template parameter.
      *
-     * Same but takes a [[dtype_t]] rather than a template parameter.
-     *
-     * @instanceDescriptionEnd
-     *
+     * @endDoc
      */
     occa::memory wrapMemory(const void *ptr,
                             const dim_t entries,

@@ -3,37 +3,63 @@ Basic types
 '''
 import dataclasses
 from dataclasses import dataclass
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from .constants import *
 from .utils import *
 from .xml_utils import *
 
 
+Content = Union['Markdown', 'Hyperlink']
+
 @dataclass
-class NodeInfo:
-    # Manual
-    id_: str
-    is_alias: bool
-    # Automatic
+class Documentation:
+    # Automatic from Doxygen
     filepath: str
     line_number: str
 
+    # Manually provided
+    id_: str
+    id_index: Optional[int]
+    sections: Dict[str, List[Content]]
+
     @staticmethod
     def parse(node):
-        id_node = node.find(f'./*/*/{ID_TAG}')
-        id_node_attrs = get_node_attributes(id_node)
-
         location = get_node_attributes(node, f'./location')
-        return NodeInfo(
-            id_ = id_node.text.strip(),
-            is_alias = 'true' == id_node_attrs.get('is_alias', 'false'),
-            filepath = location['file'],
-            line_number = location['line'],
+        filepath = location['file']
+        line_number = location['line']
+
+        doc_node = get_documentation_node(node)
+        [id_, id_index] = Documentation.parse_id(doc_node)
+
+
+        return Documentation(
+            filepath=filepath,
+            line_number=line_number,
+            id_=id_,
+            id_index=id_index,
+            sections=get_documentation_sections(doc_node.text)
         )
+
+    @staticmethod
+    def parse_id(doc_node):
+        full_id = doc_node.attrib['id']
+        if '[' not in full_id:
+            # If there is only 1, default to 0 index
+            return [full_id, 0]
+
+        # Searching for something like "constructor[0]" (<id>[<id_index>])
+        id_pattern = r'(?P<id>[a-zA-Z0-9_]+)'
+        id_index_pattern = r'\[(?P<id_index>[0-9]+)\]'
+
+        m = re.match(id_pattern + id_index_pattern, full_id)
+        return [m['id'], int(m['id_index'])]
 
     def get_id(self):
         return self.id_ or self.alias_id
+
+    def is_alias(self):
+        return self.id_index > 0
 
 @dataclass
 class Markdown:
@@ -57,13 +83,13 @@ class Hyperlink:
 
         if len(parts) == 1:
             return Hyperlink(
-                node_id = text,
-                text = text,
+                node_id=text,
+                text=text,
             )
 
         return Hyperlink(
-            node_id = parts[1].strip(),
-            text = parts[0].strip(),
+            node_id=parts[1].strip(),
+            text=parts[0].strip(),
         )
 
     def to_string(self):
@@ -71,7 +97,7 @@ class Hyperlink:
 
 @dataclass
 class Description:
-    entries: List[Union[Markdown, Hyperlink]]
+    entries: List[Content]
 
     def to_string(self):
         return [
@@ -93,10 +119,10 @@ class Type:
         children = list(node.getchildren())
         if len(children):
             return Type(
-                qualifiers = words,
-                post_qualifiers = split_by_whitespace(children[0].tail),
-                type_ = cls.parse(children[0]),
-                ref_id = children[0].attrib.get('refid')
+                qualifiers=words,
+                post_qualifiers=split_by_whitespace(children[0].tail),
+                type_=cls.parse(children[0]),
+                ref_id=children[0].attrib.get('refid')
             )
 
         qualifiers = []
@@ -113,10 +139,10 @@ class Type:
                 post_qualifiers.append(word)
 
         return Type(
-            qualifiers = qualifiers,
-            post_qualifiers = post_qualifiers,
-            type_ = type_,
-            ref_id = None,
+            qualifiers=qualifiers,
+            post_qualifiers=post_qualifiers,
+            type_=type_,
+            ref_id=None,
         )
 
 @dataclass
@@ -128,8 +154,6 @@ class Argument:
 class BaseNodeInfo:
     ref_id: str
     type_: str
-    description: Description
-    instance_description: Description
 
 @dataclass
 class Function(BaseNodeInfo):
@@ -145,12 +169,12 @@ class Function(BaseNodeInfo):
         attrs = get_node_attributes(node)
 
         return Function(
-            is_static = get_bool_attr(attrs, 'static'),
-            is_const = get_bool_attr(attrs, 'const'),
-            template = cls.get_function_arguments(node.find('./templateparamlist')),
-            arguments = cls.get_function_arguments(node),
-            return_type = cls.get_function_return_type(node),
-            name = get_node_text(node, './name'),
+            is_static=get_bool_attr(attrs, 'static'),
+            is_const=get_bool_attr(attrs, 'const'),
+            template=cls.get_function_arguments(node.find('./templateparamlist')),
+            arguments=cls.get_function_arguments(node),
+            return_type=cls.get_function_return_type(node),
+            name=get_node_text(node, './name'),
             **dataclasses.asdict(base_info)
         )
 
@@ -159,8 +183,8 @@ class Function(BaseNodeInfo):
             return []
         return [
             Argument(
-                type_ = Type.parse(param.find('./type')),
-                name =  get_node_text(param, './declname'),
+                type_=Type.parse(param.find('./type')),
+                name= get_node_text(param, './declname'),
             )
             for param in node.findall('./param')
         ]
@@ -177,13 +201,13 @@ class Class(BaseNodeInfo):
     @staticmethod
     def parse(node, base_info):
       return Class(
-          name = get_node_text(node, './compoundname'),
+          name=get_node_text(node, './compoundname'),
           **dataclasses.asdict(base_info),
       )
 
 @dataclass
 class Definition:
-    node_info: NodeInfo
+    documentation: Documentation
     definition: Union[Function, Class]
 
     @staticmethod
@@ -191,10 +215,8 @@ class Definition:
         attrs = get_node_attributes(node)
 
         base_info = BaseNodeInfo(
-            ref_id = attrs.get('id'),
-            type_ = attrs.get('kind'),
-            description = get_node_description(node),
-            instance_description = get_node_instance_description(node),
+            ref_id=attrs.get('id'),
+            type_=attrs.get('kind'),
         )
 
         if base_info.type_ == 'function':
@@ -205,9 +227,9 @@ class Definition:
             definition = base_info
 
         return Definition(
-            node_info = NodeInfo.parse(node),
-            definition = definition,
+            documentation=Documentation.parse(node),
+            definition=definition,
         )
 
     def is_alias(self):
-        return self.node_info.is_alias
+        return self.documentation.is_alias()
