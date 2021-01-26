@@ -5,7 +5,6 @@ import os
 
 from .constants import *
 from .types import *
-from .dev_utils import *
 from .system_commands import *
 
 
@@ -95,7 +94,7 @@ def generate_node_markdown(node: DocTreeNode,
 
     create_directory_for(markdown_filepath)
     with open(markdown_filepath, 'w') as fd:
-        fd.write('hello')
+        fd.write(node.get_markdown_content())
 
     for child in node.children:
         generate_node_markdown(child, node_filepath)

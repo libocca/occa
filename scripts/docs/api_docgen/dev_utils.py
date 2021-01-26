@@ -16,7 +16,7 @@ class JSONEncoder(json.JSONEncoder):
         return dataclasses.asdict(data)
 
 
-def pp_json(d: dict):
+def pp_json(d: Any):
     '''
     Pretty-print JSON objects
     '''

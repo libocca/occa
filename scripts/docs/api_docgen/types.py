@@ -8,10 +8,12 @@ from typing import cast, Any, Dict, List, Match, Optional, Tuple, Union
 from .constants import *
 from .utils import *
 from .xml_utils import *
+from .dev_utils import *
 
 
 Content = Union['Markdown', 'Hyperlink']
 Code = Union['DefinitionInfo', 'Function', 'Class']
+
 
 @dataclass
 class Documentation:
@@ -58,6 +60,7 @@ class Documentation:
             re.match(id_pattern + id_index_pattern, full_id)
         )
         return (m['id'], int(m['id_index']))
+
 
 @dataclass
 class Markdown:
@@ -128,6 +131,7 @@ class Markdown:
     def to_string(self) -> str:
         return self.text
 
+
 @dataclass
 class Hyperlink:
     node_id: str
@@ -156,6 +160,7 @@ class Hyperlink:
         # TODO
         return 'hi'
 
+
 @dataclass
 class Description:
     entries: List[Content]
@@ -165,6 +170,7 @@ class Description:
             entry.to_string()
             for entry in self.entries
         ])
+
 
 @dataclass
 class Type:
@@ -206,16 +212,19 @@ class Type:
             ref_id=None,
         )
 
+
 @dataclass
 class Argument:
     type_: Type
     name: str
+
 
 @dataclass
 class DefinitionInfo:
     ref_id: str
     type_: str
     name: str
+
 
 @dataclass
 class Function(DefinitionInfo):
@@ -255,6 +264,12 @@ class Function(DefinitionInfo):
             node.find('./type')
         )
 
+    def get_markdown_content(self,
+                             doc: Documentation,
+                             overrides: List['Definition']) -> str:
+        return 'hi'
+
+
 @dataclass
 class Class(DefinitionInfo):
     name: str
@@ -265,6 +280,13 @@ class Class(DefinitionInfo):
           **dataclasses.asdict(def_info),
           'name': get_node_text(node, './compoundname'),
       })
+
+    def get_markdown_content(self, doc: Documentation) -> str:
+        if doc.id_ == 'device':
+            pp_json(self)
+            pp_json(doc)
+        return 'hi'
+
 
 @dataclass
 class Definition:
@@ -317,9 +339,11 @@ class Definition:
             definition.doc.id_index
         )
 
+
 @dataclass
 class DocNode:
     definitions: List[Definition]
+
 
 @dataclass(init=False)
 class DocTreeNode:
@@ -339,12 +363,16 @@ class DocTreeNode:
         )
 
     @property
+    def root_definition(self):
+        return self.definitions[0]
+
+    @property
     def id_(self) -> str:
-        return self.definitions[0].id_
+        return self.root_definition.id_
 
     @property
     def name(self) -> str:
-        name = self.definitions[0].code.name
+        name = self.root_definition.code.name
 
         if name.startswith('operator'):
             return re.sub(r'^operator', 'operator &nbsp; ', name)
@@ -356,7 +384,18 @@ class DocTreeNode:
 
     @staticmethod
     def sort_key(node: 'DocTreeNode') -> Any:
-        return Definition.sort_key(node.definitions[0])
+        return Definition.sort_key(node.root_definition)
+
+    def get_markdown_content(self) -> str:
+        def_ = self.root_definition
+
+        if isinstance(def_.code, Class):
+            return def_.code.get_markdown_content(def_.doc)
+
+        if isinstance(def_.code, Function):
+            return def_.code.get_markdown_content(def_.doc, self.definitions[1:])
+
+        return r'¯\\_(ツ)_/¯'
 
 @dataclass
 class DocTree:
