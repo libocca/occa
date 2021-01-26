@@ -35,7 +35,7 @@ namespace occa {
    *   - Memory allocation ([[memory]])
    *   - Compile and run code ([[kernel]])
    *
-   *   ## Setup
+   *   # Setup
    *
    *   Setting up [[device]] objects is done through JSON properties.
    *   Here's an example of a CUDA device picking device `0` through its [[device.constructor]]:
@@ -67,7 +67,7 @@ namespace occa {
    *   })
    *   ```
    *
-   *   ## Memory allocation
+   *   # Memory allocation
    *
    *   We suggest allocating through the templated [[device.malloc]] method which will keep type information around.
    *   Here's an example which allocates memory on the device to fit a `float` array of size 10:
@@ -76,9 +76,9 @@ namespace occa {
    *   occa::memory mem = device.malloc<float>(10);
    *   ```
    *
-   *   ## Kernel compilation
+   *   # Kernel compilation
    *
-   *   Kernel allocation can be done two ways, through [[a file|device.buildKernel]]) or [[string source|device.buildKernelFromString]].
+   *   Kernel allocation can be done two ways, through [[a file|device.buildKernel]] or [[string source|device.buildKernelFromString]].
    *   Here's an example which builds a [[kernel]] from a file:
    *
    *   ```cpp
@@ -88,7 +88,7 @@ namespace occa {
    *   );
    *   ```
    *
-   *   ## Interoperability
+   *   # Interoperability
    *
    *   Lastly, we allow for interoperability with supported backends/libraries by wrapping and unwrapping memory objects.
    *
@@ -100,9 +100,9 @@ namespace occa {
    *   );
    *   ```
    *
-   *   ## Garbage collection
+   *   # Garbage collection
    *
-   *   The [[device.free]] function can be called to free the device along with any other object allocated by it, such as [[memory]] and [[kernel] objects.
+   *   The [[device.free]] function can be called to free the device along with any other object allocated by it, such as [[memory]] and [[kernel]] objects.
    *   OCCA implemented reference counting by default so calling [[device.free]] is not required.   *
    *
    * @endDoc
@@ -503,7 +503,7 @@ namespace occa {
                              const occa::json &props = occa::json()) const;
 
     /**
-     * @startDoc{buildkernelFromString}
+     * @startDoc{buildKernelFromString}
      *
      * Description:
      *   Same as [[device.buildKernel]] but given the kernel source code rather than the filename.

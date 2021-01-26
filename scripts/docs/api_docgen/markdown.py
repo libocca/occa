@@ -35,7 +35,7 @@ def make_sidebar(root_dir: str,
     indent += '  '
     # Nested directories need the `/` at the end
     children_headers = [
-        f'{indent}- [{child.name}](/{relative_filepath}/{child.id_}{"/" if child.children else ""})\n'
+        f'{indent}- [{child.name}](/{relative_filepath}/{child.link_name})\n'
         for child in children
     ]
 
@@ -71,11 +71,11 @@ def make_sidebar(root_dir: str,
 
 
 def generate_sidebars(root_dir: str, tree: DocTree):
-    before_content = '- [**API**](/api/)\n'
+    before_content = f'- [**{API_SIDEBAR_NAME}**](/{API_RELATIVE_DIR}/)\n'
 
     make_sidebar(
         root_dir,
-        relative_filepath='api',
+        relative_filepath=API_RELATIVE_DIR,
         children=tree.roots,
         before_content=before_content,
         after_content='',
@@ -84,7 +84,8 @@ def generate_sidebars(root_dir: str, tree: DocTree):
 
 
 def generate_node_markdown(node: DocTreeNode,
-                           filepath: str):
+                           filepath: str,
+                           hyperlink_mapping: HyperlinkMapping):
     node_filepath = f'{filepath}/{node.id_}'
     markdown_filepath = (
         f'{node_filepath}/{README_FILENAME}'
@@ -94,17 +95,21 @@ def generate_node_markdown(node: DocTreeNode,
 
     create_directory_for(markdown_filepath)
     with open(markdown_filepath, 'w') as fd:
-        fd.write(node.get_markdown_content())
+        fd.write(node.get_markdown_content(hyperlink_mapping))
 
     for child in node.children:
-        generate_node_markdown(child, node_filepath)
+        generate_node_markdown(child, node_filepath, hyperlink_mapping)
+
 
 def generate_markdown(root_dir: str, tree: DocTree):
+    hyperlink_mapping = tree.build_hyperlink_mapping()
+
     for child in tree.roots:
-        generate_node_markdown(child, root_dir)
+        generate_node_markdown(child, root_dir, hyperlink_mapping)
+
 
 def generate_api(root_dir: str, tree: DocTree):
-    api_dir = f'{root_dir}/api'
+    api_dir = f'{root_dir}/{API_RELATIVE_DIR}'
 
     clear_api(api_dir)
     generate_sidebars(root_dir, tree)

@@ -61,14 +61,14 @@ namespace occa {
    *
    *   - [[json.asString]]
    *   - [[json.asNumber]]
-   *   - [[json.asBool]]
+   *   - [[json.asBoolean]]
    *   - [[json.asNull]]
    *   - [[json.asObject]]
    *   - [[json.asArray]]
    *
    *   # Data access
    *
-   *   Accessing and setting data can be done through the [[json.brackets]].
+   *   Accessing and setting data can be done through the [[json.operator_brackets]].
    *   To make it simpler to access nested structures, we support passing `/`-delimited paths
    *
    *   For example, if we wanted to build
@@ -353,16 +353,49 @@ namespace occa {
     json& load(const char *&c);
     json& load(const std::string &s);
 
+    /**
+     * @startDoc{dump}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     std::string dump(const int indent = 2) const;
 
     void dumpToString(std::string &out,
                       const std::string &indent = "",
                       const std::string &currentIndent = "") const;
 
+    /**
+     * @startDoc{parse}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     static json parse(const char *&c);
     static json parse(const std::string &s);
 
+    /**
+     * @startDoc{read}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     static json read(const std::string &filename);
+
+    /**
+     * @startDoc{write}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     void write(const std::string &filename);
 
     void loadString(const char *&c);
@@ -382,22 +415,62 @@ namespace occa {
 
     bool has(const std::string &s) const;
 
+    /**
+     * @startDoc{isString}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline bool isString() const {
       return (type == string_);
     }
 
+    /**
+     * @startDoc{isNumber}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline bool isNumber() const {
       return (type == number_);
     }
 
+    /**
+     * @startDoc{isObject}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline bool isObject() const {
       return (type == object_);
     }
 
+    /**
+     * @startDoc{isArray}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline bool isArray() const {
       return (type == array_);
     }
 
+    /**
+     * @startDoc{isBool}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline bool isBool() const {
       return (
         (type == number_) &&
@@ -405,6 +478,14 @@ namespace occa {
       );
     }
 
+    /**
+     * @startDoc{isNull}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline bool isNull() const {
       return (type == null_);
     }
@@ -420,6 +501,14 @@ namespace occa {
       }
     }
 
+    /**
+     * @startDoc{asNull}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline json& asNull() {
       if (type & ~(none_ | null_)) {
         clear();
@@ -428,6 +517,14 @@ namespace occa {
       return *this;
     }
 
+    /**
+     * @startDoc{asBoolean}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline json& asBoolean() {
       if (type & number_) {
         value_.number = (bool) value_.number;
@@ -439,6 +536,14 @@ namespace occa {
       return *this;
     }
 
+    /**
+     * @startDoc{asNumber}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline json& asNumber() {
       if (type & ~(none_ | number_)) {
         clear();
@@ -447,6 +552,14 @@ namespace occa {
       return *this;
     }
 
+    /**
+     * @startDoc{asString}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline json& asString() {
       if (type & ~(none_ | string_)) {
         clear();
@@ -455,6 +568,14 @@ namespace occa {
       return *this;
     }
 
+    /**
+     * @startDoc{asArray}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline json& asArray() {
       if (type & ~(none_ | array_)) {
         clear();
@@ -463,6 +584,14 @@ namespace occa {
       return *this;
     }
 
+    /**
+     * @startDoc{asObject}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline json& asObject() {
       if (type & ~(none_ | object_)) {
         clear();
@@ -535,6 +664,14 @@ namespace occa {
 
     int size() const;
 
+    /**
+     * @startDoc{set}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     template <class TM>
     json& set(const char *key,
               const TM &value);

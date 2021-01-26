@@ -16,8 +16,15 @@ OCCA_DOC_TAG = 'occa-doc'
 # Where definition information is stored in the doc_tree
 DOC_FIELD = '__doc__'
 
+# Definition padding
+DEFINITION_SECTION_INDENT = '  '
+
 # Where children are stored in the doc_tree entry
 CHILDREN_FIELD = '__children__'
+
+# Information about the api documentation directory
+API_SIDEBAR_NAME = 'API'
+API_RELATIVE_DIR = 'api'
 
 # README_FILENAME
 README_FILENAME = 'README.md'

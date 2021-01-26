@@ -11,9 +11,23 @@ from .xml_utils import *
 from .dev_utils import *
 
 
-Content = Union['Markdown', 'Hyperlink']
 Code = Union['DefinitionInfo', 'Function', 'Class']
+HyperlinkMapping = Dict[str, 'HyperlinkNodeInfo']
 
+@dataclass
+class HyperlinkNodeInfo:
+    name: str
+    link: str
+
+@dataclass
+class HyperlinkMapping:
+    mapping: Dict[str, HyperlinkNodeInfo]
+
+    def get(self, node_id: str) -> HyperlinkNodeInfo:
+        try:
+            return self.mapping[node_id]
+        except KeyError as e:
+            raise KeyError(f"Missing documentation for: [{node_id}]") from e
 
 @dataclass
 class Documentation:
@@ -24,7 +38,7 @@ class Documentation:
     # Manually provided
     id_: str
     id_index: Optional[int]
-    sections: Dict[str, List[Content]]
+    description: str
 
     @staticmethod
     def parse(node: Any) -> 'Documentation':
@@ -41,7 +55,7 @@ class Documentation:
             line_number=line_number,
             id_=id_,
             id_index=id_index,
-            sections=Markdown.get_sections(doc_node.text),
+            description=doc_node.text,
         )
 
     @staticmethod
@@ -64,31 +78,10 @@ class Documentation:
 
 @dataclass
 class Markdown:
-    text: str
-
     @staticmethod
-    def expand_hyperlinks(markdown: str) -> List[Content]:
-        '''
-        Separate the hyperlink and markdown content
-        '''
-        markdown = markdown.strip()
-
-        if not markdown:
-            return []
-
-        # Searching for content inside [[...]]
-        left = '[['.replace('[', r'\[')
-        right = ']]'.replace(']', r'\]')
-
-        groups = re.split(f'{left}(.*?){right}', markdown)
-
-        return [
-            Hyperlink.parse(text) if index % 2 else Markdown(text = text)
-            for index, text in enumerate(groups)
-        ]
-
-    @staticmethod
-    def get_sections(content: str) -> Dict[str, List[Content]]:
+    def parse_sections(content: str,
+                       node_link: str,
+                       hyperlink_mapping: HyperlinkMapping) -> Dict[str, str]:
         '''
         Find the sections given by header and and indentation
         For example:
@@ -118,58 +111,126 @@ class Markdown:
 
         parts = re.split(f'(?:^|\n+)([^\s].*?[^\s]):\n', content)
 
+        sections = {}
         # Content starts with ^ so we want to ignore parts[0]
-        headers = parts[1::2]
-        contents = parts[2::2]
+        for section_header, section_content in zip(parts[1::2], parts[2::2]):
+            section_content = Markdown.remove_section_padding(section_content)
 
-        return {
-            header: Markdown.expand_hyperlinks(contents[index])
-            for index, header in enumerate(headers)
-        }
+            section_content = Markdown.replace_headers(section_header,
+                                                       section_content,
+                                                       node_link)
 
+            section_content = Markdown.replace_hyperlinks(section_content,
+                                                          hyperlink_mapping)
 
-    def to_string(self) -> str:
-        return self.text
+            sections.update({
+                section_header: section_content,
+            })
 
-
-@dataclass
-class Hyperlink:
-    node_id: str
-    text: str
+        return sections
 
     @staticmethod
-    def parse(text: str) -> 'Hyperlink':
+    def remove_section_padding(content: str) -> str:
+        return '\n'.join(
+            re.sub('^' + DEFINITION_SECTION_INDENT, '', line)
+            for line in content.splitlines()
+        )
+
+    @staticmethod
+    def replace_headers(header: str, content: str, node_link: str) -> str:
+        # Downgrade headers and use HTML to avoid creating sidebar items for them
+        for header_index in range(4, 0, -1):
+            markdown_header_prefix = '#' * header_index
+            parts = re.split(f'\n{markdown_header_prefix} ([^\n]*)\n', content)
+
+            # Nothing to do
+            if len(parts) == 1:
+                continue
+
+            # We could start a section without a header
+            if len(parts) % 2:
+                section_headers = ['', *parts[1::2]]
+                section_contents = parts[0::2]
+            else:
+                section_headers = parts[0::2]
+                section_contents = parts[1::2]
+
+            content = ''
+            for section_header, section_content in zip(section_headers, section_contents):
+                if not section_header:
+                    content += section_content
+                    continue
+
+                header_html = Markdown.build_header(
+                    header=section_header,
+                    header_index=(header_index + 1),
+                    node_link=node_link,
+                )
+                content += f'\n{header_html}\n{section_content}'
+
+        return content
+
+    @staticmethod
+    def build_header(header: str,
+                     header_index: int,
+                     node_link: str,
+                     include_id: bool = True) -> str:
+        # Camel/Pascal case -> Kebab case
+        header_id = re.sub(r'([^A-Z])([A-Z])', r'\1-\2', header).lower()
+
+        href = f'#{node_link}'
+        if include_id:
+            href += f'?id={header_id}'
+
+        return f'''
+<h{header_index} id="{header_id}">
+ <a href="{href}" class="anchor">
+   <span>{header}</span>
+  </a>
+</h{header_index}>
+'''.strip()
+
+    @staticmethod
+    def replace_hyperlinks(content: str,
+                           hyperlink_mapping: HyperlinkMapping) -> str:
+        '''
+        Separate the hyperlink and markdown content
+        '''
+        # Searching for content inside [[...]]
+        left = '[['.replace('[', r'\[')
+        right = ']]'.replace(']', r'\]')
+
+        groups = re.split(f'{left}(.*?){right}', content)
+
+        return ''.join([
+            (
+                Markdown.replace_hyperlink(text, hyperlink_mapping)
+                if index % 2 else
+                text
+            )
+            for index, text in enumerate(groups)
+        ])
+
+    @staticmethod
+    def replace_hyperlink(content: str,
+                          hyperlink_mapping: HyperlinkMapping) -> str:
         # Format:
         #   [[device.malloc]]
         #   [[malloc|device.malloc]]
-        text = text.strip()
-        parts = text.split('|')
+        parts = content.split('|')
 
         if len(parts) == 1:
-            return Hyperlink(
-                node_id=text,
-                text=text,
-            )
+            # [[device.malloc]]
+            node_id = parts[0].strip()
+            link_text = None
+        else:
+            # [[malloc|device.malloc]]
+            link_text = parts[0].strip()
+            node_id = parts[1].strip()
 
-        return Hyperlink(
-            node_id=parts[1].strip(),
-            text=parts[0].strip(),
-        )
+        info = hyperlink_mapping.get(node_id)
 
-    def to_string(self) -> str:
-        # TODO
-        return 'hi'
-
-
-@dataclass
-class Description:
-    entries: List[Content]
-
-    def to_string(self) -> str:
-        return ' '.join([
-            entry.to_string()
-            for entry in self.entries
-        ])
+        return f'[{link_text or info.name}]({info.link})'
 
 
 @dataclass
@@ -266,7 +327,8 @@ class Function(DefinitionInfo):
 
     def get_markdown_content(self,
                              doc: Documentation,
-                             overrides: List['Definition']) -> str:
+                             overrides: List['Definition'],
+                             hyperlink_mapping: HyperlinkMapping) -> str:
         return 'hi'
 
 
@@ -281,11 +343,33 @@ class Class(DefinitionInfo):
           'name': get_node_text(node, './compoundname'),
       })
 
-    def get_markdown_content(self, doc: Documentation) -> str:
+    def get_markdown_content(self,
+                             doc: Documentation,
+                             hyperlink_mapping: HyperlinkMapping) -> str:
         if doc.id_ == 'device':
             pp_json(self)
             pp_json(doc)
-        return 'hi'
+
+        info = hyperlink_mapping.get(self.ref_id)
+
+        sections = Markdown.parse_sections(doc.description,
+                                           info.link,
+                                           hyperlink_mapping)
+
+        description = sections.get('Description')
+        if not description:
+            raise NotImplementedError('Classes need to have a [Description] section')
+
+        # Add the class header and missing description header
+        class_header = Markdown.build_header(self.name, 1, info.link, include_id=False)
+        description_header = Markdown.build_header('Description', 2, info.link)
+        return f'''
+{class_header}
+
+{description_header}
+
+{description}
+'''.strip()
 
 
 @dataclass
@@ -325,10 +409,7 @@ class Definition:
         if self.id_.startswith('constructor'):
             return 0
 
-        if self.id_.startswith('operator'):
-            return 1
-
-        return 2
+        return 1
 
     @staticmethod
     def sort_key(definition: 'Definition') -> Any:
@@ -371,11 +452,15 @@ class DocTreeNode:
         return self.root_definition.id_
 
     @property
+    def ref_id(self) -> str:
+        return self.root_definition.code.ref_id
+
+    @property
     def name(self) -> str:
         name = self.root_definition.code.name
 
         if name.startswith('operator'):
-            return re.sub(r'^operator', 'operator &nbsp; ', name)
+            return re.sub(r'^operator', 'operator ', name)
 
         if self.id_ == 'constructor':
             return '(constructor)'
@@ -386,17 +471,69 @@ class DocTreeNode:
     def sort_key(node: 'DocTreeNode') -> Any:
         return Definition.sort_key(node.root_definition)
 
-    def get_markdown_content(self) -> str:
+    @property
+    def link_name(self) -> str:
+        if self.children:
+            return f'{self.id_}/'
+        else:
+            return self.id_;
+
+    def get_markdown_content(self, hyperlink_mapping: HyperlinkMapping) -> str:
         def_ = self.root_definition
 
         if isinstance(def_.code, Class):
-            return def_.code.get_markdown_content(def_.doc)
+            return def_.code.get_markdown_content(def_.doc,
+                                                  hyperlink_mapping)
 
         if isinstance(def_.code, Function):
-            return def_.code.get_markdown_content(def_.doc, self.definitions[1:])
+            return def_.code.get_markdown_content(def_.doc,
+                                                  self.definitions[1:],
+                                                  hyperlink_mapping)
 
-        return r'¯\\_(ツ)_/¯'
+        raise NotImplementedError("Code type undefined")
 
 @dataclass
 class DocTree:
-    roots: List['DocTreeNode']
+    roots: List[DocTreeNode]
+
+    @staticmethod
+    def get_hyperlink_mapping(base_link: str,
+                              namespace: str,
+                              node: DocTreeNode) -> Dict[str, HyperlinkNodeInfo]:
+        global_id = (
+            f'{namespace}.{node.id_}'
+            if namespace else
+            node.id_
+        )
+
+        node_link = f'{base_link}{node.link_name}'
+
+        info = HyperlinkNodeInfo(
+            name=node.name,
+            link=node_link,
+        )
+
+        # Also store the ref_id so we can map from a node to the hyperlink info
+        hyperlink_mapping = {
+            global_id: info,
+            node.ref_id: info,
+        }
+
+        for child in node.children:
+            hyperlink_mapping.update(
+                DocTree.get_hyperlink_mapping(node_link, global_id, child)
+            )
+
+        return hyperlink_mapping
+
+    def build_hyperlink_mapping(self) -> HyperlinkMapping:
+        root_link = f'/{API_RELATIVE_DIR}/'
+        namespace = ''
+
+        hyperlink_mapping = {}
+        for child in self.roots:
+            hyperlink_mapping.update(
+                DocTree.get_hyperlink_mapping(root_link, namespace, child)
+            )
+
+        return HyperlinkMapping(mapping=hyperlink_mapping)

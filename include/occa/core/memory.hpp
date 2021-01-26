@@ -148,9 +148,25 @@ namespace occa {
     occa::memory operator + (const dim_t offset) const;
     occa::memory& operator += (const dim_t offset);
 
+    /**
+     * @startDoc{slice}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     occa::memory slice(const dim_t offset,
                        const dim_t count = -1) const;
 
+    /**
+     * @startDoc{copyFrom}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     void copyFrom(const void *src,
                   const dim_t bytes = -1,
                   const dim_t offset = 0,
@@ -162,6 +178,14 @@ namespace occa {
                   const dim_t srcOffset = 0,
                   const occa::json &props = occa::json());
 
+    /**
+     * @startDoc{copyTo}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     void copyTo(void *dest,
                 const dim_t bytes = -1,
                 const dim_t offset = 0,
@@ -185,12 +209,38 @@ namespace occa {
     void copyTo(const memory dest,
                 const occa::json &props) const;
 
+    /**
+     * @startDoc{cast}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     occa::memory cast(const dtype_t &dtype_) const;
 
+    /**
+     * @startDoc{clone}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     occa::memory clone() const;
 
+    /**
+     * @startDoc{free}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     void free();
+
     void detach();
+
     void deleteRefs(const bool freeMemory = false);
   };
 
