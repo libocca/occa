@@ -15,8 +15,8 @@ namespace occa
     {
       friend class device;
 
-    private:
-      ::sycl::device *dpcppDevice;
+//@todo: Check public/private/protected here
+    public:
       functionPtr_t function;
       void *dlHandle;
 
@@ -26,17 +26,17 @@ namespace occa
              const std::string &sourceFilename_,
              const occa::json &properties_);
 
-      kernel(modeDevice_t *modeDevice_,
-             const std::string &name_,
-             const std::string &sourceFilename_,
-             ::sycl::device *dpcppDevice_,
-             functionPtr_t function_,
-             const occa::json &properties_);
+      // kernel(modeDevice_t *modeDevice_,
+      //        const std::string &name_,
+      //        const std::string &sourceFilename_,
+      //        functionPtr_t function_,
+      //        void* dlHandle_,
+      //        const occa::json &properties_);
 
       ~kernel();
 
       ::sycl::queue *getCommandQueue() const;
-      const lang::kernelMetadata_t &getMetadata() const;
+      // const lang::kernelMetadata_t &getMetadata() const;
 
       int maxDims() const;
       dim maxOuterDims() const;

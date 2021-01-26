@@ -15,27 +15,31 @@ namespace occa
                    const std::string &sourceFilename_,
                    const occa::json &properties_)
         : occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
-          dpcppDevice{nullptr},
           function{nullptr},
           dlHandle{nullptr}
     {
     }
 
-    kernel::kernel(modeDevice_t *modeDevice_,
-                   const std::string &name_,
-                   const std::string &sourceFilename_,
-                   ::sycl::device *dpcppDevice_,
-                   functionPtr_t function_,
-                   const occa::json &properties_)
-        : occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
-          dpcppDevice(dpcppDevice_),
-          function(function_),
-          dlHandle(nullptr)
-    {
-    }
+    // kernel::kernel(modeDevice_t *modeDevice_,
+    //                const std::string &name_,
+    //                const std::string &sourceFilename_,
+    //                functionPtr_t function_,
+    //                void *dlHandle_,
+    //                const occa::json &properties_)
+    //     : occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
+    //       function(function_),
+    //       dlHandle(dlHandle_)
+    // {
+    // }
 
     kernel::~kernel()
     {
+      if (dlHandle)
+      {
+        sys::dlclose(dlHandle);
+        dlHandle = nullptr;
+      }
+      function = nullptr;
     }
 
     ::sycl::queue *kernel::getCommandQueue() const
@@ -48,11 +52,6 @@ namespace occa
       static cl_uint dims_ = 0;
       dims_ = getCommandQueue()->get_device().get_info<::sycl::info::device::max_work_item_dimensions>();
       return (int)dims_;
-    }
-
-    const lang::kernelMetadata_t &kernel::getMetadata() const
-    {
-      return metadata;
     }
 
     dim kernel::maxOuterDims() const

@@ -21,8 +21,7 @@ namespace occa
                                      const occa::json &props);
 
     public:
-      void* dpcppPtr;
-      
+
       memory(modeDevice_t *modeDevice_,
              udim_t size_,
              const occa::json &properties_ = occa::json());
@@ -31,11 +30,11 @@ namespace occa
 
       ::sycl::queue *getCommandQueue() const;
 
-void* getKernelArgPtr() const;
+      void *getKernelArgPtr() const;
 
       modeMemory_t *addOffset(const dim_t offset);
 
-      void* getPtr(const occa::json &props);
+      void *getPtr(const occa::json &props);
 
       void copyTo(void *dest,
                   const udim_t bytes,

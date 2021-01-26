@@ -10,8 +10,7 @@ namespace occa
     memory::memory(modeDevice_t *modeDevice_,
                    udim_t size_,
                    const occa::json &properties_)
-        : occa::modeMemory_t(modeDevice_, size_, properties_),
-          dpcppPtr(ptr)
+        : occa::modeMemory_t(modeDevice_, size_, properties_)
     {
     }
 
@@ -33,7 +32,7 @@ namespace occa
 
     void *memory::getKernelArgPtr() const
     {
-      return (void *)dpcppPtr;
+      return ptr;
     }
 
     modeMemory_t *memory::addOffset(const dim_t offset)
