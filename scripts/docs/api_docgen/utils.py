@@ -2,14 +2,15 @@
 Miscellaneous utility methods
 '''
 import re
+from typing import List
 
 
-def split_by_whitespace(text):
+def split_by_whitespace(text: str) -> List[str]:
     '''
     Split by any amount of whitespace
     '''
     if not text:
-        return ''
+        return []
 
     return [
         word
@@ -18,7 +19,7 @@ def split_by_whitespace(text):
     ]
 
 
-def nested_get(obj, path):
+def nested_get(obj: dict, path: List[str]) -> dict:
     '''
     Traverse a nested path in `obj` and create dict()
     for any keys in the path that don't exist

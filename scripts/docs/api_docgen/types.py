@@ -3,7 +3,7 @@ Basic types
 '''
 import dataclasses
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Union
+from typing import cast, Any, Dict, List, Optional, Tuple, Union
 
 from .constants import *
 from .utils import *
@@ -11,6 +11,7 @@ from .xml_utils import *
 
 
 Content = Union['Markdown', 'Hyperlink']
+Code = Union['DefinitionInfo', 'Function', 'Class']
 
 @dataclass
 class Documentation:
@@ -24,13 +25,13 @@ class Documentation:
     sections: Dict[str, List[Content]]
 
     @staticmethod
-    def parse(node):
+    def parse(node: Any) -> Documentation:
         location = get_node_attributes(node, f'./location')
         filepath = location['file']
         line_number = location['line']
 
         doc_node = get_documentation_node(node)
-        [id_, id_index] = Documentation.parse_id(doc_node)
+        (id_, id_index) = Documentation.parse_id(doc_node)
 
 
         return Documentation(
@@ -38,35 +39,94 @@ class Documentation:
             line_number=line_number,
             id_=id_,
             id_index=id_index,
-            sections=get_documentation_sections(doc_node.text)
+            sections=Markdown.get_sections(doc_node.text),
         )
 
     @staticmethod
-    def parse_id(doc_node):
+    def parse_id(doc_node: Any) -> Tuple[str, int]:
         full_id = doc_node.attrib['id']
         if '[' not in full_id:
             # If there is only 1, default to 0 index
-            return [full_id, 0]
+            return (full_id, 0)
 
         # Searching for something like "constructor[0]" (<id>[<id_index>])
         id_pattern = r'(?P<id>[a-zA-Z0-9_]+)'
         id_index_pattern = r'\[(?P<id_index>[0-9]+)\]'
 
-        m = re.match(id_pattern + id_index_pattern, full_id)
-        return [m['id'], int(m['id_index'])]
-
-    def get_id(self):
-        return self.id_ or self.alias_id
-
-    def is_alias(self):
-        return self.id_index > 0
+        m = cast(
+            re.Match[Any],
+            re.match(id_pattern + id_index_pattern, full_id)
+        )
+        return (m['id'], int(m['id_index']))
 
 @dataclass
 class Markdown:
     text: str
 
-    def to_string(self):
-        return text
+    @staticmethod
+    def expand_hyperlinks(markdown: str) -> List[Content]:
+        '''
+        Separate the hyperlink and markdown content
+        '''
+        markdown = markdown.strip()
+
+        if not markdown:
+            return []
+
+        # Searching for content inside [[...]]
+        left = '[['.replace('[', r'\[')
+        right = ']]'.replace(']', r'\]')
+
+        groups = re.split(f'{left}(.*?){right}', markdown)
+
+        return [
+            Hyperlink.parse(text) if index % 2 else Markdown(text = text)
+            for index, text in enumerate(groups)
+        ]
+
+    @staticmethod
+    def get_sections(content: str) -> Dict[str, List[Content]]:
+        '''
+        Find the sections given by header and and indentation
+        For example:
+
+        "
+        Section Header 1:
+          line1
+
+          line3
+
+        Section Header 2:
+          line1
+
+        Section Header 3:
+          line1
+        "
+
+        ->
+
+        {
+          "Section Header 1": "line1\n\nline3",
+          "Section Header 2": "line1",
+          "Section Header 3": "line1",
+        }
+        '''
+        content = content.strip()
+
+        parts = re.split(f'(?:^|\n+)([^\s].*?[^\s]):\n', content)
+
+        # Content starts with ^ so we want to ignore parts[0]
+        headers = parts[1::2]
+        contents = parts[2::2]
+
+        return {
+            header: Markdown.expand_hyperlinks(contents[index])
+            for index, header in enumerate(headers)
+        }
+
+
+    def to_string(self) -> str:
+        return self.text
 
 @dataclass
 class Hyperlink:
@@ -74,7 +134,7 @@ class Hyperlink:
     text: str
 
     @staticmethod
-    def parse(text):
+    def parse(text: str) -> Hyperlink:
         # Format:
         #   [[device.malloc]]
         #   [[malloc|device.malloc]]
@@ -92,28 +152,29 @@ class Hyperlink:
             text=parts[0].strip(),
         )
 
-    def to_string(self):
+    def to_string(self) -> str:
+        # TODO
         return 'hi'
 
 @dataclass
 class Description:
     entries: List[Content]
 
-    def to_string(self):
-        return [
+    def to_string(self) -> str:
+        return ' '.join([
             entry.to_string()
-            for entry in entries
-        ].join(' ')
+            for entry in self.entries
+        ])
 
 @dataclass
 class Type:
     qualifiers: List[str]
     post_qualifiers: List[str]
-    type_: 'Type'
+    type_: Union['Type', str]
     ref_id: Optional[str]
 
     @classmethod
-    def parse(cls, node):
+    def parse(cls, node) -> Type:
         words = split_by_whitespace(node.text)
 
         children = list(node.getchildren())
@@ -151,34 +212,34 @@ class Argument:
     name: str
 
 @dataclass
-class BaseNodeInfo:
+class DefinitionInfo:
     ref_id: str
     type_: str
+    name: str
 
 @dataclass
-class Function(BaseNodeInfo):
+class Function(DefinitionInfo):
     is_static: bool
     is_const: bool
     template: List[Argument]
     arguments: List[Argument]
     return_type: Type
-    name: str
 
     @classmethod
-    def parse(cls, node, base_info):
+    def parse(cls, node: Any, def_info: DefinitionInfo) -> Function:
         attrs = get_node_attributes(node)
 
         return Function(
+            **dataclasses.asdict(def_info),
             is_static=get_bool_attr(attrs, 'static'),
             is_const=get_bool_attr(attrs, 'const'),
             template=cls.get_function_arguments(node.find('./templateparamlist')),
             arguments=cls.get_function_arguments(node),
             return_type=cls.get_function_return_type(node),
             name=get_node_text(node, './name'),
-            **dataclasses.asdict(base_info)
         )
 
-    def get_function_arguments(node):
+    def get_function_arguments(node: Any) -> List[Argument]:
         if node is None:
             return []
         return [
@@ -189,42 +250,44 @@ class Function(BaseNodeInfo):
             for param in node.findall('./param')
         ]
 
-    def get_function_return_type(node):
+    def get_function_return_type(node: Any) -> Type:
         return Type.parse(
             node.find('./type')
         )
 
 @dataclass
-class Class(BaseNodeInfo):
+class Class(DefinitionInfo):
     name: str
 
     @staticmethod
-    def parse(node, base_info):
+    def parse(node: Any, def_info: DefinitionInfo):
       return Class(
+          **dataclasses.asdict(def_info),
           name=get_node_text(node, './compoundname'),
-          **dataclasses.asdict(base_info),
       )
 
 @dataclass
 class Definition:
     doc: Documentation
-    code: Union[Function, Class]
+    code: Code
 
     @staticmethod
-    def parse(node):
+    def parse(node) -> Definition:
         attrs = get_node_attributes(node)
 
-        base_info = BaseNodeInfo(
+        def_info = DefinitionInfo(
             ref_id=attrs.get('id'),
             type_=attrs.get('kind'),
+            name='',
         )
 
-        if base_info.type_ == 'function':
-            code = Function.parse(node, base_info)
-        elif base_info.type_ == 'class':
-            code = Class.parse(node, base_info)
+        code: Code
+        if def_info.type_ == 'function':
+            code = Function.parse(node, def_info)
+        elif def_info.type_ == 'class':
+            code = Class.parse(node, def_info)
         else:
-            code = base_info
+            code = def_info
 
         return Definition(
             doc=Documentation.parse(node),
@@ -232,10 +295,10 @@ class Definition:
         )
 
     @property
-    def id_(self):
+    def id_(self) -> str:
         return self.doc.id_
 
-    def get_priority(self):
+    def get_priority(self) -> int:
         # Order methods based on the following types
         if self.id_.startswith('constructor'):
             return 0
@@ -246,16 +309,13 @@ class Definition:
         return 2
 
     @staticmethod
-    def sort_key(definition):
+    def sort_key(definition: Definition) -> Any:
         # Sort by id and then by it's index
         return [
             definition.get_priority(),
             definition.doc.id_,
             definition.doc.id_index
         ]
-
-    def is_alias(self):
-        return self.doc.is_alias()
 
 @dataclass
 class DocNode:
@@ -275,18 +335,12 @@ class DocTreeNode:
         )
         self.children = children
 
-    def build_api_path(self, *path):
-        if self.api_dir:
-            return '/'.join([self.api_dir, *path])
-
-        return '/'.join(path)
-
     @property
-    def id_(self):
+    def id_(self) -> str:
         return self.definitions[0].id_
 
     @property
-    def name(self):
+    def name(self) -> str:
         name = self.definitions[0].code.name
 
         if name.startswith('operator'):

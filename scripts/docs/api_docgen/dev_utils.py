@@ -3,6 +3,8 @@ Helper methods for developing and debugging
 """
 import json
 import dataclasses
+from lxml import etree as et
+from typing import Any, Optional
 
 
 # Print @dataclass as json
@@ -14,14 +16,14 @@ class JSONEncoder(json.JSONEncoder):
         return dataclasses.asdict(data)
 
 
-def pp_json(d):
+def pp_json(d: dict):
     '''
     Pretty-print JSON objects
     '''
     print(json.dumps(d, indent=4, cls=JSONEncoder))
 
 
-def elem_to_json(elem):
+def elem_to_json(elem: Any):
     return {
         'tag': elem.tag,
         'attributes': dict(elem.attrib),
@@ -32,7 +34,7 @@ def elem_to_json(elem):
     }
 
 
-def pp_elem(elem, in_json=True):
+def pp_elem(elem: Optional[Any], in_json=True):
     '''
     Pretty-print lxml elements
     '''

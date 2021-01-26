@@ -48,7 +48,7 @@ assert not is_safe_to_rmrf('/a/./b/./.', verbose=False)
 assert is_safe_to_rmrf('/a/./b/././c/d', verbose=False)
 
 
-def safe_rmrf(path):
+def safe_rmrf(path: str):
     '''
     Safely 'rm -rf' path or exit out
     '''

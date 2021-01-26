@@ -24,7 +24,7 @@ def clear_api(api_dir: str):
 
     create_directory_for(api_readme)
     with open(api_readme, 'w') as fd:
-        api_readme_contents = fd.write(api_readme_contents)
+        fd.write(api_readme_contents)
 
 
 def make_sidebar(root_dir: str,
