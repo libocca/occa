@@ -207,8 +207,8 @@ class Class(BaseNodeInfo):
 
 @dataclass
 class Definition:
-    documentation: Documentation
-    definition: Union[Function, Class]
+    doc: Documentation
+    code: Union[Function, Class]
 
     @staticmethod
     def parse(node):
@@ -220,16 +220,83 @@ class Definition:
         )
 
         if base_info.type_ == 'function':
-            definition = Function.parse(node, base_info)
+            code = Function.parse(node, base_info)
         elif base_info.type_ == 'class':
-            definition = Class.parse(node, base_info)
+            code = Class.parse(node, base_info)
         else:
-            definition = base_info
+            code = base_info
 
         return Definition(
-            documentation=Documentation.parse(node),
-            definition=definition,
+            doc=Documentation.parse(node),
+            code=code,
         )
 
+    @property
+    def id_(self):
+        return self.doc.id_
+
+    def get_priority(self):
+        # Order methods based on the following types
+        if self.id_.startswith('constructor'):
+            return 0
+
+        if self.id_.startswith('operator'):
+            return 1
+
+        return 2
+
+    @staticmethod
+    def sort_key(definition):
+        # Sort by id and then by it's index
+        return [
+            definition.get_priority(),
+            definition.doc.id_,
+            definition.doc.id_index
+        ]
+
     def is_alias(self):
-        return self.documentation.is_alias()
+        return self.doc.is_alias()
+
+@dataclass
+class DocNode:
+    definitions: List[Definition]
+
+@dataclass(init=False)
+class DocTreeNode:
+    definitions: List[Definition]
+    children: List['DocTreeNode']
+
+    def __init__(self,
+                 definitions: List[Definition],
+                 children: List['DocTreeNode']):
+        self.definitions = sorted(
+            definitions,
+            key=Definition.sort_key
+        )
+        self.children = children
+
+    def build_api_path(self, *path):
+        if self.api_dir:
+            return '/'.join([self.api_dir, *path])
+
+        return '/'.join(path)
+
+    @property
+    def id_(self):
+        return self.definitions[0].id_
+
+    @property
+    def name(self):
+        name = self.definitions[0].code.name
+
+        if name.startswith('operator'):
+            return re.sub(r'^operator', 'operator &nbsp; ', name)
+
+        if self.id_ == 'constructor':
+            return '(constructor)'
+
+        return name
+
+@dataclass
+class DocTree:
+    roots: List['DocTreeNode']

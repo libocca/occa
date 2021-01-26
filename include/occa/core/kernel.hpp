@@ -32,28 +32,26 @@ namespace occa {
   typedef kernelBuilderVector::const_iterator cKernelBuilderVectorIterator;
 
   /**
-   * @id{kernel}
+   * @startDoc{kernel}
    *
-   * @descriptionStart
+   * Description:
    *
-   * # Description
+   *   A [[kernel]] object is a handle to a device function for the device it was built in.
+   *   For example, in `Serial` and `OpenMP` modes it is analogous to a calling a C++ function.
+   *   For GPU modes, it means launching work on a more granular and parallized manner.
    *
-   * A [[kernel]] object is a handle to a device function for the device it was built in.
-   * For example, in `Serial` and `OpenMP` modes it is analogous to a calling a C++ function.
-   * For GPU modes, it means launching work on a more granular and parallized manner.
+   *   # Launch
    *
-   * # Launch
+   *   There are 2 ways to launching kernels:
+   *   - [[kernel.()]] which can be used to call a kernel like a regular function.
+   *   - [[kernel.run]] which requires the user to push the arguments one-by-one before running it.
    *
-   * There are 2 ways to launching kernels:
-   * - [[kernel.()]] which can be used to call a kernel like a regular function.
-   * - [[kernel.run]] which requires the user to push the arguments one-by-one before running it.
+   *   # Garbage collection
    *
-   * # Garbage collection
+   *   The [[kernel.free]] function can be called to free the kernel.
+   *   OCCA implemented reference counting by default so calling [[kernel.free]] is not required.
    *
-   * The [[kernel.free]] function can be called to free the kernel.
-   * OCCA implemented reference counting by default so calling [[kernel.free]] is not required.
-   *
-   * @descriptionEnd
+   * @endDoc
    */
   class kernel : public gc::ringEntry_t {
     friend class occa::modeKernel_t;
@@ -109,13 +107,9 @@ namespace occa {
     void run(std::initializer_list<kernelArg> args) const;
 
   /**
-   * @id{()}
+   * @startDoc{operator_parentheses}
    *
-   * @descriptionStart
-   *
-   * Test
-   *
-   * @descriptionEnd
+   * @endDoc
    */
 #include "kernelOperators.hpp_codegen"
 

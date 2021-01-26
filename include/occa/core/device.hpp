@@ -183,7 +183,7 @@ namespace occa {
     void dontUseRefs();
 
     /**
-     * @startDoc{comparison[0]}
+     * @startDoc{operator_equals[0]}
      *
      * Description:
      *   Compare if two devices have the same references.
@@ -196,7 +196,7 @@ namespace occa {
     bool operator == (const occa::device &other) const;
 
     /**
-     * @startDoc{comparison[1]}
+     * @startDoc{operator_equals[1]}
      *
      * Description:
      *   Compare if two devices have different references.

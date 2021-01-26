@@ -13,11 +13,17 @@ DOXYGEN_OUTPUT = f'{OCCA_DIR}/.doxygen_output'
 # Each unique class/method should have a @id{id-name}
 OCCA_DOC_TAG = 'occa-doc'
 
-# Where the class/method information is stored inside the doc tree
-INFO_FIELD = '__info__'
+# Where definition information is stored in the doc_tree
+DOC_FIELD = '__doc__'
 
-# Where aliases are store in the doc tree
-ALIASES_FIELD = '__aliases__'
+# Where children are stored in the doc_tree entry
+CHILDREN_FIELD = '__children__'
+
+# README_FILENAME
+README_FILENAME = 'README.md'
+
+# Sidebar filename
+SIDEBAR_FILENAME = '_sidebar.md'
 
 # C++ Qualifiers to find the type
 #
