@@ -65,7 +65,10 @@ def run_doxygen():
 
     # Run doxygen
     subprocess.check_output(
-        ['doxygen', '.doxygen']
+        ['doxygen', f'{OCCA_DIR}/.doxygen'],
+        env=dict(os.environ,
+                 OCCA_DIR=OCCA_DIR,
+                 DOXYGEN_OUTPUT=DOXYGEN_OUTPUT),
     )
 
 

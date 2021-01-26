@@ -5,13 +5,13 @@ OUTPUT_LANGUAGE        = English
 
 # Output
 GENERATE_XML           = YES
-XML_OUTPUT             = .doxygen_output
+XML_OUTPUT             = $(DOXYGEN_OUTPUT)
 XML_PROGRAMLISTING     = NO
 CREATE_SUBDIRS         = NO
 MARKDOWN_SUPPORT       = YES
 
 # Input
-INPUT                  = include
+INPUT                  = $(OCCA_DIR)/include
 RECURSIVE              = YES
 SEARCH_INCLUDES        = NO
 FILE_PATTERNS          = *.cpp \

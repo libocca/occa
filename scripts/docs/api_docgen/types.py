@@ -3,7 +3,7 @@ Basic types
 '''
 import dataclasses
 from dataclasses import dataclass
-from typing import cast, Any, Dict, List, Optional, Tuple, Union
+from typing import cast, Any, Dict, List, Match, Optional, Tuple, Union
 
 from .constants import *
 from .utils import *
@@ -25,7 +25,7 @@ class Documentation:
     sections: Dict[str, List[Content]]
 
     @staticmethod
-    def parse(node: Any) -> Documentation:
+    def parse(node: Any) -> 'Documentation':
         location = get_node_attributes(node, f'./location')
         filepath = location['file']
         line_number = location['line']
@@ -54,7 +54,7 @@ class Documentation:
         id_index_pattern = r'\[(?P<id_index>[0-9]+)\]'
 
         m = cast(
-            re.Match[Any],
+            Match[Any],
             re.match(id_pattern + id_index_pattern, full_id)
         )
         return (m['id'], int(m['id_index']))
@@ -134,7 +134,7 @@ class Hyperlink:
     text: str
 
     @staticmethod
-    def parse(text: str) -> Hyperlink:
+    def parse(text: str) -> 'Hyperlink':
         # Format:
         #   [[device.malloc]]
         #   [[malloc|device.malloc]]
@@ -174,7 +174,7 @@ class Type:
     ref_id: Optional[str]
 
     @classmethod
-    def parse(cls, node) -> Type:
+    def parse(cls, node) -> 'Type':
         words = split_by_whitespace(node.text)
 
         children = list(node.getchildren())
@@ -226,18 +226,18 @@ class Function(DefinitionInfo):
     return_type: Type
 
     @classmethod
-    def parse(cls, node: Any, def_info: DefinitionInfo) -> Function:
+    def parse(cls, node: Any, def_info: DefinitionInfo) -> 'Function':
         attrs = get_node_attributes(node)
 
-        return Function(
+        return Function(**{
             **dataclasses.asdict(def_info),
-            is_static=get_bool_attr(attrs, 'static'),
-            is_const=get_bool_attr(attrs, 'const'),
-            template=cls.get_function_arguments(node.find('./templateparamlist')),
-            arguments=cls.get_function_arguments(node),
-            return_type=cls.get_function_return_type(node),
-            name=get_node_text(node, './name'),
-        )
+            'is_static': get_bool_attr(attrs, 'static'),
+            'is_const': get_bool_attr(attrs, 'const'),
+            'template': cls.get_function_arguments(node.find('./templateparamlist')),
+            'arguments': cls.get_function_arguments(node),
+            'return_type': cls.get_function_return_type(node),
+            'name': get_node_text(node, './name'),
+        })
 
     def get_function_arguments(node: Any) -> List[Argument]:
         if node is None:
@@ -261,10 +261,10 @@ class Class(DefinitionInfo):
 
     @staticmethod
     def parse(node: Any, def_info: DefinitionInfo):
-      return Class(
+      return Class(**{
           **dataclasses.asdict(def_info),
-          name=get_node_text(node, './compoundname'),
-      )
+          'name': get_node_text(node, './compoundname'),
+      })
 
 @dataclass
 class Definition:
@@ -272,7 +272,7 @@ class Definition:
     code: Code
 
     @staticmethod
-    def parse(node) -> Definition:
+    def parse(node) -> 'Definition':
         attrs = get_node_attributes(node)
 
         def_info = DefinitionInfo(
@@ -309,13 +309,13 @@ class Definition:
         return 2
 
     @staticmethod
-    def sort_key(definition: Definition) -> Any:
+    def sort_key(definition: 'Definition') -> Any:
         # Sort by id and then by it's index
-        return [
+        return (
             definition.get_priority(),
             definition.doc.id_,
             definition.doc.id_index
-        ]
+        )
 
 @dataclass
 class DocNode:
@@ -333,7 +333,10 @@ class DocTreeNode:
             definitions,
             key=Definition.sort_key
         )
-        self.children = children
+        self.children = sorted(
+            children,
+            key=DocTreeNode.sort_key
+        )
 
     @property
     def id_(self) -> str:
@@ -350,6 +353,10 @@ class DocTreeNode:
             return '(constructor)'
 
         return name
+
+    @staticmethod
+    def sort_key(node: 'DocTreeNode') -> Any:
+        return Definition.sort_key(node.definitions[0])
 
 @dataclass
 class DocTree:

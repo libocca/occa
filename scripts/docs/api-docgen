@@ -28,7 +28,7 @@ def alias_path(path: str,
     return (path, node_id)
 
 
-def get_global_id_map(tree: Any, nodes: List[Any]): Dict[str, str]:
+def get_global_id_map(tree: Any, nodes: List[Any]) -> Dict[str, str]:
     paths = sorted([
         [tree.getpath(node), Documentation.parse(node)]
         for node in nodes
