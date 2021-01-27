@@ -71,7 +71,18 @@ def make_sidebar(root_dir: str,
 
 
 def generate_sidebars(root_dir: str, tree: DocTree):
-    before_content = f'- [**{API_SIDEBAR_NAME}**](/{API_RELATIVE_DIR}/)\n'
+    before_content = f'''
+<div class="api-version-container">
+  <select onchange="vm.onLanguageChange(this)">
+    <option value="cpp">C++</option>
+  </select>
+  <select onchange="vm.onVersionChange(this)">
+    <option value="nightly">Nightly</option>
+  </select>
+</div>
+
+- [**{API_SIDEBAR_NAME}**](/{API_RELATIVE_DIR}/)
+'''.strip() + '\n'
 
     make_sidebar(
         root_dir,
