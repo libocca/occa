@@ -1,116 +1,157 @@
 '''
-Generates Markdown from extracted metadata
+Markdown generation
 '''
-import os
-
-from .constants import *
 from .types import *
-from .system_commands import *
+
+def parse_sections(content: str,
+                   node_link: str,
+                   hyperlink_mapping: HyperlinkMapping) -> Dict[str, str]:
+    '''
+    Find the sections given by header and and indentation
+    For example:
+
+    "
+    Section Header 1:
+      line1
+
+      line3
+
+    Section Header 2:
+      line1
+
+    Section Header 3:
+      line1
+    "
+
+    ->
+
+    {
+      "Section Header 1": "line1\n\nline3",
+      "Section Header 2": "line1",
+      "Section Header 3": "line1",
+    }
+    '''
+    content = content.strip()
+
+    parts = re.split(f'(?:^|\n+)([^\s].*?[^\s]):\n', content)
+
+    sections = {}
+    # Content starts with ^ so we want to ignore parts[0]
+    for section_header, section_content in zip(parts[1::2], parts[2::2]):
+        section_content = remove_section_padding(section_content)
+
+        section_content = replace_headers(section_header,
+                                                   section_content,
+                                                   node_link)
+
+        section_content = replace_hyperlinks(section_content,
+                                                      hyperlink_mapping)
+
+        sections.update({
+            section_header: section_content,
+        })
+
+    return sections
 
 
-def create_directory_for(filepath: str):
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+def remove_section_padding(content: str) -> str:
+    return '\n'.join(
+        re.sub('^' + DEFINITION_SECTION_INDENT, '', line)
+        for line in content.splitlines()
+    )
 
 
-def clear_api(api_dir: str):
-    # We don't want to remove the non-auto-generated file inside api/README.md
-    api_readme = f'{api_dir}/{README_FILENAME}'
+def replace_headers(header: str, content: str, node_link: str) -> str:
+    # Downgrade headers and use HTML to avoid creating sidebar items for them
+    for header_index in range(4, 0, -1):
+        markdown_header_prefix = '#' * header_index
+        parts = re.split(f'\n{markdown_header_prefix} ([^\n]*)\n', content)
 
-    with open(api_readme, 'r') as fd:
-        api_readme_contents = fd.read()
+        # Nothing to do
+        if len(parts) == 1:
+            continue
 
-    safe_rmrf(api_dir)
+        # We could start a section without a header
+        if len(parts) % 2:
+            section_headers = ['', *parts[1::2]]
+            section_contents = parts[0::2]
+        else:
+            section_headers = parts[0::2]
+            section_contents = parts[1::2]
 
-    create_directory_for(api_readme)
-    with open(api_readme, 'w') as fd:
-        fd.write(api_readme_contents)
+        content = ''
+        for section_header, section_content in zip(section_headers, section_contents):
+            if not section_header:
+                content += section_content
+                continue
+
+            header_html = build_header(
+                header=section_header,
+                header_index=(header_index + 1),
+                node_link=node_link,
+            )
+            content += f'\n{header_html}\n{section_content}'
+
+    return content
 
 
-def make_sidebar(root_dir: str,
-                 relative_filepath: str,
-                 children: List[DocTreeNode],
-                 before_content: str,
-                 after_content: str,
-                 indent: str):
-    indent += '  '
-    # Nested directories need the `/` at the end
-    children_headers = [
-        f'{indent}- [{child.name}](/{relative_filepath}/{child.link_name})\n'
-        for child in children
-    ]
+def build_header(header: str,
+                 header_index: int,
+                 node_link: str,
+                 include_id: bool = True) -> str:
+    # Camel/Pascal case -> Kebab case
+    header_id = re.sub(r'([^A-Z])([A-Z])', r'\1-\2', header).lower()
 
-    sidebar_filepath = f'{root_dir}/{relative_filepath}/{SIDEBAR_FILENAME}'
+    href = f'#{node_link}'
+    if include_id:
+        href += f'?id={header_id}'
 
-    create_directory_for(sidebar_filepath)
-    with open(sidebar_filepath, 'w') as fd:
-        fd.write(before_content)
+    return f'''
+<h{header_index} id="{header_id}">
+ <a href="{href}" class="anchor">
+   <span>{header}</span>
+  </a>
+</h{header_index}>
+'''.strip()
 
-        for header in children_headers:
-            fd.write(header)
 
-        fd.write(after_content)
+def replace_hyperlinks(content: str,
+                       hyperlink_mapping: HyperlinkMapping) -> str:
+    '''
+    Separate the hyperlink and markdown content
+    '''
+    # Searching for content inside [[...]]
+    left = '[['.replace('[', r'\[')
+    right = ']]'.replace(']', r'\]')
 
-    for index, child in enumerate(children):
-        child_before_content = before_content
-        child_after_content = after_content
+    groups = re.split(f'{left}(.*?){right}', content)
 
-        for header in children_headers[:index + 1]:
-            child_before_content += header
-
-        for header in children_headers[index + 1:]:
-            child_after_content += header
-
-        make_sidebar(
-            root_dir,
-            relative_filepath=f'{relative_filepath}/{child.id_}',
-            children=child.children,
-            before_content=child_before_content,
-            after_content=child_after_content,
-            indent=indent,
+    return ''.join([
+        (
+            replace_hyperlink(text, hyperlink_mapping)
+            if index % 2 else
+            text
         )
+        for index, text in enumerate(groups)
+    ])
 
 
-def generate_sidebars(root_dir: str, tree: DocTree):
-    before_content = f'- [**{API_SIDEBAR_NAME}**](/{API_RELATIVE_DIR}/)\n'
+def replace_hyperlink(content: str,
+                      hyperlink_mapping: HyperlinkMapping) -> str:
+    # Format:
+    #   [[device.malloc]]
+    #   [[malloc|device.malloc]]
+    parts = content.split('|')
 
-    make_sidebar(
-        root_dir,
-        relative_filepath=API_RELATIVE_DIR,
-        children=tree.roots,
-        before_content=before_content,
-        after_content='',
-        indent='',
-    )
+    if len(parts) == 1:
+        # [[device.malloc]]
+        node_id = parts[0].strip()
+        link_text = None
+    else:
+        # [[malloc|device.malloc]]
+        link_text = parts[0].strip()
+        node_id = parts[1].strip()
 
+    info = hyperlink_mapping.get(node_id)
 
-def generate_node_markdown(node: DocTreeNode,
-                           filepath: str,
-                           hyperlink_mapping: HyperlinkMapping):
-    node_filepath = f'{filepath}/{node.id_}'
-    markdown_filepath = (
-        f'{node_filepath}/{README_FILENAME}'
-        if node.children else
-        f'{node_filepath}.md'
-    )
-
-    create_directory_for(markdown_filepath)
-    with open(markdown_filepath, 'w') as fd:
-        fd.write(node.get_markdown_content(hyperlink_mapping))
-
-    for child in node.children:
-        generate_node_markdown(child, node_filepath, hyperlink_mapping)
-
-
-def generate_markdown(root_dir: str, tree: DocTree):
-    hyperlink_mapping = tree.build_hyperlink_mapping()
-
-    for child in tree.roots:
-        generate_node_markdown(child, root_dir, hyperlink_mapping)
-
-
-def generate_api(root_dir: str, tree: DocTree):
-    api_dir = f'{root_dir}/{API_RELATIVE_DIR}'
-
-    clear_api(api_dir)
-    generate_sidebars(root_dir, tree)
-    generate_markdown(api_dir, tree)
+    return f'[{link_text or info.name}]({info.link})'
