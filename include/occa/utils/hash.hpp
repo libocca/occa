@@ -35,8 +35,8 @@ namespace occa {
 
     hash_t& operator ^= (const hash_t hash);
 
-    template <class TM>
-    hash_t operator ^ (const TM &t) const;
+    template <class T>
+    hash_t operator ^ (const T &t) const;
 
     int getInt() const;
 
@@ -54,22 +54,22 @@ namespace occa {
 
   hash_t hash(const void *ptr, udim_t bytes);
 
-  template <class TM>
-  inline hash_t hash(const std::vector<TM> &vec) {
+  template <class T>
+  inline hash_t hash(const std::vector<T> &vec) {
     hash_t h;
-    for (const TM &value : vec) {
+    for (const T &value : vec) {
       h ^= hash(value);
     }
     return h;
   }
 
-  template <class TM>
-  inline hash_t hash(const TM &t) {
-    return hash(&t, sizeof(TM));
+  template <class T>
+  inline hash_t hash(const T &t) {
+    return hash(&t, sizeof(T));
   }
 
-  template <class TM>
-  inline hash_t hash_t::operator ^ (const TM &t) const {
+  template <class T>
+  inline hash_t hash_t::operator ^ (const T &t) const {
     return (*this ^ hash(t));
   }
 

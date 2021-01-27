@@ -55,7 +55,7 @@ namespace occa {
       return lambda(args...);
     }
 
-    template <class TM>
+    template <class T>
     friend class array;
   };
 }

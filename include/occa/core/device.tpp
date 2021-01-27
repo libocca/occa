@@ -1,42 +1,42 @@
 namespace occa {
-  template <class TM>
+  template <class T>
   occa::memory device::malloc(const dim_t entries,
                               const void *src,
                               const occa::json &props) {
-    return malloc(entries, occa::dtype::get<TM>(), src, props);
+    return malloc(entries, occa::dtype::get<T>(), src, props);
   }
 
-  template <class TM>
+  template <class T>
   occa::memory device::malloc(const dim_t entries,
                               const occa::memory src,
                               const occa::json &props) {
-    return malloc(entries, occa::dtype::get<TM>(), src, props);
+    return malloc(entries, occa::dtype::get<T>(), src, props);
   }
 
-  template <class TM>
+  template <class T>
   occa::memory device::malloc(const dim_t entries,
                               const occa::json &props) {
-    return malloc(entries, occa::dtype::get<TM>(), props);
+    return malloc(entries, occa::dtype::get<T>(), props);
   }
 
-  template <class TM>
-  TM* device::umalloc(const dim_t entries,
+  template <class T>
+  T* device::umalloc(const dim_t entries,
                       const void *src,
                       const occa::json &props) {
-    return (TM*) umalloc(entries, dtype::get<TM>(), src, props);
+    return (T*) umalloc(entries, dtype::get<T>(), src, props);
   }
 
-  template <class TM>
-  TM* device::umalloc(const dim_t entries,
+  template <class T>
+  T* device::umalloc(const dim_t entries,
                       const occa::memory src,
                       const occa::json &props) {
-    return (TM*) umalloc(entries, dtype::get<TM>(), src, props);
+    return (T*) umalloc(entries, dtype::get<T>(), src, props);
   }
 
-  template <class TM>
-  TM* device::umalloc(const dim_t entries,
+  template <class T>
+  T* device::umalloc(const dim_t entries,
                       const occa::json &props) {
-    return (TM*) umalloc(entries, dtype::get<TM>(), props);
+    return (T*) umalloc(entries, dtype::get<T>(), props);
   }
 
   template <>
@@ -44,10 +44,10 @@ namespace occa {
                                         const dim_t entries,
                                         const occa::json &props);
 
-  template <class TM>
-  occa::memory device::wrapMemory(const TM *ptr,
+  template <class T>
+  occa::memory device::wrapMemory(const T *ptr,
                                   const dim_t entries,
                                   const occa::json &props) {
-    return wrapMemory(ptr, entries, occa::dtype::get<TM>(), props);
+    return wrapMemory(ptr, entries, occa::dtype::get<T>(), props);
   }
 }

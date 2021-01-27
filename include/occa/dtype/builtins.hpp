@@ -79,17 +79,17 @@ namespace occa {
     extern const dtype_t memory;
 
     // Templated types
-    template <class TM>
+    template <class T>
     dtype_t get() {
-      if (!typeMetadata<TM>::isPointer) {
+      if (!typeMetadata<T>::isPointer) {
         return none;
       }
-      return get<typename typeMetadata<TM>::baseType>();
+      return get<typename typeMetadata<T>::baseType>();
     }
 
-    template <class TM = void, class ...Types>
+    template <class T = void, class ...Types>
     dtypeVector getMany() {
-      dtypeVector types = { get<TM>() };
+      dtypeVector types = { get<T>() };
 
       dtypeVector tail = getMany<Types...>();
       types.insert(types.end(), tail.begin(), tail.end());

@@ -672,34 +672,34 @@ namespace occa {
      *
      * @endDoc
      */
-    template <class TM>
+    template <class T>
     json& set(const char *key,
-              const TM &value);
+              const T &value);
 
-    template <class TM>
+    template <class T>
     json& set(const std::string &key,
-              const TM &value);
+              const T &value);
 
     json getPathValue(const char *key) const;
 
-    template <class TM>
-    TM get(const char *key,
-           const TM &default_ = TM()) const;
+    template <class T>
+    T get(const char *key,
+           const T &default_ = T()) const;
 
-    template <class TM>
-    TM get(const std::string &key,
-           const TM &default_ = TM()) const;
+    template <class T>
+    T get(const std::string &key,
+           const T &default_ = T()) const;
 
-    template <class TM>
-    std::vector<TM> toVector(const std::vector<TM> &default_ = std::vector<TM>()) const;
+    template <class T>
+    std::vector<T> toVector(const std::vector<T> &default_ = std::vector<T>()) const;
 
-    template <class TM>
-    std::vector<TM> toVector(const char *c,
-                             const std::vector<TM> &default_ = std::vector<TM>()) const;
+    template <class T>
+    std::vector<T> toVector(const char *c,
+                             const std::vector<T> &default_ = std::vector<T>()) const;
 
-    template <class TM>
-    std::vector<TM> toVector(const std::string &s,
-                             const std::vector<TM> &default_ = std::vector<TM>()) const;
+    template <class T>
+    std::vector<T> toVector(const std::string &s,
+                             const std::vector<T> &default_ = std::vector<T>()) const;
 
     strVector keys() const;
     jsonArray values() const;

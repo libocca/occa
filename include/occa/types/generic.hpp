@@ -60,14 +60,14 @@ namespace occa {
     pointerConstructor((void*) NULL, dtype::void_); \
   }                                                 \
                                                     \
-  template <class TM>                               \
-  CLASS_NAME(TM *arg) {                             \
-    pointerConstructor(arg, dtype::get<TM>());      \
+  template <class T>                               \
+  CLASS_NAME(T *arg) {                             \
+    pointerConstructor(arg, dtype::get<T>());      \
   }                                                 \
                                                     \
-  template <class TM>                               \
-  CLASS_NAME(const TM *arg) {                       \
-    pointerConstructor(arg, dtype::get<TM>());      \
+  template <class T>                               \
+  CLASS_NAME(const T *arg) {                       \
+    pointerConstructor(arg, dtype::get<T>());      \
   }                                                 \
                                                     \
   void ignore_this_function_only_for_semicolon()

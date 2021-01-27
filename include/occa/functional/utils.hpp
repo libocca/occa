@@ -33,7 +33,7 @@ namespace occa {
     //   lambda
     //   -> std::function<ret(args...)>
     //   -> occa::function<ret(args...)>
-    template <typename TM>
+    template <typename T>
     struct inferFunctionHelper;
 
     template <typename ReturnType, typename ClassType, typename ...ArgTypes>
@@ -53,13 +53,13 @@ namespace occa {
     //====================================
 
     //---[ Array ]------------------------
-    template <class TM>
-    TM hostReduction(reductionType type, occa::memory mem) {
+    template <class T>
+    T hostReduction(reductionType type, occa::memory mem) {
       const int entryCount = (int) mem.length();
-      TM *values = new TM[entryCount];
+      T *values = new T[entryCount];
       mem.copyTo(values);
 
-      TM reductionValue = values[0];
+      T reductionValue = values[0];
       switch (type) {
         case reductionType::sum:
           for (int i = 1; i < entryCount; ++i) {

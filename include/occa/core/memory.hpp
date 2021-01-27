@@ -97,11 +97,11 @@ namespace occa {
 
     memory& swap(memory &m);
 
-    template <class TM = void>
-    TM* ptr();
+    template <class T = void>
+    T* ptr();
 
-    template <class TM = void>
-    const TM* ptr() const;
+    template <class T = void>
+    const T* ptr() const;
 
     modeMemory_t* getModeMemory() const;
     modeDevice_t* getModeDevice() const;
@@ -120,9 +120,9 @@ namespace occa {
     udim_t size() const;
     udim_t length() const;
 
-    template <class TM>
+    template <class T>
     udim_t length() const {
-      return size() / sizeof(TM);
+      return size() / sizeof(T);
     }
 
     //---[ UVA ]------------------------

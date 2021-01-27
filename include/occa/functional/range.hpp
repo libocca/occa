@@ -55,30 +55,30 @@ namespace occa {
 
     void forEach(const occa::function<void(const int)> &fn) const;
 
-    template <class TM>
-    array<TM> map(const occa::function<TM(const int)> &fn) const {
-      return typelessMap<TM>(fn);
+    template <class T>
+    array<T> map(const occa::function<T(const int)> &fn) const {
+      return typelessMap<T>(fn);
     }
 
-    template <class TM>
-    array<TM> mapTo(occa::array<TM> &output,
-                    const occa::function<TM(const int)> &fn) const {
+    template <class T>
+    array<T> mapTo(occa::array<T> &output,
+                    const occa::function<T(const int)> &fn) const {
       output.resize(length());
       typelessMapTo(output.memory(), fn);
       return output;
     }
 
-    template <class TM>
-    TM reduce(reductionType type,
-              const occa::function<TM(const TM&, const int)> &fn) const {
-      return typelessReduce<TM>(type, TM(), false, fn);
+    template <class T>
+    T reduce(reductionType type,
+              const occa::function<T(const T&, const int)> &fn) const {
+      return typelessReduce<T>(type, T(), false, fn);
     }
 
-    template <class TM>
-    TM reduce(reductionType type,
-              const TM &localInit,
-              const occa::function<TM(const TM&, const int)> &fn) const {
-      return typelessReduce<TM>(type, localInit, true, fn);
+    template <class T>
+    T reduce(reductionType type,
+              const T &localInit,
+              const occa::function<T(const T&, const int)> &fn) const {
+      return typelessReduce<T>(type, localInit, true, fn);
     }
     //==================================
 
