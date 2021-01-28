@@ -13,7 +13,7 @@
     <div class="definition">
       <code>T* occa::memory::ptr()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/memory.hpp#L108" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/core/memory.hpp#L108" target="_blank">Source</a>
     </div>
     
   </div>

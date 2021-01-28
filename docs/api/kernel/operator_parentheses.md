@@ -13,7 +13,7 @@
     <div class="definition">
       <code>void occa::kernel::operator()() const</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/kernelOperators.hpp_codegen#L7" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/core/kernelOperators.hpp_codegen#L7" target="_blank">Source</a>
     </div>
     
   </div>

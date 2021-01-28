@@ -13,7 +13,7 @@
     <div class="definition">
       <code>occa::memory occa::device::malloc(const dim_t entries, const void *src=NULL, const occa::json &props=occa::json())</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/device.hpp#L551" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/core/device.hpp#L551" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -41,7 +41,7 @@
     <div class="definition">
       <code>occa::memory occa::device::malloc(const dim_t entries, const dtype_t &dtype, const void *src=NULL, const occa::json &props=occa::json())</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/device.hpp#L578" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/core/device.hpp#L578" target="_blank">Source</a>
     </div>
     <div class="description">
 

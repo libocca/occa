@@ -13,7 +13,7 @@
     <div class="definition">
       <code>occa::kernel occa::device::buildKernel(const std::string &filename, const std::string &kernelName, const occa::json &props=occa::json()) const</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/device.hpp#L503" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/core/device.hpp#L503" target="_blank">Source</a>
     </div>
     <div class="description">
 

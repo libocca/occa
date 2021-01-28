@@ -13,7 +13,7 @@
     <div class="definition">
       <code>json& occa::json::asNull()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/types/json.hpp#L512" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/types/json.hpp#L512" target="_blank">Source</a>
     </div>
     
   </div>

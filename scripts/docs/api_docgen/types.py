@@ -268,9 +268,9 @@ class Function(DefinitionInfo):
                                                        hyperlink_mapping)
 
             argument_descriptions = [
-                (arg, argument_content.get(arg))
-                for arg in self.arguments
-                if argument_content.get(arg)
+                (arg.name, argument_content.get(arg.name))
+                for arg in def_info.code.arguments
+                if argument_content.get(arg.name)
             ]
 
         if (not description and
@@ -303,6 +303,7 @@ class Function(DefinitionInfo):
             content += f'''
       <div class="section-header">Arguments</div>
       <ul class="section-list">
+          {argument_content}
       </ul>
 '''
 

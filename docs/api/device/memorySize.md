@@ -13,7 +13,7 @@
     <div class="definition">
       <code>udim_t occa::device::memorySize() const</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/device.hpp#L317" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/core/device.hpp#L317" target="_blank">Source</a>
     </div>
     
   </div>

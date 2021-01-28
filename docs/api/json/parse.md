@@ -13,7 +13,7 @@
     <div class="definition">
       <code>static json occa::json::parse(const char *&c)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/types/json.hpp#L378" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/types/json.hpp#L378" target="_blank">Source</a>
     </div>
     
   </div>

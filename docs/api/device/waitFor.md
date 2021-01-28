@@ -13,7 +13,7 @@
     <div class="definition">
       <code>void occa::device::waitFor(streamTag tag)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/device.hpp#L421" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/core/device.hpp#L421" target="_blank">Source</a>
     </div>
     
   </div>
