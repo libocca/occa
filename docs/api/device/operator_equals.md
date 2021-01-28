@@ -13,7 +13,7 @@
     <div class="definition">
       <code>bool occa::device::operator==(const occa::device &other) const</code>
       <div class="flex-spacing"></div>
-      <a href="hi" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/device.hpp#L198" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -35,7 +35,7 @@
     <div class="definition">
       <code>bool occa::device::operator!=(const occa::device &other) const</code>
       <div class="flex-spacing"></div>
-      <a href="hi" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/device.hpp#L211" target="_blank">Source</a>
     </div>
     <div class="description">
 

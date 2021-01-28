@@ -13,7 +13,7 @@
     <div class="definition">
       <code>occa::device::device()</code>
       <div class="flex-spacing"></div>
-      <a href="hi" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/device.hpp#L130" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -31,7 +31,7 @@
     <div class="definition">
       <code>occa::device::device(const std::string &props)</code>
       <div class="flex-spacing"></div>
-      <a href="hi" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/device.hpp#L144" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -49,7 +49,7 @@
     <div class="definition">
       <code>occa::device::device(const occa::json &props)</code>
       <div class="flex-spacing"></div>
-      <a href="hi" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/device.hpp#L158" target="_blank">Source</a>
     </div>
     <div class="description">
 

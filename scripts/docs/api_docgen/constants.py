@@ -13,6 +13,9 @@ DOXYGEN_OUTPUT = f'{OCCA_DIR}/.doxygen_output'
 # Each unique class/method should have a @id{id-name}
 OCCA_DOC_TAG = 'occa-doc'
 
+# Github URL
+OCCA_GITHUB_URL='https://github.com/libocca/occa'
+
 # Where definition information is stored in the doc_tree
 DOC_FIELD = '__doc__'
 

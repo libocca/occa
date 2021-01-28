@@ -13,7 +13,7 @@
     <div class="definition">
       <code>const occa::json& occa::device::properties() const</code>
       <div class="flex-spacing"></div>
-      <a href="hi" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/device.hpp#L280" target="_blank">Source</a>
     </div>
     
   </div>

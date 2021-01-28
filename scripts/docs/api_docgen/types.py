@@ -182,6 +182,7 @@ class Function(DefinitionInfo):
                              doc: Documentation,
                              name: str,
                              overrides: List['Definition'],
+                             git_hash: str,
                              hyperlink_mapping: HyperlinkMapping) -> str:
         from . import markdown
 
@@ -202,7 +203,7 @@ class Function(DefinitionInfo):
     <div class="definition">
       <code>{override.code.get_function_signature(hyperlink_mapping)}</code>
       <div class="flex-spacing"></div>
-      <a href="{override.code.get_source_link()}" target="_blank">Source</a>
+      <a href="{override.code.get_source_link(override.doc, git_hash)}" target="_blank">Source</a>
     </div>
     {self.get_description_markdown(override, hyperlink_mapping)}
   </div>
@@ -236,11 +237,15 @@ class Function(DefinitionInfo):
 
     def get_function_signature(self,
                                hyperlink_mapping: HyperlinkMapping):
-        # TODO
+        # TODO:
+        # - Split the name and link to different classes
+        # - Clean up the arguments so it's not one super long line
         return self.full_name
 
-    def get_source_link(self):
-        return "hi"
+    def get_source_link(self,
+                        doc: Documentation,
+                        git_hash: str) -> str:
+        return f'{OCCA_GITHUB_URL}/blob/{git_hash}/{doc.filepath}#L{doc.line_number}'
 
     def get_description_markdown(self,
                                  def_info: 'Definition',
@@ -459,7 +464,9 @@ class DocTreeNode:
         else:
             return self.id_;
 
-    def get_markdown_content(self, hyperlink_mapping: HyperlinkMapping) -> str:
+    def get_markdown_content(self,
+                             git_hash: str,
+                             hyperlink_mapping: HyperlinkMapping) -> str:
         def_ = self.root_definition
 
         if isinstance(def_.code, Class):
@@ -470,6 +477,7 @@ class DocTreeNode:
             return def_.code.get_markdown_content(def_.doc,
                                                   self.name,
                                                   self.definitions,
+                                                  git_hash,
                                                   hyperlink_mapping)
 
         raise NotImplementedError("Code type undefined")

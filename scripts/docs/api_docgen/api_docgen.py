@@ -96,6 +96,7 @@ def generate_sidebars(root_dir: str, tree: DocTree):
 
 def generate_node_markdown(node: DocTreeNode,
                            filepath: str,
+                           git_hash: str,
                            hyperlink_mapping: HyperlinkMapping):
     node_filepath = f'{filepath}/{node.id_}'
     markdown_filepath = (
@@ -106,17 +107,18 @@ def generate_node_markdown(node: DocTreeNode,
 
     create_directory_for(markdown_filepath)
     with open(markdown_filepath, 'w') as fd:
-        fd.write(node.get_markdown_content(hyperlink_mapping))
+        fd.write(node.get_markdown_content(git_hash, hyperlink_mapping))
 
     for child in node.children:
-        generate_node_markdown(child, node_filepath, hyperlink_mapping)
+        generate_node_markdown(child, node_filepath, git_hash, hyperlink_mapping)
 
 
 def generate_markdown(root_dir: str, tree: DocTree):
+    git_hash = get_git_hash()
     hyperlink_mapping = tree.build_hyperlink_mapping()
 
     for child in tree.roots:
-        generate_node_markdown(child, root_dir, hyperlink_mapping)
+        generate_node_markdown(child, root_dir, git_hash, hyperlink_mapping)
 
 
 def generate_api(root_dir: str, tree: DocTree):
