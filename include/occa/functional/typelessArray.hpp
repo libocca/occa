@@ -71,7 +71,7 @@ namespace occa {
         {"occa_array_length", arrayLength},
         {"occa_array_return", returnMemory}
       }, {
-        {"defines/TM", dtype_.name()},
+        {"defines/T", dtype_.name()},
         {"defines/OCCA_ARRAY_TILE_SIZE", safeTileSize},
         {"defines/OCCA_ARRAY_TILE_ITERATIONS", safeTileIterations},
         {"defines/OCCA_ARRAY_FUNCTION(VALUE, INDEX, VALUES_PTR)", buildMapFunctionCall(fn)},
@@ -89,19 +89,19 @@ namespace occa {
       );
     }
 
-    template <class TM2>
+    template <class T2>
     occa::scope getCpuReduceArrayScope(reductionType type,
-                                       const TM2 &localInit,
+                                       const T2 &localInit,
                                        const bool useLocalInit,
                                        const baseFunction &fn) const {
       const int arrayLength = (int) length();
       const int ompLoopSize = 128;
 
-      setupReturnMemoryArray<TM2>(ompLoopSize);
+      setupReturnMemoryArray<T2>(ompLoopSize);
 
       occa::json props({
-        {"defines/TM", dtype_.name()},
-        {"defines/TM2", dtype::get<TM2>().name()},
+        {"defines/T", dtype_.name()},
+        {"defines/T2", dtype::get<T2>().name()},
         {"defines/OCCA_ARRAY_OMP_LOOP_SIZE", 128},
         {"defines/OCCA_ARRAY_FUNCTION(ACC, VALUE, INDEX, VALUES_PTR)", buildReduceFunctionCall(fn)},
         {"defines/OCCA_ARRAY_LOCAL_REDUCTION(LEFT_VALUE, RIGHT_VALUE)", buildLocalReductionOperation(type)},
@@ -128,9 +128,9 @@ namespace occa {
       );
     }
 
-    template <class TM2>
+    template <class T2>
     occa::scope getGpuReduceArrayScope(reductionType type,
-                                       const TM2 &localInit,
+                                       const T2 &localInit,
                                        const bool useLocalInit,
                                        const baseFunction &fn) const {
       const int arrayLength = (int) length();
@@ -165,11 +165,11 @@ namespace occa {
       const int localReductionSize = safeTileSize * safeTileIterations;
       const int localReductionCount = (arrayLength + localReductionSize - 1) / localReductionSize;
 
-      setupReturnMemoryArray<TM2>(localReductionCount);
+      setupReturnMemoryArray<T2>(localReductionCount);
 
       occa::json props({
-        {"defines/TM", dtype_.name()},
-        {"defines/TM2", dtype::get<TM2>().name()},
+        {"defines/T", dtype_.name()},
+        {"defines/T2", dtype::get<T2>().name()},
         {"defines/OCCA_ARRAY_TILE_SIZE", safeTileSize},
         {"defines/OCCA_ARRAY_TILE_ITERATIONS", safeTileIterations},
         {"defines/OCCA_ARRAY_FUNCTION(ACC, VALUE, INDEX, VALUES_PTR)", buildReduceFunctionCall(fn)},
@@ -177,8 +177,8 @@ namespace occa {
         {"defines/OCCA_ARRAY_SHARED_REDUCTION(BOUNDS)",
          "for (int i = 0; i < OCCA_ARRAY_TILE_SIZE; ++i; @inner) {"
          "  if (i < BOUNDS) {"
-         "    const TM2 leftValue = tileAcc[i];"
-         "    const TM2 rightValue = tileAcc[i + BOUNDS];"
+         "    const T2 leftValue = tileAcc[i];"
+         "    const T2 rightValue = tileAcc[i + BOUNDS];"
          "    tileAcc[i] = OCCA_ARRAY_LOCAL_REDUCTION(leftValue, rightValue);"
          "  }"
          "}"},
@@ -448,9 +448,9 @@ namespace occa {
       ));
     }
 
-    template <class TM2>
+    template <class T2>
     occa::memory typelessMap(const baseFunction &fn) const {
-      occa::memory output = device_.template malloc<TM2>(length());
+      occa::memory output = device_.template malloc<T2>(length());
 
       typelessMapTo(output, fn);
 
@@ -471,24 +471,24 @@ namespace occa {
       ));
     }
 
-    template <class TM2>
-    TM2 typelessReduce(reductionType type,
-                       const TM2 &localInit,
+    template <class T2>
+    T2 typelessReduce(reductionType type,
+                       const T2 &localInit,
                        const bool useLocalInit,
                        const baseFunction &fn) const {
       if (usingNativeCpuMode()) {
-        return typelessCpuReduce<TM2>(type, localInit, useLocalInit, fn);
+        return typelessCpuReduce<T2>(type, localInit, useLocalInit, fn);
       } else {
-        return typelessGpuReduce<TM2>(type, localInit, useLocalInit, fn);
+        return typelessGpuReduce<T2>(type, localInit, useLocalInit, fn);
       }
     }
 
-    template <class TM2>
-    TM2 typelessCpuReduce(reductionType type,
-                          const TM2 &localInit,
+    template <class T2>
+    T2 typelessCpuReduce(reductionType type,
+                          const T2 &localInit,
                           const bool useLocalInit,
                           const baseFunction &fn) const {
-      occa::scope scope = getCpuReduceArrayScope<TM2>(type, localInit, useLocalInit, fn);
+      occa::scope scope = getCpuReduceArrayScope<T2>(type, localInit, useLocalInit, fn);
 
       OCCA_JIT(scope, (
         for (int ompIndex = 0; ompIndex < OCCA_ARRAY_OMP_LOOP_SIZE; ++ompIndex; @outer) {
@@ -501,7 +501,7 @@ namespace occa {
             const int unsafeEndIndex = startIndex + blockSize;
             const int endIndex = occa_array_length < unsafeEndIndex ? occa_array_length : unsafeEndIndex;
 
-            TM2 localAcc = OCCA_ARRAY_REDUCTION_INIT_VALUE;
+            T2 localAcc = OCCA_ARRAY_REDUCTION_INIT_VALUE;
 
             for (int i = startIndex; i < endIndex; ++i) {
               localAcc = OCCA_ARRAY_FUNCTION_CALL(localAcc, i);
@@ -512,15 +512,15 @@ namespace occa {
         }
       ));
 
-      return finishReturnMemoryReduction<TM2>(type);
+      return finishReturnMemoryReduction<T2>(type);
     }
 
-    template <class TM2>
-    TM2 typelessGpuReduce(reductionType type,
-                          const TM2 &localInit,
+    template <class T2>
+    T2 typelessGpuReduce(reductionType type,
+                          const T2 &localInit,
                           const bool useLocalInit,
                           const baseFunction &fn) const {
-      occa::scope scope = getGpuReduceArrayScope<TM2>(type, localInit, useLocalInit, fn);
+      occa::scope scope = getGpuReduceArrayScope<T2>(type, localInit, useLocalInit, fn);
 
       OCCA_JIT(scope, (
         for (int tileIndex = 0;
@@ -528,10 +528,10 @@ namespace occa {
              tileIndex += (OCCA_ARRAY_TILE_SIZE * OCCA_ARRAY_TILE_ITERATIONS);
              @outer) {
 
-          @shared volatile TM2 tileAcc[OCCA_ARRAY_TILE_SIZE];
+          @shared volatile T2 tileAcc[OCCA_ARRAY_TILE_SIZE];
 
           for (int localIndex = 0; localIndex < OCCA_ARRAY_TILE_SIZE; ++localIndex; @inner) {
-            TM2 localAcc = OCCA_ARRAY_REDUCTION_INIT_VALUE;
+            T2 localAcc = OCCA_ARRAY_REDUCTION_INIT_VALUE;
 
             for (int i = 0; i < OCCA_ARRAY_TILE_ITERATIONS; ++i) {
               const int index = tileIndex + (i * OCCA_ARRAY_TILE_ITERATIONS) + localIndex;
@@ -581,8 +581,8 @@ namespace occa {
 
           for (int i = 0; i < OCCA_ARRAY_TILE_SIZE; ++i; @inner) {
             if (i == 0) {
-              const TM2 leftValue = tileAcc[0];
-              const TM2 rightValue = tileAcc[1];
+              const T2 leftValue = tileAcc[0];
+              const T2 rightValue = tileAcc[1];
               occa_array_return[tileIndex] = (
                 OCCA_ARRAY_LOCAL_REDUCTION(leftValue, rightValue)
               );
@@ -591,12 +591,12 @@ namespace occa {
         }
       ));
 
-      return finishReturnMemoryReduction<TM2>(type);
+      return finishReturnMemoryReduction<T2>(type);
     }
 
-    template <class TM2>
-    TM2 finishReturnMemoryReduction(reductionType type) const {
-      return functional::hostReduction<TM2>(type, returnMemory);
+    template <class T2>
+    T2 finishReturnMemoryReduction(reductionType type) const {
+      return functional::hostReduction<T2>(type, returnMemory);
     }
     //==================================
   };

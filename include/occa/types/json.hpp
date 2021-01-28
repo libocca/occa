@@ -26,6 +26,105 @@ namespace occa {
     jsonObject object;
   } jsonValue_t;
 
+  /**
+   * @startDoc{json}
+   *
+   * Description:
+   *
+   *   A [[json]] object stores data in the same way specified by the JSON standard.
+   *   It's used across the OCCA library as a way to flexibly pass user configurations.
+   *
+   *   # Types
+   *
+   *   There are 6 basic types a json object can be at a time:
+   *   - String
+   *   - Number
+   *   - Boolean
+   *   - NULL
+   *   - Array of json objects
+   *   - Map of string keys to json objects
+   *
+   *   # Type checking
+   *
+   *   There is a method provided check for each type
+   *
+   *   - [[json.isString]]
+   *   - [[json.isNumber]]
+   *   - [[json.isBool]]
+   *   - [[json.isNull]]
+   *   - [[json.isObject]]
+   *   - [[json.isArray]]
+   *
+   *   # Type casting
+   *
+   *    There is also a method to enforce the json object to be a specific type
+   *
+   *   - [[json.asString]]
+   *   - [[json.asNumber]]
+   *   - [[json.asBoolean]]
+   *   - [[json.asNull]]
+   *   - [[json.asObject]]
+   *   - [[json.asArray]]
+   *
+   *   # Data access
+   *
+   *   Accessing and setting data can be done through the [[json.operator_brackets]].
+   *   To make it simpler to access nested structures, we support passing `/`-delimited paths
+   *
+   *   For example, if we wanted to build
+   *
+   *   ```js
+   *   {
+   *     "a": {
+   *       "b": {
+   *         "c": "hello world"
+   *       }
+   *     }
+   *   }
+   *   ```
+   *
+   *   we could do it two ways:
+   *
+   *   ```cpp
+   *   occa::json j;
+   *   j["a"]["b"]["c"] = "hello world';
+   *   ```
+   *
+   *   or a the more compact way:
+   *
+   *   ```cpp
+   *   occa::json j;
+   *   j["a/b/c"] = "hello world';
+   *   ```
+   *
+   *   If for some reason there needs to be a `/` in the key name, use the [[json.set]] method instead
+   *
+   *   For example, building
+   *
+   *   ```js
+   *   {
+   *     "a/b/c": "hello world"
+   *   }
+   *   ```
+   *
+   *   would be done through
+   *
+   *   ```cpp
+   *   occa::json j;
+   *   j.set("a/b/c", "hello world');
+   *   ```
+   *
+   *   # Decoding
+   *
+   *   - [[json.parse]] can be used to parse a string to a json object.
+   *   - [[json.read]] is the same as [[json.parse]] but reads and parses a file instead.
+   *
+   *   # Encoding
+   *   - [[json.dump]] produces the JSON string associated with the stored data.
+   *   - [[json.write]] is the same as [[json.dump]] but saves the output in a file.
+   *
+   * @endDoc
+   */
   class json {
   public:
     static const char objectKeyEndChars[];
@@ -254,16 +353,49 @@ namespace occa {
     json& load(const char *&c);
     json& load(const std::string &s);
 
+    /**
+     * @startDoc{dump}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     std::string dump(const int indent = 2) const;
 
     void dumpToString(std::string &out,
                       const std::string &indent = "",
                       const std::string &currentIndent = "") const;
 
+    /**
+     * @startDoc{parse}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     static json parse(const char *&c);
     static json parse(const std::string &s);
 
+    /**
+     * @startDoc{read}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     static json read(const std::string &filename);
+
+    /**
+     * @startDoc{write}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     void write(const std::string &filename);
 
     void loadString(const char *&c);
@@ -283,22 +415,62 @@ namespace occa {
 
     bool has(const std::string &s) const;
 
+    /**
+     * @startDoc{isString}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline bool isString() const {
       return (type == string_);
     }
 
+    /**
+     * @startDoc{isNumber}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline bool isNumber() const {
       return (type == number_);
     }
 
+    /**
+     * @startDoc{isObject}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline bool isObject() const {
       return (type == object_);
     }
 
+    /**
+     * @startDoc{isArray}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline bool isArray() const {
       return (type == array_);
     }
 
+    /**
+     * @startDoc{isBool}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline bool isBool() const {
       return (
         (type == number_) &&
@@ -306,6 +478,14 @@ namespace occa {
       );
     }
 
+    /**
+     * @startDoc{isNull}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline bool isNull() const {
       return (type == null_);
     }
@@ -321,6 +501,14 @@ namespace occa {
       }
     }
 
+    /**
+     * @startDoc{asNull}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline json& asNull() {
       if (type & ~(none_ | null_)) {
         clear();
@@ -329,6 +517,14 @@ namespace occa {
       return *this;
     }
 
+    /**
+     * @startDoc{asBoolean}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline json& asBoolean() {
       if (type & number_) {
         value_.number = (bool) value_.number;
@@ -340,6 +536,14 @@ namespace occa {
       return *this;
     }
 
+    /**
+     * @startDoc{asNumber}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline json& asNumber() {
       if (type & ~(none_ | number_)) {
         clear();
@@ -348,6 +552,14 @@ namespace occa {
       return *this;
     }
 
+    /**
+     * @startDoc{asString}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline json& asString() {
       if (type & ~(none_ | string_)) {
         clear();
@@ -356,6 +568,14 @@ namespace occa {
       return *this;
     }
 
+    /**
+     * @startDoc{asArray}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline json& asArray() {
       if (type & ~(none_ | array_)) {
         clear();
@@ -364,6 +584,14 @@ namespace occa {
       return *this;
     }
 
+    /**
+     * @startDoc{asObject}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline json& asObject() {
       if (type & ~(none_ | object_)) {
         clear();
@@ -415,6 +643,14 @@ namespace occa {
     json& operator [] (const char *c);
     const json& operator [] (const char *c) const;
 
+    /**
+     * @startDoc{operator_brackets}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
     inline json& operator [] (const std::string &s) {
       return (*this)[s.c_str()];
     }
@@ -428,34 +664,42 @@ namespace occa {
 
     int size() const;
 
-    template <class TM>
+    /**
+     * @startDoc{set}
+     *
+     * Description:
+     *   TODO
+     *
+     * @endDoc
+     */
+    template <class T>
     json& set(const char *key,
-              const TM &value);
+              const T &value);
 
-    template <class TM>
+    template <class T>
     json& set(const std::string &key,
-              const TM &value);
+              const T &value);
 
     json getPathValue(const char *key) const;
 
-    template <class TM>
-    TM get(const char *key,
-           const TM &default_ = TM()) const;
+    template <class T>
+    T get(const char *key,
+           const T &default_ = T()) const;
 
-    template <class TM>
-    TM get(const std::string &key,
-           const TM &default_ = TM()) const;
+    template <class T>
+    T get(const std::string &key,
+           const T &default_ = T()) const;
 
-    template <class TM>
-    std::vector<TM> toVector(const std::vector<TM> &default_ = std::vector<TM>()) const;
+    template <class T>
+    std::vector<T> toVector(const std::vector<T> &default_ = std::vector<T>()) const;
 
-    template <class TM>
-    std::vector<TM> toVector(const char *c,
-                             const std::vector<TM> &default_ = std::vector<TM>()) const;
+    template <class T>
+    std::vector<T> toVector(const char *c,
+                             const std::vector<T> &default_ = std::vector<T>()) const;
 
-    template <class TM>
-    std::vector<TM> toVector(const std::string &s,
-                             const std::vector<TM> &default_ = std::vector<TM>()) const;
+    template <class T>
+    std::vector<T> toVector(const std::string &s,
+                             const std::vector<T> &default_ = std::vector<T>()) const;
 
     strVector keys() const;
     jsonArray values() const;

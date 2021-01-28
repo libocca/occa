@@ -15,7 +15,7 @@ namespace occa {
   typedef std::vector<scopeKernelArg> scopeKernelArgVector;
 
   namespace scopeKernelArgMethods {
-    template <class TM>
+    template <class T>
     struct isMemory {
       static const bool value = false;
     };
@@ -25,15 +25,15 @@ namespace occa {
       static const bool value = true;
     };
 
-    template <class TM>
+    template <class T>
     struct argIsPointer {
-      static const bool value = typeMetadata<TM>::isPointer || isMemory<TM>::value;
+      static const bool value = typeMetadata<T>::isPointer || isMemory<T>::value;
     };
 
-    template <class TM>
-    inline dtype_t getPointerType(const TM &arg) {
-      if (typeMetadata<TM>::isPointer) {
-        return dtype::get<TM>();
+    template <class T>
+    inline dtype_t getPointerType(const T &arg) {
+      if (typeMetadata<T>::isPointer) {
+        return dtype::get<T>();
       }
       return dtype::none;
     }
@@ -75,28 +75,28 @@ namespace occa {
       }
     }
 
-    template <class TM>
+    template <class T>
     void add(const std::string &name,
-             TM *value) {
+             T *value) {
       add({name, value});
     }
 
-    template <class TM>
+    template <class T>
     void add(const std::string &name,
-             const TM *value) {
+             const T *value) {
       // dtype -> name doesn't support const types yet
       add({name, value});
     }
 
-    template <class TM>
+    template <class T>
     void add(const std::string &name,
-             TM &value) {
+             T &value) {
       add({name, value});
     }
 
-    template <class TM>
+    template <class T>
     void add(const std::string &name,
-             const TM &value) {
+             const T &value) {
       add({name, value});
     }
 

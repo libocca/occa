@@ -1,15 +1,26 @@
+#! /usr/bin/env python3
+
+"""
+Generates:
+- `operator ()` for occa::kernel
+- `switch ()` to call function pointers with varying argument counts
+"""
+
 import os
 import functools
 
 
-OCCA_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../..")
+OCCA_DIR = os.environ.get(
+    'OCCA_DIR',
+    os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "../..")
+    )
 )
 
-EDIT_WARNING = '''
+EDIT_WARNING = f'''
 // -------------[ DO NOT EDIT ]-------------
 //  THIS IS AN AUTOMATICALLY GENERATED FILE
-//  EDIT: scripts/codegen/setup_kernel_operators.py
+//  EDIT: {os.path.relpath(__file__, OCCA_DIR)}
 // =========================================
 '''.strip()
 

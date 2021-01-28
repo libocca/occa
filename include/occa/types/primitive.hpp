@@ -304,26 +304,26 @@ namespace occa {
       return to<double>();
     }
 
-    template <class TM>
-    inline TM to() const {
+    template <class T>
+    inline T to() const {
       switch(type) {
-      case primitiveType::bool_   : return (TM) value.bool_;
-      case primitiveType::uint8_  : return (TM) value.uint8_;
-      case primitiveType::uint16_ : return (TM) value.uint16_;
-      case primitiveType::uint32_ : return (TM) value.uint32_;
-      case primitiveType::uint64_ : return (TM) value.uint64_;
-      case primitiveType::int8_   : return (TM) value.int8_;
-      case primitiveType::int16_  : return (TM) value.int16_;
-      case primitiveType::int32_  : return (TM) value.int32_;
-      case primitiveType::int64_  : return (TM) value.int64_;
+      case primitiveType::bool_   : return (T) value.bool_;
+      case primitiveType::uint8_  : return (T) value.uint8_;
+      case primitiveType::uint16_ : return (T) value.uint16_;
+      case primitiveType::uint32_ : return (T) value.uint32_;
+      case primitiveType::uint64_ : return (T) value.uint64_;
+      case primitiveType::int8_   : return (T) value.int8_;
+      case primitiveType::int16_  : return (T) value.int16_;
+      case primitiveType::int32_  : return (T) value.int32_;
+      case primitiveType::int64_  : return (T) value.int64_;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wfloat-equal"
-      case primitiveType::float_  : return (TM) value.float_;
-      case primitiveType::double_ : return (TM) value.double_;
+      case primitiveType::float_  : return (T) value.float_;
+      case primitiveType::double_ : return (T) value.double_;
 #pragma GCC diagnostic pop
       default: OCCA_FORCE_ERROR("Type not set");
       }
-      return TM();
+      return T();
     }
 
     inline bool isNaN() const {

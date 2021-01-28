@@ -278,3 +278,10 @@ print-%:
 	$(info )
 	@true
 #=================================================
+
+
+#---[ Documentation ]-----------------------------
+# Auto-generate the API documentation
+docs:
+	@${OCCA_DIR}/scripts/docs/api-docgen
+#=================================================

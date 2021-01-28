@@ -1,0 +1,16 @@
+#!/usr/bin/env python3
+'''
+Automates the API documentation:
+- Runs Doxygen to build an .xml file of the headers found in `include/`
+- Looks for file that have an output from our own custom Doxygen ALIASES
+- Parse through the classes and functions that have been documented
+
+Dependencies:
+- lxml: Parses XML files
+- mypy: Type check
+'''
+from api_docgen.cli import main
+
+
+if '__main__' == __name__:
+    main()

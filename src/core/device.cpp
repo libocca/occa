@@ -9,6 +9,46 @@
 #include <occa/internal/io.hpp>
 
 namespace occa {
+  //---[ Utils ]------------------------
+  occa::json getModeSpecificProps(const std::string &mode,
+                                  const occa::json &props) {
+    occa::json allProps = (
+      props
+      + props["modes/" + mode]
+    );
+
+    allProps.remove("modes");
+
+    return allProps;
+  }
+
+  occa::json getObjectSpecificProps(const std::string &mode,
+                                    const std::string &object,
+                                    const occa::json &props) {
+    occa::json allProps = (
+      props[object]
+      + props[object + "/modes/" + mode]
+      + props["modes/" + mode + "/" + object]
+    );
+
+    allProps.remove(object + "/modes");
+    allProps.remove("modes");
+
+    return allProps;
+  }
+
+  occa::json initialObjectProps(const std::string &mode,
+                                const std::string &object,
+                                const occa::json &props) {
+    occa::json objectProps = (
+      getObjectSpecificProps(mode, object, settings())
+      + getObjectSpecificProps(mode, object, props)
+    );
+    objectProps["mode"] = mode;
+    return objectProps;
+  }
+  //====================================
+
   device::device() :
     modeDevice(NULL) {}
 
@@ -532,43 +572,4 @@ namespace occa {
     return out;
   }
   //====================================
-
-  //---[ Utils ]------------------------
-  occa::json getModeSpecificProps(const std::string &mode,
-                                        const occa::json &props) {
-    occa::json allProps = (
-      props
-      + props["modes/" + mode]
-    );
-
-    allProps.remove("modes");
-
-    return allProps;
-  }
-
-  occa::json getObjectSpecificProps(const std::string &mode,
-                                          const std::string &object,
-                                          const occa::json &props) {
-    occa::json allProps = (
-      props[object]
-      + props[object + "/modes/" + mode]
-      + props["modes/" + mode + "/" + object]
-    );
-
-    allProps.remove(object + "/modes");
-    allProps.remove("modes");
-
-    return allProps;
-  }
-
-  occa::json initialObjectProps(const std::string &mode,
-                                      const std::string &object,
-                                      const occa::json &props) {
-    occa::json objectProps = (
-      getObjectSpecificProps(mode, object, settings())
-      + getObjectSpecificProps(mode, object, props)
-    );
-    objectProps["mode"] = mode;
-    return objectProps;
-  }
 }

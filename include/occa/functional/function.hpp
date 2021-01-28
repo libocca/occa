@@ -11,6 +11,14 @@ namespace occa {
   template <class Function>
   class function;
 
+  /**
+   * @startDoc{function}
+   *
+   * Description:
+   *   TODO
+   *
+   * @endDoc
+   */
   template <class ReturnType, class ...ArgTypes>
   class function<ReturnType(ArgTypes...)> : public baseFunction {
   private:
@@ -55,7 +63,7 @@ namespace occa {
       return lambda(args...);
     }
 
-    template <class TM>
+    template <class T>
     friend class array;
   };
 }

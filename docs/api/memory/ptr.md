@@ -1,0 +1,23 @@
+
+<h1 id="ptr">
+ <a href="#/api/memory/ptr" class="anchor">
+   <span>ptr</span>
+  </a>
+</h1>
+
+<div class="signature">
+  <hr>
+
+  
+  <div class="definition-container">
+    <div class="definition">
+      <code>T* occa::memory::ptr()</code>
+      <div class="flex-spacing"></div>
+      <a href="hi" target="_blank">Source</a>
+    </div>
+    
+  </div>
+
+
+  <hr>
+</div>

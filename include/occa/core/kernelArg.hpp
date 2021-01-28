@@ -67,14 +67,14 @@ namespace occa {
 
     OCCA_GENERIC_CLASS_CONSTRUCTORS(kernelArg);
 
-    template <class TM>
-    kernelArg(const type2<TM> &arg) {
-      addPointer((void*) const_cast<type2<TM>*>(&arg), sizeof(type2<TM>), false);
+    template <class T>
+    kernelArg(const type2<T> &arg) {
+      addPointer((void*) const_cast<type2<T>*>(&arg), sizeof(type2<T>), false);
     }
 
-    template <class TM>
-    kernelArg(const type4<TM> &arg) {
-      addPointer((void*) const_cast<type4<TM>*>(&arg), sizeof(type4<TM>), false);
+    template <class T>
+    kernelArg(const type4<T> &arg) {
+      addPointer((void*) const_cast<type4<T>*>(&arg), sizeof(type4<T>), false);
     }
 
     int size() const;
@@ -124,20 +124,20 @@ namespace occa {
     scopeKernelArg(const std::string &name_,
                    const primitive &value_);
 
-    template <class TM>
+    template <class T>
     inline scopeKernelArg(const std::string &name_,
-                          TM *value_) :
+                          T *value_) :
       name(name_),
       isConst(false) {
-      pointerConstructor(value_, dtype::get<TM>());
+      pointerConstructor(value_, dtype::get<T>());
     }
 
-    template <class TM>
+    template <class T>
     inline scopeKernelArg(const std::string &name_,
-                          const TM *value_) :
+                          const T *value_) :
       name(name_),
       isConst(true) {
-      pointerConstructor(value_, dtype::get<TM>());
+      pointerConstructor(value_, dtype::get<T>());
     }
 
     virtual ~scopeKernelArg();

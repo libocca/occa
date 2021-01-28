@@ -5,19 +5,19 @@
 #include <occa/types/tuples.hpp>
 
 namespace occa {
-  template <class TM>
+  template <class T>
   struct typeMetadata {
-    typedef TM baseType;
+    typedef T baseType;
     static const bool isPointer = false;
   };
 
-  template <class TM>
-  struct typeMetadata<TM*> {
-    typedef TM baseType;
+  template <class T>
+  struct typeMetadata<T*> {
+    typedef T baseType;
     static const bool isPointer = true;
   };
 
-  template <class TM>
+  template <class T>
   class primitiveinfo {
   public:
     static const std::string id;
@@ -25,7 +25,7 @@ namespace occa {
     static const bool isUnsigned;
   };
 
-  template <class TM>
+  template <class T>
   class typeinfo {
   public:
     static const std::string id;

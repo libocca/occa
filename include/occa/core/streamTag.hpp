@@ -12,7 +12,14 @@ namespace occa {
   class modeDevice_t; class device;
   class modeStreamTag_t; class streamTag;
 
-  //---[ streamTag ]-----------------------
+  /**
+   * @startDoc{streamTag}
+   *
+   * Description:
+   *   TODO
+   *
+   * @endDoc
+   */
   class streamTag : public gc::ringEntry_t {
     friend class occa::modeStreamTag_t;
     friend class occa::device;
@@ -49,7 +56,6 @@ namespace occa {
 
     void free();
   };
-  //====================================
 }
 
 #endif

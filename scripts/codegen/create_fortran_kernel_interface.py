@@ -1,6 +1,7 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
-""" Generate the Fortran kernel module (occa_kernel_m.f90)
+"""
+Generate the Fortran kernel module (occa_kernel_m.f90)
 """
 
 import os
@@ -8,8 +9,11 @@ import re
 import argparse
 
 
-OCCA_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", "..")
+OCCA_DIR = os.environ.get(
+    'OCCA_DIR',
+    os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "../..")
+    )
 )
 
 CODEGEN_DIR = os.path.join(OCCA_DIR, 'scripts', 'codegen')
