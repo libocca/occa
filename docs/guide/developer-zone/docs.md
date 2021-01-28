@@ -2,11 +2,11 @@
 
 ## Downloading
 
-To update the docs, clone the git repo first
+To update the docs, clone the git repo first and go to the docs directory
 
 ```bash
-git clone git@github.com:libocca/libocca.org.git
-cd libocca.org
+git clone git@github.com:libocca/occa.git
+cd occa/docs
 ```
 
 ## Yarn
@@ -27,4 +27,23 @@ PATH+=":${HOME}/.npm-global/bin/docsify"
 
 ```bash
 docsify serve .
+```
+
+## Generate the API
+
+### Requirements
+
+Generating the API docs requires:
+- Python 3.7 or greater
+- doxygen
+  - `sudo apt install doxygen`
+- lxml Python package
+-   `pip install lxml`
+
+### Command
+
+Inside the `occa/` directory, run
+
+```bash
+./scripts/docs/api-docgen
 ```
