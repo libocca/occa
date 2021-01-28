@@ -13,7 +13,7 @@
     <div class="definition">
       <code>json& occa::json::asNumber()</code>
       <div class="flex-spacing"></div>
-      <a href="hi" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/types/json.hpp#L547" target="_blank">Source</a>
     </div>
     
   </div>

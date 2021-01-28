@@ -95,4 +95,4 @@ def get_git_hash():
     '''
     return subprocess.check_output(
         'git rev-parse --short HEAD'.split(' ')
-    ).decode('utf-8')
+    ).decode('utf-8').strip()

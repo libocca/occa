@@ -13,7 +13,7 @@
     <div class="definition">
       <code>occa::memory occa::memory::slice(const dim_t offset, const dim_t count=-1) const</code>
       <div class="flex-spacing"></div>
-      <a href="hi" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/memory.hpp#L166" target="_blank">Source</a>
     </div>
     
   </div>

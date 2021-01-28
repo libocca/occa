@@ -13,7 +13,7 @@
     <div class="definition">
       <code>void occa::kernel::free()</code>
       <div class="flex-spacing"></div>
-      <a href="hi" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/kernel.hpp#L135" target="_blank">Source</a>
     </div>
     
   </div>
