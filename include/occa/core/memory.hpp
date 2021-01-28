@@ -97,6 +97,13 @@ namespace occa {
 
     memory& swap(memory &m);
 
+    /**
+     * @startDoc{ptr}
+     *
+     * TODO
+     *
+     * @endDoc
+     */
     template <class T = void>
     T* ptr();
 

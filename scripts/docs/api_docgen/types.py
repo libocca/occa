@@ -129,6 +129,11 @@ class DefinitionInfo:
     type_: str
     name: str
 
+    @property
+    def short_name(self):
+        # Remove the templates
+        return self.name.split('<')[0]
+
 
 @dataclass
 class Function(DefinitionInfo):
@@ -170,15 +175,146 @@ class Function(DefinitionInfo):
 
     def get_markdown_content(self,
                              doc: Documentation,
+                             name: str,
                              overrides: List['Definition'],
                              hyperlink_mapping: HyperlinkMapping) -> str:
-        return 'hi'
+        from . import markdown
+
+        info = hyperlink_mapping.get(self.ref_id)
+        sections = markdown.parse_sections(doc.description,
+                                           info.link,
+                                           hyperlink_mapping,
+                                           header_index_offset=2)
+
+        description = sections.get('Description')
+        examples = sections.get('Examples')
+
+        method_header = markdown.build_header(name, 1, info.link, include_id=False)
+
+        function_definitions = '\n  <hr>\n'.join(
+            '''
+  <div class="definition-container">
+    <div class="definition">
+      <code>{override.get_function_signature(hyperlink_mapping)</code>
+      <div class="flex-spacing"></div>
+      <a href="{override.get_source_link()}" target="_blank">Source</a>
+    </div>
+    {self.get_description_markdown(hyperlink_mapping)}
+  </div>
+'''
+            for override in overrides
+        )
+
+        content = f'''
+{method_header}
+
+<div class="signature">
+  <hr>
+
+  {function_definitions}
+
+  <hr>
+</div>
+'''
+
+        for (section_header, section_content) in [('Description', description), ('Examples', examples)]:
+            if section_content:
+                section_header = markdown.build_header(section_header, 2, info.link)
+                content += f'''
+
+{section_header}
+
+{section_content}
+'''
+
+        return content
+
+    def get_function_signature(self,
+                               hyperlink_mapping: HyperlinkMapping):
+        return "hi"
+
+    def get_source_link(self):
+        return "hi"
+
+    def get_description_markdown(self,
+                                hyperlink_mapping: HyperlinkMapping):
+        info = hyperlink_mapping.get(self.ref_id)
+        sections = markdown.parse_sections(doc.description,
+                                           info.link,
+                                           hyperlink_mapping)
+
+        description = sections.get('Overloaded Description')
+        arguments = sections.get('Arguments')
+        returns = sections.get('Returns')
+
+        argument_descriptions = []
+        if arguments:
+            argument_content = markdown.parse_sections(arguments,
+                                                       info.link,
+                                                       hyperlink_mapping)
+
+            argument_descriptions = [
+                (arg, argument_content.get(arg))
+                for arg in self.arguments
+                if argument_content.get(arg)
+            ]
+
+        if (not description and
+            not argument_descriptions and
+            not returns):
+            return ''
+
+        content = '<div class="description">\n'
+
+        if description:
+            content += f'''
+      <div>
+        ::: markdown
+        {description}
+        :::
+      </div>
+'''
+
+        if argument_descriptions:
+            argument_content = '\n'.join(
+                f'''
+        <li>
+          <strong>{arg_name}</strong>: ::: markdown
+            {arg_description}
+            :::
+        </li>
+'''
+                for (arg_name, arg_description) in argument_descriptions
+            )
+            content += f'''
+      <div class="section-header">Arguments</div>
+      <ul class="section-list">
+      </ul>
+'''
+
+        if returns:
+            content += f'''
+      <div class="section-header">Returns</div>
+      <ul class="section-list">
+        <li>
+          ::: markdown
+          {returns}
+          :::
+        </li>
+      </ul>
+    </div>
+'''
+
+        return content
+
+    def get_definition_markdown(self,
+                                hyperlink_mapping: HyperlinkMapping):
+        return "hi"
+
 
 
 @dataclass
 class Class(DefinitionInfo):
-    name: str
-
     @staticmethod
     def parse(node: Any, def_info: DefinitionInfo):
       return Class(**{
@@ -206,7 +342,7 @@ class Class(DefinitionInfo):
             raise NotImplementedError('Classes need to have a [Description] section')
 
         # Add the class header and missing description header
-        class_header = markdown.build_header(self.name, 1, info.link, include_id=False)
+        class_header = markdown.build_header(self.short_name, 1, info.link, include_id=False)
         description_header = markdown.build_header('Description', 2, info.link)
         return f'''
 {class_header}
@@ -302,7 +438,7 @@ class DocTreeNode:
 
     @property
     def name(self) -> str:
-        name = self.root_definition.code.name
+        name = self.root_definition.code.short_name
 
         if name.startswith('operator'):
             return re.sub(r'^operator', 'operator ', name)
@@ -332,7 +468,8 @@ class DocTreeNode:
 
         if isinstance(def_.code, Function):
             return def_.code.get_markdown_content(def_.doc,
-                                                  self.definitions[1:],
+                                                  self.name,
+                                                  self.definitions,
                                                   hyperlink_mapping)
 
         raise NotImplementedError("Code type undefined")

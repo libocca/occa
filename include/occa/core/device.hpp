@@ -103,7 +103,7 @@ namespace occa {
    *   # Garbage collection
    *
    *   The [[device.free]] function can be called to free the device along with any other object allocated by it, such as [[memory]] and [[kernel]] objects.
-   *   OCCA implemented reference counting by default so calling [[device.free]] is not required.   *
+   *   OCCA implemented reference counting by default so calling [[device.free]] is not required.
    *
    * @endDoc
    */
@@ -136,7 +136,8 @@ namespace occa {
      *   Takes a JSON-formatted string for the device props.
      *
      * Arguments:
-     *   props: JSON-formatted string that defines the device properties
+     *   props:
+     *     JSON-formatted string that defines the device properties
      *
      * @endDoc
      */
@@ -149,7 +150,8 @@ namespace occa {
      *   Takes an [[json]] argument for the device props.
      *
      * Arguments:
-     *   props: Device properties
+     *   props:
+     *     Device properties
      *
      * @endDoc
      */
@@ -332,7 +334,7 @@ namespace occa {
      *
      * Description:
      *   Finishes any asynchronous operation queued up on the device, such as
-     *   [[async memory allocations|malloc]] or [[kernel calls|kernel.()]].
+     *   [[async memory allocations|device.malloc]] or [[kernel calls|kernel.operator_parentheses]].
      *
      * @endDoc
      */
@@ -359,7 +361,7 @@ namespace occa {
      * @startDoc{createStream}
      *
      * Description:
-     *   Creates and returns a new [[steam]] to queue operations on.
+     *   Creates and returns a new [[stream]] to queue operations on.
      *   If the backend supports streams, out-of-order work can be achieved through
      *   the use of streams.
      *
@@ -447,7 +449,7 @@ namespace occa {
      * Description:
      *   Builds a [[kernel]] given a filename, kernel name, and optional properties.
      *
-     *   ## Defines
+     *   # Defines
      *
      *   Compile-time definitions can be passed through the `defines` path.
      *   For example:
@@ -457,7 +459,7 @@ namespace occa {
      *   props["defines/TWO"] = 2;
      *   ```
      *
-     *   ## Includes
+     *   # Includes
      *
      *   Headers can be `#include`-ed through the `includes` path.
      *   For example:
@@ -468,7 +470,7 @@ namespace occa {
      *   props["includes"] += "my_header.hpp";
      *   ```
      *
-     *   ## Headers
+     *   # Headers
      *
      *   Source code can be injected through the `headers` path.
      *   For example:
@@ -479,7 +481,7 @@ namespace occa {
      *   props["headers"] += "#define TWO 2";
      *   ```
      *
-     *   ## Functions
+     *   # Functions
      *
      *   Lastly, [[function]]'s can be captured through the `functions` path.
      *   For example:

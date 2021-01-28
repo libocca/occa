@@ -11,7 +11,15 @@ namespace occa {
     class output;
   }
 
-  // Uses FNV hashing
+  /**
+   * @startDoc{hash_t}
+   *
+   * Description:
+   *   TODO
+   *   Note: Uses FNV hashing
+   *
+   * @endDoc
+   */
   class hash_t {
   public:
     bool initialized;

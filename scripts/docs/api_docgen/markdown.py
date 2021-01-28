@@ -5,7 +5,8 @@ from .types import *
 
 def parse_sections(content: str,
                    node_link: str,
-                   hyperlink_mapping: HyperlinkMapping) -> Dict[str, str]:
+                   hyperlink_mapping: HyperlinkMapping,
+                   header_index_offset: int = 1) -> Dict[str, str]:
     '''
     Find the sections given by header and and indentation
     For example:
@@ -41,11 +42,12 @@ def parse_sections(content: str,
         section_content = remove_section_padding(section_content)
 
         section_content = replace_headers(section_header,
-                                                   section_content,
-                                                   node_link)
+                                          section_content,
+                                          node_link,
+                                          header_index_offset)
 
         section_content = replace_hyperlinks(section_content,
-                                                      hyperlink_mapping)
+                                             hyperlink_mapping)
 
         sections.update({
             section_header: section_content,
@@ -61,7 +63,10 @@ def remove_section_padding(content: str) -> str:
     )
 
 
-def replace_headers(header: str, content: str, node_link: str) -> str:
+def replace_headers(header: str,
+                    content: str,
+                    node_link: str,
+                    header_index_offset: int) -> str:
     # Downgrade headers and use HTML to avoid creating sidebar items for them
     for header_index in range(4, 0, -1):
         markdown_header_prefix = '#' * header_index
@@ -87,7 +92,7 @@ def replace_headers(header: str, content: str, node_link: str) -> str:
 
             header_html = build_header(
                 header=section_header,
-                header_index=(header_index + 1),
+                header_index=(header_index + header_index_offset),
                 node_link=node_link,
             )
             content += f'\n{header_html}\n{section_content}'

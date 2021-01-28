@@ -13,7 +13,14 @@ namespace occa {
   class modeStream_t; class stream;
   class modeDevice_t; class device;
 
-  //---[ stream ]-----------------------
+  /**
+   * @startDoc{stream}
+   *
+   * Description:
+   *   TODO
+   *
+   * @endDoc
+   */
   class stream : public gc::ringEntry_t {
     friend class occa::modeStream_t;
     friend class occa::device;
@@ -51,7 +58,6 @@ namespace occa {
 
     void free();
   };
-  //====================================
 
   std::ostream& operator << (std::ostream &out,
                              const occa::stream &stream);
