@@ -18,6 +18,14 @@ namespace occa {
   typedef std::map<std::string, dtype_t>        dtypeNameMap_t;
   typedef std::vector<const dtype_t*>           dtypeVector_t;
 
+  /**
+   * @startDoc{dtype_t}
+   *
+   * Description:
+   *   TODO
+   *
+   * @endDoc
+   */
   class dtype_t {
   private:
     const dtype_t *ref;

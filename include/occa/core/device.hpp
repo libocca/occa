@@ -365,7 +365,7 @@ namespace occa {
      *   If the backend supports streams, out-of-order work can be achieved through
      *   the use of streams.
      *
-     *   ?> Note that the stream is created but not set as the active stream.
+     *   > Note that the stream is created but not set as the active stream.
      *
      * Returns:
      *   Newly created [[stream]]
@@ -631,7 +631,7 @@ namespace occa {
      *   The simplest example would be on a `Serial` or `OpenMP` device, where a regular pointer allocated through `malloc` or `new` is passed in.
      *   For other modes, such as CUDA or HIP, it takes the pointer allocated through their API.
      *
-     *   ?> Note that automatic garbage collection is not set for wrapped memory objects.
+     *   > Note that automatic garbage collection is not set for wrapped memory objects.
      *
      * Overloaded Description:
      *   Uses the templated type to determine the type and bytes.

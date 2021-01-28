@@ -137,6 +137,7 @@ class DefinitionInfo:
 
 @dataclass
 class Function(DefinitionInfo):
+    full_name: str
     is_static: bool
     is_const: bool
     template: List[Argument]
@@ -149,6 +150,10 @@ class Function(DefinitionInfo):
 
         return Function(**{
             **dataclasses.asdict(def_info),
+            'full_name': ''.join([
+                get_node_text(node, './definition'),
+                get_node_text(node, './argsstring'),
+            ]),
             'is_static': get_bool_attr(attrs, 'static'),
             'is_const': get_bool_attr(attrs, 'const'),
             'template': cls.get_function_arguments(node.find('./templateparamlist')),
@@ -192,14 +197,14 @@ class Function(DefinitionInfo):
         method_header = markdown.build_header(name, 1, info.link, include_id=False)
 
         function_definitions = '\n  <hr>\n'.join(
-            '''
+            f'''
   <div class="definition-container">
     <div class="definition">
-      <code>{override.get_function_signature(hyperlink_mapping)</code>
+      <code>{override.code.get_function_signature(hyperlink_mapping)}</code>
       <div class="flex-spacing"></div>
-      <a href="{override.get_source_link()}" target="_blank">Source</a>
+      <a href="{override.code.get_source_link()}" target="_blank">Source</a>
     </div>
-    {self.get_description_markdown(hyperlink_mapping)}
+    {self.get_description_markdown(override, hyperlink_mapping)}
   </div>
 '''
             for override in overrides
@@ -231,15 +236,19 @@ class Function(DefinitionInfo):
 
     def get_function_signature(self,
                                hyperlink_mapping: HyperlinkMapping):
-        return "hi"
+        # TODO
+        return self.full_name
 
     def get_source_link(self):
         return "hi"
 
     def get_description_markdown(self,
-                                hyperlink_mapping: HyperlinkMapping):
+                                 def_info: 'Definition',
+                                 hyperlink_mapping: HyperlinkMapping):
+        from . import markdown
+
         info = hyperlink_mapping.get(self.ref_id)
-        sections = markdown.parse_sections(doc.description,
+        sections = markdown.parse_sections(def_info.doc.description,
                                            info.link,
                                            hyperlink_mapping)
 
@@ -307,11 +316,6 @@ class Function(DefinitionInfo):
 
         return content
 
-    def get_definition_markdown(self,
-                                hyperlink_mapping: HyperlinkMapping):
-        return "hi"
-
-
 
 @dataclass
 class Class(DefinitionInfo):
@@ -326,10 +330,6 @@ class Class(DefinitionInfo):
                              doc: Documentation,
                              hyperlink_mapping: HyperlinkMapping) -> str:
         from . import markdown
-
-        if doc.id_ == 'device':
-            pp_json(self)
-            pp_json(doc)
 
         info = hyperlink_mapping.get(self.ref_id)
 

@@ -34,7 +34,7 @@ namespace occa {
    *   - [[memory.copyTo]] which helpes copy data from the memory object to the input.
    *   - [[memory.copyFrom]] which helpes copy data from the input to the memory object.
    *
-   *   ?> Note that because we know the type and size of the underlying data allocated, passing the bytes to copy defaults to the full array.
+   *   > Note that because we know the type and size of the underlying data allocated, passing the bytes to copy defaults to the full array.
    *
    *   # Transformations
    *
