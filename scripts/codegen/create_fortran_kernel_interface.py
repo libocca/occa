@@ -9,24 +9,17 @@ import argparse
 
 
 OCCA_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..")
+    os.path.join(os.path.dirname(__file__), "..", "..")
 )
 
-
-EDIT_WARNING = ('''
-! --------------[ DO NOT EDIT ]--------------
-!  THIS IS AN AUTOMATICALLY GENERATED FILE
-!  EDIT:
-!    %s
-!    %s
-! ===========================================
-'''.strip() % (os.path.relpath(__file__, OCCA_DIR),
-               os.path.relpath('occa_kernel_m.f90.in', OCCA_DIR)))
-
+CODEGEN_DIR = os.path.join(OCCA_DIR, 'scripts', 'codegen')
+FORTRAN_DIR = os.path.join(OCCA_DIR, 'src', 'fortran')
+C_SRC_DIR = os.path.join(OCCA_DIR, 'src', 'c')
+C_INC_DIR = os.path.join(OCCA_DIR, 'include', 'occa', 'c')
 
 OCCA_KERNEL_RUN_N = ('''
     subroutine occaKernelRunN%02d(kernel, argc, %s) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF%02d")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -45,6 +38,15 @@ OCCA_KERNEL_RUN = ('''
 ''').lstrip('\n')
 
 
+def generate_edit_warning(fpath, comment_marker='!'):
+    return \
+        ('%s --------------[ DO NOT EDIT ]--------------\n' % comment_marker) + \
+        ('%s  THIS IS AN AUTOMATICALLY GENERATED FILE\n' % comment_marker) + \
+        ('%s  EDIT:\n' % comment_marker) + \
+        ('%s    %s\n' % (comment_marker, os.path.relpath(__file__, OCCA_DIR))) + \
+        (('%s    %s\n' %(comment_marker, os.path.relpath(fpath, OCCA_DIR))) if fpath else '') + \
+        ('%s ===========================================\n' % comment_marker)
+
 if __name__ == '__main__':
     # Parse command-line arguments
     parser = argparse.ArgumentParser(usage=__doc__)
@@ -53,16 +55,17 @@ if __name__ == '__main__':
 
     MAX_ARGS = args.NargsMax
     if MAX_ARGS > 99:
-        raise ValueError('The format was designed for max. 99 arguments!')
+        raise ValueError('The format was designed for max. %d arguments!' % MAX_ARGS)
 
-    with open('occa_kernel_m.f90.in', 'r') as f:
+    fname_in = os.path.join(CODEGEN_DIR, 'occa_kernel_m.f90.in')
+    with open(fname_in, 'r') as f:
         f_in = f.readlines()
 
-    fname = os.path.join(OCCA_DIR, 'src', 'fortran', 'occa_kernel_m.f90')
+    fname = os.path.join(FORTRAN_DIR, 'occa_kernel_m.f90')
     print('Write OCCA Fortran kernel module to: %s' % (fname))
     with open(fname, 'w') as f:
         # Add edit warning to the top of the file
-        f.write(EDIT_WARNING)
+        f.write(generate_edit_warning(fname_in))
         f.write('\n')
 
         # Write header
@@ -91,7 +94,7 @@ if __name__ == '__main__':
                 args_d = ', '.join(arg_lst)
 
             if (N > 1): f.write('\n')
-            f.write(OCCA_KERNEL_RUN_N % (N, args_f, args_d))
+            f.write(OCCA_KERNEL_RUN_N % (N, args_f, N, args_d))
 
         # Write input file
         line = f_in.pop(0)
@@ -142,3 +145,40 @@ if __name__ == '__main__':
         # Write remainder of the input file
         for line in f_in:
             f.write(line)
+
+    # Generate interface functions with fixed arity to safely interface C with Fortran
+    fname = os.path.join(C_SRC_DIR, 'kernel_fortran_interface.cpp')
+    print('Write OCCA Fortran kernel interface C source to: %s' % fname)
+    with open(fname, 'w') as f:
+        f.write(generate_edit_warning(None, comment_marker='//'))
+        f.write('\n')
+        f.write('#include <occa/c/kernel_fortran_interface.h>\n')
+        f.write('#include <occa/c/kernel.h>\n')
+        f.write('\n')
+        f.write('OCCA_START_EXTERN_C\n')
+        f.write('\n')
+        for N in range(1, MAX_ARGS+1):
+            f.write('void occaKernelRunF%02d(occaKernel kernel,\n' % N);
+            f.write('                      const int argc,\n');
+            for n in range(1, N+1):
+                f.write('                      occaType arg%02d%s\n' % (n, ') {' if n == N else ','))
+            f.write('  occaKernelRunN(kernel, argc,\n')
+            for n in range(1, N+1):
+                f.write('%16s arg%02d%s' % ('', n, ');\n}\n\n' if n == N else ',\n'))
+        f.write('OCCA_END_EXTERN_C\n')
+
+    fname = os.path.join(C_INC_DIR, 'kernel_fortran_interface.h')
+    print('Write OCCA Fortran kernel interface C headers to: %s' % fname)
+    with open(fname, 'w') as f:
+        f.write(generate_edit_warning(None, comment_marker='//'))
+        f.write('\n')
+        f.write('#include <occa/internal/c/types.hpp>\n')
+        f.write('\n')
+        f.write('OCCA_START_EXTERN_C\n')
+        f.write('\n')
+        for N in range(1, MAX_ARGS+1):
+            f.write('void occaKernelRunF%02d(occaKernel kernel,\n' % N);
+            f.write('                      const int argc,\n');
+            for n in range(1, N+1):
+                f.write('                      occaType arg%02d%s\n' % (n, ');\n\n' if n == N else ','))
+        f.write('OCCA_END_EXTERN_C\n')
