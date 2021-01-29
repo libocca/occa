@@ -11,9 +11,9 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code>streamTag occa::device::tagStream()</code>
+      <code><a href="/api/streamTag">occa::streamTag</a> tagStream()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/core/device.hpp#L411" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/b37a03f7/include/occa/core/device.hpp#L411" target="_blank">Source</a>
     </div>
     <div class="description">
 

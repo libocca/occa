@@ -11,9 +11,9 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code>occa::memory occa::memory::cast(const dtype_t &dtype_) const</code>
+      <code><a href="/api/memory/">occa::memory</a> cast(<span class="token keyword">const</span> <a href="/api/dtype_t">occa::dtype_t</a> &dtype_)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/core/memory.hpp#L227" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/b37a03f7/include/occa/core/memory.hpp#L227" target="_blank">Source</a>
     </div>
     
   </div>

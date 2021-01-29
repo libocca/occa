@@ -11,9 +11,9 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code>hash_t occa::device::hash() const</code>
+      <code><a href="/api/hash_t">occa::hash_t</a> hash()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/core/device.hpp#L304" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/b37a03f7/include/occa/core/device.hpp#L304" target="_blank">Source</a>
     </div>
     <div class="description">
 

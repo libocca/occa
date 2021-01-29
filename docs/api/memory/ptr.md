@@ -11,9 +11,10 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code>T* occa::memory::ptr()</code>
+      <code>template <<span class="token keyword">class</span> <span class="token keyword">T</span>>
+<span class="token keyword">T</span>* ptr()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/core/memory.hpp#L108" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/b37a03f7/include/occa/core/memory.hpp#L108" target="_blank">Source</a>
     </div>
     
   </div>

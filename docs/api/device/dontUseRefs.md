@@ -11,9 +11,9 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code>void occa::device::dontUseRefs()</code>
+      <code><span class="token keyword">void</span> dontUseRefs()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/core/device.hpp#L185" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/b37a03f7/include/occa/core/device.hpp#L185" target="_blank">Source</a>
     </div>
     
   </div>

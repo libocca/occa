@@ -11,9 +11,9 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code>void occa::kernel::run() const</code>
+      <code><span class="token keyword">void</span> run()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/core/kernel.hpp#L114" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/b37a03f7/include/occa/core/kernel.hpp#L114" target="_blank">Source</a>
     </div>
     
   </div>

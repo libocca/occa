@@ -11,9 +11,9 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code>bool occa::json::isObject() const</code>
+      <code><span class="token keyword">bool</span> isObject()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/types/json.hpp#L450" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/b37a03f7/include/occa/types/json.hpp#L450" target="_blank">Source</a>
     </div>
     
   </div>

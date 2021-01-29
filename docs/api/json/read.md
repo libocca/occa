@@ -11,9 +11,9 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code>static json occa::json::read(const std::string &filename)</code>
+      <code><a href="/api/json/">occa::json</a> read(<span class="token keyword">const</span> <span class="token keyword">std::string</span> &filename)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/types/json.hpp#L389" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/b37a03f7/include/occa/types/json.hpp#L389" target="_blank">Source</a>
     </div>
     
   </div>

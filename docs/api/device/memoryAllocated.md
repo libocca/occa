@@ -11,9 +11,9 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code>udim_t occa::device::memoryAllocated() const</code>
+      <code><span class="token keyword">udim_t</span> memoryAllocated()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/core/device.hpp#L330" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/b37a03f7/include/occa/core/device.hpp#L330" target="_blank">Source</a>
     </div>
     
   </div>

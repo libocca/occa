@@ -11,9 +11,9 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code>const std::string& occa::device::mode() const</code>
+      <code><span class="token keyword">const</span> <span class="token keyword">std::string</span>& mode()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/core/device.hpp#L267" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/b37a03f7/include/occa/core/device.hpp#L267" target="_blank">Source</a>
     </div>
     <div class="description">
 

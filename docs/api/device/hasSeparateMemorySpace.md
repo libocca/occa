@@ -11,9 +11,9 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code>bool occa::device::hasSeparateMemorySpace()</code>
+      <code><span class="token keyword">bool</span> hasSeparateMemorySpace()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6c4ac6cd/include/occa/core/device.hpp#L357" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/b37a03f7/include/occa/core/device.hpp#L357" target="_blank">Source</a>
     </div>
     <div class="description">
 
