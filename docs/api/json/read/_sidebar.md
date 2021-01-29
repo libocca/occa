@@ -26,6 +26,7 @@
     - [parse](/api/json/parse)
     - [read](/api/json/read)
   - [occa::hash_t](/api/hash_t)
+  - [occa::kernelArg](/api/kernelArg)
   - [occa::kernel](/api/kernel/)
   - [occa::device](/api/device/)
   - [occa::function](/api/function)

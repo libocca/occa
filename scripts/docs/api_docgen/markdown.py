@@ -32,7 +32,7 @@ def parse_sections(content: str,
       "Section Header 3": "line1",
     }
     '''
-    content = content.strip()
+    content = (content or '').strip()
 
     parts = re.split(f'(?:^|\n+)([^\s].*?[^\s]):\n', content)
 

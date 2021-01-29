@@ -10,6 +10,7 @@
 - [**API**](/api/)
   - [occa::json](/api/json/)
   - [occa::hash_t](/api/hash_t)
+  - [occa::kernelArg](/api/kernelArg)
   - [occa::kernel](/api/kernel/)
     - [free](/api/kernel/free)
     - [operator ()](/api/kernel/operator_parentheses)

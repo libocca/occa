@@ -6,14 +6,14 @@
 </h1>
 
 <div class="signature">
-  <hr>
 
-  
+<hr>
+
   <div class="definition-container">
     <div class="definition">
       <code><a href="#/api/streamTag">occa::streamTag</a> tagStream()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/a7d71df6/include/occa/core/device.hpp#L411" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6aadf694/include/occa/core/device.hpp#L411" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -23,7 +23,6 @@
       </ul>
 </div>
   </div>
-
 
   <hr>
 </div>

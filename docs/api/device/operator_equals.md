@@ -6,14 +6,14 @@
 </h1>
 
 <div class="signature">
-  <hr>
 
-  
+<hr>
+
   <div class="definition-container">
     <div class="definition">
       <code><span class="token keyword">bool</span> operator == (<span class="token keyword">const</span> <a href="#/api/device/">occa::device</a> &other)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/a7d71df6/include/occa/core/device.hpp#L198" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6aadf694/include/occa/core/device.hpp#L198" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -24,13 +24,13 @@
 </div>
   </div>
 
-  <hr>
+<hr>
 
   <div class="definition-container">
     <div class="definition">
       <code><span class="token keyword">bool</span> operator != (<span class="token keyword">const</span> <a href="#/api/device/">occa::device</a> &other)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/a7d71df6/include/occa/core/device.hpp#L211" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6aadf694/include/occa/core/device.hpp#L211" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -40,7 +40,6 @@
       </ul>
 </div>
   </div>
-
 
   <hr>
 </div>

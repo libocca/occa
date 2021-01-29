@@ -20,6 +20,7 @@
     - [isBool](/api/json/isBool)
     - [isNull](/api/json/isNull)
   - [occa::hash_t](/api/hash_t)
+  - [occa::kernelArg](/api/kernelArg)
   - [occa::kernel](/api/kernel/)
   - [occa::device](/api/device/)
   - [occa::function](/api/function)

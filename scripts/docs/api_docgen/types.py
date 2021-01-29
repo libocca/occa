@@ -257,36 +257,66 @@ class Function(DefinitionInfo):
         description = sections.get('Description')
         examples = sections.get('Examples')
 
-        method_header = markdown.build_header(name, 1, info.link, include_id=False)
+        # Special case when we want to replace the argument type
+        #
+        # Example:
+        #   void operator () ([[kernelArg]]... args)
+        #
+        argument_override = sections.get('Argument Override')
 
-        function_definitions = '\n  <hr>\n'.join(
-            f'''
-  <div class="definition-container">
-    <div class="definition">
-      <code>{func.get_function_signature(hyperlink_mapping)}</code>
-      <div class="flex-spacing"></div>
-      <a href="{func.get_source_link(override.doc, git_hash)}" target="_blank">Source</a>
-    </div>
-    {self.get_description_markdown(override, hyperlink_mapping)}
-  </div>
-'''
-            for override in overrides
-            for func in [cast('Function', override.code)]
-        )
+        method_header = markdown.build_header(name, 1, info.link, include_id=False)
 
         content = f'''
 {method_header}
 
 <div class="signature">
-  <hr>
+'''
 
-  {function_definitions}
+        func_descriptions = [
+            (override, self.get_description_markdown(override, hyperlink_mapping))
+            for override in overrides
+        ]
 
+        override_group_descriptions = ['']
+        override_groups = [[]]
+        for override, func_description in func_descriptions:
+            if func_description:
+                override_group_descriptions.append(func_description)
+                override_groups.append([])
+            override_groups[-1].append(override)
+
+        for func_description, override_group in zip(override_group_descriptions, override_groups):
+            if not len(override_group):
+                continue
+
+            content += '\n<hr>\n'
+            for index, override in enumerate(override_group):
+                is_last = (index == (len(override_group) - 1))
+
+                func = cast('Function', override.code)
+
+                override_description = func_description if is_last else ''
+
+                content += f'''
+  <div class="definition-container">
+    <div class="definition">
+      <code>{func.get_function_signature(hyperlink_mapping, argument_override)}</code>
+      <div class="flex-spacing"></div>
+      <a href="{func.get_source_link(override.doc, git_hash)}" target="_blank">Source</a>
+    </div>
+    {override_description}
+  </div>
+'''
+
+        content += f'''
   <hr>
 </div>
 '''
 
-        for (section_header, section_content) in [('Description', description), ('Examples', examples)]:
+        for (section_header, section_content) in [
+                ('Description', description),
+                ('Examples', examples),
+        ]:
             if section_content:
                 section_header = markdown.build_header(section_header, 2, info.link)
                 content += f'''
@@ -298,7 +328,10 @@ class Function(DefinitionInfo):
 
         return content
 
-    def get_function_signature(self, hyperlink_mapping: HyperlinkMapping):
+    def get_function_signature(self,
+                               hyperlink_mapping: HyperlinkMapping,
+                               argument_override: Optional[str]):
+        from . import markdown
         # Example:
         #
         #   template <class TM>
@@ -337,17 +370,23 @@ class Function(DefinitionInfo):
         content += name_str
         char_count += len(name_str)
 
-        left_padding = ' ' * char_count
+        if argument_override:
+            content += (
+                markdown.replace_hyperlinks(argument_override,
+                                            hyperlink_mapping)
+            ).strip()
+        else:
+            left_padding = ' ' * char_count
 
-        # . . . . . . . . const int *arg1,
-        #                 const int *arg2
-        #                 const int *arg3
-        for index, arg in enumerate(self.arguments):
-            if index:
-                content += f',\n{left_padding}'
-            (arg_content, arg_char_count) = arg.to_string(hyperlink_mapping)
-            content += arg_content
-            char_count += arg_char_count
+            # . . . . . . . . const int *arg1,
+            #                 const int *arg2
+            #                 const int *arg3
+            for index, arg in enumerate(self.arguments):
+                if index:
+                    content += f',\n{left_padding}'
+                (arg_content, arg_char_count) = arg.to_string(hyperlink_mapping)
+                content += arg_content
+                char_count += arg_char_count
 
         # )
         content += ')'
@@ -569,7 +608,7 @@ class DocTreeNode:
         if self.children:
             return f'{self.id_}/'
         else:
-            return self.id_;
+            return self.id_
 
     def get_markdown_content(self,
                              git_hash: str,

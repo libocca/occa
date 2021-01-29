@@ -6,16 +6,16 @@
 </h1>
 
 <div class="signature">
-  <hr>
 
-  
+<hr>
+
   <div class="definition-container">
     <div class="definition">
       <code><a href="#/api/kernel/">occa::kernel</a> buildKernelFromString(<span class="token keyword">const</span> <span class="token keyword">std::string</span> &content,
                                    <span class="token keyword">const</span> <span class="token keyword">std::string</span> &kernelName,
                                    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/a7d71df6/include/occa/core/device.hpp#L518" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6aadf694/include/occa/core/device.hpp#L518" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -25,7 +25,6 @@
       </ul>
 </div>
   </div>
-
 
   <hr>
 </div>
