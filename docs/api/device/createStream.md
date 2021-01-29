@@ -13,7 +13,7 @@
     <div class="definition">
       <code><a href="#/api/stream">occa::stream</a> createStream(<span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6aadf694/include/occa/core/device.hpp#L375" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/f8dbf4d2/include/occa/core/device.hpp#L375" target="_blank">Source</a>
     </div>
     <div class="description">
 

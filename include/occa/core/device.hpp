@@ -177,7 +177,7 @@ namespace occa {
      * @startDoc{dontUseRefs}
      *
      * Description:
-     *   By default, a [device] will automatically call [[device.free]] through reference counting.
+     *   By default, a [[device]] will automatically call [[device.free]] through reference counting.
      *   Turn off automatic garbage collection through this method.
      *
      * @endDoc
@@ -446,6 +446,17 @@ namespace occa {
     /**
      * @startDoc{buildKernel}
      *
+     * Arguments:
+     *   filename:
+     *     Location of the file to compile
+     *   kernelName
+     *     Specify the `@kernel` function name to use
+     *   props:
+     *     Backend-specific [[properties|json]] on how to compile the kernel.
+     *
+     * Returns:
+     *   The compiled [[kernel]].
+     *
      * Description:
      *   Builds a [[kernel]] given a filename, kernel name, and optional properties.
      *
@@ -495,9 +506,6 @@ namespace occa {
      *   );
      *   ```
      *
-     * Returns:
-     *   The compiled [[kernel]].
-     *
      * @endDoc
      */
     occa::kernel buildKernel(const std::string &filename,
@@ -509,6 +517,15 @@ namespace occa {
      *
      * Description:
      *   Same as [[device.buildKernel]] but given the kernel source code rather than the filename.
+     *
+     * Arguments:
+     *   content:
+     *     Source code to complile
+     *   kernelName
+     *     Specify the `@kernel` function name to use
+     *   props:
+     *     Backend-specific [[properties|json]] on how to compile the kernel.
+     *     More information in [[device.buildKernel]]
      *
      * Returns:
      *   The compiled [[kernel]].
@@ -542,6 +559,14 @@ namespace occa {
      * Overloaded Description:
      *   Uses the templated type to determine the type and bytes.
      *
+     * Arguments:
+     *   entries:
+     *     The length of the allocated memory
+     *   src:
+     *     If non-`NULL`, copy the `src` contents to the newly allocated [[memory]]
+     *   props:
+     *     Backend-specific [[properties|json]] to describe allocation strategies
+     *
      * Returns:
      *   The allocated [[memory]]
      *
@@ -572,6 +597,19 @@ namespace occa {
      *
      * Overloaded Description:
      *   Same but takes a [[dtype_t]] rather than a template parameter.
+     *
+     * Arguments:
+     *   entries:
+     *     The length of the allocated memory
+     *   dtype:
+     *     The [[dtype_t]] of what will be allocated, which defines the length of each entry
+     *   src:
+     *     If non-`NULL`, copy the `src` contents to the newly allocated [[memory]]
+     *   props:
+     *     Backend-specific [[properties|json]] to describe allocation strategies
+     *
+     * Returns:
+     *   The allocated [[memory]]
      *
      * @endDoc
      */
