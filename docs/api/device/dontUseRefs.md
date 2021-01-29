@@ -13,7 +13,7 @@
     <div class="definition">
       <code><span class="token keyword">void</span> dontUseRefs()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6aadf694/include/occa/core/device.hpp#L185" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/core/device.hpp#L185" target="_blank">Source</a>
     </div>
     
   </div>
@@ -28,5 +28,5 @@
   </a>
 </h2>
 
-By default, a [device] will automatically call [free](/api/device/free) through reference counting.
+By default, a [occa::device](/api/device/) will automatically call [free](/api/device/free) through reference counting.
 Turn off automatic garbage collection through this method.

@@ -89,6 +89,9 @@ class Type:
     def parse(cls, node) -> 'Type':
         words = split_by_whitespace(node.text)
 
+        # TODO:
+        # Handle types like:
+        #  <type>std::initializer_list&lt; <ref refid="classocca_1_1kernelArg" kindref="compound">kernelArg</ref> &gt;</type>
         children = list(node.getchildren())
         if len(children):
             return Type(
@@ -148,8 +151,9 @@ class Type:
             content += f'''<a href="#{info.link}">{info.name}</a>'''.strip()
             char_count += len(info.name)
         elif self.type_:
-            content += f'<span class="token keyword">{self.type_}</span>'
-            char_count += len(cast(str, self.type_))
+            type_str = self.type_ if isinstance(self.type_, str) else self.type_.type_
+            content += f'<span class="token keyword">{type_str}</span>'
+            char_count += len(type_str)
 
         needs_space_before_name = True
         if self.post_qualifiers:

@@ -115,19 +115,18 @@ a:not(.md-button):hover {
   }
 
   .sidebar-toggle {
-    display: unset;
+      display: unset;
+      cursor: pointer !important;
+      padding: 20px !important;
+      bottom: 10px !important;
+      right: 10px !important;
+      left: unset !important;
+      border: 1px solid rgba(42, 128, 185, 0.63) !important;
+      border-radius: 100px !important;
+      /* Add some highlight to the top */
+      box-shadow: 0px 4px 50px 16px rgba(255,255,255,0.56);
+      width: auto !important;
   }
-}
-
-.sidebar-toggle {
-  cursor: pointer !important;
-  padding: 25px !important;
-  bottom: -10px !important;
-  left: -10px !important;
-  background-color: rgba(255, 255, 255, 0.9) !important;
-  border-radius: 100px !important;
-  /* Add some highlight to the top */
-  box-shadow: 0px 4px 50px 16px rgba(255,255,255,0.56);
 }
 
 .sidebar-toggle-button {

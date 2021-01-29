@@ -2,6 +2,12 @@
 
 ?> API documentation is still under development
 
+Welcome to the OCCA library API documentation!
+
+
+Below are the more common class types but all of the documentation can be found on the left sidebar.
+On mobile, expand the sidebar through the bottom-right button.
+
 [occa::device](/api/device/)
 
 ::: indent

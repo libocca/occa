@@ -13,7 +13,16 @@
     <div class="definition">
       <code><span class="token keyword">void</span> run()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6aadf694/include/occa/core/kernel.hpp#L114" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/core/kernel.hpp#L277" target="_blank">Source</a>
+    </div>
+    
+  </div>
+
+  <div class="definition-container">
+    <div class="definition">
+      <code><span class="token keyword">void</span> run(<span class="token keyword">std::initializer_list<</span> <a href="#/api/kernelArg">occa::kernelArg</a> >args)</code>
+      <div class="flex-spacing"></div>
+      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/core/kernel.hpp#L282" target="_blank">Source</a>
     </div>
     
   </div>
@@ -28,4 +37,10 @@
   </a>
 </h2>
 
-TODO
+The more common way to run a [occa::kernel](/api/kernel/) is through [operator ()](/api/kernel/operator_parentheses).
+However, we also offer a way to run a kernel by manually pushing arguments to it.
+This is useful when building a kernel dynamically.
+
+Manually push arguments through [pushArg](/api/kernel/pushArg), followed by calling this `run` function.
+
+To clear the arguments, use [clearArgs](/api/kernel/clearArgs).
