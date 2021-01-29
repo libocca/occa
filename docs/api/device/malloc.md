@@ -11,12 +11,12 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code>template <<span class="token keyword">class</span> <span class="token keyword">T</span>>
-<a href="/api/memory/">occa::memory</a> malloc(<span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
+      <code><span class="token keyword">template</span> <<span class="token keyword">class</span> <span class="token keyword">T</span>>
+<a href="#/api/memory/">occa::memory</a> malloc(<span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
                     <span class="token keyword">const</span> <span class="token keyword">void</span> *src,
-                    <span class="token keyword">const</span> <a href="/api/json/">occa::json</a> &props)</code>
+                    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/b37a03f7/include/occa/core/device.hpp#L551" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/device.hpp#L551" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -42,12 +42,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code><a href="/api/memory/">occa::memory</a> malloc(<span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
-                    <span class="token keyword">const</span> <a href="/api/dtype_t">occa::dtype_t</a> &dtype,
+      <code><a href="#/api/memory/">occa::memory</a> malloc(<span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
+                    <span class="token keyword">const</span> <a href="#/api/dtype_t">occa::dtype_t</a> &dtype,
                     <span class="token keyword">const</span> <span class="token keyword">void</span> *src,
-                    <span class="token keyword">const</span> <a href="/api/json/">occa::json</a> &props)</code>
+                    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/b37a03f7/include/occa/core/device.hpp#L578" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/device.hpp#L578" target="_blank">Source</a>
     </div>
     <div class="description">
 

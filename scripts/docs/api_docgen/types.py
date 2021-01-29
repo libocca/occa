@@ -12,7 +12,6 @@ from .dev_utils import *
 
 
 Code = Union['DefinitionInfo', 'Function', 'Class']
-HyperlinkMapping = Dict[str, 'HyperlinkNodeInfo']
 
 @dataclass
 class HyperlinkNodeInfo:
@@ -23,13 +22,14 @@ class HyperlinkNodeInfo:
 class HyperlinkMapping:
     mapping: Dict[str, HyperlinkNodeInfo]
 
-    def get(self, node_id: str, missing_ok=False) -> HyperlinkNodeInfo:
+    def get(self, node_id: str) -> HyperlinkNodeInfo:
         try:
             return self.mapping[node_id]
         except KeyError as e:
-            if missing_ok:
-                return None
             raise KeyError(f"Missing documentation for: [{node_id}]") from e
+
+    def optional_get(self, node_id: str) -> Optional[HyperlinkNodeInfo]:
+        return self.mapping.get(node_id)
 
 @dataclass
 class Documentation:
@@ -45,7 +45,7 @@ class Documentation:
     @staticmethod
     def parse(node: Any) -> 'Documentation':
         location = get_node_attributes(node, f'./location')
-        filepath = location['file']
+        filepath = location['file'].replace(f'{OCCA_DIR}/', '')
         line_number = location['line']
 
         doc_node = get_documentation_node(node)
@@ -138,18 +138,18 @@ class Type:
 
         info = None
         if self.ref_id:
-            info = hyperlink_mapping.get(self.ref_id, missing_ok=True)
+            info = hyperlink_mapping.optional_get(self.ref_id)
 
         if self.qualifiers:
             content += ' '
             char_count += 1
 
         if info:
-            content += f'''<a href="{info.link}">{info.name}</a>'''.strip()
+            content += f'''<a href="#{info.link}">{info.name}</a>'''.strip()
             char_count += len(info.name)
         else:
             content += f'<span class="token keyword">{self.type_}</span>'
-            char_count += len(self.type_)
+            char_count += len(cast(str, self.type_))
 
         needs_space_before_name = True
         if self.post_qualifiers:
@@ -263,14 +263,15 @@ class Function(DefinitionInfo):
             f'''
   <div class="definition-container">
     <div class="definition">
-      <code>{override.code.get_function_signature(hyperlink_mapping)}</code>
+      <code>{func.get_function_signature(hyperlink_mapping)}</code>
       <div class="flex-spacing"></div>
-      <a href="{override.code.get_source_link(override.doc, git_hash)}" target="_blank">Source</a>
+      <a href="{func.get_source_link(override.doc, git_hash)}" target="_blank">Source</a>
     </div>
     {self.get_description_markdown(override, hyperlink_mapping)}
   </div>
 '''
             for override in overrides
+            for func in [cast('Function', override.code)]
         )
 
         content = f'''
@@ -309,8 +310,7 @@ class Function(DefinitionInfo):
 
         # template <class TM>
         if self.template:
-            template_start ='template <'
-            content += template_start
+            content += '<span class="token keyword">template</span> <'
 
             for (index, arg) in enumerate(self.template):
                 if index:
@@ -370,14 +370,15 @@ class Function(DefinitionInfo):
 
         argument_descriptions = []
         if arguments:
-            argument_content = markdown.parse_sections(arguments,
-                                                       info.link,
-                                                       hyperlink_mapping)
+            argument_sections = markdown.parse_sections(arguments,
+                                                        info.link,
+                                                        hyperlink_mapping)
 
+            func = cast('Function', def_info.code)
             argument_descriptions = [
-                (arg.name, argument_content.get(arg.name))
-                for arg in def_info.code.arguments
-                if argument_content.get(arg.name)
+                (arg.name, argument_sections.get(arg.name))
+                for arg in func.arguments
+                if argument_sections.get(arg.name)
             ]
 
         if (not description and

@@ -11,9 +11,9 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code><span class="token keyword">void</span> setStream(<a href="/api/stream">occa::stream</a> s)</code>
+      <code><span class="token keyword">void</span> setStream(<a href="#/api/stream">occa::stream</a> s)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/b37a03f7/include/occa/core/device.hpp#L398" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/device.hpp#L398" target="_blank">Source</a>
     </div>
     
   </div>

@@ -11,9 +11,9 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code><a href="/api/memory/">occa::memory</a> clone()</code>
+      <code><a href="#/api/memory/">occa::memory</a> clone()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/b37a03f7/include/occa/core/memory.hpp#L237" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/memory.hpp#L237" target="_blank">Source</a>
     </div>
     
   </div>
