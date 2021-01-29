@@ -13,7 +13,7 @@
     <div class="definition">
       <code><span class="token keyword">bool</span> hasSeparateMemorySpace()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/device.hpp#L357" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/1202d27b/include/occa/core/device.hpp#L357" target="_blank">Source</a>
     </div>
     <div class="description">
 

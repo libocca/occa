@@ -13,7 +13,7 @@
     <div class="definition">
       <code><a href="#/api/streamTag">occa::streamTag</a> tagStream()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/device.hpp#L411" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/1202d27b/include/occa/core/device.hpp#L411" target="_blank">Source</a>
     </div>
     <div class="description">
 

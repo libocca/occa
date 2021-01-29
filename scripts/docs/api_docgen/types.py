@@ -328,7 +328,12 @@ class Function(DefinitionInfo):
             char_count += return_char_count + 1
 
         # malloc(
-        name_str = f'{self.name}('
+        name_str = f'{self.name}'
+        if name_str.startswith('operator'):
+            name_str = re.sub(r'^operator', 'operator ', name_str)
+            name_str += ' '
+        name_str += '('
+
         content += name_str
         char_count += len(name_str)
 

@@ -14,7 +14,7 @@
       <code><span class="token keyword">double</span> timeBetween(<span class="token keyword">const</span> <a href="#/api/streamTag">occa::streamTag</a> &startTag,
                    <span class="token keyword">const</span> <a href="#/api/streamTag">occa::streamTag</a> &endTag)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/device.hpp#L434" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/1202d27b/include/occa/core/device.hpp#L434" target="_blank">Source</a>
     </div>
     <div class="description">
 
