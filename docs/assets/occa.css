@@ -5,6 +5,24 @@
   padding-left: 1em;
   border-left: 1px solid #ededed;
 }
+
+.desktop-only {
+    display: unset;
+}
+
+.mobile-only {
+    display: none;
+}
+
+@media only screen and (max-width: 600px) {
+    .desktop-only {
+        display: none;
+    }
+
+    .mobile-only {
+        display: unset;
+    }
+}
 /*====================================*/
 
 /*---[ Header & Footer ]--------------*/

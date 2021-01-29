@@ -11,10 +11,14 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code><span class="token keyword">template</span> <<span class="token keyword">class</span> <span class="token keyword">T</span>>
+      <code class="desktop-only"><span class="token keyword">template</span> <<span class="token keyword">class</span> <span class="token keyword">T</span>>
 <span class="token keyword">T</span>* ptr()</code>
+      <code class="mobile-only"><span class="token keyword">template</span> <<span class="token keyword">class</span> <span class="token keyword">T</span>>
+<span class="token keyword">T</span>* ptr(
+    
+)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/core/memory.hpp#L108" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/628fed0f/include/occa/core/memory.hpp#L108" target="_blank">Source</a>
     </div>
     
   </div>

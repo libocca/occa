@@ -301,10 +301,16 @@ class Function(DefinitionInfo):
 
                 override_description = func_description if is_last else ''
 
+                (func_content, func_mobile_content) = (
+                    func.get_function_signature(hyperlink_mapping,
+                                                argument_override)
+                )
+
                 content += f'''
   <div class="definition-container">
     <div class="definition">
-      <code>{func.get_function_signature(hyperlink_mapping, argument_override)}</code>
+      <code class="desktop-only">{func_content}</code>
+      <code class="mobile-only">{func_mobile_content}</code>
       <div class="flex-spacing"></div>
       <a href="{func.get_source_link(override.doc, git_hash)}" target="_blank">Source</a>
     </div>
@@ -334,7 +340,7 @@ class Function(DefinitionInfo):
 
     def get_function_signature(self,
                                hyperlink_mapping: HyperlinkMapping,
-                               argument_override: Optional[str]):
+                               argument_override: Optional[str]) -> Tuple[str, str]:
         from . import markdown
         # Example:
         #
@@ -379,8 +385,11 @@ class Function(DefinitionInfo):
                 markdown.replace_hyperlinks(argument_override,
                                             hyperlink_mapping)
             ).strip()
+            mobile_content = content
         else:
             left_padding = ' ' * char_count
+
+            mobile_content = content + '\n    '
 
             # . . . . . . . . const int *arg1,
             #                 const int *arg2
@@ -388,14 +397,19 @@ class Function(DefinitionInfo):
             for index, arg in enumerate(self.arguments):
                 if index:
                     content += f',\n{left_padding}'
+                    mobile_content += ',\n    '
+
                 (arg_content, arg_char_count) = arg.to_string(hyperlink_mapping)
                 content += arg_content
                 char_count += arg_char_count
 
+                mobile_content += arg_content
+
         # )
         content += ')'
+        mobile_content += '\n)'
 
-        return content
+        return (content, mobile_content)
 
     def get_source_link(self,
                         doc: Documentation,

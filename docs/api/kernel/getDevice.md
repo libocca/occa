@@ -11,9 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code><a href="#/api/device/">occa::device</a> getDevice()</code>
+      <code class="desktop-only"><a href="#/api/device/">occa::device</a> getDevice()</code>
+      <code class="mobile-only"><a href="#/api/device/">occa::device</a> getDevice(
+    
+)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/core/kernel.hpp#L141" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/628fed0f/include/occa/core/kernel.hpp#L141" target="_blank">Source</a>
     </div>
     <div class="description">
 

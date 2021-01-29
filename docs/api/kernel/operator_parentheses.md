@@ -11,9 +11,11 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code><span class="token keyword">void</span> operator () ([occa::kernelArg](/api/kernelArg)... args)</code>
+      <code class="desktop-only"><span class="token keyword">void</span> operator () ([occa::kernelArg](/api/kernelArg)... args)</code>
+      <code class="mobile-only"><span class="token keyword">void</span> operator () ([occa::kernelArg](/api/kernelArg)... args
+)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/core/kernelOperators.hpp_codegen#L7" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/628fed0f/include/occa/core/kernelOperators.hpp_codegen#L7" target="_blank">Source</a>
     </div>
     
   </div>

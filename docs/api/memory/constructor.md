@@ -11,9 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code>memory()</code>
+      <code class="desktop-only">memory()</code>
+      <code class="mobile-only">memory(
+    
+)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/core/memory.hpp#L80" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/628fed0f/include/occa/core/memory.hpp#L80" target="_blank">Source</a>
     </div>
     
   </div>

@@ -11,10 +11,14 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code><a href="#/api/memory/">occa::memory</a> slice(<span class="token keyword">const</span> <span class="token keyword">dim_t</span> offset,
+      <code class="desktop-only"><a href="#/api/memory/">occa::memory</a> slice(<span class="token keyword">const</span> <span class="token keyword">dim_t</span> offset,
                    <span class="token keyword">const</span> <span class="token keyword">dim_t</span> count)</code>
+      <code class="mobile-only"><a href="#/api/memory/">occa::memory</a> slice(
+    <span class="token keyword">const</span> <span class="token keyword">dim_t</span> offset,
+    <span class="token keyword">const</span> <span class="token keyword">dim_t</span> count
+)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/core/memory.hpp#L166" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/628fed0f/include/occa/core/memory.hpp#L166" target="_blank">Source</a>
     </div>
     
   </div>
