@@ -6,51 +6,40 @@
 </h1>
 
 <div class="signature">
-  <hr>
 
-  
+<hr>
+
   <div class="definition-container">
     <div class="definition">
-      <code><span class="token keyword">bool</span> operator==(<span class="token keyword">const</span> <a href="#/api/device/">occa::device</a> &other)</code>
+      <code><span class="token keyword">bool</span> operator == (<span class="token keyword">const</span> <a href="#/api/device/">occa::device</a> &other)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/device.hpp#L198" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6aadf694/include/occa/core/device.hpp#L198" target="_blank">Source</a>
     </div>
     <div class="description">
 
       <div class="section-header">Returns</div>
       <ul class="section-list">
-        <li>
-          ::: markdown
-          If the references are the same, this returns `true` otherwise `false`.
-          :::
-        </li>
+        <li> ::: markdown If the references are the same, this returns `true` otherwise `false`. ::: </li>
       </ul>
-    </div>
-
+</div>
   </div>
 
-  <hr>
+<hr>
 
   <div class="definition-container">
     <div class="definition">
-      <code><span class="token keyword">bool</span> operator!=(<span class="token keyword">const</span> <a href="#/api/device/">occa::device</a> &other)</code>
+      <code><span class="token keyword">bool</span> operator != (<span class="token keyword">const</span> <a href="#/api/device/">occa::device</a> &other)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/device.hpp#L211" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6aadf694/include/occa/core/device.hpp#L211" target="_blank">Source</a>
     </div>
     <div class="description">
 
       <div class="section-header">Returns</div>
       <ul class="section-list">
-        <li>
-          ::: markdown
-          If the references are different, this returns `true` otherwise `false`.
-          :::
-        </li>
+        <li> ::: markdown If the references are different, this returns `true` otherwise `false`. ::: </li>
       </ul>
-    </div>
-
+</div>
   </div>
-
 
   <hr>
 </div>

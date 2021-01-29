@@ -6,18 +6,17 @@
 </h1>
 
 <div class="signature">
-  <hr>
 
-  
+<hr>
+
   <div class="definition-container">
     <div class="definition">
       <code><span class="token keyword">void</span> free()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/device.hpp#L254" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6aadf694/include/occa/core/device.hpp#L254" target="_blank">Source</a>
     </div>
     
   </div>
-
 
   <hr>
 </div>

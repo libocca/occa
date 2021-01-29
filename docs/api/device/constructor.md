@@ -6,83 +6,72 @@
 </h1>
 
 <div class="signature">
-  <hr>
 
-  
+<hr>
+
   <div class="definition-container">
     <div class="definition">
-      <code><span class="token keyword"></span> device()</code>
+      <code>device()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/device.hpp#L130" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6aadf694/include/occa/core/device.hpp#L130" target="_blank">Source</a>
     </div>
     <div class="description">
 
       <div>
-        ::: markdown
-        Default constructor
-        :::
+        ::: markdown Default constructor :::
       </div>
-
+</div>
   </div>
 
-  <hr>
+<hr>
 
   <div class="definition-container">
     <div class="definition">
-      <code><span class="token keyword"></span> device(<span class="token keyword">const</span> <span class="token keyword">std::string</span> &props)</code>
+      <code>device(<span class="token keyword">const</span> <span class="token keyword">std::string</span> &props)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/device.hpp#L144" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6aadf694/include/occa/core/device.hpp#L144" target="_blank">Source</a>
     </div>
     <div class="description">
 
       <div>
-        ::: markdown
-        Takes a JSON-formatted string for the device props.
-        :::
+        ::: markdown Takes a JSON-formatted string for the device props. :::
       </div>
 
       <div class="section-header">Arguments</div>
       <ul class="section-list">
           
         <li>
-          <strong>props</strong>: ::: markdown
-            JSON-formatted string that defines the device properties
-            :::
+          <strong>props</strong>: ::: markdown JSON-formatted string that defines the device properties :::
         </li>
 
       </ul>
-
+</div>
   </div>
 
-  <hr>
+<hr>
 
   <div class="definition-container">
     <div class="definition">
-      <code><span class="token keyword"></span> device(<span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
+      <code>device(<span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/device.hpp#L158" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6aadf694/include/occa/core/device.hpp#L158" target="_blank">Source</a>
     </div>
     <div class="description">
 
       <div>
-        ::: markdown
-        Takes an [occa::json](/api/json/) argument for the device props.
-        :::
+        ::: markdown Takes an [occa::json](/api/json/) argument for the device props. :::
       </div>
 
       <div class="section-header">Arguments</div>
       <ul class="section-list">
           
         <li>
-          <strong>props</strong>: ::: markdown
-            Device properties
-            :::
+          <strong>props</strong>: ::: markdown Device properties :::
         </li>
 
       </ul>
-
+</div>
   </div>
-
 
   <hr>
 </div>

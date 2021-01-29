@@ -31,7 +31,7 @@ ALIASES += rawXmlEnd="]]>"
 ALIASES += startDoc{1}="\xmlonly <occa-doc id=\"\1\">@rawXmlStart "
 ALIASES += endDoc=" @rawXmlEnd</occa-doc> \endxmlonly"
 
-ALIASES += doc="\xmlonly <occa-doc id=\"\1\"></occa-doc> \endxmlonly"
+ALIASES += doc{1}="\xmlonly <occa-doc id=\"\1\"></occa-doc> \endxmlonly"
 #=======================================
 
 

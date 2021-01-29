@@ -375,7 +375,7 @@ code .token.annotation {
 }
 
 .api-container .signature {
-  margin: 30px 0;
+  margin: 40px 0;
 }
 
 .api-container .section-header {
@@ -388,7 +388,7 @@ code .token.annotation {
 }
 
 .api-container .signature .definition-container {
-  margin: 1em 0;
+  margin: 2em 0;
 }
 
 .api-container .signature p {
@@ -397,7 +397,7 @@ code .token.annotation {
 
 .api-container .signature .definition {
   display: flex;
-  margin: 0.8em 0 0.4em 0;
+  margin: 2em 0;
 }
 
 .api-container .signature .definition code {

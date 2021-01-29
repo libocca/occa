@@ -261,7 +261,7 @@ occa.addTabs = (content) => (
 occa.addMarkdown = (content) => (
   occa.applyRegexTransformation(
     content,
-    /::: markdown\s+([\s\S]*?)\s+:::(?:\n|$)/g,
+    /::: markdown\s+([\s\S]*?)\s+?:::/g,
     ([content]) => {
       const parts = marked.lexer(content.trim());
       return occa.tokensToHTML(parts);

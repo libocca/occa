@@ -12,6 +12,7 @@
     - [asArray](/api/json/asArray)
     - [asBoolean](/api/json/asBoolean)
   - [occa::hash_t](/api/hash_t)
+  - [occa::kernelArg](/api/kernelArg)
   - [occa::kernel](/api/kernel/)
   - [occa::device](/api/device/)
   - [occa::function](/api/function)

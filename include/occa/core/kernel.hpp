@@ -120,6 +120,9 @@ namespace occa {
      * Description:
      *   TODO
      *
+     * Argument Override:
+     *    [[kernelArg]]... args
+     *
      * @endDoc
      */
 #include "kernelOperators.hpp_codegen"

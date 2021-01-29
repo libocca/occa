@@ -42,6 +42,14 @@ namespace occa {
   //====================================
 
   //---[ kernelArg ]--------------------
+  /**
+   * @startDoc{kernelArg}
+   *
+   * Description:
+   *   TODO
+   *
+   * @endDoc
+   */
   class kernelArg : public generic {
    public:
     kernelArgDataVector args;
