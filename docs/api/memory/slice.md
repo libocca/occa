@@ -14,7 +14,7 @@
       <code><a href="#/api/memory/">occa::memory</a> slice(<span class="token keyword">const</span> <span class="token keyword">dim_t</span> offset,
                    <span class="token keyword">const</span> <span class="token keyword">dim_t</span> count)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/1202d27b/include/occa/core/memory.hpp#L166" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/62a34ff6/include/occa/core/memory.hpp#L166" target="_blank">Source</a>
     </div>
     
   </div>

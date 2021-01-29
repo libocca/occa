@@ -147,7 +147,7 @@ class Type:
         if info:
             content += f'''<a href="#{info.link}">{info.name}</a>'''.strip()
             char_count += len(info.name)
-        else:
+        elif self.type_:
             content += f'<span class="token keyword">{self.type_}</span>'
             char_count += len(cast(str, self.type_))
 

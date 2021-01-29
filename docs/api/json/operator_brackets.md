@@ -13,7 +13,7 @@
     <div class="definition">
       <code><a href="#/api/json/">occa::json</a>& operator [] (<span class="token keyword">const</span> <span class="token keyword">std::string</span> &s)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/1202d27b/include/occa/types/json.hpp#L654" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/62a34ff6/include/occa/types/json.hpp#L654" target="_blank">Source</a>
     </div>
     
   </div>

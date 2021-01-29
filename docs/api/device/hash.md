@@ -13,7 +13,7 @@
     <div class="definition">
       <code><a href="#/api/hash_t">occa::hash_t</a> hash()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/1202d27b/include/occa/core/device.hpp#L304" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/62a34ff6/include/occa/core/device.hpp#L304" target="_blank">Source</a>
     </div>
     <div class="description">
 

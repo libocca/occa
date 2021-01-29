@@ -11,9 +11,9 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code><span class="token keyword"></span> device()</code>
+      <code>device()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/1202d27b/include/occa/core/device.hpp#L130" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/62a34ff6/include/occa/core/device.hpp#L130" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -29,9 +29,9 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code><span class="token keyword"></span> device(<span class="token keyword">const</span> <span class="token keyword">std::string</span> &props)</code>
+      <code>device(<span class="token keyword">const</span> <span class="token keyword">std::string</span> &props)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/1202d27b/include/occa/core/device.hpp#L144" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/62a34ff6/include/occa/core/device.hpp#L144" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -58,9 +58,9 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code><span class="token keyword"></span> device(<span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
+      <code>device(<span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/1202d27b/include/occa/core/device.hpp#L158" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/62a34ff6/include/occa/core/device.hpp#L158" target="_blank">Source</a>
     </div>
     <div class="description">
 

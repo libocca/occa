@@ -13,7 +13,7 @@
     <div class="definition">
       <code><span class="token keyword">void</span> finish()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/1202d27b/include/occa/core/device.hpp#L341" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/62a34ff6/include/occa/core/device.hpp#L341" target="_blank">Source</a>
     </div>
     
   </div>
