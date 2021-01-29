@@ -15,20 +15,15 @@
                          <span class="token keyword">const</span> <span class="token keyword">std::string</span> &kernelName,
                          <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/62a34ff6/include/occa/core/device.hpp#L503" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/a7d71df6/include/occa/core/device.hpp#L503" target="_blank">Source</a>
     </div>
     <div class="description">
 
       <div class="section-header">Returns</div>
       <ul class="section-list">
-        <li>
-          ::: markdown
-          The compiled [occa::kernel](/api/kernel/).
-          :::
-        </li>
+        <li> ::: markdown The compiled [occa::kernel](/api/kernel/). ::: </li>
       </ul>
-    </div>
-
+</div>
   </div>
 
 

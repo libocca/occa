@@ -16,7 +16,7 @@
             <span class="token keyword">const</span> <span class="token keyword">dim_t</span> offset,
             <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/62a34ff6/include/occa/core/memory.hpp#L196" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/a7d71df6/include/occa/core/memory.hpp#L196" target="_blank">Source</a>
     </div>
     
   </div>

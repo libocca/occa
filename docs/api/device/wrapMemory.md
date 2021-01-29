@@ -16,26 +16,19 @@
                         <span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
                         <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/62a34ff6/include/occa/core/device.hpp#L645" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/a7d71df6/include/occa/core/device.hpp#L645" target="_blank">Source</a>
     </div>
     <div class="description">
 
       <div>
-        ::: markdown
-        Uses the templated type to determine the type and bytes.
-        :::
+        ::: markdown Uses the templated type to determine the type and bytes. :::
       </div>
 
       <div class="section-header">Returns</div>
       <ul class="section-list">
-        <li>
-          ::: markdown
-          The wrapped [occa::memory](/api/memory/)
-          :::
-        </li>
+        <li> ::: markdown The wrapped [occa::memory](/api/memory/) ::: </li>
       </ul>
-    </div>
-
+</div>
   </div>
 
   <hr>
@@ -47,16 +40,14 @@
                         <span class="token keyword">const</span> <a href="#/api/dtype_t">occa::dtype_t</a> &dtype,
                         <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/62a34ff6/include/occa/core/device.hpp#L657" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/a7d71df6/include/occa/core/device.hpp#L657" target="_blank">Source</a>
     </div>
     <div class="description">
 
       <div>
-        ::: markdown
-        Same but takes a [occa::dtype_t](/api/dtype_t) rather than a template parameter.
-        :::
+        ::: markdown Same but takes a [occa::dtype_t](/api/dtype_t) rather than a template parameter. :::
       </div>
-
+</div>
   </div>
 
 

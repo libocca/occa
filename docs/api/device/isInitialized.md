@@ -13,20 +13,15 @@
     <div class="definition">
       <code><span class="token keyword">bool</span> isInitialized()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/62a34ff6/include/occa/core/device.hpp#L224" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/a7d71df6/include/occa/core/device.hpp#L224" target="_blank">Source</a>
     </div>
     <div class="description">
 
       <div class="section-header">Returns</div>
       <ul class="section-list">
-        <li>
-          ::: markdown
-          Returns `true` if the device has been intialized, through either the [(constructor)](/api/device/constructor) or [setup](/api/device/setup).
-          :::
-        </li>
+        <li> ::: markdown Returns `true` if the device has been intialized, through either the [(constructor)](/api/device/constructor) or [setup](/api/device/setup). ::: </li>
       </ul>
-    </div>
-
+</div>
   </div>
 
 

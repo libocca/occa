@@ -396,9 +396,7 @@ class Function(DefinitionInfo):
         if description:
             content += f'''
       <div>
-        ::: markdown
-        {description}
-        :::
+        ::: markdown {description} :::
       </div>
 '''
 
@@ -406,9 +404,7 @@ class Function(DefinitionInfo):
             argument_content = '\n'.join(
                 f'''
         <li>
-          <strong>{arg_name}</strong>: ::: markdown
-            {arg_description}
-            :::
+          <strong>{arg_name}</strong>: ::: markdown {arg_description} :::
         </li>
 '''
                 for (arg_name, arg_description) in argument_descriptions
@@ -424,14 +420,11 @@ class Function(DefinitionInfo):
             content += f'''
       <div class="section-header">Returns</div>
       <ul class="section-list">
-        <li>
-          ::: markdown
-          {returns}
-          :::
-        </li>
+        <li> ::: markdown {returns} ::: </li>
       </ul>
-    </div>
 '''
+
+        content += '</div>'
 
         return content
 
