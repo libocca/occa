@@ -11,9 +11,9 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code>stream occa::device::getStream()</code>
+      <code><a href="#/api/stream">occa::stream</a> getStream()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/device.hpp#L388" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/device.hpp#L388" target="_blank">Source</a>
     </div>
     <div class="description">
 

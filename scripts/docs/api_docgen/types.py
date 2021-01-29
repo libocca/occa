@@ -12,7 +12,6 @@ from .dev_utils import *
 
 
 Code = Union['DefinitionInfo', 'Function', 'Class']
-HyperlinkMapping = Dict[str, 'HyperlinkNodeInfo']
 
 @dataclass
 class HyperlinkNodeInfo:
@@ -29,6 +28,9 @@ class HyperlinkMapping:
         except KeyError as e:
             raise KeyError(f"Missing documentation for: [{node_id}]") from e
 
+    def optional_get(self, node_id: str) -> Optional[HyperlinkNodeInfo]:
+        return self.mapping.get(node_id)
+
 @dataclass
 class Documentation:
     # Automatic from Doxygen
@@ -43,7 +45,7 @@ class Documentation:
     @staticmethod
     def parse(node: Any) -> 'Documentation':
         location = get_node_attributes(node, f'./location')
-        filepath = location['file']
+        filepath = location['file'].replace(f'{OCCA_DIR}/', '')
         line_number = location['line']
 
         doc_node = get_documentation_node(node)
@@ -116,11 +118,71 @@ class Type:
             ref_id=None,
         )
 
+    def to_string(self,
+                  hyperlink_mapping: HyperlinkMapping,
+                  var_name: Optional[str] = None) -> Tuple[str, int]:
+        # Keep track of the character count for padding purposes
+        content = ''
+        char_count = 0
+        if self.qualifiers:
+            content += f'''
+<span class="token keyword">{' '.join(self.qualifiers)}</span>
+'''.strip()
+            # Spaces
+            char_count += len(self.qualifiers) - 1
+            # Words
+            char_count += sum(
+                len(qualifier)
+                for qualifier in self.qualifiers
+            )
+
+        info = None
+        if self.ref_id:
+            info = hyperlink_mapping.optional_get(self.ref_id)
+
+        if self.qualifiers:
+            content += ' '
+            char_count += 1
+
+        if info:
+            content += f'''<a href="#{info.link}">{info.name}</a>'''.strip()
+            char_count += len(info.name)
+        else:
+            content += f'<span class="token keyword">{self.type_}</span>'
+            char_count += len(cast(str, self.type_))
+
+        needs_space_before_name = True
+        if self.post_qualifiers:
+            # Format:
+            # - void*
+            # - void *ptr
+            if var_name:
+                needs_space_before_name = False
+                content += ' '
+                char_count += 1
+            content += ''.join(self.post_qualifiers)
+            char_count += sum(
+                len(qualifier)
+                for qualifier in self.post_qualifiers
+            )
+
+        if var_name:
+            if needs_space_before_name:
+                content += ' '
+                char_count += 1
+
+            content += var_name
+            char_count += len(var_name)
+
+        return (content, char_count)
 
 @dataclass
 class Argument:
     type_: Type
     name: str
+
+    def to_string(self, hyperlink_mapping: HyperlinkMapping):
+        return self.type_.to_string(hyperlink_mapping, self.name)
 
 
 @dataclass
@@ -201,14 +263,15 @@ class Function(DefinitionInfo):
             f'''
   <div class="definition-container">
     <div class="definition">
-      <code>{override.code.get_function_signature(hyperlink_mapping)}</code>
+      <code>{func.get_function_signature(hyperlink_mapping)}</code>
       <div class="flex-spacing"></div>
-      <a href="{override.code.get_source_link(override.doc, git_hash)}" target="_blank">Source</a>
+      <a href="{func.get_source_link(override.doc, git_hash)}" target="_blank">Source</a>
     </div>
     {self.get_description_markdown(override, hyperlink_mapping)}
   </div>
 '''
             for override in overrides
+            for func in [cast('Function', override.code)]
         )
 
         content = f'''
@@ -235,12 +298,56 @@ class Function(DefinitionInfo):
 
         return content
 
-    def get_function_signature(self,
-                               hyperlink_mapping: HyperlinkMapping):
-        # TODO:
-        # - Split the name and link to different classes
-        # - Clean up the arguments so it's not one super long line
-        return self.full_name
+    def get_function_signature(self, hyperlink_mapping: HyperlinkMapping):
+        # Example:
+        #
+        #   template <class TM>
+        #   occa::memory malloc(const int *arg1,
+        #                       const int *arg2,
+        #                       const int *arg3)
+        content = ''
+        char_count = 0
+
+        # template <class TM>
+        if self.template:
+            content += '<span class="token keyword">template</span> <'
+
+            for (index, arg) in enumerate(self.template):
+                if index:
+                    content += ', '
+
+                (arg_content, arg_char_count) = arg.type_.to_string(hyperlink_mapping)
+                content += arg_content
+
+            content += '>\n'
+
+        # occa::memory
+        (return_type, return_char_count) = self.return_type.to_string(hyperlink_mapping)
+        if return_type:
+            content += f'{return_type} '
+            char_count += return_char_count + 1
+
+        # malloc(
+        name_str = f'{self.name}('
+        content += name_str
+        char_count += len(name_str)
+
+        left_padding = ' ' * char_count
+
+        # . . . . . . . . const int *arg1,
+        #                 const int *arg2
+        #                 const int *arg3
+        for index, arg in enumerate(self.arguments):
+            if index:
+                content += f',\n{left_padding}'
+            (arg_content, arg_char_count) = arg.to_string(hyperlink_mapping)
+            content += arg_content
+            char_count += arg_char_count
+
+        # )
+        content += ')'
+
+        return content
 
     def get_source_link(self,
                         doc: Documentation,
@@ -263,14 +370,15 @@ class Function(DefinitionInfo):
 
         argument_descriptions = []
         if arguments:
-            argument_content = markdown.parse_sections(arguments,
-                                                       info.link,
-                                                       hyperlink_mapping)
+            argument_sections = markdown.parse_sections(arguments,
+                                                        info.link,
+                                                        hyperlink_mapping)
 
+            func = cast('Function', def_info.code)
             argument_descriptions = [
-                (arg, argument_content.get(arg))
-                for arg in self.arguments
-                if argument_content.get(arg)
+                (arg.name, argument_sections.get(arg.name))
+                for arg in func.arguments
+                if argument_sections.get(arg.name)
             ]
 
         if (not description and
@@ -303,6 +411,7 @@ class Function(DefinitionInfo):
             content += f'''
       <div class="section-header">Arguments</div>
       <ul class="section-list">
+          {argument_content}
       </ul>
 '''
 

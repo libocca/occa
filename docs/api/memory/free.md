@@ -11,9 +11,9 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code>void occa::memory::free()</code>
+      <code><span class="token keyword">void</span> free()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/memory.hpp#L247" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/memory.hpp#L247" target="_blank">Source</a>
     </div>
     
   </div>

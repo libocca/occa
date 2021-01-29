@@ -11,9 +11,9 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code>stream occa::device::createStream(const occa::json &props=occa::json())</code>
+      <code><a href="#/api/stream">occa::stream</a> createStream(<span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/device.hpp#L375" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/device.hpp#L375" target="_blank">Source</a>
     </div>
     <div class="description">
 

@@ -11,9 +11,12 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code>occa::memory occa::device::wrapMemory(const T *ptr, const dim_t entries, const occa::json &props=occa::json())</code>
+      <code><span class="token keyword">template</span> <<span class="token keyword">class</span> <span class="token keyword">T</span>>
+<a href="#/api/memory/">occa::memory</a> wrapMemory(<span class="token keyword">const</span> <span class="token keyword">T</span> *ptr,
+                        <span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
+                        <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/device.hpp#L645" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/device.hpp#L645" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -39,9 +42,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code>occa::memory occa::device::wrapMemory(const void *ptr, const dim_t entries, const dtype_t &dtype, const occa::json &props=occa::json())</code>
+      <code><a href="#/api/memory/">occa::memory</a> wrapMemory(<span class="token keyword">const</span> <span class="token keyword">void</span> *ptr,
+                        <span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
+                        <span class="token keyword">const</span> <a href="#/api/dtype_t">occa::dtype_t</a> &dtype,
+                        <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/core/device.hpp#L657" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/core/device.hpp#L657" target="_blank">Source</a>
     </div>
     <div class="description">
 

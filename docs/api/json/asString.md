@@ -11,9 +11,9 @@
   
   <div class="definition-container">
     <div class="definition">
-      <code>json& occa::json::asString()</code>
+      <code><a href="#/api/json/">occa::json</a>& asString()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/26e3076e/include/occa/types/json.hpp#L563" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/1fea69a2/include/occa/types/json.hpp#L563" target="_blank">Source</a>
     </div>
     
   </div>

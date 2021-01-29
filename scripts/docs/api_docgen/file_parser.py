@@ -12,10 +12,10 @@ def alias_path(path: str,
                ordered_path_aliases: List[Tuple[str, str]]) -> Tuple[str, str]:
     for (alias_path, alias_id) in ordered_path_aliases:
         if path.startswith(alias_path):
-            return [
+            return (
                 path.replace(path, alias_id),
                 f'{alias_id}.{node_id}',
-            ]
+            )
 
     return (path, node_id)
 
@@ -50,7 +50,7 @@ def get_doc_tree(filename: str) -> Dict[str, Any]:
     nodes = get_documented_definition_nodes(root)
     global_id_map = get_global_id_map(tree, nodes)
 
-    doc_tree = {}
+    doc_tree: Dict[str, Any] = {}
     for node in nodes:
         # Split by . and append a CHILDREN_FIELD in between
         # Example:
@@ -99,10 +99,4 @@ def load_documentation() -> DocTree:
 
     return DocTree(
         roots=finalize_doc_tree(doc_tree)
-    )
-
-def generate_api(root_dir: str):
-    generate_api_markdown(
-        '/home/david/git/libocca.org',
-        load_documentation(),
     )
