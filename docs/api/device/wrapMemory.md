@@ -16,7 +16,7 @@
                         <span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
                         <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/f8dbf4d2/include/occa/core/device.hpp#L683" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/core/device.hpp#L683" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -40,7 +40,7 @@
                         <span class="token keyword">const</span> <a href="#/api/dtype_t">occa::dtype_t</a> &dtype,
                         <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/f8dbf4d2/include/occa/core/device.hpp#L695" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/core/device.hpp#L695" target="_blank">Source</a>
     </div>
     <div class="description">
 

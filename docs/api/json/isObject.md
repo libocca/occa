@@ -13,7 +13,7 @@
     <div class="definition">
       <code><span class="token keyword">bool</span> isObject()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/f8dbf4d2/include/occa/types/json.hpp#L450" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/types/json.hpp#L450" target="_blank">Source</a>
     </div>
     
   </div>

@@ -13,7 +13,7 @@
     <div class="definition">
       <code><span class="token keyword">void</span> free()</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/f8dbf4d2/include/occa/core/kernel.hpp#L138" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/core/kernel.hpp#L307" target="_blank">Source</a>
     </div>
     
   </div>
@@ -28,4 +28,4 @@
   </a>
 </h2>
 
-TODO
+Free the kernel
