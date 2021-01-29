@@ -92,7 +92,7 @@ occa::array<float> ab = (
 We maintain our documentation on the [libocca.org](https://libocca.org) site
 
 - [:notebook:	Guide](https://libocca.org/#/guide)
-- [:gear: API](https://libocca.org/#/api)
+- [:gear: API](https://libocca.org/#/api/)
 - [🌟 Who is using OCCA?](https://libocca.org/#/gallery)
 - [:lab_coat: Publications](https://libocca.org/#/publications)
 
