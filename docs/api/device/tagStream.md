@@ -11,15 +11,18 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code><a href="#/api/streamTag">occa::streamTag</a> tagStream()</code>
+      <code class="desktop-only"><a href="#/api/streamTag/">occa::streamTag</a> tagStream()</code>
+      <code class="mobile-only"><a href="#/api/streamTag/">occa::streamTag</a> tagStream(
+    
+)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/core/device.hpp#L411" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/device.hpp#L413" target="_blank">Source</a>
     </div>
     <div class="description">
 
       <div class="section-header">Returns</div>
       <ul class="section-list">
-        <li> ::: markdown The created [occa::streamTag](/api/streamTag). ::: </li>
+        <li> ::: markdown The created [occa::streamTag](/api/streamTag/). ::: </li>
       </ul>
 </div>
   </div>
@@ -34,4 +37,4 @@
   </a>
 </h2>
 
-Tag the active stream and return the created [occa::streamTag](/api/streamTag).
+Tag the active stream and return the created [occa::streamTag](/api/streamTag/).

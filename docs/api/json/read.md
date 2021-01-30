@@ -11,9 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code><a href="#/api/json/">occa::json</a> read(<span class="token keyword">const</span> <span class="token keyword">std::string</span> &filename)</code>
+      <code class="desktop-only"><a href="#/api/json/">occa::json</a> read(<span class="token keyword">const</span> <span class="token keyword">std::string</span> &amp;filename)</code>
+      <code class="mobile-only"><a href="#/api/json/">occa::json</a> read(
+    <span class="token keyword">const</span> <span class="token keyword">std::string</span> &amp;filename
+)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/types/json.hpp#L389" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/types/json.hpp#L401" target="_blank">Source</a>
     </div>
     
   </div>
@@ -28,4 +31,7 @@
   </a>
 </h2>
 
-TODO
+Read the input file and parse the JSON-formatted contents.
+Throw an `occa::exception` if the input is not of JSON-format
+
+Same as [parse](/api/json/parse) but with a file rather than a `string`.

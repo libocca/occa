@@ -11,9 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code><span class="token keyword">std::string</span> dump(<span class="token keyword">const</span> <span class="token keyword">int</span> indent)</code>
+      <code class="desktop-only"><span class="token keyword">std::string</span> dump(<span class="token keyword">const</span> <span class="token keyword">int</span> indent)</code>
+      <code class="mobile-only"><span class="token keyword">std::string</span> dump(
+    <span class="token keyword">const</span> <span class="token keyword">int</span> indent
+)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/types/json.hpp#L364" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/types/json.hpp#L366" target="_blank">Source</a>
     </div>
     
   </div>
@@ -28,4 +31,6 @@
   </a>
 </h2>
 
-TODO
+Return the JSON-formatted string representation of the data
+
+Same as [write](/api/json/write) but to a `string` rather than a file

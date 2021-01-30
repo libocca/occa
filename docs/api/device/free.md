@@ -11,9 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code><span class="token keyword">void</span> free()</code>
+      <code class="desktop-only"><span class="token keyword">void</span> free()</code>
+      <code class="mobile-only"><span class="token keyword">void</span> free(
+    
+)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/core/device.hpp#L254" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/device.hpp#L256" target="_blank">Source</a>
     </div>
     
   </div>
@@ -31,4 +34,6 @@
 Free the device, which will also free:
 - Allocated [occa::memory](/api/memory/)
 - Built [occa::kernel](/api/kernel/)
-- Created [occa::stream](/api/stream) and [occa::streamTag](/api/streamTag)
+- Created [occa::stream](/api/stream/) and [occa::streamTag](/api/streamTag/)
+
+Calling [isInitialized](/api/device/isInitialized) will return `false` now.

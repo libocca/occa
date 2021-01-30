@@ -129,7 +129,7 @@ namespace occa {
     return 0;
   }
 
-  const strVector& dtype_t::structFields() const {
+  const strVector& dtype_t::structFieldNames() const {
     const dtypeStruct_t *structPtr = self().struct_;
     OCCA_ERROR("Cannot get fields from a non-struct dtype_t",
                structPtr != NULL);

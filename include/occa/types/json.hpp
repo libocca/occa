@@ -357,7 +357,9 @@ namespace occa {
      * @startDoc{dump}
      *
      * Description:
-     *   TODO
+     *   Return the JSON-formatted string representation of the data
+     *
+     *   Same as [[json.write]] but to a `string` rather than a file
      *
      * @endDoc
      */
@@ -368,21 +370,31 @@ namespace occa {
                       const std::string &currentIndent = "") const;
 
     /**
-     * @startDoc{parse}
+     * @startDoc{parse[0]}
      *
      * Description:
-     *   TODO
+     *   Parse a JSON-formatted string.
+     *   Throw an `occa::exception` if the input is not of JSON-format
+     *
+     *   Same as [[json.read]] but with a file rather than a `string`.
      *
      * @endDoc
      */
     static json parse(const char *&c);
+
+    /**
+     * @doc{parse[1]}
+     */
     static json parse(const std::string &s);
 
     /**
      * @startDoc{read}
      *
      * Description:
-     *   TODO
+     *   Read the input file and parse the JSON-formatted contents.
+     *   Throw an `occa::exception` if the input is not of JSON-format
+     *
+     *   Same as [[json.parse]] but with a file rather than a `string`.
      *
      * @endDoc
      */
@@ -392,7 +404,9 @@ namespace occa {
      * @startDoc{write}
      *
      * Description:
-     *   TODO
+     *   Output the JSON-formatted string representation of the data into the given file.
+     *
+     *   Same as [[json.dump]] but writes to a file rather than a `string`.
      *
      * @endDoc
      */
@@ -413,13 +427,27 @@ namespace occa {
 
     void mergeWithObject(const jsonObject &obj);
 
-    bool has(const std::string &s) const;
+    /**
+     * @startDoc{has}
+     *
+     * Description:
+     *   If it's an object, return whether it has a key `s` which handles paths.
+     *
+     *   For example, the following checks whether there is a nested `{a: {b: {c: ...}}}` structure:
+     *
+     *   ```cpp
+     *   j.has("a/b/c")
+     *   ```
+     *
+     * @endDoc
+     */
+    bool has(const std::string &key) const;
 
     /**
      * @startDoc{isString}
      *
      * Description:
-     *   TODO
+     *   Returns whether the json object represents a `string`
      *
      * @endDoc
      */
@@ -431,7 +459,7 @@ namespace occa {
      * @startDoc{isNumber}
      *
      * Description:
-     *   TODO
+     *   Returns whether the json object represents a `number`
      *
      * @endDoc
      */
@@ -443,7 +471,7 @@ namespace occa {
      * @startDoc{isObject}
      *
      * Description:
-     *   TODO
+     *   Returns whether the json object represents an `object`
      *
      * @endDoc
      */
@@ -455,7 +483,7 @@ namespace occa {
      * @startDoc{isArray}
      *
      * Description:
-     *   TODO
+     *   Returns whether the json object represents an `array`
      *
      * @endDoc
      */
@@ -467,7 +495,7 @@ namespace occa {
      * @startDoc{isBool}
      *
      * Description:
-     *   TODO
+     *   Returns whether the json object represents an `bool`
      *
      * @endDoc
      */
@@ -482,7 +510,7 @@ namespace occa {
      * @startDoc{isNull}
      *
      * Description:
-     *   TODO
+     *   Returns whether the json object represents `NULL`
      *
      * @endDoc
      */
@@ -505,7 +533,7 @@ namespace occa {
      * @startDoc{asNull}
      *
      * Description:
-     *   TODO
+     *   Cast the JSON type as `NULL`
      *
      * @endDoc
      */
@@ -521,7 +549,7 @@ namespace occa {
      * @startDoc{asBoolean}
      *
      * Description:
-     *   TODO
+     *   Cast the JSON type as `boolean`
      *
      * @endDoc
      */
@@ -540,7 +568,7 @@ namespace occa {
      * @startDoc{asNumber}
      *
      * Description:
-     *   TODO
+     *   Cast the JSON type as a `number`
      *
      * @endDoc
      */
@@ -556,7 +584,7 @@ namespace occa {
      * @startDoc{asString}
      *
      * Description:
-     *   TODO
+     *   Cast the JSON type as a `stream`
      *
      * @endDoc
      */
@@ -572,7 +600,7 @@ namespace occa {
      * @startDoc{asArray}
      *
      * Description:
-     *   TODO
+     *   Cast the JSON type as an `array`
      *
      * @endDoc
      */
@@ -588,7 +616,7 @@ namespace occa {
      * @startDoc{asObject}
      *
      * Description:
-     *   TODO
+     *   Cast the JSON type as an `object`
      *
      * @endDoc
      */
@@ -644,10 +672,13 @@ namespace occa {
     const json& operator [] (const char *c) const;
 
     /**
-     * @startDoc{operator_brackets}
+     * @startDoc{operator_brackets[0]}
      *
      * Description:
-     *   TODO
+     *   Access data if it's an object or array.
+     *
+     * Overloaded Description:
+     *   Return the object value given by key `s`
      *
      * @endDoc
      */
@@ -655,20 +686,47 @@ namespace occa {
       return (*this)[s.c_str()];
     }
 
+    /**
+     * @doc{operator_brackets[1]}
+     */
     inline const json& operator [] (const std::string &s) const {
       return (*this)[s.c_str()];
     }
 
+    /**
+     * @startDoc{operator_brackets[2]}
+     *
+     * Overloaded Description:
+     *   Return the value at array on index `n`
+     *
+     * @endDoc
+     */
     json& operator [] (const int n);
+
+    /**
+     * @doc{operator_brackets[3]}
+     */
     const json& operator [] (const int n) const;
 
+    /**
+     * @startDoc{size}
+     *
+     * Description:
+     *   If it's an object, return how many key/value pairs it has.
+     *
+     *   If it's an array, return how many array entries it has.
+     *
+     *   If it's a string, return its length.
+     *
+     *   Otherwise, return 0
+     */
     int size() const;
 
     /**
-     * @startDoc{set}
+     * @startDoc{set[0]}
      *
      * Description:
-     *   TODO
+     *   Similar to [[json.operator_brackets]] which can be used to set a value, but avoids parsing `/` as paths
      *
      * @endDoc
      */
@@ -676,16 +734,30 @@ namespace occa {
     json& set(const char *key,
               const T &value);
 
+    /**
+     * @doc{set[1]}
+     */
     template <class T>
     json& set(const std::string &key,
               const T &value);
 
     json getPathValue(const char *key) const;
 
+    /**
+     * @startDoc{get[0]}
+     *
+     * Description:
+     *   Similar to [[json.operator_brackets]] which can be used to get a value, but avoids parsing `/` as paths
+     *
+     * @endDoc
+     */
     template <class T>
     T get(const char *key,
            const T &default_ = T()) const;
 
+    /**
+     * @doc{get[1]}
+     */
     template <class T>
     T get(const std::string &key,
            const T &default_ = T()) const;
@@ -701,16 +773,56 @@ namespace occa {
     std::vector<T> toVector(const std::string &s,
                              const std::vector<T> &default_ = std::vector<T>()) const;
 
+    /**
+     * @startDoc{keys}
+     *
+     * Description:
+     *   If it's an object, return an `std::vector<string>` of its keys.
+     *
+     *   Otherwise return an empty vector.
+     *
+     * @endDoc
+     */
     strVector keys() const;
+
+    /**
+     * @startDoc{value}
+     *
+     * Description:
+     *   If it's an object, return an `std::vector<string>` of its values.
+     *
+     *   Otherwise return an empty vector.
+     *
+     * @endDoc
+     */
     jsonArray values() const;
 
+    /**
+     * @startDoc{remove[0]}
+     *
+     * Description:
+     *   If it's an object, remove the key/value corresponding which matches the key
+     *
+     * @endDoc
+     */
     json& remove(const char *c);
 
+    /**
+     * @doc{remove[1]}
+     */
     inline json& remove(const std::string &s) {
       remove(s.c_str());
       return *this;
     }
 
+    /**
+     * @startDoc{operator_equals}
+     *
+     * Description:
+     *   Returns `true` if the two json values are the same
+     *
+     * @endDoc
+     */
     inline bool operator == (const json &j) const {
       if (type != j.type) {
         return false;

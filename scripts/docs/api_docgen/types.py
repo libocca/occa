@@ -2,6 +2,7 @@
 Basic types
 '''
 import dataclasses
+import html
 from dataclasses import dataclass
 from typing import cast, Any, Dict, List, Match, Optional, Tuple, Union
 
@@ -12,6 +13,13 @@ from .dev_utils import *
 
 
 Code = Union['DefinitionInfo', 'Function', 'Class']
+
+def escape_html(text):
+    return (
+        html.escape(text)
+        .replace('*', '&#42;')
+        .replace('_', '&#95;')
+    )
 
 @dataclass
 class HyperlinkNodeInfo:
@@ -148,11 +156,16 @@ class Type:
             char_count += 1
 
         if info:
-            content += f'''<a href="#{info.link}">{info.name}</a>'''.strip()
+            type_str = escape_html(info.name)
+            content += f'''<a href="#{info.link}">{type_str}</a>'''.strip()
             char_count += len(info.name)
         elif self.type_:
-            type_str = self.type_ if isinstance(self.type_, str) else self.type_.type_
-            content += f'<span class="token keyword">{type_str}</span>'
+            type_str = cast(str, (
+                self.type_ if isinstance(self.type_, str) else self.type_.type_
+            ))
+            safe_type_str = escape_html(type_str)
+
+            content += f'<span class="token keyword">{safe_type_str}</span>'
             char_count += len(type_str)
 
         needs_space_before_name = True
@@ -164,7 +177,9 @@ class Type:
                 needs_space_before_name = False
                 content += ' '
                 char_count += 1
-            content += ''.join(self.post_qualifiers)
+            content += escape_html(
+                ''.join(self.post_qualifiers)
+            )
             char_count += sum(
                 len(qualifier)
                 for qualifier in self.post_qualifiers
@@ -186,7 +201,7 @@ class Argument:
     name: str
 
     def to_string(self, hyperlink_mapping: HyperlinkMapping):
-        return self.type_.to_string(hyperlink_mapping, self.name)
+        return self.type_.to_string(hyperlink_mapping, escape_html(self.name))
 
 
 @dataclass
@@ -197,6 +212,9 @@ class DefinitionInfo:
 
     @property
     def short_name(self):
+        if self.name == 'operator<':
+            return self.name
+
         # Remove the templates
         return self.name.split('<')[0]
 
@@ -282,7 +300,7 @@ class Function(DefinitionInfo):
         ]
 
         override_group_descriptions = ['']
-        override_groups = [[]]
+        override_groups: Any = [[]]
         for override, func_description in func_descriptions:
             if func_description:
                 override_group_descriptions.append(func_description)
@@ -301,10 +319,16 @@ class Function(DefinitionInfo):
 
                 override_description = func_description if is_last else ''
 
+                (func_content, func_mobile_content) = (
+                    func.get_function_signature(hyperlink_mapping,
+                                                argument_override)
+                )
+
                 content += f'''
   <div class="definition-container">
     <div class="definition">
-      <code>{func.get_function_signature(hyperlink_mapping, argument_override)}</code>
+      <code class="desktop-only">{func_content}</code>
+      <code class="mobile-only">{func_mobile_content}</code>
       <div class="flex-spacing"></div>
       <a href="{func.get_source_link(override.doc, git_hash)}" target="_blank">Source</a>
     </div>
@@ -334,7 +358,7 @@ class Function(DefinitionInfo):
 
     def get_function_signature(self,
                                hyperlink_mapping: HyperlinkMapping,
-                               argument_override: Optional[str]):
+                               argument_override: Optional[str]) -> Tuple[str, str]:
         from . import markdown
         # Example:
         #
@@ -366,8 +390,8 @@ class Function(DefinitionInfo):
 
         # malloc(
         name_str = f'{self.name}'
-        if name_str.startswith('operator'):
-            name_str = re.sub(r'^operator', 'operator ', name_str)
+        if name_str.startswith('operator') and not name_str.startswith('operator '):
+            name_str = re.sub(r'^operator', 'operator ', escape_html(name_str))
             name_str += ' '
         name_str += '('
 
@@ -379,8 +403,11 @@ class Function(DefinitionInfo):
                 markdown.replace_hyperlinks(argument_override,
                                             hyperlink_mapping)
             ).strip()
+            mobile_content = content
         else:
             left_padding = ' ' * char_count
+
+            mobile_content = content + '\n    '
 
             # . . . . . . . . const int *arg1,
             #                 const int *arg2
@@ -388,14 +415,19 @@ class Function(DefinitionInfo):
             for index, arg in enumerate(self.arguments):
                 if index:
                     content += f',\n{left_padding}'
+                    mobile_content += ',\n    '
+
                 (arg_content, arg_char_count) = arg.to_string(hyperlink_mapping)
                 content += arg_content
                 char_count += arg_char_count
 
+                mobile_content += arg_content
+
         # )
         content += ')'
+        mobile_content += '\n)'
 
-        return content
+        return (content, mobile_content)
 
     def get_source_link(self,
                         doc: Documentation,
@@ -595,8 +627,8 @@ class DocTreeNode:
     def name(self) -> str:
         name = self.root_definition.code.short_name
 
-        if name.startswith('operator'):
-            return re.sub(r'^operator', 'operator ', name)
+        if name.startswith('operator') and not name.startswith('operator '):
+            return re.sub(r'^operator', 'operator ', escape_html(name))
 
         if self.id_ == 'constructor':
             return '(constructor)'
@@ -635,6 +667,12 @@ class DocTreeNode:
 @dataclass
 class DocTree:
     roots: List[DocTreeNode]
+
+    def __init__(self, roots: List[DocTreeNode]):
+        self.roots = sorted(
+            roots,
+            key=DocTreeNode.sort_key,
+        )
 
     @staticmethod
     def get_hyperlink_mapping(base_link: str,

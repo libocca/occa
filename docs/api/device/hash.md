@@ -11,15 +11,18 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code><a href="#/api/hash_t">occa::hash_t</a> hash()</code>
+      <code class="desktop-only"><a href="#/api/hash_t/">occa::hash&#95;t</a> hash()</code>
+      <code class="mobile-only"><a href="#/api/hash_t/">occa::hash&#95;t</a> hash(
+    
+)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/core/device.hpp#L304" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/device.hpp#L306" target="_blank">Source</a>
     </div>
     <div class="description">
 
       <div class="section-header">Returns</div>
       <ul class="section-list">
-        <li> ::: markdown The device [hash](/api/hash_t) ::: </li>
+        <li> ::: markdown The device [hash](/api/hash_t/) ::: </li>
       </ul>
 </div>
   </div>
@@ -34,6 +37,6 @@
   </a>
 </h2>
 
-Gets the [hash](/api/hash_t) of the device.
+Gets the [hash](/api/hash_t/) of the device.
 Two devices should have the same hash if they point to the same hardware device
 and setup with the same properties.

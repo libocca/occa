@@ -90,10 +90,10 @@ namespace occa {
      * @startDoc{isInitialized}
      *
      * Description:
-     *   Check whether the kernel has been intialized.
+     *   Check whether the [[kernel]] has been intialized.
      *
      * Returns:
-     *   Returns `true` if the kernel has been built successfully
+     *   Returns `true` if the [[kernel]] has been built successfully
      *
      * @endDoc
      */
@@ -116,7 +116,7 @@ namespace occa {
      * @startDoc{properties}
      *
      * Description:
-     *   Get the properties used to build the kernel.
+     *   Get the properties used to build the [[kernel]].
      *
      * Description:
      *   Returns the properties used to build the [[kernel]].
@@ -131,7 +131,7 @@ namespace occa {
      * @startDoc{getDevice}
      *
      * Description:
-     *   Returns the [[device]] used to build the [[kernel].
+     *   Returns the [[device]] used to build the [[kernel]].
      *
      * Returns:
      *   The [[device]] used to build the [[kernel]]
@@ -157,7 +157,7 @@ namespace occa {
      * @startDoc{operator_equals[1]}
      *
      * Description:
-     *   Compare if two devices have different references.
+     *   Compare if two kernels have different references.
      *
      * Returns:
      *   If the references are different, this returns `true` otherwise `false`.
@@ -261,7 +261,7 @@ namespace occa {
     void clearArgs();
 
     /**
-     * @startDoc{run}
+     * @startDoc{run[0]}
      *
      * Description:
      *   The more common way to run a [[kernel]] is through [[kernel.operator_parentheses]].
@@ -277,7 +277,7 @@ namespace occa {
     void run() const;
 
     /**
-     * @doc{run}
+     * @doc{run[1]}
      */
     void run(std::initializer_list<kernelArg> args) const;
 
@@ -300,7 +300,8 @@ namespace occa {
      * @startDoc{free}
      *
      * Description:
-     *   Free the kernel
+     *   Free the kernel object.
+     *   Calling [[kernel.isInitialized]] will return `false` now.
      *
      * @endDoc
      */

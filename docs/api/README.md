@@ -1,7 +1,5 @@
 # API
 
-?> API documentation is still under development
-
 Welcome to the OCCA library API documentation!
 
 

@@ -6,7 +6,7 @@ To update the docs, clone the git repo first and go to the docs directory
 
 ```bash
 git clone git@github.com:libocca/occa.git
-cd occa/docs
+cd occa
 ```
 
 ## Yarn
@@ -26,7 +26,7 @@ PATH+=":${HOME}/.npm-global/bin/docsify"
 ## Run libocca.org Locally
 
 ```bash
-docsify serve .
+docsify serve docs
 ```
 
 ## Generate the API

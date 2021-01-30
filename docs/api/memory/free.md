@@ -11,9 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code><span class="token keyword">void</span> free()</code>
+      <code class="desktop-only"><span class="token keyword">void</span> free()</code>
+      <code class="mobile-only"><span class="token keyword">void</span> free(
+    
+)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/core/memory.hpp#L247" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/memory.hpp#L477" target="_blank">Source</a>
     </div>
     
   </div>
@@ -28,4 +31,5 @@
   </a>
 </h2>
 
-TODO
+Free the device memory.
+Calling [isInitialized](/api/memory/isInitialized) will return `false` now.

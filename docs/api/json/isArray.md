@@ -11,9 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code><span class="token keyword">bool</span> isArray()</code>
+      <code class="desktop-only"><span class="token keyword">bool</span> isArray()</code>
+      <code class="mobile-only"><span class="token keyword">bool</span> isArray(
+    
+)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/types/json.hpp#L462" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/types/json.hpp#L490" target="_blank">Source</a>
     </div>
     
   </div>
@@ -28,4 +31,4 @@
   </a>
 </h2>
 
-TODO
+Returns whether the json object represents an `array`

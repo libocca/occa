@@ -11,15 +11,18 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code><span class="token keyword">bool</span> isInitialized()</code>
+      <code class="desktop-only"><span class="token keyword">bool</span> isInitialized()</code>
+      <code class="mobile-only"><span class="token keyword">bool</span> isInitialized(
+    
+)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/core/device.hpp#L224" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/device.hpp#L224" target="_blank">Source</a>
     </div>
     <div class="description">
 
       <div class="section-header">Returns</div>
       <ul class="section-list">
-        <li> ::: markdown Returns `true` if the device has been intialized, through either the [(constructor)](/api/device/constructor) or [setup](/api/device/setup). ::: </li>
+        <li> ::: markdown Returns `true` if the [occa::device](/api/device/) has been intialized, through either the [(constructor)](/api/device/constructor) or [setup](/api/device/setup). ::: </li>
       </ul>
 </div>
   </div>
@@ -34,4 +37,4 @@
   </a>
 </h2>
 
-Check whether the device has been intialized.
+Check whether the [occa::device](/api/device/) has been intialized.

@@ -51,7 +51,7 @@ namespace occa {
    *
    *   ```cpp
    *   occa::device device(
-   *     "{ mode: 'CUDA", device_id: 0 }"
+   *     "{ mode: 'CUDA', device_id: 0 }"
    *   );
    *   ```
    *
@@ -214,10 +214,10 @@ namespace occa {
      * @startDoc{isInitialized}
      *
      * Description:
-     *   Check whether the device has been intialized.
+     *   Check whether the [[device]] has been intialized.
      *
      * Returns:
-     *   Returns `true` if the device has been intialized, through either the [[device.constructor]] or [[device.setup]].
+     *   Returns `true` if the [[device]] has been intialized, through either the [[device.constructor]] or [[device.setup]].
      *
      * @endDoc
      */
@@ -248,6 +248,8 @@ namespace occa {
      *   - Allocated [[memory]]
      *   - Built [[kernel]]
      *   - Created [[stream]] and [[streamTag]]
+     *
+     *   Calling [[device.isInitialized]] will return `false` now.
      *
      * @endDoc
      */

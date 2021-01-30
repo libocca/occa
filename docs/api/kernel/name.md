@@ -11,9 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code><span class="token keyword">const</span> <span class="token keyword">std::string</span>& name()</code>
+      <code class="desktop-only"><span class="token keyword">const</span> <span class="token keyword">std::string</span>&amp; name()</code>
+      <code class="mobile-only"><span class="token keyword">const</span> <span class="token keyword">std::string</span>&amp; name(
+    
+)</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/7d325d3f/include/occa/core/kernel.hpp#L180" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/kernel.hpp#L180" target="_blank">Source</a>
     </div>
     <div class="description">
 

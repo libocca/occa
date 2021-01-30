@@ -10,4 +10,9 @@
   </a>
 </h2>
 
-TODO
+[occa::kernel](/api/kernel/) arguments must be of type [occa::kernelArg](/api/kernelArg).
+Custom user types can be passed to a kernel by implementing a cast operator such as:
+
+```cpp
+operator occa::kernelArg() const;
+```
