@@ -16,7 +16,7 @@
     <span class="token keyword">const</span> <span class="token keyword">char</span> *&c
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/58bd0f1e/include/occa/types/json.hpp#L378" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/types/json.hpp#L378" target="_blank">Source</a>
     </div>
     
   </div>

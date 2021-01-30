@@ -18,7 +18,7 @@
     <span class="token keyword">const</span> <span class="token keyword">T</span> &t
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/58bd0f1e/include/occa/utils/hash.hpp#L92" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/utils/hash.hpp#L92" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -38,7 +38,7 @@
     <span class="token keyword">const</span> <a href="#/api/hash_t/">occa::hash_t</a> hash
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/58bd0f1e/include/occa/utils/hash.hpp#L105" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/utils/hash.hpp#L105" target="_blank">Source</a>
     </div>
     <div class="description">
 

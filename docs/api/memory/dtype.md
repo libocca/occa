@@ -11,12 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only"><span class="token keyword">const</span> <a href="#/api/dtype_t">occa::dtype_t</a>& dtype()</code>
-      <code class="mobile-only"><span class="token keyword">const</span> <a href="#/api/dtype_t">occa::dtype_t</a>& dtype(
+      <code class="desktop-only"><span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype_t</a>& dtype()</code>
+      <code class="mobile-only"><span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype_t</a>& dtype(
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/58bd0f1e/include/occa/core/memory.hpp#L193" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/core/memory.hpp#L193" target="_blank">Source</a>
     </div>
     
   </div>
@@ -31,4 +31,4 @@
   </a>
 </h2>
 
-Returns the [occa::dtype_t](/api/dtype_t)
+Returns the [occa::dtype_t](/api/dtype_t/)

@@ -18,7 +18,7 @@
     <span class="token keyword">dim</span> innerDims
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/58bd0f1e/include/occa/core/kernel.hpp#L237" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/core/kernel.hpp#L237" target="_blank">Source</a>
     </div>
     
   </div>

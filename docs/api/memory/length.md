@@ -16,7 +16,7 @@
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/58bd0f1e/include/occa/core/memory.hpp#L217" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/core/memory.hpp#L217" target="_blank">Source</a>
     </div>
     
   </div>
@@ -32,7 +32,7 @@
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/58bd0f1e/include/occa/core/memory.hpp#L228" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/core/memory.hpp#L228" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -52,8 +52,8 @@
   </a>
 </h2>
 
-Get the length of the memory object, using its underlying [occa::dtype_t](/api/dtype_t).
-This [occa::dtype_t](/api/dtype_t) can be fetched through the [dtype](/api/memory/dtype) method
+Get the length of the memory object, using its underlying [occa::dtype_t](/api/dtype_t/).
+This [occa::dtype_t](/api/dtype_t/) can be fetched through the [dtype](/api/memory/dtype) method
 
 If no type was given during [allocation](/api/device/malloc) or was ever set
 through [casting it](/api/memory/cast), it will return the bytes just like [size](/api/memory/size).

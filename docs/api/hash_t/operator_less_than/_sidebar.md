@@ -9,8 +9,8 @@
 
 - [**API**](/api/)
   - [occa::device](/api/device/)
-  - [occa::dtype_t](/api/dtype_t)
-  - [occa::function](/api/function)
+  - [occa::dtype_t](/api/dtype_t/)
+  - [occa::function](/api/function/)
   - [occa::hash_t](/api/hash_t/)
     - [fromString](/api/hash_t/fromString)
     - [getFullString](/api/hash_t/getFullString)
