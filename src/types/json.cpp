@@ -448,7 +448,7 @@ namespace occa {
     }
   }
 
-  bool json::has(const std::string &key) const {
+  bool json::has(const std::string &s) const {
     const char *c  = s.c_str();
     const json *j = this;
 
