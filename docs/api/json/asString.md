@@ -11,12 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only"><a href="#/api/json/">occa::json</a>& asString()</code>
-      <code class="mobile-only"><a href="#/api/json/">occa::json</a>& asString(
+      <code class="desktop-only"><a href="#/api/json/">occa::json</a>&amp; asString()</code>
+      <code class="mobile-only"><a href="#/api/json/">occa::json</a>&amp; asString(
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/types/json.hpp#L563" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/types/json.hpp#L591" target="_blank">Source</a>
     </div>
     
   </div>
@@ -31,4 +31,4 @@
   </a>
 </h2>
 
-TODO
+Cast the JSON type as a `stream`

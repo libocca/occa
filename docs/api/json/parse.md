@@ -11,12 +11,24 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only"><a href="#/api/json/">occa::json</a> parse(<span class="token keyword">const</span> <span class="token keyword">char</span> *&c)</code>
+      <code class="desktop-only"><a href="#/api/json/">occa::json</a> parse(<span class="token keyword">const</span> <span class="token keyword">char</span> &#42;&amp;c)</code>
       <code class="mobile-only"><a href="#/api/json/">occa::json</a> parse(
-    <span class="token keyword">const</span> <span class="token keyword">char</span> *&c
+    <span class="token keyword">const</span> <span class="token keyword">char</span> &#42;&amp;c
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/types/json.hpp#L378" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/types/json.hpp#L383" target="_blank">Source</a>
+    </div>
+    
+  </div>
+
+  <div class="definition-container">
+    <div class="definition">
+      <code class="desktop-only"><a href="#/api/json/">occa::json</a> parse(<span class="token keyword">const</span> <span class="token keyword">std::string</span> &amp;s)</code>
+      <code class="mobile-only"><a href="#/api/json/">occa::json</a> parse(
+    <span class="token keyword">const</span> <span class="token keyword">std::string</span> &amp;s
+)</code>
+      <div class="flex-spacing"></div>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/types/json.hpp#L388" target="_blank">Source</a>
     </div>
     
   </div>
@@ -31,4 +43,7 @@
   </a>
 </h2>
 
-TODO
+Parse a JSON-formatted string.
+Throw an `occa::exception` if the input is not of JSON-format
+
+Same as [read](/api/json/read) but with a file rather than a `string`.

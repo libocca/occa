@@ -16,7 +16,7 @@
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/types/json.hpp#L438" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/types/json.hpp#L466" target="_blank">Source</a>
     </div>
     
   </div>
@@ -31,4 +31,4 @@
   </a>
 </h2>
 
-TODO
+Returns whether the json object represents a `number`

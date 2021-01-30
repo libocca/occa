@@ -261,7 +261,7 @@ namespace occa {
     void clearArgs();
 
     /**
-     * @startDoc{run}
+     * @startDoc{run[0]}
      *
      * Description:
      *   The more common way to run a [[kernel]] is through [[kernel.operator_parentheses]].
@@ -277,7 +277,7 @@ namespace occa {
     void run() const;
 
     /**
-     * @doc{run}
+     * @doc{run[1]}
      */
     void run(std::initializer_list<kernelArg> args) const;
 

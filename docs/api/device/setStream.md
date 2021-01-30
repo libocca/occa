@@ -16,7 +16,7 @@
     <a href="#/api/stream/">occa::stream</a> s
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/core/device.hpp#L400" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/core/device.hpp#L400" target="_blank">Source</a>
     </div>
     
   </div>

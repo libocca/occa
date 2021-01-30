@@ -16,7 +16,7 @@
     <span class="token keyword">const</span> <span class="token keyword">int</span> indent
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/types/json.hpp#L364" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/types/json.hpp#L366" target="_blank">Source</a>
     </div>
     
   </div>
@@ -31,4 +31,6 @@
   </a>
 </h2>
 
-TODO
+Return the JSON-formatted string representation of the data
+
+Same as [write](/api/json/write) but to a `string` rather than a file

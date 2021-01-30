@@ -11,12 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only"><span class="token keyword">bool</span> canBeCastedTo(<span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype_t</a> &other)</code>
+      <code class="desktop-only"><span class="token keyword">bool</span> canBeCastedTo(<span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype&#95;t</a> &amp;other)</code>
       <code class="mobile-only"><span class="token keyword">bool</span> canBeCastedTo(
-    <span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype_t</a> &other
+    <span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype&#95;t</a> &amp;other
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/dtype/dtype.hpp#L236" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/dtype/dtype.hpp#L236" target="_blank">Source</a>
     </div>
     
   </div>

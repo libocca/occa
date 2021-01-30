@@ -12,17 +12,17 @@
   <div class="definition-container">
     <div class="definition">
       <code class="desktop-only"><span class="token keyword">template</span> <<span class="token keyword">class</span> <span class="token keyword">T</span>>
-<a href="#/api/memory/">occa::memory</a> malloc(<span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
-                    <span class="token keyword">const</span> <span class="token keyword">void</span> *src,
-                    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
+<a href="#/api/memory/">occa::memory</a> malloc(<span class="token keyword">const</span> <span class="token keyword">dim&#95;t</span> entries,
+                    <span class="token keyword">const</span> <span class="token keyword">void</span> &#42;src,
+                    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props)</code>
       <code class="mobile-only"><span class="token keyword">template</span> <<span class="token keyword">class</span> <span class="token keyword">T</span>>
 <a href="#/api/memory/">occa::memory</a> malloc(
-    <span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
-    <span class="token keyword">const</span> <span class="token keyword">void</span> *src,
-    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props
+    <span class="token keyword">const</span> <span class="token keyword">dim&#95;t</span> entries,
+    <span class="token keyword">const</span> <span class="token keyword">void</span> &#42;src,
+    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/core/device.hpp#L578" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/core/device.hpp#L578" target="_blank">Source</a>
     </div>
     
   </div>
@@ -30,17 +30,17 @@
   <div class="definition-container">
     <div class="definition">
       <code class="desktop-only"><span class="token keyword">template</span> <<span class="token keyword">class</span> <span class="token keyword">T</span>>
-<a href="#/api/memory/">occa::memory</a> malloc(<span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
+<a href="#/api/memory/">occa::memory</a> malloc(<span class="token keyword">const</span> <span class="token keyword">dim&#95;t</span> entries,
                     <span class="token keyword">const</span> <a href="#/api/memory/">occa::memory</a> src,
-                    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
+                    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props)</code>
       <code class="mobile-only"><span class="token keyword">template</span> <<span class="token keyword">class</span> <span class="token keyword">T</span>>
 <a href="#/api/memory/">occa::memory</a> malloc(
-    <span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
+    <span class="token keyword">const</span> <span class="token keyword">dim&#95;t</span> entries,
     <span class="token keyword">const</span> <a href="#/api/memory/">occa::memory</a> src,
-    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props
+    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/core/device.hpp#L586" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/core/device.hpp#L586" target="_blank">Source</a>
     </div>
     
   </div>
@@ -48,15 +48,15 @@
   <div class="definition-container">
     <div class="definition">
       <code class="desktop-only"><span class="token keyword">template</span> <<span class="token keyword">class</span> <span class="token keyword">T</span>>
-<a href="#/api/memory/">occa::memory</a> malloc(<span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
-                    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
+<a href="#/api/memory/">occa::memory</a> malloc(<span class="token keyword">const</span> <span class="token keyword">dim&#95;t</span> entries,
+                    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props)</code>
       <code class="mobile-only"><span class="token keyword">template</span> <<span class="token keyword">class</span> <span class="token keyword">T</span>>
 <a href="#/api/memory/">occa::memory</a> malloc(
-    <span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
-    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props
+    <span class="token keyword">const</span> <span class="token keyword">dim&#95;t</span> entries,
+    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/core/device.hpp#L594" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/core/device.hpp#L594" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -94,52 +94,52 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only"><a href="#/api/memory/">occa::memory</a> malloc(<span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
-                    <span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype_t</a> &dtype,
-                    <span class="token keyword">const</span> <span class="token keyword">void</span> *src,
-                    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
+      <code class="desktop-only"><a href="#/api/memory/">occa::memory</a> malloc(<span class="token keyword">const</span> <span class="token keyword">dim&#95;t</span> entries,
+                    <span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype&#95;t</a> &amp;dtype,
+                    <span class="token keyword">const</span> <span class="token keyword">void</span> &#42;src,
+                    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props)</code>
       <code class="mobile-only"><a href="#/api/memory/">occa::memory</a> malloc(
-    <span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
-    <span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype_t</a> &dtype,
-    <span class="token keyword">const</span> <span class="token keyword">void</span> *src,
-    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props
+    <span class="token keyword">const</span> <span class="token keyword">dim&#95;t</span> entries,
+    <span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype&#95;t</a> &amp;dtype,
+    <span class="token keyword">const</span> <span class="token keyword">void</span> &#42;src,
+    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/core/device.hpp#L618" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/core/device.hpp#L618" target="_blank">Source</a>
     </div>
     
   </div>
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only"><a href="#/api/memory/">occa::memory</a> malloc(<span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
-                    <span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype_t</a> &dtype,
+      <code class="desktop-only"><a href="#/api/memory/">occa::memory</a> malloc(<span class="token keyword">const</span> <span class="token keyword">dim&#95;t</span> entries,
+                    <span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype&#95;t</a> &amp;dtype,
                     <span class="token keyword">const</span> <a href="#/api/memory/">occa::memory</a> src,
-                    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
+                    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props)</code>
       <code class="mobile-only"><a href="#/api/memory/">occa::memory</a> malloc(
-    <span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
-    <span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype_t</a> &dtype,
+    <span class="token keyword">const</span> <span class="token keyword">dim&#95;t</span> entries,
+    <span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype&#95;t</a> &amp;dtype,
     <span class="token keyword">const</span> <a href="#/api/memory/">occa::memory</a> src,
-    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props
+    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/core/device.hpp#L626" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/core/device.hpp#L626" target="_blank">Source</a>
     </div>
     
   </div>
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only"><a href="#/api/memory/">occa::memory</a> malloc(<span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
-                    <span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype_t</a> &dtype,
-                    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
+      <code class="desktop-only"><a href="#/api/memory/">occa::memory</a> malloc(<span class="token keyword">const</span> <span class="token keyword">dim&#95;t</span> entries,
+                    <span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype&#95;t</a> &amp;dtype,
+                    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props)</code>
       <code class="mobile-only"><a href="#/api/memory/">occa::memory</a> malloc(
-    <span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
-    <span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype_t</a> &dtype,
-    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props
+    <span class="token keyword">const</span> <span class="token keyword">dim&#95;t</span> entries,
+    <span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype&#95;t</a> &amp;dtype,
+    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/core/device.hpp#L634" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/core/device.hpp#L634" target="_blank">Source</a>
     </div>
     <div class="description">
 

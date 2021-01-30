@@ -119,7 +119,7 @@ namespace occa {
     int getInt() const;
 
     /**
-     * @startDoc{getString}
+     * @startDoc{getString[0]}
      *
      * Description:
      *   Return a short string representation of the hash
@@ -133,7 +133,7 @@ namespace occa {
     std::string getString() const;
 
     /**
-     * @doc{getString}
+     * @doc{getString[1]}
      */
     operator std::string () const;
 

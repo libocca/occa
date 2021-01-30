@@ -16,19 +16,19 @@
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/core/kernel.hpp#L277" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/core/kernel.hpp#L277" target="_blank">Source</a>
     </div>
     
   </div>
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only"><span class="token keyword">void</span> run(<span class="token keyword">std::initializer_list<</span> <a href="#/api/kernelArg">occa::kernelArg</a> >args)</code>
+      <code class="desktop-only"><span class="token keyword">void</span> run(<span class="token keyword">std::initializer_list<</span> <a href="#/api/kernelArg">occa::kernelArg</a> &gt;args)</code>
       <code class="mobile-only"><span class="token keyword">void</span> run(
-    <span class="token keyword">std::initializer_list<</span> <a href="#/api/kernelArg">occa::kernelArg</a> >args
+    <span class="token keyword">std::initializer_list<</span> <a href="#/api/kernelArg">occa::kernelArg</a> &gt;args
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/core/kernel.hpp#L282" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/core/kernel.hpp#L282" target="_blank">Source</a>
     </div>
     
   </div>

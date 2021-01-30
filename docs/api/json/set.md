@@ -12,27 +12,18 @@
   <div class="definition-container">
     <div class="definition">
       <code class="desktop-only"><span class="token keyword">template</span> <<span class="token keyword">class</span> <span class="token keyword">T</span>>
-<a href="#/api/json/">occa::json</a>& set(<span class="token keyword">const</span> <span class="token keyword">char</span> *key,
-                <span class="token keyword">const</span> <span class="token keyword">T</span> &value)</code>
+<a href="#/api/json/">occa::json</a>&amp; set(<span class="token keyword">const</span> <span class="token keyword">std::string</span> &amp;key,
+                <span class="token keyword">const</span> <span class="token keyword">T</span> &amp;value)</code>
       <code class="mobile-only"><span class="token keyword">template</span> <<span class="token keyword">class</span> <span class="token keyword">T</span>>
-<a href="#/api/json/">occa::json</a>& set(
-    <span class="token keyword">const</span> <span class="token keyword">char</span> *key,
-    <span class="token keyword">const</span> <span class="token keyword">T</span> &value
+<a href="#/api/json/">occa::json</a>&amp; set(
+    <span class="token keyword">const</span> <span class="token keyword">std::string</span> &amp;key,
+    <span class="token keyword">const</span> <span class="token keyword">T</span> &amp;value
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/types/json.hpp#L676" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/types/json.hpp#L741" target="_blank">Source</a>
     </div>
     
   </div>
 
   <hr>
 </div>
-
-
-<h2 id="description">
- <a href="#/api/json/set?id=description" class="anchor">
-   <span>Description</span>
-  </a>
-</h2>
-
-TODO

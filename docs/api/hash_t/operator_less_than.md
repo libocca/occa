@@ -11,12 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only"><span class="token keyword">bool</span> operator &lt; (<span class="token keyword">const</span> <a href="#/api/hash_t/">occa::hash_t</a> &fo)</code>
+      <code class="desktop-only"><span class="token keyword">bool</span> operator &lt; (<span class="token keyword">const</span> <a href="#/api/hash_t/">occa::hash&#95;t</a> &amp;fo)</code>
       <code class="mobile-only"><span class="token keyword">bool</span> operator &lt; (
-    <span class="token keyword">const</span> <a href="#/api/hash_t/">occa::hash_t</a> &fo
+    <span class="token keyword">const</span> <a href="#/api/hash_t/">occa::hash&#95;t</a> &amp;fo
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/utils/hash.hpp#L58" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/utils/hash.hpp#L58" target="_blank">Source</a>
     </div>
     
   </div>

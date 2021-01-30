@@ -11,12 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only"><a href="#/api/stream/">occa::stream</a> createStream(<span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
+      <code class="desktop-only"><a href="#/api/stream/">occa::stream</a> createStream(<span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props)</code>
       <code class="mobile-only"><a href="#/api/stream/">occa::stream</a> createStream(
-    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props
+    <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/core/device.hpp#L377" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/core/device.hpp#L377" target="_blank">Source</a>
     </div>
     <div class="description">
 

@@ -14,6 +14,13 @@ from .dev_utils import *
 
 Code = Union['DefinitionInfo', 'Function', 'Class']
 
+def escape_html(text):
+    return (
+        html.escape(text)
+        .replace('*', '&#42;')
+        .replace('_', '&#95;')
+    )
+
 @dataclass
 class HyperlinkNodeInfo:
     name: str
@@ -149,14 +156,14 @@ class Type:
             char_count += 1
 
         if info:
-            type_str = html.escape(info.name)
+            type_str = escape_html(info.name)
             content += f'''<a href="#{info.link}">{type_str}</a>'''.strip()
             char_count += len(info.name)
         elif self.type_:
             type_str = cast(str, (
                 self.type_ if isinstance(self.type_, str) else self.type_.type_
             ))
-            safe_type_str = html.escape(type_str)
+            safe_type_str = escape_html(type_str)
 
             content += f'<span class="token keyword">{safe_type_str}</span>'
             char_count += len(type_str)
@@ -170,7 +177,9 @@ class Type:
                 needs_space_before_name = False
                 content += ' '
                 char_count += 1
-            content += ''.join(self.post_qualifiers)
+            content += escape_html(
+                ''.join(self.post_qualifiers)
+            )
             char_count += sum(
                 len(qualifier)
                 for qualifier in self.post_qualifiers
@@ -192,7 +201,7 @@ class Argument:
     name: str
 
     def to_string(self, hyperlink_mapping: HyperlinkMapping):
-        return self.type_.to_string(hyperlink_mapping, html.escape(self.name))
+        return self.type_.to_string(hyperlink_mapping, escape_html(self.name))
 
 
 @dataclass
@@ -382,7 +391,7 @@ class Function(DefinitionInfo):
         # malloc(
         name_str = f'{self.name}'
         if name_str.startswith('operator') and not name_str.startswith('operator '):
-            name_str = re.sub(r'^operator', 'operator ', html.escape(name_str))
+            name_str = re.sub(r'^operator', 'operator ', escape_html(name_str))
             name_str += ' '
         name_str += '('
 
@@ -619,7 +628,7 @@ class DocTreeNode:
         name = self.root_definition.code.short_name
 
         if name.startswith('operator') and not name.startswith('operator '):
-            return re.sub(r'^operator', 'operator ', html.escape(name))
+            return re.sub(r'^operator', 'operator ', escape_html(name))
 
         if self.id_ == 'constructor':
             return '(constructor)'

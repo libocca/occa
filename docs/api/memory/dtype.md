@@ -11,12 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only"><span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype_t</a>& dtype()</code>
-      <code class="mobile-only"><span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype_t</a>& dtype(
+      <code class="desktop-only"><span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype&#95;t</a>&amp; dtype()</code>
+      <code class="mobile-only"><span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype&#95;t</a>&amp; dtype(
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/22da1992/include/occa/core/memory.hpp#L193" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/core/memory.hpp#L193" target="_blank">Source</a>
     </div>
     
   </div>
