@@ -15,8 +15,10 @@ namespace occa {
    * @startDoc{hash_t}
    *
    * Description:
-   *   TODO
-   *   Note: Uses FNV hashing
+   *   An object used to represent a hash value.
+   *   It's intent isn't for security purposes, but rather to distinguish "things".
+   *
+   *   > It currently uses FNV hashing since it's quick, but it can be changed if something more useful shows up.
    *
    * @endDoc
    */
@@ -35,23 +37,127 @@ namespace occa {
 
     void clear();
 
+    /**
+     * @startDoc{isInitialized}
+     *
+     * Description:
+     *   Return whether the [[hash_t]] was initialized
+     *
+     * @endDoc
+     */
     inline bool isInitialized() const { return initialized; }
 
+    /**
+     * @startDoc{operator_less_than}
+     *
+     * Description:
+     *   Implemented for comparison purposes, such as sorting
+     *
+     * @endDoc
+     */
     bool operator < (const hash_t &fo) const;
+
+    /**
+     * @startDoc{operator_equals[1]}
+     *
+     * Description:
+     *   Returns `true` if two [[hash_t]] objects are the same
+     *
+     * @endDoc
+     */
     bool operator == (const hash_t &fo) const;
+
+    /**
+     * @startDoc{operator_equals[1]}
+     *
+     * Description:
+     *   Returns `true` if two [[hash_t]] objects are the different
+     *
+     * @endDoc
+     */
     bool operator != (const hash_t &fo) const;
 
-    hash_t& operator ^= (const hash_t hash);
-
+    /**
+     * @startDoc{operator_xor[0]}
+     *
+     * Description:
+     *   Apply a XOR (`^`) operation between two hashes, a common way to "combine" hashes
+     *
+     * Returns:
+     *   A new hash
+     *
+     * @endDoc
+     */
     template <class T>
     hash_t operator ^ (const T &t) const;
 
+    /**
+     * @startDoc{operator_xor[1]}
+     *
+     * Description:
+     *   Same as above but applies it inplace
+     *
+     * Returns:
+     *   The same [[hash_t]] as the caller
+     *
+     * @endDoc
+     */
+    hash_t& operator ^= (const hash_t hash);
+
+    /**
+     * @startDoc{getInt}
+     *
+     * Description:
+     *   Return an integer representation of the hash
+     *
+     *   ?> Note that this does not fully represent the hash.
+     *   ?> .
+     *   ?> There isn't a way to recreate the hash from just this `int` value
+     *
+     * @endDoc
+     */
     int getInt() const;
 
-    std::string getFullString() const;
+    /**
+     * @startDoc{getString}
+     *
+     * Description:
+     *   Return a short string representation of the hash
+     *
+     *   ?> Note that this does not fully represent the hash.
+     *   ?> .
+     *   ?> There isn't a way to recreate the hash from just this `std::string` value
+     *
+     * @endDoc
+     */
     std::string getString() const;
+
+    /**
+     * @doc{getString}
+     */
     operator std::string () const;
 
+    /**
+     * @startDoc{getFullString}
+     *
+     * Description:
+     *   Return the full string representation of the hash.
+     *
+     *   Use the [[hash_t.fromString]] method to get the [[hash_t]] object back.
+     *
+     * @endDoc
+     */
+    std::string getFullString() const;
+
+    /**
+     * @startDoc{fromString}
+     *
+     * Description:
+     *   Given the full string representation of the hash ([[hash_t.getFullString]]),
+     *   get the original [[hash_t]] object back.
+     *
+     * @endDoc
+     */
     static hash_t fromString(const std::string &s);
 
     friend std::ostream& operator << (std::ostream &out,

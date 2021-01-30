@@ -11,7 +11,7 @@
   - [occa::device](/api/device/)
   - [occa::dtype_t](/api/dtype_t)
   - [occa::function](/api/function)
-  - [occa::hash_t](/api/hash_t)
+  - [occa::hash_t](/api/hash_t/)
   - [occa::json](/api/json/)
     - [asArray](/api/json/asArray)
   - [occa::kernel](/api/kernel/)

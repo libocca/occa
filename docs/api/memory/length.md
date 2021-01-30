@@ -11,12 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only"><span class="token keyword">udim&lowbar;t</span> length()</code>
-      <code class="mobile-only"><span class="token keyword">udim&lowbar;t</span> length(
+      <code class="desktop-only"><span class="token keyword">udim_t</span> length()</code>
+      <code class="mobile-only"><span class="token keyword">udim_t</span> length(
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/d617b895/include/occa/core/memory.hpp#L217" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/58bd0f1e/include/occa/core/memory.hpp#L217" target="_blank">Source</a>
     </div>
     
   </div>
@@ -26,13 +26,13 @@
   <div class="definition-container">
     <div class="definition">
       <code class="desktop-only"><span class="token keyword">template</span> <<span class="token keyword">class</span> <span class="token keyword">T</span>>
-<span class="token keyword">udim&lowbar;t</span> length()</code>
+<span class="token keyword">udim_t</span> length()</code>
       <code class="mobile-only"><span class="token keyword">template</span> <<span class="token keyword">class</span> <span class="token keyword">T</span>>
-<span class="token keyword">udim&lowbar;t</span> length(
+<span class="token keyword">udim_t</span> length(
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/d617b895/include/occa/core/memory.hpp#L228" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/58bd0f1e/include/occa/core/memory.hpp#L228" target="_blank">Source</a>
     </div>
     <div class="description">
 

@@ -2,6 +2,7 @@
 Basic types
 '''
 import dataclasses
+import html
 from dataclasses import dataclass
 from typing import cast, Any, Dict, List, Match, Optional, Tuple, Union
 
@@ -148,14 +149,14 @@ class Type:
             char_count += 1
 
         if info:
-            type_str = self.get_safe_name(info.name)
+            type_str = html.escape(info.name)
             content += f'''<a href="#{info.link}">{type_str}</a>'''.strip()
             char_count += len(info.name)
         elif self.type_:
             type_str = cast(str, (
                 self.type_ if isinstance(self.type_, str) else self.type_.type_
             ))
-            safe_type_str = self.get_safe_name(type_str)
+            safe_type_str = html.escape(type_str)
 
             content += f'<span class="token keyword">{safe_type_str}</span>'
             char_count += len(type_str)
@@ -185,17 +186,13 @@ class Type:
 
         return (content, char_count)
 
-    @staticmethod
-    def get_safe_name(name: str) -> str:
-        return name.replace('_', '&lowbar;')
-
 @dataclass
 class Argument:
     type_: Type
     name: str
 
     def to_string(self, hyperlink_mapping: HyperlinkMapping):
-        return self.type_.to_string(hyperlink_mapping, self.name)
+        return self.type_.to_string(hyperlink_mapping, html.escape(self.name))
 
 
 @dataclass
@@ -206,6 +203,9 @@ class DefinitionInfo:
 
     @property
     def short_name(self):
+        if self.name == 'operator<':
+            return self.name
+
         # Remove the templates
         return self.name.split('<')[0]
 
@@ -381,8 +381,8 @@ class Function(DefinitionInfo):
 
         # malloc(
         name_str = f'{self.name}'
-        if name_str.startswith('operator'):
-            name_str = re.sub(r'^operator', 'operator ', name_str)
+        if name_str.startswith('operator') and not name_str.startswith('operator '):
+            name_str = re.sub(r'^operator', 'operator ', html.escape(name_str))
             name_str += ' '
         name_str += '('
 
@@ -618,8 +618,8 @@ class DocTreeNode:
     def name(self) -> str:
         name = self.root_definition.code.short_name
 
-        if name.startswith('operator'):
-            return re.sub(r'^operator', 'operator ', name)
+        if name.startswith('operator') and not name.startswith('operator '):
+            return re.sub(r'^operator', 'operator ', html.escape(name))
 
         if self.id_ == 'constructor':
             return '(constructor)'

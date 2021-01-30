@@ -12,17 +12,17 @@
   <div class="definition-container">
     <div class="definition">
       <code class="desktop-only"><span class="token keyword">void</span> copyTo(<span class="token keyword">void</span> *dest,
-            <span class="token keyword">const</span> <span class="token keyword">dim&lowbar;t</span> bytes,
-            <span class="token keyword">const</span> <span class="token keyword">dim&lowbar;t</span> offset,
+            <span class="token keyword">const</span> <span class="token keyword">dim_t</span> bytes,
+            <span class="token keyword">const</span> <span class="token keyword">dim_t</span> offset,
             <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <code class="mobile-only"><span class="token keyword">void</span> copyTo(
     <span class="token keyword">void</span> *dest,
-    <span class="token keyword">const</span> <span class="token keyword">dim&lowbar;t</span> bytes,
-    <span class="token keyword">const</span> <span class="token keyword">dim&lowbar;t</span> offset,
+    <span class="token keyword">const</span> <span class="token keyword">dim_t</span> bytes,
+    <span class="token keyword">const</span> <span class="token keyword">dim_t</span> offset,
     <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/d617b895/include/occa/core/memory.hpp#L405" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/58bd0f1e/include/occa/core/memory.hpp#L405" target="_blank">Source</a>
     </div>
     
   </div>
@@ -36,7 +36,7 @@
     <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/d617b895/include/occa/core/memory.hpp#L413" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/58bd0f1e/include/occa/core/memory.hpp#L413" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -72,19 +72,19 @@ For example, `async: true`. :::
   <div class="definition-container">
     <div class="definition">
       <code class="desktop-only"><span class="token keyword">void</span> copyTo(<span class="token keyword">const</span> <a href="#/api/memory/">occa::memory</a> dest,
-            <span class="token keyword">const</span> <span class="token keyword">dim&lowbar;t</span> bytes,
-            <span class="token keyword">const</span> <span class="token keyword">dim&lowbar;t</span> destOffset,
-            <span class="token keyword">const</span> <span class="token keyword">dim&lowbar;t</span> srcOffset,
+            <span class="token keyword">const</span> <span class="token keyword">dim_t</span> bytes,
+            <span class="token keyword">const</span> <span class="token keyword">dim_t</span> destOffset,
+            <span class="token keyword">const</span> <span class="token keyword">dim_t</span> srcOffset,
             <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <code class="mobile-only"><span class="token keyword">void</span> copyTo(
     <span class="token keyword">const</span> <a href="#/api/memory/">occa::memory</a> dest,
-    <span class="token keyword">const</span> <span class="token keyword">dim&lowbar;t</span> bytes,
-    <span class="token keyword">const</span> <span class="token keyword">dim&lowbar;t</span> destOffset,
-    <span class="token keyword">const</span> <span class="token keyword">dim&lowbar;t</span> srcOffset,
+    <span class="token keyword">const</span> <span class="token keyword">dim_t</span> bytes,
+    <span class="token keyword">const</span> <span class="token keyword">dim_t</span> destOffset,
+    <span class="token keyword">const</span> <span class="token keyword">dim_t</span> srcOffset,
     <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/d617b895/include/occa/core/memory.hpp#L431" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/58bd0f1e/include/occa/core/memory.hpp#L431" target="_blank">Source</a>
     </div>
     
   </div>
@@ -98,7 +98,7 @@ For example, `async: true`. :::
     <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/d617b895/include/occa/core/memory.hpp#L440" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/58bd0f1e/include/occa/core/memory.hpp#L440" target="_blank">Source</a>
     </div>
     <div class="description">
 

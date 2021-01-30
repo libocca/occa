@@ -1,7 +1,7 @@
 
-<h1 id="operator  kernel-arg">
+<h1 id="operator kernel-arg">
  <a href="#/api/memory/operator_kernelArg" class="anchor">
-   <span>operator  kernelArg</span>
+   <span>operator kernelArg</span>
   </a>
 </h1>
 
@@ -11,12 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only">operator  kernelArg ()</code>
-      <code class="mobile-only">operator  kernelArg (
+      <code class="desktop-only">operator kernelArg()</code>
+      <code class="mobile-only">operator kernelArg(
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/d617b895/include/occa/core/memory.hpp#L152" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/58bd0f1e/include/occa/core/memory.hpp#L152" target="_blank">Source</a>
     </div>
     <div class="description">
 

@@ -11,18 +11,18 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only"><a href="#/api/hash_t">occa::hash&lowbar;t</a> hash()</code>
-      <code class="mobile-only"><a href="#/api/hash_t">occa::hash&lowbar;t</a> hash(
+      <code class="desktop-only"><a href="#/api/hash_t/">occa::hash_t</a> hash()</code>
+      <code class="mobile-only"><a href="#/api/hash_t/">occa::hash_t</a> hash(
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/d617b895/include/occa/core/kernel.hpp#L221" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/58bd0f1e/include/occa/core/kernel.hpp#L221" target="_blank">Source</a>
     </div>
     <div class="description">
 
       <div class="section-header">Returns</div>
       <ul class="section-list">
-        <li> ::: markdown The kernel [hash](/api/hash_t) ::: </li>
+        <li> ::: markdown The kernel [hash](/api/hash_t/) ::: </li>
       </ul>
 </div>
   </div>
@@ -37,6 +37,6 @@
   </a>
 </h2>
 
-Gets the [hash](/api/hash_t) of the kernel.
+Gets the [hash](/api/hash_t/) of the kernel.
 Two kernels should have the same hash if they were compiled with the same source
 and setup with the same properties.

@@ -13,16 +13,16 @@
     <div class="definition">
       <code class="desktop-only"><span class="token keyword">template</span> <<span class="token keyword">class</span> <span class="token keyword">T</span>>
 <a href="#/api/memory/">occa::memory</a> wrapMemory(<span class="token keyword">const</span> <span class="token keyword">T</span> *ptr,
-                        <span class="token keyword">const</span> <span class="token keyword">dim&lowbar;t</span> entries,
+                        <span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
                         <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <code class="mobile-only"><span class="token keyword">template</span> <<span class="token keyword">class</span> <span class="token keyword">T</span>>
 <a href="#/api/memory/">occa::memory</a> wrapMemory(
     <span class="token keyword">const</span> <span class="token keyword">T</span> *ptr,
-    <span class="token keyword">const</span> <span class="token keyword">dim&lowbar;t</span> entries,
+    <span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
     <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/d617b895/include/occa/core/device.hpp#L685" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/58bd0f1e/include/occa/core/device.hpp#L685" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -42,17 +42,17 @@
   <div class="definition-container">
     <div class="definition">
       <code class="desktop-only"><a href="#/api/memory/">occa::memory</a> wrapMemory(<span class="token keyword">const</span> <span class="token keyword">void</span> *ptr,
-                        <span class="token keyword">const</span> <span class="token keyword">dim&lowbar;t</span> entries,
-                        <span class="token keyword">const</span> <a href="#/api/dtype_t">occa::dtype&lowbar;t</a> &dtype,
+                        <span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
+                        <span class="token keyword">const</span> <a href="#/api/dtype_t">occa::dtype_t</a> &dtype,
                         <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props)</code>
       <code class="mobile-only"><a href="#/api/memory/">occa::memory</a> wrapMemory(
     <span class="token keyword">const</span> <span class="token keyword">void</span> *ptr,
-    <span class="token keyword">const</span> <span class="token keyword">dim&lowbar;t</span> entries,
-    <span class="token keyword">const</span> <a href="#/api/dtype_t">occa::dtype&lowbar;t</a> &dtype,
+    <span class="token keyword">const</span> <span class="token keyword">dim_t</span> entries,
+    <span class="token keyword">const</span> <a href="#/api/dtype_t">occa::dtype_t</a> &dtype,
     <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &props
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/d617b895/include/occa/core/device.hpp#L697" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/58bd0f1e/include/occa/core/device.hpp#L697" target="_blank">Source</a>
     </div>
     <div class="description">
 

@@ -46,7 +46,12 @@ namespace occa {
    * @startDoc{kernelArg}
    *
    * Description:
-   *   TODO
+   *   [[kernel]] arguments must be of type [[kernelArg]].
+   *   Custom user types can be passed to a kernel by implementing a cast operator such as:
+   *
+   *   ```cpp
+   *   operator occa::kernelArg() const;
+   *   ```
    *
    * @endDoc
    */
