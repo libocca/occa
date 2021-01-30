@@ -270,7 +270,7 @@ namespace occa {
      *
      * @endDoc
      */
-    bool operator != (const occa::memory &other) occa;
+    bool operator != (const occa::memory &other) const;
 
     /**
      * @startDoc{operator_add[0]}
@@ -283,7 +283,7 @@ namespace occa {
      *
      * @endDoc
      */
-    const::memory operator + (const dim_t offset) const;
+    occa::memory operator + (const dim_t offset) const;
 
     /**
      * @doc{operator_add[1]}
