@@ -51,7 +51,7 @@ namespace occa {
    *
    *   ```cpp
    *   occa::device device(
-   *     "{ mode: 'CUDA", device_id: 0 }"
+   *     "{ mode: 'CUDA', device_id: 0 }"
    *   );
    *   ```
    *
