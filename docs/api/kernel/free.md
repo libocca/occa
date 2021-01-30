@@ -16,7 +16,7 @@
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/628fed0f/include/occa/core/kernel.hpp#L307" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/3f46f975/include/occa/core/kernel.hpp#L308" target="_blank">Source</a>
     </div>
     
   </div>
@@ -31,4 +31,5 @@
   </a>
 </h2>
 
-Free the kernel
+Free the kernel object.
+Calling [isInitialized](/api/kernel/isInitialized) will return `false` now.

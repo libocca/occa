@@ -11,12 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only"><span class="token keyword">udim_t</span> memoryAllocated()</code>
-      <code class="mobile-only"><span class="token keyword">udim_t</span> memoryAllocated(
+      <code class="desktop-only"><span class="token keyword">udim&lowbar;t</span> memoryAllocated()</code>
+      <code class="mobile-only"><span class="token keyword">udim&lowbar;t</span> memoryAllocated(
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/628fed0f/include/occa/core/device.hpp#L330" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/3f46f975/include/occa/core/device.hpp#L332" target="_blank">Source</a>
     </div>
     
   </div>

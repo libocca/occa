@@ -16,7 +16,7 @@
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/628fed0f/include/occa/core/memory.hpp#L247" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/3f46f975/include/occa/core/memory.hpp#L477" target="_blank">Source</a>
     </div>
     
   </div>
@@ -31,4 +31,5 @@
   </a>
 </h2>
 
-TODO
+Free the device memory.
+Calling [isInitialized](/api/memory/isInitialized) will return `false` now.

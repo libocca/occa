@@ -11,14 +11,24 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only"><a href="#/api/memory/">occa::memory</a> cast(<span class="token keyword">const</span> <a href="#/api/dtype_t">occa::dtype_t</a> &dtype_)</code>
+      <code class="desktop-only"><a href="#/api/memory/">occa::memory</a> cast(<span class="token keyword">const</span> <a href="#/api/dtype_t">occa::dtype&lowbar;t</a> &dtype_)</code>
       <code class="mobile-only"><a href="#/api/memory/">occa::memory</a> cast(
-    <span class="token keyword">const</span> <a href="#/api/dtype_t">occa::dtype_t</a> &dtype_
+    <span class="token keyword">const</span> <a href="#/api/dtype_t">occa::dtype&lowbar;t</a> &dtype_
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/628fed0f/include/occa/core/memory.hpp#L227" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/3f46f975/include/occa/core/memory.hpp#L456" target="_blank">Source</a>
     </div>
-    
+    <div class="description">
+
+      <div class="section-header">Arguments</div>
+      <ul class="section-list">
+          
+        <li>
+          <strong>dtype_</strong>: ::: markdown What the return [occa::memory](/api/memory/)'s data type should be :::
+        </li>
+
+      </ul>
+</div>
   </div>
 
   <hr>
@@ -31,4 +41,5 @@
   </a>
 </h2>
 
-TODO
+Return a reference to the caller [occa::memory](/api/memory/) object but
+with a different data type.

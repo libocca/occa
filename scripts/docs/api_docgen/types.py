@@ -148,11 +148,16 @@ class Type:
             char_count += 1
 
         if info:
-            content += f'''<a href="#{info.link}">{info.name}</a>'''.strip()
+            type_str = self.get_safe_name(info.name)
+            content += f'''<a href="#{info.link}">{type_str}</a>'''.strip()
             char_count += len(info.name)
         elif self.type_:
-            type_str = self.type_ if isinstance(self.type_, str) else self.type_.type_
-            content += f'<span class="token keyword">{type_str}</span>'
+            type_str = (
+                self.type_ if isinstance(self.type_, str) else self.type_.type_
+            )
+            safe_type_str = self.get_safe_name(type_str)
+
+            content += f'<span class="token keyword">{safe_type_str}</span>'
             char_count += len(type_str)
 
         needs_space_before_name = True
@@ -179,6 +184,10 @@ class Type:
             char_count += len(var_name)
 
         return (content, char_count)
+
+    @staticmethod
+    def get_safe_name(name: str) -> str:
+        return name.replace('_', '&lowbar;')
 
 @dataclass
 class Argument:

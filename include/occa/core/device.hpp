@@ -249,6 +249,8 @@ namespace occa {
      *   - Built [[kernel]]
      *   - Created [[stream]] and [[streamTag]]
      *
+     *   Calling [[device.isInitialized]] will return `false` now.
+     *
      * @endDoc
      */
     void free();

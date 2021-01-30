@@ -16,7 +16,7 @@
     <span class="token keyword">const</span> <a href="#/api/kernel/">occa::kernel</a> &other
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/628fed0f/include/occa/core/kernel.hpp#L154" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/3f46f975/include/occa/core/kernel.hpp#L154" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -36,7 +36,7 @@
     <span class="token keyword">const</span> <a href="#/api/kernel/">occa::kernel</a> &other
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/628fed0f/include/occa/core/kernel.hpp#L167" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/3f46f975/include/occa/core/kernel.hpp#L167" target="_blank">Source</a>
     </div>
     <div class="description">
 

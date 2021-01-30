@@ -69,14 +69,6 @@ namespace occa {
     modeMemory_t *modeMemory;
 
   public:
-    /**
-     * @startDoc{constructor}
-     *
-     * Description:
-     *   TODO
-     *
-     * @endDoc
-     */
     memory();
     memory(void *uvaPtr);
     memory(modeMemory_t *modeMemory_);
@@ -93,40 +85,145 @@ namespace occa {
   public:
     void dontUseRefs();
 
+    /**
+     * @startDoc{isInitialized}
+     *
+     * Description:
+     *   Check whether the [[memory]] has been intialized.
+     *
+     * Returns:
+     *   Returns `true` if the [[memory]] has been built successfully
+     *
+     * @endDoc
+     */
     bool isInitialized() const;
 
     memory& swap(memory &m);
 
     /**
-     * @startDoc{ptr}
+     * @startDoc{ptr[0]}
      *
-     * TODO
+     * Description:
+     *   Return the backend pointer
+     *
+     *   - _Serial_, _OpenMP_: Host pointer, which can be used in the host application
+     *   - _CUDA_, _HIP_: Allocated device pointer. If allocated with the `host: true` flag it will return the host pointer
+     *   - _OpenCL_: `cl_mem` pointer
+     *   - _Metal_: Metal buffer pointer
      *
      * @endDoc
      */
     template <class T = void>
     T* ptr();
 
+    /**
+     * @doc{ptr[1]}
+     */
     template <class T = void>
     const T* ptr() const;
 
     modeMemory_t* getModeMemory() const;
     modeDevice_t* getModeDevice() const;
 
+    /**
+     * @startDoc{getDevice}
+     *
+     * Description:
+     *   Returns the [[device]] used to build the [[memory]].
+     *
+     * Returns:
+     *   The [[device]] used to build the [[memory]]
+     *
+     * @endDoc
+     */
     occa::device getDevice() const;
 
+    /**
+     * @startDoc{operator_kernelArg}
+     *
+     * Description:
+     *   Casts to [[kernelArg]] for it to be taken as a [[kernel]] argument
+     *
+     * Returns:
+     *   The [[kernelArg]]
+     *
+     * @endDoc
+     */
     operator kernelArg() const;
 
+    /**
+     * @startDoc{mode}
+     *
+     * Description:
+     *   Returns the mode of the [[device]] used to build the [[memory]].
+     *
+     * Returns:
+     *   The `mode` string, such as `"Serial"`, `"CUDA"`, or `"HIP"`.
+     *
+     * @endDoc
+     */
     const std::string& mode() const;
+
+    /**
+     * @startDoc{properties}
+     *
+     * Description:
+     *   Get the properties used to build the [[memory]].
+     *
+     * Description:
+     *   Returns the properties used to build the [[memory]].
+     *
+     * @endDoc
+     */
     const occa::json& properties() const;
 
     void setDtype(const dtype_t &dtype__);
 
+    /**
+     * @startDoc{dtype}
+     *
+     * Description:
+     *   Get the [[dtype_t]] from when the [[memory]] was allocated or [[casted manually|memory.cast]]
+     *
+     * Description:
+     *   Returns the [[dtype_t]]
+     *
+     * @endDoc
+     */
     const dtype_t& dtype() const;
 
+    /**
+     * @startDoc{size}
+     *
+     * Description:
+     *   Get the byte size of the allocated memory
+     *
+     * @endDoc
+     */
     udim_t size() const;
+
+    /**
+     * @startDoc{length[0]}
+     *
+     * Description:
+     *   Get the length of the memory object, using its underlying [[dtype_t]].
+     *   This [[dtype_t]] can be fetched through the [[memory.dtype]] method
+     *
+     *   If no type was given during [[allocation|device.malloc]] or was ever set
+     *   through [[casting it|memory.cast]], it will return the bytes just like [[memory.size]].
+     *
+     * @endDoc
+     */
     udim_t length() const;
 
+    /**
+     * @startDoc{length[1]}
+     *
+     * Overloaded Description:
+     *   Same as above but explicitly chose the type (`T`)
+     *
+     * @endDoc
+     */
     template <class T>
     udim_t length() const {
       return size() / sizeof(T);
@@ -149,17 +246,74 @@ namespace occa {
     void uvaMarkFresh();
     //==================================
 
+    /**
+     * @startDoc{operator_equals[0]}
+     *
+     * Description:
+     *   Compare if two memory objects have the same references.
+     *
+     * Returns:
+     *   If the references are the same, this returns `true` otherwise `false`.
+     *
+     * @endDoc
+     */
     bool operator == (const occa::memory &other) const;
-    bool operator != (const occa::memory &other) const;
 
-    occa::memory operator + (const dim_t offset) const;
+    /**
+     * @startDoc{operator_equals[1]}
+     *
+     * Description:
+     *   Compare if two memory objects have different references.
+     *
+     * Returns:
+     *   If the references are different, this returns `true` otherwise `false`.
+     *
+     * @endDoc
+     */
+    bool operator != (const occa::memory &other) occa;
+
+    /**
+     * @startDoc{operator_add[0]}
+     *
+     * Description:
+     *   Same as calling [[memory.slice]]`(offset)`
+     *
+     * Returns:
+     *   A [[memory]] object shifted by `offset` bytes
+     *
+     * @endDoc
+     */
+    const::memory operator + (const dim_t offset) const;
+
+    /**
+     * @doc{operator_add[1]}
+     */
     occa::memory& operator += (const dim_t offset);
 
     /**
      * @startDoc{slice}
      *
      * Description:
-     *   TODO
+     *   Returns a [[memory]] object with the same reference as the caller,
+     *   but has its start and end pointer values shifted.
+     *
+     *   For example:
+     *
+     *   ```cpp
+     *   // mem = {?, ?, ?, ?}
+     *   occa::memory mem = device.malloc<float>(4);
+     *
+     *   occa::memory firstHalf = mem.slice(0, 2);
+     *   occa::memory lastHalf = mem.slice(2, 4); // Or just mem.slice(2)
+     *
+     *   int values[4] = {1, 2, 3, 4}
+     *
+     *   // mem = {1, 2, ?, ?}
+     *   firstHalf.copyFrom(values);
+     *
+     *   // mem = {1, 2, 3, 4}
+     *   secondtHalf.copyFrom(values + 2);
+     *   ```
      *
      * @endDoc
      */
@@ -167,10 +321,24 @@ namespace occa {
                        const dim_t count = -1) const;
 
     /**
-     * @startDoc{copyFrom}
+     * @startDoc{copyFrom[0]}
      *
      * Description:
-     *   TODO
+     *   Copies data from the input `src` to the caller [[memory]] object
+     *
+     * Arguments:
+     *   src:
+     *     Data source.
+     *
+     *   bytes:
+     *     How many bytes to copy.
+     *
+     *   offset:
+     *     The [[memory]] offset where data transfer will start.
+     *
+     *   props:
+     *     Any backend-specific properties for memory transfer.
+     *     For example, `async: true`.
      *
      * @endDoc
      */
@@ -179,6 +347,27 @@ namespace occa {
                   const dim_t offset = 0,
                   const occa::json &props = occa::json());
 
+    /**
+     * @doc{copyFrom[1]}
+     */
+    void copyFrom(const void *src,
+                  const occa::json &props);
+
+    /**
+     * @startDoc{copyFrom[2]}
+     *
+     * Description:
+     *   Same as above, but uses a [[memory]] source
+     *
+     * Arguments:
+     *   destOffset:
+     *     The [[memory]] offset for the caller [[memory]]
+     *
+     *   srcOffset:
+     *     The [[memory]] offset for the source [[memory]] (`src`)
+     *
+     * @endDoc
+     */
     void copyFrom(const memory src,
                   const dim_t bytes = -1,
                   const dim_t destOffset = 0,
@@ -186,10 +375,30 @@ namespace occa {
                   const occa::json &props = occa::json());
 
     /**
-     * @startDoc{copyTo}
+     * @doc{copyFrom[3]}
+     */
+    void copyFrom(const memory src,
+                  const occa::json &props);
+
+    /**
+     * @startDoc{copyTo[0]}
      *
      * Description:
-     *   TODO
+     *   Copies data from the input `src` to the caller [[memory]] object
+     *
+     * Arguments:
+     *   dest:
+     *     Where to copy the [[memory]] data to.
+     *
+     *   bytes:
+     *     How many bytes to copy
+     *
+     *   offset:
+     *     The [[memory]] offset where data transfer will start.
+     *
+     *   props:
+     *     Any backend-specific properties for memory transfer.
+     *     For example, `async: true`.
      *
      * @endDoc
      */
@@ -198,21 +407,36 @@ namespace occa {
                 const dim_t offset = 0,
                 const occa::json &props = occa::json()) const;
 
+    /**
+     * @doc{copyTo[1]}
+     */
+    void copyTo(void *dest,
+                const occa::json &props) const;
+
+    /**
+     * @startDoc{copyTo[2]}
+     *
+     * Description:
+     *   Same as above, but uses a [[memory]] source
+     *
+     * Arguments:
+     *   destOffset:
+     *     The [[memory]] offset for the destination [[memory]] (`dest`)
+     *
+     *   srcOffset:
+     *     The [[memory]] offset for the caller [[memory]]
+     *
+     * @endDoc
+     */
     void copyTo(const memory dest,
                 const dim_t bytes = -1,
                 const dim_t destOffset = 0,
                 const dim_t srcOffset = 0,
                 const occa::json &props = occa::json()) const;
 
-    void copyFrom(const void *src,
-                  const occa::json &props);
-
-    void copyFrom(const memory src,
-                  const occa::json &props);
-
-    void copyTo(void *dest,
-                const occa::json &props) const;
-
+    /**
+     * @doc{copyTo[3]}
+     */
     void copyTo(const memory dest,
                 const occa::json &props) const;
 
@@ -220,7 +444,12 @@ namespace occa {
      * @startDoc{cast}
      *
      * Description:
-     *   TODO
+     *   Return a reference to the caller [[memory]] object but
+     *   with a different data type.
+     *
+     * Arguments:
+     *   dtype_:
+     *     What the return [[memory]]'s data type should be
      *
      * @endDoc
      */
@@ -230,7 +459,7 @@ namespace occa {
      * @startDoc{clone}
      *
      * Description:
-     *   TODO
+     *   Allocate a new [[memory]] object with the same data copied to it
      *
      * @endDoc
      */
@@ -240,7 +469,8 @@ namespace occa {
      * @startDoc{free}
      *
      * Description:
-     *   TODO
+     *   Free the device memory.
+     *   Calling [[memory.isInitialized]] will return `false` now.
      *
      * @endDoc
      */
