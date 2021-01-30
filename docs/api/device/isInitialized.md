@@ -16,13 +16,13 @@
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/3f46f975/include/occa/core/device.hpp#L224" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/d617b895/include/occa/core/device.hpp#L224" target="_blank">Source</a>
     </div>
     <div class="description">
 
       <div class="section-header">Returns</div>
       <ul class="section-list">
-        <li> ::: markdown Returns `true` if the device has been intialized, through either the [(constructor)](/api/device/constructor) or [setup](/api/device/setup). ::: </li>
+        <li> ::: markdown Returns `true` if the [occa::device](/api/device/) has been intialized, through either the [(constructor)](/api/device/constructor) or [setup](/api/device/setup). ::: </li>
       </ul>
 </div>
   </div>
@@ -37,4 +37,4 @@
   </a>
 </h2>
 
-Check whether the device has been intialized.
+Check whether the [occa::device](/api/device/) has been intialized.

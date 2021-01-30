@@ -152,9 +152,9 @@ class Type:
             content += f'''<a href="#{info.link}">{type_str}</a>'''.strip()
             char_count += len(info.name)
         elif self.type_:
-            type_str = (
+            type_str = cast(str, (
                 self.type_ if isinstance(self.type_, str) else self.type_.type_
-            )
+            ))
             safe_type_str = self.get_safe_name(type_str)
 
             content += f'<span class="token keyword">{safe_type_str}</span>'
@@ -291,7 +291,7 @@ class Function(DefinitionInfo):
         ]
 
         override_group_descriptions = ['']
-        override_groups = [[]]
+        override_groups: Any = [[]]
         for override, func_description in func_descriptions:
             if func_description:
                 override_group_descriptions.append(func_description)
@@ -658,6 +658,12 @@ class DocTreeNode:
 @dataclass
 class DocTree:
     roots: List[DocTreeNode]
+
+    def __init__(self, roots: List[DocTreeNode]):
+        self.roots = sorted(
+            roots,
+            key=DocTreeNode.sort_key,
+        )
 
     @staticmethod
     def get_hyperlink_mapping(base_link: str,

@@ -16,7 +16,7 @@
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/3f46f975/include/occa/core/device.hpp#L256" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/d617b895/include/occa/core/device.hpp#L256" target="_blank">Source</a>
     </div>
     
   </div>
@@ -34,6 +34,6 @@
 Free the device, which will also free:
 - Allocated [occa::memory](/api/memory/)
 - Built [occa::kernel](/api/kernel/)
-- Created [occa::stream](/api/stream) and [occa::streamTag](/api/streamTag)
+- Created [occa::stream](/api/stream/) and [occa::streamTag](/api/streamTag/)
 
 Calling [isInitialized](/api/device/isInitialized) will return `false` now.

@@ -11,18 +11,18 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only"><a href="#/api/stream">occa::stream</a> getStream()</code>
-      <code class="mobile-only"><a href="#/api/stream">occa::stream</a> getStream(
+      <code class="desktop-only"><a href="#/api/stream/">occa::stream</a> getStream()</code>
+      <code class="mobile-only"><a href="#/api/stream/">occa::stream</a> getStream(
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/3f46f975/include/occa/core/device.hpp#L390" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/d617b895/include/occa/core/device.hpp#L390" target="_blank">Source</a>
     </div>
     <div class="description">
 
       <div class="section-header">Returns</div>
       <ul class="section-list">
-        <li> ::: markdown Returns the active [occa::stream](/api/stream). ::: </li>
+        <li> ::: markdown Returns the active [occa::stream](/api/stream/). ::: </li>
       </ul>
 </div>
   </div>
@@ -37,4 +37,4 @@
   </a>
 </h2>
 
-Returns the active [occa::stream](/api/stream).
+Returns the active [occa::stream](/api/stream/).

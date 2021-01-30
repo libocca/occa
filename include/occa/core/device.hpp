@@ -214,10 +214,10 @@ namespace occa {
      * @startDoc{isInitialized}
      *
      * Description:
-     *   Check whether the device has been intialized.
+     *   Check whether the [[device]] has been intialized.
      *
      * Returns:
-     *   Returns `true` if the device has been intialized, through either the [[device.constructor]] or [[device.setup]].
+     *   Returns `true` if the [[device]] has been intialized, through either the [[device.constructor]] or [[device.setup]].
      *
      * @endDoc
      */

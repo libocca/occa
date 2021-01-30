@@ -11,12 +11,12 @@
 
   <div class="definition-container">
     <div class="definition">
-      <code class="desktop-only"><span class="token keyword">void</span> waitFor(<a href="#/api/streamTag">occa::streamTag</a> tag)</code>
+      <code class="desktop-only"><span class="token keyword">void</span> waitFor(<a href="#/api/streamTag/">occa::streamTag</a> tag)</code>
       <code class="mobile-only"><span class="token keyword">void</span> waitFor(
-    <a href="#/api/streamTag">occa::streamTag</a> tag
+    <a href="#/api/streamTag/">occa::streamTag</a> tag
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/3f46f975/include/occa/core/device.hpp#L423" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/d617b895/include/occa/core/device.hpp#L423" target="_blank">Source</a>
     </div>
     
   </div>
@@ -31,4 +31,4 @@
   </a>
 </h2>
 
-Wait for all operations queued up until the [tag](/api/streamTag).
+Wait for all operations queued up until the [tag](/api/streamTag/).
