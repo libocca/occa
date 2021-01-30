@@ -16,7 +16,7 @@
     <a href="#/api/streamTag/">occa::streamTag</a> tag
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/core/device.hpp#L423" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/device.hpp#L423" target="_blank">Source</a>
     </div>
     
   </div>

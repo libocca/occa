@@ -37,7 +37,7 @@ JSON formatted strings can also be passed directly, which can be useful when loa
 
 ```cpp
 occa::device device(
-  "{ mode: 'CUDA", device_id: 0 }"
+  "{ mode: 'CUDA', device_id: 0 }"
 );
 ```
 

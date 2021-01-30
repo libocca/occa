@@ -16,7 +16,7 @@
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/06c83625/include/occa/functional/function.hpp#L60" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/functional/function.hpp#L60" target="_blank">Source</a>
     </div>
     
   </div>
