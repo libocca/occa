@@ -12,120 +12,7 @@
 namespace occa {
   namespace serial {
     device::device(const occa::json &properties_) :
-      occa::modeDevice_t(properties_) {
-
-      occa::json &kernelProps = properties["kernel"];
-      std::string compiler;
-      std::string compilerFlags;
-      std::string compilerLanguage;
-      std::string compilerEnvScript;
-      std::string compilerLinkerFlags;
-      std::string compilerSharedFlags;
-
-      if (env::var("OCCA_CXX").size()) {
-        compiler = env::var("OCCA_CXX");
-      } else if (kernelProps.get<std::string>("compiler").size()) {
-        compiler = (std::string) kernelProps["compiler"];
-      } else if (env::var("CXX").size()) {
-        compiler = env::var("CXX");
-      } else {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-        compiler = "g++";
-#else
-        compiler = "cl.exe";
-#endif
-      }
-
-      if (env::var("OCCA_CXXFLAGS").size()) {
-        compilerFlags = env::var("OCCA_CXXFLAGS");
-      } else if (kernelProps.get<std::string>("compiler_flags").size()) {
-        compilerFlags = (std::string) kernelProps["compiler_flags"];
-      } else if (env::var("CXXFLAGS").size()) {
-        compilerFlags = env::var("CXXFLAGS");
-      } else {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-        compilerFlags = "-O3";
-#else
-        compilerFlags = " /Ox";
-#endif
-      }
-
-      const int compilerVendor = sys::compilerVendor(compiler);
-
-      if (env::var("OCCA_COMPILER_LANGUAGE").size()) {
-        compilerLanguage = env::var("OCCA_COMPILER_LANGUAGE");
-      } else if (kernelProps.get<std::string>("compiler_language").size()) {
-        compilerLanguage = (std::string) kernelProps["compiler_language"];
-      }
-
-      // Default to C++
-      const bool compilingCpp = lowercase(compilerLanguage) != "c";
-      const int compilerLanguageFlag = (
-        compilingCpp
-        ? sys::language::CPP
-        : sys::language::C
-      );
-      if (compilingCpp) {
-        sys::addCompilerFlags(compilerFlags, sys::compilerCpp11Flags(compilerVendor));
-      } else {
-        sys::addCompilerFlags(compilerFlags, sys::compilerC99Flags(compilerVendor));
-      }
-
-      if (env::var("OCCA_COMPILER_SHARED_FLAGS").size()) {
-        compilerSharedFlags = env::var("OCCA_COMPILER_SHARED_FLAGS");
-      } else if (kernelProps.get<std::string>("compiler_shared_flags").size()) {
-        compilerSharedFlags = (std::string) kernelProps["compiler_shared_flags"];
-      } else {
-        compilerSharedFlags = sys::compilerSharedBinaryFlags(compilerVendor);
-      }
-
-      if (env::var("OCCA_LDFLAGS").size()) {
-        compilerLinkerFlags = env::var("OCCA_LDFLAGS");
-      } else if (kernelProps.get<std::string>("compiler_linker_flags").size()) {
-        compilerLinkerFlags = (std::string) kernelProps["compiler_linker_flags"];
-      }
-
-      if (kernelProps.get<std::string>("compiler_env_script").size()) {
-        compilerEnvScript = (std::string) kernelProps["compiler_env_script"];
-      } else {
-#if (OCCA_OS == OCCA_WINDOWS_OS)
-        std::string byteness;
-
-        if (sizeof(void*) == 4) {
-          byteness = "x86 ";
-        } else if (sizeof(void*) == 8) {
-          byteness = "amd64";
-        } else {
-          OCCA_FORCE_ERROR("sizeof(void*) is not equal to 4 or 8");
-        }
-#  if   (OCCA_VS_VERSION == 1800)
-        // MSVC++ 12.0 - Visual Studio 2013
-        char *visualStudioTools = getenv("VS120COMNTOOLS");
-#  elif (OCCA_VS_VERSION == 1700)
-        // MSVC++ 11.0 - Visual Studio 2012
-        char *visualStudioTools = getenv("VS110COMNTOOLS");
-#  else
-        //(OCCA_VS_VERSION < 1700)
-        // MSVC++ 10.0 - Visual Studio 2010
-        char *visualStudioTools = getenv("VS100COMNTOOLS");
-#  endif
-
-        if (visualStudioTools) {
-          compilerEnvScript = "\"" + std::string(visualStudioTools) + "..\\..\\VC\\vcvarsall.bat\" " + byteness;
-        } else {
-          io::stdout << "WARNING: Visual Studio environment variable not found -> compiler environment (vcvarsall.bat) maybe not correctly setup." << std::endl;
-        }
-#endif
-      }
-
-      kernelProps["compiler"] = compiler;
-      kernelProps["compiler_flags"] = compilerFlags;
-      kernelProps["compiler_env_script"] = compilerEnvScript;
-      kernelProps["compiler_vendor"] = compilerVendor;
-      kernelProps["compiler_language"] = compilerLanguageFlag;
-      kernelProps["compiler_linker_flags"] = compilerLinkerFlags;
-      kernelProps["compiler_shared_flags"] = compilerSharedFlags;
-    }
+      occa::modeDevice_t(properties_) {}
 
     device::~device() {}
 
@@ -206,6 +93,7 @@ namespace occa {
       return true;
     }
 
+    // TODO: Functionally obsolete overload? kernelProps from the device will now be empty anyway.
     modeKernel_t* device::buildKernel(const std::string &filename,
                                       const std::string &kernelName,
                                       const hash_t kernelHash,
@@ -263,12 +151,128 @@ namespace occa {
         return k;
       }
 
+      std::string compilerLanguage;
+      std::string compiler;
+      std::string compilerFlags;
+      std::string compilerLinkerFlags;
+      std::string compilerSharedFlags;
+      std::string compilerEnvScript;
+
+      // Default to C++
+      compilerLanguage = "cpp";
+      if (env::var("OCCA_COMPILER_LANGUAGE").size()) {
+        compilerLanguage = env::var("OCCA_COMPILER_LANGUAGE");
+      } else if (kernelProps.get<std::string>("compiler_language").size()) {
+        compilerLanguage = (std::string) kernelProps["compiler_language"];
+      }
+
+      const bool compilingOkl = kernelProps.get("okl/enabled", true);
+      const bool compilingCpp = compilingOkl || (lowercase(compilerLanguage) != "c");
+      const int compilerLanguageFlag = (
+        compilingCpp
+        ? sys::language::CPP
+        : sys::language::C
+      );
+
+      if (compilerLanguageFlag == sys::language::CPP && env::var("OCCA_CXX").size()) {
+        compiler = env::var("OCCA_CXX");
+      } else if (compilerLanguageFlag == sys::language::C && env::var("OCCA_CC").size()) {
+        compiler = env::var("OCCA_CC");
+      } else if (kernelProps.get<std::string>("compiler").size()) {
+        compiler = (std::string) kernelProps["compiler"];
+      } else if (compilerLanguageFlag == sys::language::CPP && env::var("CXX").size()) {
+        compiler = env::var("CXX");
+      } else if (compilerLanguageFlag == sys::language::C && env::var("CC").size()) {
+        compiler = env::var("CC");
+      } else if (compilerLanguageFlag == sys::language::CPP) {
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+        compiler = "g++";
+#else
+        compiler = "cl.exe";
+#endif
+      } else {
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+        compiler = "gcc";
+#else
+        compiler = "cl.exe";
+#endif
+      }
+
+      if (compilerLanguageFlag == sys::language::CPP && env::var("OCCA_CXXFLAGS").size()) {
+        compilerFlags = env::var("OCCA_CXXFLAGS");
+      } else if (compilerLanguageFlag == sys::language::C && env::var("OCCA_CFLAGS").size()) {
+        compilerFlags = env::var("OCCA_CFLAGS");
+      } else if (kernelProps.get<std::string>("compiler_flags").size()) {
+        compilerFlags = (std::string) kernelProps["compiler_flags"];
+      } else if (compilerLanguageFlag == sys::language::CPP && env::var("CXXFLAGS").size()) {
+        compilerFlags = env::var("CXXFLAGS");
+      } else if (compilerLanguageFlag == sys::language::C && env::var("CFLAGS").size()) {
+        compilerFlags = env::var("CFLAGS");
+      } else {
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+        compilerFlags = "-O3";
+#else
+        compilerFlags = " /Ox";
+#endif
+      }
+
+      const int compilerVendor = sys::compilerVendor(compiler);
+
+      if (env::var("OCCA_COMPILER_SHARED_FLAGS").size()) {
+        compilerSharedFlags = env::var("OCCA_COMPILER_SHARED_FLAGS");
+      } else if (kernelProps.get<std::string>("compiler_shared_flags").size()) {
+        compilerSharedFlags = (std::string) kernelProps["compiler_shared_flags"];
+      } else {
+        compilerSharedFlags = sys::compilerSharedBinaryFlags(compilerVendor);
+      }
+
+      if (env::var("OCCA_LDFLAGS").size()) {
+        compilerLinkerFlags = env::var("OCCA_LDFLAGS");
+      } else if (kernelProps.get<std::string>("compiler_linker_flags").size()) {
+        compilerLinkerFlags = (std::string) kernelProps["compiler_linker_flags"];
+      }
+
+      if (kernelProps.get<std::string>("compiler_env_script").size()) {
+        compilerEnvScript = (std::string) kernelProps["compiler_env_script"];
+      } else {
+#if (OCCA_OS == OCCA_WINDOWS_OS)
+        std::string byteness;
+
+        if (sizeof(void*) == 4) {
+          byteness = "x86 ";
+        } else if (sizeof(void*) == 8) {
+          byteness = "amd64";
+        } else {
+          OCCA_FORCE_ERROR("sizeof(void*) is not equal to 4 or 8");
+        }
+#  if   (OCCA_VS_VERSION == 1800)
+        // MSVC++ 12.0 - Visual Studio 2013
+        char *visualStudioTools = getenv("VS120COMNTOOLS");
+#  elif (OCCA_VS_VERSION == 1700)
+        // MSVC++ 11.0 - Visual Studio 2012
+        char *visualStudioTools = getenv("VS110COMNTOOLS");
+#  else
+        //(OCCA_VS_VERSION < 1700)
+        // MSVC++ 10.0 - Visual Studio 2010
+        char *visualStudioTools = getenv("VS100COMNTOOLS");
+#  endif
+
+        if (visualStudioTools) {
+          compilerEnvScript = "\"" + std::string(visualStudioTools) + "..\\..\\VC\\vcvarsall.bat\" " + byteness;
+        } else {
+          io::stdout << "WARNING: Visual Studio environment variable not found -> compiler environment (vcvarsall.bat) maybe not correctly setup." << std::endl;
+        }
+#endif
+      }
+
+      if (compilerLanguageFlag == sys::language::CPP) {
+        sys::addCompilerFlags(compilerFlags, sys::compilerCpp11Flags(compilerVendor));
+      } else if (compilerLanguageFlag == sys::language::C) {
+        sys::addCompilerFlags(compilerFlags, sys::compilerC99Flags(compilerVendor));
+      }
+
       std::string sourceFilename;
       lang::sourceMetadata_t metadata;
-      const bool compilingOkl = kernelProps.get("okl/enabled", true);
-      const bool compilingCpp = (
-        ((int) kernelProps["compiler_language"]) == sys::language::CPP
-      );
 
       if (isLauncherKernel) {
         sourceFilename = filename;
@@ -306,15 +310,9 @@ namespace occa {
       }
 
       std::stringstream command;
-      std::string compilerEnvScript = kernelProps["compiler_env_script"];
       if (compilerEnvScript.size()) {
         command << compilerEnvScript << " && ";
       }
-
-      const std::string compiler = kernelProps["compiler"];
-      std::string compilerFlags = kernelProps["compiler_flags"];
-      std::string compilerLinkerFlags = kernelProps["compiler_linker_flags"];
-      std::string compilerSharedFlags = kernelProps["compiler_shared_flags"];
 
       sys::addCompilerFlags(compilerFlags, compilerSharedFlags);
 
