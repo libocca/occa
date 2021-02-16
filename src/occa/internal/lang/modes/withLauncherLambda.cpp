@@ -682,7 +682,7 @@ namespace occa
         //           expressionStatement *exprSmnta = new expressionStatement(&kernelSmnt, *strnodea);
         //           exprSmnta->hasSemicolon = false;
         //           kernelSmnt.children.insert(kernelSmnt.children.begin(), exprSmnta);
-        //           identifierToken *stte = new identifierToken(originSource::builtin, "variable");
+                  // identifierToken *stte = new identifierToken(originSource::builtin, "variable");
         //           std::string sae = ");\n});\n";
         //           // sae += "q->wait();";
         //           identifierNode *strnodeae = new identifierNode(stte, sae);

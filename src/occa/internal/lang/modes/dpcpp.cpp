@@ -4,6 +4,8 @@
 #include <occa/internal/lang/modes/oklForStatement.hpp>
 #include <occa/internal/lang/builtins/attributes.hpp>
 #include <occa/internal/lang/builtins/types.hpp>
+#include <occa/internal/lang/expr.hpp>
+// #include <occa/internal/lang/expr/lambdaNode.hpp>
 
 namespace occa
 {
@@ -32,10 +34,14 @@ namespace occa
 
       void dpcppParser::beforeKernelSplit()
       {
-        if (!success)
-          return;
-        addExtensions();
+        // setupHeaders();
 
+        // if (!success)
+          // return;
+        // addExtensions();
+
+        // if(!success)
+        //   return;
         // updateConstToConstant();
 
         if (!success)
@@ -50,6 +56,10 @@ namespace occa
       void dpcppParser::afterKernelSplit()
       {
         addBarriers();
+
+        if (!success)
+          return;
+        setupHeaders();
 
         if (!success)
           return;
@@ -75,6 +85,15 @@ namespace occa
         return name;
       }
 
+      // @note: As of SYCL 2020 this will need to change from `CL/sycl.hpp` to `sycl.hpp`
+      void dpcppParser::setupHeaders()
+      {
+        root.addFirst(
+            *(new directiveStatement(
+                &root,
+                directiveToken(root.source->origin, "include <CL/sycl.hpp>"))));
+      }
+
       void dpcppParser::addExtensions()
       {
         if (!settings.has("extensions"))
@@ -87,6 +106,8 @@ namespace occa
         {
           return;
         }
+
+        // @todo: Enable dpcpp extensions
 
         // jsonObject &extensionObj = extensions.object();
         // jsonObject::iterator it = extensionObj.begin();
@@ -127,27 +148,109 @@ namespace occa
 
       void dpcppParser::setupKernels()
       {
-        statementArray::from(root)
-            .flatFilterByStatementType(
-                statementType::functionDecl | statementType::function,
-                "kernel")
+        root.children
+            .filterByStatementType(
+              statementType::functionDecl | statementType::function,
+              "kernel"
+            )
             .forEach([&](statement_t *smnt) {
-              function_t *function;
+              function_t * function;
 
               if (smnt->type() & statementType::functionDecl)
               {
-                function = &(((functionDeclStatement *)smnt)->function());
+                functionDeclStatement &k = ((functionDeclStatement &)*smnt);
+                function = &(k.function());
 
-                migrateLocalDecls((functionDeclStatement &)*smnt);
+                variable_t sycl_queue(syclQueue, "q_");
+                sycl_queue += pointer_t();
+
+                variable_t sycl_ndrange(syclNdRange, "ndrange_");
+                sycl_ndrange += pointer_t();
+                
+                function->addArgumentFirst(sycl_ndrange);
+                function->addArgumentFirst(sycl_queue);
+
+                blockStatement &outer_statement = *(new blockStatement(&root, k.source->clone()));
+                blockStatement &inner_statement = *(new blockStatement(&outer_statement, k.source->clone()));
+                
+                //-----
+                migrateLocalDecls(k, inner_statement);
                 if (!success)
                   return;
+
+                //-------
+                // @todo Refactor into separate functions
+                variable_t sycl_nditem(syclNdItem, "it_");
+
+                lambda_t & sycl_kernel = * (new lambda_t(capture_t::byValue, k));
+                sycl_kernel.addArgument(sycl_nditem);
+                lambdaNode sycl_kernel_node(sycl_kernel.source,sycl_kernel);
+
+                leftUnaryOpNode sycl_ndrange_node(
+                    sycl_ndrange.source,
+                    op::dereference,
+                    variableNode(sycl_ndrange.source, sycl_ndrange.clone()));
+
+                exprNodeVector parallelfor_args;
+                parallelfor_args.push_back(&sycl_ndrange_node);
+                parallelfor_args.push_back(&sycl_kernel_node);
+
+                identifierNode parallelfor_node(
+                    new identifierToken(originSource::builtin, "parfor"),
+                    "parallel_for");
+
+                callNode parallelfor_call_node(
+                    parallelfor_node.token,
+                    parallelfor_node,
+                    parallelfor_args);
+
+                variable_t sycl_handler(syclHandler, "cgh_");
+                sycl_handler.vartype.setReferenceToken(
+                    new operatorToken(sycl_handler.source->origin, op::address));
+
+                binaryOpNode cgh_parallelfor(
+                    sycl_handler.source,
+                    op::dot,
+                    variableNode(sycl_handler.source, sycl_handler.clone()),
+                    parallelfor_call_node);
+
+                inner_statement.add(*(new expressionStatement(nullptr, cgh_parallelfor)));
+                //
+                //-------
+                // @todo Refactor into separate functions
+
+                lambda_t & cg_function = *(new lambda_t(capture_t::byReference, inner_statement));
+                cg_function.addArgument(sycl_handler);
+                lambdaNode cg_function_node(cg_function.source, cg_function);
+
+                exprNodeVector submit_args;
+                submit_args.push_back(&cg_function_node);
+
+                identifierNode submit_node(
+                    new identifierToken(originSource::builtin, "qsub"),
+                    "submit");
+
+                callNode submit_call_node(
+                    submit_node.token,
+                    submit_node,
+                    submit_args);
+
+                binaryOpNode q_submit(
+                    sycl_queue.source,
+                    op::arrow,
+                    variableNode(sycl_queue.source, sycl_queue.clone()),
+                    submit_call_node);
+
+                outer_statement.addFirst(*(new expressionStatement(nullptr, q_submit)));
+
+                k.set(outer_statement);
+                //------
               }
               else
               {
                 function = &(((functionStatement *)smnt)->function());
               }
-
-              setKernelQualifiers(*function);
+                setKernelQualifiers(*function);
             });
       }
 
@@ -165,8 +268,7 @@ namespace occa
               }
 
               vartype_t &vartype = funcDeclSmnt.function().returnType;
-              vartype.qualifiers.addFirst(vartype.origin(),
-                                          device);
+              vartype.qualifiers.addFirst(vartype.origin(),device);
             });
       }
 
@@ -186,43 +288,27 @@ namespace occa
       {
         function.returnType.add(0, kernel);
 
-        variableVector args;
-        variable_t queueArg(syclQueuePtr, "q_");
-        args.push_back(queueArg);
-
-        // function.addArgument(queueArg); //const identifierToken &typeToken_, const type_t &type_
-
-        variable_t ndRangeArg(syclNdRangePtr, "ndrange");
-        args.push_back(ndRangeArg);
-        // function.addArgument(ndRangeArg); //const identifierToken &typeToken_, const type_t &type_
-
-        const int argCount = (int)function.args.size();
-        for (int ai = 0; ai < argCount; ++ai)
+        for (auto arg : function.args)
         {
-          variable_t arg(*function.removeArgument(0));
-
-          vartype_t &type = arg.vartype;
+          vartype_t &type = arg->vartype;
+          type = type.flatten();
           if (!(type.isPointerType() || type.referenceToken))
           {
-            operatorToken opToken(arg.source->origin, op::bitAnd);
-            type.setReferenceToken(&opToken);
+            type.setReferenceToken(arg->source);
           }
-          // function.addArgument(arg);
-          args.push_back(arg);
         }
-
-        function.addArguments(args);
       }
 
-      void dpcppParser::migrateLocalDecls(functionDeclStatement &kernelSmnt)
+      void dpcppParser::migrateLocalDecls(functionDeclStatement &fromSmnt,
+                                          blockStatement &toSmnt)
       {
-        statementArray::from(kernelSmnt)
+        statementArray::from(fromSmnt)
             .nestedForEachDeclaration([&](variableDeclaration &decl, declarationStatement &declSmnt) {
               variable_t &var = decl.variable();
               if (var.hasAttribute("shared"))
               {
                 declSmnt.removeFromParent();
-                kernelSmnt.addFirst(declSmnt);
+                toSmnt.addFirst(declSmnt);
               }
             });
       }

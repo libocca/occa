@@ -59,7 +59,7 @@ namespace occa {
       return nameOverride;
     }
 
-    const std::string& variable_t::name() const {
+    std::string variable_t::name() const {
       if (!nameOverride.size() && source) {
         return source->value;
       }

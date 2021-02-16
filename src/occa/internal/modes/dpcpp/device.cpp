@@ -145,7 +145,15 @@ namespace occa
       }
       else
       {
-        return buildKernelFromBinary(binaryFilename, kernelName, kernelProps);
+        void *kernel_dlhandle = sys::dlopen(binaryFilename, lock);
+        occa::functionPtr_t kernel_function = sys::dlsym(kernel_dlhandle, kernelName, lock);
+
+        return new dpcpp::kernel(this,
+                                 kernelName,
+                                 sourceFilename,
+                                 kernel_dlhandle,
+                                 kernel_function,
+                                 kernelProps);
       }
     }
 
@@ -222,45 +230,59 @@ namespace occa
                                                    const occa::json &kernelProps,
                                                    io::lock_t lock)
     {
-      std::cout << "\t buildOKLKernelFromBinary" << std::endl;
-      return nullptr;
+      const std::string sourceFilename = hashDir + kc::sourceFile;
+      const std::string binaryFilename = hashDir + kc::binaryFile;
+
+      dpcpp::kernel &k = *(new dpcpp::kernel(this,
+                                             kernelName,
+                                             sourceFilename,
+                                             kernelProps));
+
+      k.launcherKernel = buildLauncherKernel(kernelHash,
+                                             hashDir,
+                                             kernelName,
+                                             launcherMetadata);
+      // Find device kernels
+      orderedKernelMetadata launchedKernelsMetadata = getLaunchedKernelsMetadata(
+          kernelName,
+          deviceMetadata);
+
+      void *dl_handle = sys::dlopen(binaryFilename,lock);
+
+      const int launchedKernelsCount = (int)launchedKernelsMetadata.size();
+      for (int i = 0; i < launchedKernelsCount; ++i)
+      {
+        lang::kernelMetadata_t &metadata = launchedKernelsMetadata[i];
+
+        occa::functionPtr_t kernel_function = sys::dlsym(dl_handle, metadata.name,lock);
+       
+        kernel *dpcppKernel = new dpcpp::kernel(this,
+                               metadata.name,
+                               sourceFilename,
+                               dl_handle,
+                               kernel_function,
+                               kernelProps);
+
+        dpcppKernel->metadata = metadata;
+        k.deviceKernels.push_back(dpcppKernel);
+      }
+
+      return &k;
     }
-
-    // modeKernel_t *device::buildKernelFromBinary(const std::string &filename,
-    //                                                 const std::string &kernelName,
-    //                                                 const occa::properties &kernelProps)
-    //     {
-    //       std::string buildFile = io::dirname(filename);
-    //       buildFile += kc::buildFile;
-
-    //       lang::kernelMetadata_t metadata;
-    //       if (io::isFile(buildFile))
-    //       {
-    //         lang::sourceMetadata_t sourceMetadata = lang::sourceMetadata_t::fromBuildFile(buildFile);
-    //         metadata = sourceMetadata.kernelsMetadata[kernelName];
-    //       }
-
-    //       return buildKernelFromBinary(filename,
-    //                                    kernelName,
-    //                                    kernelProps,
-    //                                    metadata);
-    //     }
 
     modeKernel_t *device::buildKernelFromBinary(const std::string &filename,
                                                 const std::string &kernelName,
                                                 const occa::json &kernelProps)
     {
-      dpcpp::kernel &k = *(new dpcpp::kernel(this,
-                                             kernelName,
-                                             filename,
-                                             kernelProps));
+      void *kernel_dlhandle = sys::dlopen(filename);
+      occa::functionPtr_t kernel_function = sys::dlsym(kernel_dlhandle, kernelName);
 
-      k.binaryFilename = filename;
-
-      k.dlHandle = sys::dlopen(filename);
-      k.function = sys::dlsym(k.dlHandle, kernelName);
-
-      return &k;
+      return new dpcpp::kernel(this,
+                               kernelName,
+                               filename,
+                               kernel_dlhandle,
+                               kernel_function,
+                               kernelProps);
     }
     //==================================
 

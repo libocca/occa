@@ -11,16 +11,17 @@ namespace occa {
       const int typedef_    = (1 << 2);
       const int functionPtr = (1 << 3);
       const int function    = (1 << 4);
+      const int lambda      = (1 << 5);
 
-      const int class_      = (1 << 5);
-      const int struct_     = (1 << 6);
-      const int union_      = (1 << 7);
-      const int enum_       = (1 << 8);
+      const int class_      = (1 << 6);
+      const int struct_     = (1 << 7);
+      const int union_      = (1 << 8);
+      const int enum_       = (1 << 9);
       const int structure   = (class_  |
                                struct_ |
                                union_  |
                                enum_);
-    }
+    } // namespace typeType
 
     namespace classAccess {
       const int private_   = (1 << 0);

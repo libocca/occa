@@ -15,6 +15,7 @@
 #include <occa/internal/lang/expr/funcCastNode.hpp>
 #include <occa/internal/lang/expr/functionNode.hpp>
 #include <occa/internal/lang/expr/identifierNode.hpp>
+#include <occa/internal/lang/expr/lambdaNode.hpp>
 #include <occa/internal/lang/expr/leftUnaryOpNode.hpp>
 #include <occa/internal/lang/expr/newNode.hpp>
 #include <occa/internal/lang/expr/pairNode.hpp>

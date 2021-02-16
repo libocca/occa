@@ -38,7 +38,8 @@ namespace occa
         void setFunctionQualifiers();
         void setSharedQualifiers();
         void setKernelQualifiers(function_t &function);
-        void migrateLocalDecls(functionDeclStatement &kernelSmnt);
+        void migrateLocalDecls(functionDeclStatement &fromSmnt,
+                               blockStatement &toSmnt);
 
         // static bool transformBlockStatement(blockStatement &blockSmnt);
         // static bool transformBasicExpressionStatement(expressionStatement &exprSmnt);

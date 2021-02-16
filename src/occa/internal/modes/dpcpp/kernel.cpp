@@ -15,22 +15,22 @@ namespace occa
                    const std::string &sourceFilename_,
                    const occa::json &properties_)
         : occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
-          function{nullptr},
-          dlHandle{nullptr}
+          dlHandle{nullptr},
+          function{nullptr}
     {
     }
 
-    // kernel::kernel(modeDevice_t *modeDevice_,
-    //                const std::string &name_,
-    //                const std::string &sourceFilename_,
-    //                functionPtr_t function_,
-    //                void *dlHandle_,
-    //                const occa::json &properties_)
-    //     : occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
-    //       function(function_),
-    //       dlHandle(dlHandle_)
-    // {
-    // }
+    kernel::kernel(modeDevice_t *modeDevice_,
+                   const std::string &name_,
+                   const std::string &sourceFilename_,
+                   void *dlHandle_,
+                   functionPtr_t function_,
+                   const occa::json &properties_)
+        : occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
+          dlHandle(dlHandle_),
+          function(function_)
+    {
+    }
 
     kernel::~kernel()
     {

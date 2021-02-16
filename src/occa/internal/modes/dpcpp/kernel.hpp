@@ -17,8 +17,8 @@ namespace occa
 
 //@todo: Check public/private/protected here
     public:
-      functionPtr_t function;
       void *dlHandle;
+      functionPtr_t function;
 
     public:
       kernel(modeDevice_t *modeDevice_,
@@ -26,12 +26,12 @@ namespace occa
              const std::string &sourceFilename_,
              const occa::json &properties_);
 
-      // kernel(modeDevice_t *modeDevice_,
-      //        const std::string &name_,
-      //        const std::string &sourceFilename_,
-      //        functionPtr_t function_,
-      //        void* dlHandle_,
-      //        const occa::json &properties_);
+      kernel(modeDevice_t *modeDevice_,
+             const std::string &name_,
+             const std::string &sourceFilename_,
+             void* dlHandle_,
+             functionPtr_t function_,
+             const occa::json &properties_);
 
       ~kernel();
 
