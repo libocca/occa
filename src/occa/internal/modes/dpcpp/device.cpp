@@ -32,21 +32,37 @@ namespace occa
       }
 
       occa::json &kernelProps = properties["kernel"];
-      std::string compilerFlags;
+      std::string compiler, compilerFlags, compilerSharedFlags;
 
       //@todo: Refactor to utils
-      if (env::var("OCCA_DPCPP_COMPILER_FLAGS").size())
-      {
-        compilerFlags = env::var("OCCA_DPCPP_COMPILER_FLAGS");
-      }
-      else if (kernelProps.has("compiler_flags"))
-      {
-        compilerFlags = (std::string)kernelProps["compiler_flags"];
+      if (env::var("OCCA_DPCPP_COMPILER").size()) {
+        compiler = env::var("OCCA_DPCPP_COMPILER");
+      } else if (kernelProps.get<std::string>("compiler").size()) {
+        compiler = (std::string) kernelProps["compiler"];
+      } else {
+        compiler = "dpcpp";
       }
 
-      kernelProps["compiler"] = "dpcpp";
+      if (env::var("OCCA_DPCPP_COMPILER_FLAGS").size()) {
+        compilerFlags = env::var("OCCA_DPCPP_COMPILER_FLAGS");
+      } else if (kernelProps.get<std::string>("compiler_flags").size()) {
+        compilerFlags = (std::string) kernelProps["compiler_flags"];
+      } else {
+        compilerFlags = "-O3";
+      }
+
+
+      if (env::var("OCCA_COMPILER_SHARED_FLAGS").size()) {
+        compilerSharedFlags = env::var("OCCA_COMPILER_SHARED_FLAGS");
+      } else if (kernelProps.get<std::string>("compiler_shared_flags").size()) {
+        compilerSharedFlags = (std::string) kernelProps["compiler_shared_flags"];
+      } else {
+        compilerSharedFlags = "-shared -fPIC";
+      }
+
+      kernelProps["compiler"] = compiler;
       kernelProps["compiler_flags"] = compilerFlags;
-      kernelProps["compiler_linker_flags"] = "-shared -fPIC";
+      kernelProps["compiler_shared_flags"] = compilerSharedFlags;
     }
 
     //@todo: add error handling
@@ -195,6 +211,7 @@ namespace occa
 
       command << compiler
               << " " << compilerFlags
+              << " " << compilerSharedFlags
               << " " << sourceFilename
               << " -o " << binaryFilename
               << " " << compilerLinkerFlags

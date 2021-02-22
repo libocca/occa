@@ -1,6 +1,5 @@
 #ifndef OCCA_LANG_MODES_DPCPP_HEADER
 #define OCCA_LANG_MODES_DPCPP_HEADER
-
 #include <occa/internal/lang/modes/withLauncher.hpp>
 
 namespace occa
@@ -38,11 +37,18 @@ namespace occa
         void setFunctionQualifiers();
         void setSharedQualifiers();
         void setKernelQualifiers(function_t &function);
-        void migrateLocalDecls(functionDeclStatement &fromSmnt,
+        void migrateLocalDecls(blockStatement &fromSmnt,
                                blockStatement &toSmnt);
 
         // static bool transformBlockStatement(blockStatement &blockSmnt);
         // static bool transformBasicExpressionStatement(expressionStatement &exprSmnt);
+
+      private:
+        inline static const std::string sycl_header{"CL/sycl.hpp"};
+        inline static const std::string queue_name{"queue_"};
+        inline static const std::string ndrange_name{"range_"};
+        inline static const std::string group_handler_name{"handler_"};
+        inline static const std::string work_item_name{"item_"};
 
         inline int dpcppDimensionOrder(const int index) { return 2 - index; }
       };

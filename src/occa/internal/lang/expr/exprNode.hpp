@@ -75,7 +75,8 @@ namespace occa {
       extern const udim_t tuple;
       extern const udim_t cudaCall;
       extern const udim_t lambda;
-    }
+      extern const udim_t dpcppAccessor;
+    } // namespace exprNodeType
 
     class exprNode {
     public:

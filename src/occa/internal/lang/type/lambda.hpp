@@ -4,6 +4,7 @@
 #include <occa/internal/lang/type/type.hpp>
 #include <occa/internal/lang/type/vartype.hpp>
 #include <occa/internal/lang/expr/expr.hpp>
+#include <occa/internal/lang/type/function.hpp>
 // #include <occa/internal/lang/statement/blockStatement.hpp>
 
 namespace occa {
@@ -12,13 +13,14 @@ namespace occa {
 
     // For now assume all variables are captured by value or reference.
     // Add support for capturing specific variables later, if necessary.
-    class lambda_t : public type_t {
+    class lambda_t : public function_t {
     public:
       capture_t capture;
-      variablePtrVector args;
       blockStatement* body;
 
       lambda_t();
+
+      lambda_t(capture_t capture_);
 
       lambda_t(capture_t capture_,const blockStatement& body_);
 
@@ -26,18 +28,13 @@ namespace occa {
 
       ~lambda_t();
 
-      void free();
+      // void free();
 
       virtual int type() const;
       virtual type_t& clone() const;
 
       virtual bool isNamed() const;
       virtual dtype_t dtype() const;
-
-      void addArgument(const variable_t &arg);
-      void addArguments(const variableVector &args_);
-
-      variable_t* removeArgument(const int index);
 
       virtual bool equals(const type_t &other) const;
 

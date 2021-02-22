@@ -2,6 +2,7 @@
 #define OCCA_INTERNAL_LANG_EXPR_LAMBDANODE_HEADER
 
 #include <occa/internal/lang/expr/exprNode.hpp>
+#include <occa/internal/lang/expr/functionNode.hpp>
 
 namespace occa {
   namespace lang {
@@ -27,6 +28,6 @@ namespace occa {
       virtual void debugPrint(const std::string &prefix) const;
     };
   }
-}
+} 
 
 #endif
