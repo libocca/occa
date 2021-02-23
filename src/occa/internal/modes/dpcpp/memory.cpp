@@ -19,7 +19,8 @@ namespace occa
       if (isOrigin)
       {
         ::sycl::queue *q = getCommandQueue();
-        free(this->ptr, *q);
+        OCCA_DPCPP_ERROR("Memory: Freeing SYCL alloc'd memory",
+                         ::sycl::free(this->ptr, *q));
       }
       this->ptr = nullptr;
       size = 0;

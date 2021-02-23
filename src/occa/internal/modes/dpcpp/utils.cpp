@@ -7,6 +7,7 @@
 #include <occa/internal/modes/dpcpp/streamTag.hpp>
 #include <occa/internal/io.hpp>
 #include <occa/internal/utils/sys.hpp>
+#include <occa/internal/utils/env.hpp>
 #include <occa/core/base.hpp>
 
 namespace occa
@@ -98,11 +99,16 @@ namespace occa
     {
       return ::sycl::platform::get_platforms().size();
     }
+
     /* Returns the DPC++ platform of interest */
     ::sycl::platform getPlatformByID(int pID)
     {
-      return (::sycl::platform::get_platforms()[pID]);
+      auto platforms{::sycl::platform::get_platforms()};
+      OCCA_ERROR("Invalid platform number (" + occa::toString(pID) + ")",
+            (static_cast<size_t>(pID) < platforms.size()));
+      return platforms[pID];
     }
+
     /* Returns the number of DPC++ devices of a certain device type*/
     int getDeviceCount(int type)
     {
@@ -114,31 +120,43 @@ namespace occa
       }
       return count;
     }
+
     /* Return the number of DPC++ devices under a given platform */
     int getDeviceCountInPlatform(int pID, int type)
     {
-      return ::sycl::platform::get_platforms()[pID].get_devices(deviceType(type)).size();
+      auto p = getPlatformByID(pID);
+      
+      return p.get_devices(deviceType(type)).size();
     }
+
     /* Return the DPC++ device given the platform ID and Device ID */
     ::sycl::device getDeviceByID(int pID, int dID, int type)
     {
-      return (::sycl::platform::get_platforms()[pID].get_devices(deviceType(type))[dID]);
+      auto p = getPlatformByID(pID);
+      auto device_type = deviceType(type);
+      auto devices{p.get_devices(device_type)};
+      OCCA_ERROR("Invalid device number (" + occa::toString(dID) + ")",
+                 (static_cast<size_t>(dID) < devices.size()));
+      return (devices[dID]);
     }
     /* Return the DPC++ device name */
     std::string deviceName(int pID, int dID)
     {
-      return ::sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::name>();
+      auto d = getDeviceByID(pID, dID);
+      return d.get_info<::sycl::info::device::name>();
     }
     /* Return the DPC++ device type */
     int deviceType(int pID, int dID)
     {
-      return (int)::sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::device_type>();
+      auto d = getDeviceByID(pID, dID);
+      return static_cast<int>(d.get_info<::sycl::info::device::device_type>());
     }
 
     /* Return the DPC++ device vendor */
     int deviceVendor(int pID, int dID)
     {
-      std::string devVendor = ::sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::vendor>();
+      auto d = getDeviceByID(pID, dID);
+      std::string devVendor{d.get_info<::sycl::info::device::vendor>()};
       if (devVendor.find("Intel") != std::string::npos)
         return info::Intel;
       else if (devVendor.find("NVIDIA") != std::string::npos)
@@ -152,8 +170,10 @@ namespace occa
     /* Returns the DPC++ Core count */
     int deviceCoreCount(int pID, int dID)
     {
-      return ::sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::max_compute_units>();
+      auto d = getDeviceByID(pID, dID);
+      return d.get_info<::sycl::info::device::max_compute_units>();
     }
+
     /* Returns the DPC++ global memory size given the DPC++ device */
     udim_t getDeviceMemorySize(const ::sycl::device &devPtr)
     {
@@ -162,62 +182,125 @@ namespace occa
     /* Returns the DPC++ global memory size given the platform and device IDs */
     udim_t getDeviceMemorySize(int pID, int dID)
     {
-      return ::sycl::platform::get_platforms()[pID].get_devices()[dID].get_info<::sycl::info::device::global_mem_size>();
+      auto d = getDeviceByID(pID, dID);
+      return getDeviceMemorySize(d);
     }
 
-    // void buildProgramFromSource(info_t &info,
-    //                             const std::string &source,
-    //                             const std::string &kernelName,
-    //                             const std::string &compilerFlags,
-    //                             const std::string &sourceFile,
-    //                             const occa::properties &properties,
-    //                             const io::lock_t &lock) {}
+void setCompiler(occa::json &dpcpp_properties) noexcept
+    {
+      std::string compiler;
+      if (env::var("OCCA_DPCPP_COMPILER").size())
+      {
+        compiler = env::var("OCCA_DPCPP_COMPILER");
+      }
+      else if (dpcpp_properties.has("compiler"))
+      {
+        compiler = dpcpp_properties["compiler"].toString();
+      }
+      else
+      {
+        compiler = "dpcpp";
+      }
+      dpcpp_properties["compiler"] = compiler;
+    }
 
-    // void buildProgramFromBinary(info_t &info,
-    //                             const std::string &binaryFilename,
-    //                             const std::string &kernelName,
-    //                             const std::string &compilerFlags,
-    //                             const io::lock_t &lock) {}
+    void setCompilerFlags(occa::json &dpcpp_properties) noexcept
+    {
+      std::string compiler_flags;
+      if (env::var("OCCA_DPCPP_COMPILER_FLAGS").size())
+      {
+        compiler_flags = env::var("OCCA_DPCPP_COMPILER_FLAGS");
+      }
+      else if (dpcpp_properties.has("compiler_flags"))
+      {
+        compiler_flags = dpcpp_properties["compiler_flags"].toString();
+      }
+      dpcpp_properties["compiler_flags"] = compiler_flags;
+    }
 
-    // void buildProgram(info_t &info,
-    //                   const std::string &kernelName,
-    //                   const std::string &compilerFlags,
-    //                   const io::lock_t &lock) {}
+void setSharedFlags(occa::json &dpcpp_properties) noexcept
+    {
+      std::string shared_flags;
+      if (env::var("OCCA_COMPILER_SHARED_FLAGS").size())
+      {
+        shared_flags = env::var("OCCA_COMPILER_SHARED_FLAGS");
+      }
+      else if (dpcpp_properties.has("compiler_shared_flags"))
+      {
+        shared_flags = (std::string) dpcpp_properties["compiler_shared_flags"];
+      }
+      else
+      {
+        shared_flags = "-shared -fPIC";
+      }
+      dpcpp_properties["compiler_shared_flags"] = shared_flags;
+    }
 
-    // void buildKernelFromProgram(info_t &info,
-    //                             const std::string &kernelName,
-    //                             const io::lock_t &lock) {}
+    void setLinkerFlags(occa::json &dpcpp_properties) noexcept
+    {
+      std::string linker_flags;
+      if (env::var("OCCA_DPCPP_LINKER_FLAGS").size())
+      {
+        linker_flags = env::var("OCCA_DPCPP_LINKER_FLAGS");
+      }
+      else if (dpcpp_properties.has("linker_flags"))
+      {
+        linker_flags = dpcpp_properties["linker_flags"].toString();
+      }
+      dpcpp_properties["linker_flags"] = linker_flags;
+    }
 
-    // bool saveProgramBinary(info_t &info,
-    //                        const std::string &binaryFile,
-    //                        const io::lock_t &lock) { return true; }
+    double getEventProfilingSubmit(const ::sycl::event &dpcppEvent)
+    {
+      double submit_time;
+      OCCA_DPCPP_ERROR(
+          "streamTag: startTime",
+          submit_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_submit>())
+      return submit_time;
+    }
 
-    void warn(cl_int errorCode,
+    double getEventProfilingStart(const ::sycl::event &dpcppEvent)
+    {
+      double start_time;
+      OCCA_DPCPP_ERROR(
+          "streamTag: startTime",
+          start_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_start>())
+      return start_time;
+    }
+
+    double getEventProfilingEnd(const ::sycl::event &dpcppEvent)
+    {
+      double end_time;
+      OCCA_DPCPP_ERROR(
+          "streamTag: endTime",
+          end_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_end>())
+      return end_time;
+    }
+
+    void warn(const ::sycl::exception &e,
               const std::string &filename,
               const std::string &function,
               const int line,
               const std::string &message)
     {
-      if (!errorCode)
-      {
-        return;
-      }
-
-      occa::warn(filename, function, line, "dpcpp warning!");
+      std::stringstream ss;
+      ss << message << "\n"
+         << "DPCPP Error:"
+         << e.what();
+      occa::warn(filename, function, line, ss.str());
     }
 
-    void error(cl_int errorCode,
+    void error(const ::sycl::exception &e,
                const std::string &filename,
                const std::string &function,
                const int line,
                const std::string &message)
     {
-      if (!errorCode)
-      {
-        return;
-      }
-
-      occa::error(filename, function, line, "dpcpp error!");
+      std::stringstream ss;
+      ss << message << "\n"
+         << "DPCPP Error:"
+         << e.what();
+      occa::error(filename, function, line, ss.str());
     }
 
   } // namespace dpcpp

@@ -12,9 +12,25 @@ namespace occa
     {
     }
 
-    double streamTag::getTime()
+    void streamTag::waitFor()
     {
-      return 0.0;
+      OCCA_DPCPP_ERROR("streamTag: waitFor",
+                       dpcppEvent.wait_and_throw())
+    }
+
+    double streamTag::submitTime()
+    {
+      return getEventProfilingSubmit(dpcppEvent);
+    }
+
+    double streamTag::startTime()
+    {
+      return getEventProfilingStart(dpcppEvent);
+    }
+
+    double streamTag::endTime()
+    {
+      return getEventProfilingEnd(dpcppEvent);
     }
   } // namespace dpcpp
 } // namespace occa

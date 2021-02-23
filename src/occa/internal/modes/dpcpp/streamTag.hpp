@@ -17,7 +17,11 @@ namespace occa
                 ::sycl::event dpcppEvent_);
 
       virtual ~streamTag() = default;
-      double getTime();
+
+      void waitFor();
+      double submitTime();
+      double startTime();
+      double endTime();
     };
   } // namespace dpcpp
 } // namespace occa

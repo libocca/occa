@@ -27,42 +27,10 @@ namespace occa
         dpcppDevice = ::sycl::device(getDeviceByID(platformID, deviceID));
 
         std::cout << "Target Device is: " << dpcppDevice.get_info<::sycl::info::device::name>() << "\n";
-        //        dpcppContext = clCreateContext(NULL, 1, &clDevice, NULL, NULL, &error);
-        //        OCCA_DPCPP_ERROR("Device: Creating Context", error);
       }
 
       occa::json &kernelProps = properties["kernel"];
-      std::string compiler, compilerFlags, compilerSharedFlags;
-
-      //@todo: Refactor to utils
-      if (env::var("OCCA_DPCPP_COMPILER").size()) {
-        compiler = env::var("OCCA_DPCPP_COMPILER");
-      } else if (kernelProps.get<std::string>("compiler").size()) {
-        compiler = (std::string) kernelProps["compiler"];
-      } else {
-        compiler = "dpcpp";
-      }
-
-      if (env::var("OCCA_DPCPP_COMPILER_FLAGS").size()) {
-        compilerFlags = env::var("OCCA_DPCPP_COMPILER_FLAGS");
-      } else if (kernelProps.get<std::string>("compiler_flags").size()) {
-        compilerFlags = (std::string) kernelProps["compiler_flags"];
-      } else {
-        compilerFlags = "-O3";
-      }
-
-
-      if (env::var("OCCA_COMPILER_SHARED_FLAGS").size()) {
-        compilerSharedFlags = env::var("OCCA_COMPILER_SHARED_FLAGS");
-      } else if (kernelProps.get<std::string>("compiler_shared_flags").size()) {
-        compilerSharedFlags = (std::string) kernelProps["compiler_shared_flags"];
-      } else {
-        compilerSharedFlags = "-shared -fPIC";
-      }
-
-      kernelProps["compiler"] = compiler;
-      kernelProps["compiler_flags"] = compilerFlags;
-      kernelProps["compiler_shared_flags"] = compilerSharedFlags;
+      setCompilerLinkerOptions(kernelProps);
     }
 
     //@todo: add error handling
@@ -104,24 +72,30 @@ namespace occa
 
     occa::streamTag device::tagStream()
     {
+      //@note: This creates a host event which will return immediately.
+      // Unless we are using in-order queues, the current streamTag model is
+      // not terribly useful.
       ::sycl::event dpcpp_event;
       return new occa::dpcpp::streamTag(this, dpcpp_event);
     }
 
     void device::waitFor(occa::streamTag tag)
     {
-      //@todo: Implement this!
+      occa::dpcpp::streamTag &dpcppTag = (dynamic_cast<occa::dpcpp::streamTag&>(*tag.getModeStreamTag()));
+      dpcppTag.waitFor();
     }
 
     double device::timeBetween(const occa::streamTag &startTag,
                                const occa::streamTag &endTag)
     {
-      occa::dpcpp::streamTag *dpcppStartTag = (dynamic_cast<occa::dpcpp::streamTag *>(startTag.getModeStreamTag()));
-      occa::dpcpp::streamTag *dpcppEndTag = (dynamic_cast<occa::dpcpp::streamTag *>(endTag.getModeStreamTag()));
+      occa::dpcpp::streamTag &dpcppStartTag = (dynamic_cast<occa::dpcpp::streamTag&>(*startTag.getModeStreamTag()));
+      occa::dpcpp::streamTag &dpcppEndTag = (dynamic_cast<occa::dpcpp::streamTag&>(*endTag.getModeStreamTag()));
 
-      finish();
+      // finish();
+      waitFor(startTag);
+      waitFor(endTag);
 
-      return (dpcppEndTag->getTime() - dpcppStartTag->getTime());
+      return (dpcppEndTag.endTime() - dpcppStartTag.startTime());
     }
 
     ::sycl::queue *device::getCommandQueue() const
@@ -312,11 +286,15 @@ namespace occa
       if (props.get("mapped", false))
         return mappedAlloc(bytes, src, props);
 
-      memory *mem = new memory(this, bytes, props);
+      if (props.get("unified", false))
+        return unifiedAlloc(bytes, src, props);
+
+      auto mem = new dpcpp::memory(this, bytes, props);
 
       ::sycl::queue *q = getCommandQueue();
 
-      mem->ptr = static_cast<char *>(malloc_device(bytes, *q));
+      mem->ptr = static_cast<char *>(::sycl::malloc_device(bytes, *q));
+      OCCA_ERROR("DPCPP: malloc_device failed!", nullptr != mem->ptr);
 
       if (nullptr != src)
       {
@@ -332,17 +310,19 @@ namespace occa
                                       const void *src,
                                       const occa::json &props)
     {
-      memory *mem = new memory(this, bytes, props);
+      auto mem = new dpcpp::memory(this, bytes, props);
 
       ::sycl::queue *q = getCommandQueue();
 
-      mem->ptr = static_cast<char *>(malloc_host(bytes, *q));
+      mem->ptr = static_cast<char *>(::sycl::malloc_host(bytes, *q));
+      OCCA_ERROR("DPCPP: malloc_host failed!", nullptr != mem->ptr);
 
       if (nullptr != src)
       {
         q->memcpy(mem->ptr, src, bytes);
         q->wait();
       }
+
       return mem;
     }
 
@@ -350,7 +330,20 @@ namespace occa
                                        const void *src,
                                        const occa::json &props)
     {
-      return nullptr;
+      auto mem = new dpcpp::memory(this, bytes, props);
+
+      ::sycl::queue *q = getCommandQueue();
+
+      mem->ptr = static_cast<char *>(::sycl::malloc_shared(bytes, *q));
+      OCCA_ERROR("DPCPP: malloc_shared failed!", nullptr != mem->ptr);
+
+      if (nullptr != src)
+      {
+        q->memcpy(mem->ptr, src, bytes);
+        q->wait();
+      }
+
+      return mem;
     }
 
     modeMemory_t *device::wrapMemory(const void *ptr,

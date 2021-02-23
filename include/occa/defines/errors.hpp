@@ -128,22 +128,26 @@
 //---[ DPCPP ]-------------------------
 //======================================
 
+//---[ DPCPP ]---------------------------
 #define OCCA_DPCPP_TEMPLATE_CHECK(checkFunction, expr, filename, function, line, message) \
-  do {                                                                  \
-    cl_int _clErrorCode = expr;                                         \
-    if (_clErrorCode) {                                                 \
-      std::stringstream _check_ss;                                      \
-      _check_ss << message;                                             \
-      checkFunction(_clErrorCode, filename, function, line, _check_ss.str()); \
-    }                                                                   \
-  } while(0)
+  try                                                                                     \
+  {                                                                                       \
+    expr;                                                                                 \
+  }                                                                                       \
+  catch (const ::sycl::exception &e)                                                      \
+  {                                                                                       \
+    std::stringstream _check_ss;                                                          \
+    _check_ss << message;                                                                 \
+    checkFunction(e, filename, function, line, _check_ss.str());                          \
+  }
 
-#define OCCA_DPCPP_ERROR3(expr, filename, function, line, message) OCCA_METAL_TEMPLATE_CHECK(occa::metal::error, expr, filename, function, line, message)
-#define OCCA_DPCPP_ERROR2(expr, filename, function, line, message) OCCA_METAL_ERROR3(expr, filename, function, line, message)
-#define OCCA_DPCPP_ERROR(message, expr) OCCA_METAL_ERROR2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
+#define OCCA_DPCPP_ERROR3(expr, filename, function, line, message) OCCA_DPCPP_TEMPLATE_CHECK(occa::dpcpp::error, expr, filename, function, line, message)
+#define OCCA_DPCPP_ERROR2(expr, filename, function, line, message) OCCA_DPCPP_ERROR3(expr, filename, function, line, message)
+#define OCCA_DPCPP_ERROR(message, expr) OCCA_DPCPP_ERROR2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
 
-#define OCCA_DPCPP_WARNING3(expr, filename, function, line, message) OCCA_METAL_TEMPLATE_CHECK(occa::metal::warn, expr, filename, function, line, message)
-#define OCCA_DPCPP_WARNING2(expr, filename, function, line, message) OCCA_METAL_WARNING3(expr, filename, function, line, message)
-#define OCCA_DPCPP_WARNING(message, expr) OCCA_METAL_WARNING2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
+#define OCCA_DPCPP_WARNING3(expr, filename, function, line, message) OCCA_DPCPP_TEMPLATE_CHECK(occa::dpcpp::warn, expr, filename, function, line, message)
+#define OCCA_DPCPP_WARNING2(expr, filename, function, line, message) OCCA_DPCPP_WARNING3(expr, filename, function, line, message)
+#define OCCA_DPCPP_WARNING(message, expr) OCCA_DPCPP_WARNING2(expr, __FILE__, __PRETTY_FUNCTION__, __LINE__, message)
+//======================================
 
 #endif

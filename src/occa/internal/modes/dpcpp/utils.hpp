@@ -54,53 +54,37 @@ namespace occa {
     udim_t getDeviceMemorySize(const ::sycl::device &devPtr);
     udim_t getDeviceMemorySize(int pID, int dID);
 
-    // void buildProgramFromSource(info_t &info,
-    //                             const std::string &source,
-    //                             const std::string &kernelName,
-    //                             const std::string &compilerFlags = "",
-    //                             const std::string &sourceFile = "",
-    //                             const occa::properties &properties = occa::properties(),
-    //                             const io::lock_t &lock = io::lock_t());
+    void setCompiler(occa::json &dpcpp_properties) noexcept;
+    void setCompilerFlags(occa::json &dpcpp_properties) noexcept;
+    void setSharedFlags(occa::json &dpcpp_properties) noexcept;
+    void setLinkerFlags(occa::json &dpcpp_properties) noexcept;
+    
+    inline void setCompilerLinkerOptions(occa::json &dpcpp_properties) noexcept
+    {
+      setCompiler(dpcpp_properties);
+      setCompilerFlags(dpcpp_properties);
+      setSharedFlags(dpcpp_properties);
+      setLinkerFlags(dpcpp_properties);
+    }
 
-    // void buildProgramFromBinary(info_t &info,
-    //                             const std::string &binaryFilename,
-    //                             const std::string &kernelName,
-    //                             const std::string &compilerFlags = "",
-    //                             const io::lock_t &lock = io::lock_t());
+    double getEventProfilingSubmit(const ::sycl::event &dpcppEvent);
+    double getEventProfilingStart(const ::sycl::event &dpcppEvent);
+    double getEventProfilingEnd(const ::sycl::event &dpcppEvent);
 
-    // void buildProgram(info_t &info,
-    //                   const std::string &kernelName,
-    //                   const std::string &compilerFlags,
-    //                   const io::lock_t &lock = io::lock_t());
-
-    // void buildKernelFromProgram(info_t &info,
-    //                             const std::string &kernelName,
-    //                             const io::lock_t &lock = io::lock_t());
-
-    // bool saveProgramBinary(info_t &info,
-    //                        const std::string &binaryFile,
-    //                        const io::lock_t &lock = io::lock_t());
-
-//    cl_context getCLContext(occa::device device);
-
-//    cl_mem getCLMemory(occa::memory memory);
-
-//    cl_kernel getCLKernel(occa::kernel kernel);
-
-    void warn(cl_int errorCode,
-              const std::string &filename,
-              const std::string &function,
-              const int line,
-              const std::string &message);
-
-    void error(cl_int errorCode,
+    void warn(const ::sycl::exception &e,
                const std::string &filename,
                const std::string &function,
                const int line,
                const std::string &message);
 
-    int getErrorCode(int errorCode);
-    std::string getErrorMessage(const int errorCode);
+    void error(const ::sycl::exception &e,
+               const std::string &filename,
+               const std::string &function,
+               const int line,
+               const std::string &message);
+
+    // int getErrorCode(int errorCode);
+    // std::string getErrorMessage(const int errorCode);
   }
 }
 
