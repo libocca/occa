@@ -4,6 +4,7 @@
 #include <occa/internal/modes/dpcpp/device.hpp>
 #include <occa/internal/modes/dpcpp/memory.hpp>
 #include <occa/internal/modes/dpcpp/kernel.hpp>
+#include <occa/internal/modes/dpcpp/stream.hpp>
 #include <occa/internal/modes/dpcpp/streamTag.hpp>
 #include <occa/internal/io.hpp>
 #include <occa/internal/utils/sys.hpp>
@@ -250,31 +251,25 @@ void setSharedFlags(occa::json &dpcpp_properties) noexcept
       dpcpp_properties["linker_flags"] = linker_flags;
     }
 
-    double getEventProfilingSubmit(const ::sycl::event &dpcppEvent)
+    occa::dpcpp::device& getDpcppDevice(modeDevice_t* device_)
     {
-      double submit_time;
-      OCCA_DPCPP_ERROR(
-          "streamTag: startTime",
-          submit_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_submit>())
-      return submit_time;
+      occa::dpcpp::device* dpcppDevice = dynamic_cast<occa::dpcpp::device*>(device_);
+      OCCA_ERROR("[dpcpp::getDpcppDevice] Dynamic cast failed!",nullptr != dpcppDevice);
+      return *dpcppDevice;
+    }  
+
+    occa::dpcpp::stream& getDpcppStream(const occa::stream& stream_)
+    {
+      auto* dpcpp_stream{dynamic_cast<occa::dpcpp::stream*>(stream_.getModeStream())};
+      OCCA_ERROR("[dpcpp::getDpcppStream]: Dynamic cast failed!", nullptr != dpcpp_stream);
+      return *dpcpp_stream;
     }
 
-    double getEventProfilingStart(const ::sycl::event &dpcppEvent)
+    occa::dpcpp::streamTag& getDpcppStreamTag(const occa::streamTag& tag_)
     {
-      double start_time;
-      OCCA_DPCPP_ERROR(
-          "streamTag: startTime",
-          start_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_start>())
-      return start_time;
-    }
-
-    double getEventProfilingEnd(const ::sycl::event &dpcppEvent)
-    {
-      double end_time;
-      OCCA_DPCPP_ERROR(
-          "streamTag: endTime",
-          end_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_end>())
-      return end_time;
+      auto* dpcppTag{dynamic_cast<occa::dpcpp::streamTag*>(tag_.getModeStreamTag())};
+      OCCA_ERROR("[dpcpp::getDpcppStreamTag]: Dynamic cast failed!", nullptr != dpcppTag);
+      return *dpcppTag;
     }
 
     void warn(const ::sycl::exception &e,

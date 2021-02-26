@@ -3,6 +3,8 @@
 
 #include <occa/internal/core/launchedDevice.hpp>
 #include <occa/internal/modes/dpcpp/polyfill.hpp>
+#include <occa/internal/modes/dpcpp/stream.hpp>
+
 
 namespace occa
 {
@@ -40,11 +42,11 @@ namespace occa
       virtual modeStream_t *createStream(const occa::json &props);
 
       virtual occa::streamTag tagStream();
-      virtual void waitFor(streamTag tag);
-      virtual double timeBetween(const streamTag &startTag,
-                                 const streamTag &endTag);
+      virtual void waitFor(occa::streamTag tag);
+      virtual double timeBetween(const occa::streamTag &startTag,
+                                 const occa::streamTag &endTag);
 
-      ::sycl::queue *getCommandQueue() const;
+      // occa::dpcpp::stream & getDpcppStream() const;
       //================================
 
       //---[ Kernel ]-------------------
@@ -76,6 +78,11 @@ namespace occa
       virtual modeKernel_t *buildKernelFromBinary(const std::string &filename,
                                                   const std::string &kernelName,
                                                   const occa::json &props);
+
+      int maxDims() const;
+      dim maxOuterDims() const;
+      dim maxInnerDims() const;
+      udim_t maxInnerSize() const;
       //================================
 
       //---[ Memory ]-------------------

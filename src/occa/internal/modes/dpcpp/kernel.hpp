@@ -3,7 +3,8 @@
 
 #include <occa/internal/core/launchedKernel.hpp>
 #include <occa/internal/modes/dpcpp/polyfill.hpp>
-#include <occa/internal/modes/dpcpp/utils.hpp>
+#include <occa/internal/utils/sys.hpp>
+// #include <occa/internal/modes/dpcpp/utils.hpp>
 
 namespace occa
 {
@@ -35,12 +36,13 @@ namespace occa
 
       ~kernel();
 
-      ::sycl::queue *getCommandQueue() const;
+      // ::sycl::queue *getCommandQueue() const;
       // const lang::kernelMetadata_t &getMetadata() const;
 
       int maxDims() const;
       dim maxOuterDims() const;
       dim maxInnerDims() const;
+      udim_t maxInnerSize() const;
 
       void deviceRun() const;
     };

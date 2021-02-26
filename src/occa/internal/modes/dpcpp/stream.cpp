@@ -1,5 +1,6 @@
-#include <occa/internal/modes/dpcpp/stream.hpp>
 #include <occa/internal/modes/dpcpp/utils.hpp>
+#include <occa/internal/modes/dpcpp/stream.hpp>
+#include <occa/internal/modes/dpcpp/streamTag.hpp>
 
 namespace occa {
   namespace dpcpp {
@@ -12,6 +13,18 @@ namespace occa {
     stream::~stream() {
      OCCA_DPCPP_ERROR("Stream: Freeing dpcpp queue",
                         free(commandQueue))
+    }
+
+    void stream::finish()
+    {
+      OCCA_DPCPP_ERROR("stream::finish",
+                       commandQueue->wait_and_throw());
+    }
+
+    occa::dpcpp::streamTag stream::memcpy(void * dest,const void* src, size_t num_bytes)
+    {
+      ::sycl::event e{commandQueue->memcpy(dest, src, num_bytes)};
+      return dpcpp::streamTag(modeDevice, e);
     }
   }
 }

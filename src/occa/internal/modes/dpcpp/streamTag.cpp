@@ -14,23 +14,35 @@ namespace occa
 
     void streamTag::waitFor()
     {
-      OCCA_DPCPP_ERROR("streamTag: waitFor",
-                       dpcppEvent.wait_and_throw())
+          OCCA_DPCPP_ERROR("streamTag: waitFor",
+                           dpcppEvent.wait_and_throw())
     }
 
     double streamTag::submitTime()
     {
-      return getEventProfilingSubmit(dpcppEvent);
+      double submit_time;
+      OCCA_DPCPP_ERROR(
+          "streamTag: startTime",
+          submit_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_submit>())
+      return submit_time;
     }
 
     double streamTag::startTime()
     {
-      return getEventProfilingStart(dpcppEvent);
+      double start_time;
+      OCCA_DPCPP_ERROR(
+          "streamTag: startTime",
+          start_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_start>())
+      return start_time;
     }
 
     double streamTag::endTime()
     {
-      return getEventProfilingEnd(dpcppEvent);
+     double end_time;
+      OCCA_DPCPP_ERROR(
+          "streamTag: endTime",
+          end_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_end>())
+      return end_time;
     }
   } // namespace dpcpp
 } // namespace occa

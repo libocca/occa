@@ -3,9 +3,12 @@
 
 #include <occa/internal/core/stream.hpp>
 #include <occa/internal/modes/dpcpp/polyfill.hpp>
+// #include <occa/internal/modes/dpcpp/streamTag.hpp>
 
 namespace occa {
   namespace dpcpp {
+    class streamTag;
+    
     class stream : public occa::modeStream_t {
     public:
 	    ::sycl::queue* commandQueue;
@@ -15,6 +18,10 @@ namespace occa {
              ::sycl::queue* commandQueue_);
 
       virtual ~stream();
+
+      void finish();
+
+      occa::dpcpp::streamTag memcpy(void *dest, const void *src, size_t num_bytes);
     };
   }
 }

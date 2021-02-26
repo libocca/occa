@@ -8,9 +8,16 @@
 #include <occa/internal/io/lock.hpp>
 
 namespace occa {
-  class streamTag;
 
   namespace dpcpp {
+    class device;
+    class stream;
+    class streamTag;
+
+    constexpr int max_dimensions{3};
+    constexpr int x_index{2};
+    constexpr int y_index{1};
+    constexpr int z_index{0};
 
     namespace info {
       static const int CPU     = (1 << 0);
@@ -67,9 +74,9 @@ namespace occa {
       setLinkerFlags(dpcpp_properties);
     }
 
-    double getEventProfilingSubmit(const ::sycl::event &dpcppEvent);
-    double getEventProfilingStart(const ::sycl::event &dpcppEvent);
-    double getEventProfilingEnd(const ::sycl::event &dpcppEvent);
+    occa::dpcpp::device& getDpcppDevice(modeDevice_t* device_);
+    occa::dpcpp::stream& getDpcppStream(const occa::stream& stream_);
+    occa::dpcpp::streamTag &getDpcppStreamTag(const occa::streamTag& tag);
 
     void warn(const ::sycl::exception &e,
                const std::string &filename,
@@ -82,9 +89,6 @@ namespace occa {
                const std::string &function,
                const int line,
                const std::string &message);
-
-    // int getErrorCode(int errorCode);
-    // std::string getErrorMessage(const int errorCode);
   }
 }
 

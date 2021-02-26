@@ -3,12 +3,14 @@
 
 #include <occa/internal/core/memory.hpp>
 #include <occa/internal/modes/dpcpp/polyfill.hpp>
-#include <occa/internal/modes/dpcpp/device.hpp>
+// #include <occa/internal/modes/dpcpp/device.hpp>
 
 namespace occa
 {
   namespace dpcpp
   {
+    class device;
+    
     class memory : public occa::modeMemory_t
     {
       friend class dpcpp::device;
@@ -28,7 +30,8 @@ namespace occa
 
       ~memory();
 
-      ::sycl::queue *getCommandQueue() const;
+      // ::sycl::queue *getCommandQueue() const;
+      // occa::dpcpp::device &getDpcppDevice() const;
 
       void *getKernelArgPtr() const;
 

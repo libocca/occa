@@ -1,14 +1,12 @@
 #include <occa/core/base.hpp>
 #include <occa/internal/utils/env.hpp>
 #include <occa/internal/utils/sys.hpp>
+#include <occa/internal/modes/dpcpp/utils.hpp>
 #include <occa/internal/modes/dpcpp/device.hpp>
 #include <occa/internal/modes/dpcpp/kernel.hpp>
 #include <occa/internal/modes/dpcpp/memory.hpp>
 #include <occa/internal/modes/dpcpp/stream.hpp>
 #include <occa/internal/modes/dpcpp/streamTag.hpp>
-#include <occa/internal/modes/dpcpp/utils.hpp>
-#include <occa/internal/modes/serial/device.hpp>
-#include <occa/internal/modes/serial/kernel.hpp>
 #include <occa/types/primitive.hpp>
 #include <occa/internal/lang/kernelMetadata.hpp>
 #include <occa/internal/lang/modes/dpcpp.hpp>
@@ -22,9 +20,29 @@ namespace occa
     {
       if (!properties.has("wrapped"))
       {
-        platformID = getPlatformID(properties);
-        deviceID = getDeviceID(properties);
-        dpcppDevice = ::sycl::device(getDeviceByID(platformID, deviceID));
+        OCCA_ERROR(
+            "[dpcpp] device not given a [platform_id] integer",
+            properties.has("platform_id") && properties["platform_id"].isNumber());
+
+        OCCA_ERROR(
+            "[dpcpp] device not given a [device_id] integer",
+            properties.has("device_id") && properties["device_id"].isNumber());
+
+        platformID = properties.get<int>("platform_id");
+        deviceID = properties.get<int>("device_id");
+
+        auto platforms{::sycl::platform::get_platforms()};
+        OCCA_ERROR(
+            "Invalid platform number (" + toString(platformID) + ")",
+            (static_cast<size_t>(platformID) < platforms.size()));
+
+        auto devices{platforms[platformID].get_devices()};
+        OCCA_ERROR(
+            "Invalid device number (" + toString(deviceID) + ")",
+            (static_cast<size_t>(deviceID) < platforms.size()));
+
+        dpcppDevice = devices[deviceID];
+        dpcppContext = ::sycl::context(devices[deviceID]);
 
         std::cout << "Target Device is: " << dpcppDevice.get_info<::sycl::info::device::name>() << "\n";
       }
@@ -33,10 +51,9 @@ namespace occa
       setCompilerLinkerOptions(kernelProps);
     }
 
-    //@todo: add error handling
     void device::finish() const
     {
-      getCommandQueue()->wait();
+      getDpcppStream(currentStream).finish();
     }
 
     //@todo: update kernel hashing
@@ -66,8 +83,8 @@ namespace occa
     //---[ Stream ]---------------------
     modeStream_t *device::createStream(const occa::json &props)
     {
-      ::sycl::queue *q = new ::sycl::queue(dpcppDevice);
-      return new stream(this, props, q);
+      ::sycl::queue* q = new ::sycl::queue(dpcppContext, dpcppDevice, ::sycl::property::queue::enable_profiling{});
+      return new occa::dpcpp::stream(this, props, q);
     }
 
     occa::streamTag device::tagStream()
@@ -81,28 +98,22 @@ namespace occa
 
     void device::waitFor(occa::streamTag tag)
     {
-      occa::dpcpp::streamTag &dpcppTag = (dynamic_cast<occa::dpcpp::streamTag&>(*tag.getModeStreamTag()));
-      dpcppTag.waitFor();
+      getDpcppStreamTag(tag).waitFor();
     }
 
     double device::timeBetween(const occa::streamTag &startTag,
                                const occa::streamTag &endTag)
     {
-      occa::dpcpp::streamTag &dpcppStartTag = (dynamic_cast<occa::dpcpp::streamTag&>(*startTag.getModeStreamTag()));
-      occa::dpcpp::streamTag &dpcppEndTag = (dynamic_cast<occa::dpcpp::streamTag&>(*endTag.getModeStreamTag()));
+      auto& dpcppStartTag{getDpcppStreamTag(startTag)};
+      auto& dpcppEndTag{getDpcppStreamTag(endTag)};
 
-      // finish();
-      waitFor(startTag);
-      waitFor(endTag);
+      dpcppStartTag.waitFor();
+      dpcppEndTag.waitFor();
 
       return (dpcppEndTag.endTime() - dpcppStartTag.startTime());
     }
 
-    ::sycl::queue *device::getCommandQueue() const
-    {
-      occa::dpcpp::stream *stream = (occa::dpcpp::stream *)currentStream.getModeStream();
-      return stream->commandQueue;
-    }
+    
     //==================================
 
     //---[ Kernel ]---------------------
@@ -208,8 +219,7 @@ namespace occa
       if (compileError)
       {
         OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
-                                                              " Command: ["
-                                             << sCommand << ']');
+                          << " Command: ["<< sCommand << ']');
       }
     }
 
@@ -275,6 +285,33 @@ namespace occa
                                kernel_function,
                                kernelProps);
     }
+
+    int device::maxDims() const
+    {
+      // This is an OCCA restriction, not a SYCL one.
+      return occa::dpcpp::max_dimensions;
+    }
+
+    dim device::maxOuterDims() const
+    {
+      // This is an OCCA restriction, not a SYCL one.
+      return dim{occa::UDIM_DEFAULT, occa::UDIM_DEFAULT, occa::UDIM_DEFAULT};
+    }
+
+    dim device::maxInnerDims() const
+    {
+      ::sycl::id<3> max_wi_sizes = dpcppDevice.get_info<::sycl::info::device::max_work_item_sizes>();
+      return dim{max_wi_sizes[occa::dpcpp::x_index],
+                 max_wi_sizes[occa::dpcpp::y_index],
+                 max_wi_sizes[occa::dpcpp::z_index]};
+    }
+
+    udim_t device::maxInnerSize() const
+    {
+      uint64_t max_wg_size{dpcppDevice.get_info<::sycl::info::device::max_work_group_size>()};
+      return max_wg_size;
+    }
+
     //==================================
 
     //---[ Memory ]---------------------
@@ -289,17 +326,14 @@ namespace occa
       if (props.get("unified", false))
         return unifiedAlloc(bytes, src, props);
 
-      auto mem = new dpcpp::memory(this, bytes, props);
+      auto* mem = new dpcpp::memory(this, bytes, props);
 
-      ::sycl::queue *q = getCommandQueue();
-
-      mem->ptr = static_cast<char *>(::sycl::malloc_device(bytes, *q));
+      mem->ptr = static_cast<char *>(::sycl::malloc_device(bytes,dpcppDevice,dpcppContext));
       OCCA_ERROR("DPCPP: malloc_device failed!", nullptr != mem->ptr);
 
       if (nullptr != src)
       {
-        q->memcpy(mem->ptr, src, bytes);
-        q->wait();
+        mem->copyFrom(src, bytes, 0);
       }
 
       return mem;
@@ -310,17 +344,15 @@ namespace occa
                                       const void *src,
                                       const occa::json &props)
     {
-      auto mem = new dpcpp::memory(this, bytes, props);
+      auto* mem = new dpcpp::memory(this, bytes, props);
 
-      ::sycl::queue *q = getCommandQueue();
-
-      mem->ptr = static_cast<char *>(::sycl::malloc_host(bytes, *q));
+      mem->ptr = static_cast<char *>(::sycl::malloc_host(bytes,dpcppContext));
       OCCA_ERROR("DPCPP: malloc_host failed!", nullptr != mem->ptr);
 
       if (nullptr != src)
       {
-        q->memcpy(mem->ptr, src, bytes);
-        q->wait();
+        // Since memory resides on the host, call regular memcpy
+        ::memcpy(mem->ptr, src, bytes);
       }
 
       return mem;
@@ -330,17 +362,16 @@ namespace occa
                                        const void *src,
                                        const occa::json &props)
     {
-      auto mem = new dpcpp::memory(this, bytes, props);
+      auto* mem = new dpcpp::memory(this, bytes, props);
 
-      ::sycl::queue *q = getCommandQueue();
-
-      mem->ptr = static_cast<char *>(::sycl::malloc_shared(bytes, *q));
+      mem->ptr = static_cast<char *>(::sycl::malloc_shared(bytes,dpcppDevice,dpcppContext));
       OCCA_ERROR("DPCPP: malloc_shared failed!", nullptr != mem->ptr);
 
       if (nullptr != src)
       {
-        q->memcpy(mem->ptr, src, bytes);
-        q->wait();
+        // Since memory is automatically migrated, we only need to copy
+        // between host pointers.
+        ::memcpy(mem->ptr, src, bytes);
       }
 
       return mem;
@@ -350,10 +381,7 @@ namespace occa
                                      const udim_t bytes,
                                      const occa::json &props)
     {
-      memory *mem = new memory(this,
-                               bytes,
-                               props);
-
+      auto* mem = new dpcpp::memory(this,bytes,props);
       mem->ptr = (char *)ptr;
 
       return mem;
@@ -361,8 +389,10 @@ namespace occa
 
     udim_t device::memorySize() const
     {
-      return dpcpp::getDeviceMemorySize(dpcppDevice);
+      uint64_t global_mem_size{dpcppDevice.get_info<::sycl::info::device::global_mem_size>()};
+      return global_mem_size;
     }
+
     //==================================
   } // namespace dpcpp
 } // namespace occa

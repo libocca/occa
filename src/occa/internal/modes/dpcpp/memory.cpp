@@ -1,6 +1,8 @@
+#include <occa/internal/modes/dpcpp/utils.hpp>
 #include <occa/internal/modes/dpcpp/memory.hpp>
 #include <occa/internal/modes/dpcpp/device.hpp>
-#include <occa/internal/modes/dpcpp/utils.hpp>
+#include <occa/internal/modes/dpcpp/stream.hpp>
+#include <occa/internal/modes/dpcpp/streamTag.hpp>
 #include <occa/internal/utils/sys.hpp>
 
 namespace occa
@@ -18,17 +20,12 @@ namespace occa
     {
       if (isOrigin)
       {
-        ::sycl::queue *q = getCommandQueue();
+        auto& dpcpp_device = getDpcppDevice(modeDevice);
         OCCA_DPCPP_ERROR("Memory: Freeing SYCL alloc'd memory",
-                         ::sycl::free(this->ptr, *q));
+                         ::sycl::free(this->ptr,dpcpp_device.dpcppContext));
       }
       this->ptr = nullptr;
       size = 0;
-    }
-
-    ::sycl::queue *memory::getCommandQueue() const
-    {
-      return ((::occa::dpcpp::device *)modeDevice)->getCommandQueue();
     }
 
     void *memory::getKernelArgPtr() const
@@ -57,11 +54,12 @@ namespace occa
                           const occa::json &props)
     {
       const bool async = props.get("async", false);
-      ::sycl::queue *q = getCommandQueue();
 
-      q->memcpy(&(this->ptr)[offset], &((char *)src)[offset], bytes);
-      if (!async)
-        q->wait();
+      occa::dpcpp::stream& q = getDpcppStream(modeDevice->currentStream);
+      occa::dpcpp::streamTag e = q.memcpy(&(this->ptr)[offset], &((char *)src)[offset], bytes);
+
+      if(!async)
+        e.waitFor();
     }
 
     void memory::copyFrom(const modeMemory_t *src,
@@ -71,11 +69,12 @@ namespace occa
                           const occa::json &props)
     {
       const bool async = props.get("async", false);
-      ::sycl::queue *q = getCommandQueue();
-      q->memcpy(&(this->ptr)[destOffset], &(src->ptr)[srcOffset], bytes);
 
-      if (!async)
-        q->wait();
+      occa::dpcpp::stream& q = getDpcppStream(modeDevice->currentStream);
+      occa::dpcpp::streamTag e = q.memcpy(&(this->ptr)[destOffset], &(src->ptr)[srcOffset], bytes);
+
+      if(!async)
+        e.waitFor();
     }
 
     void memory::copyTo(void *dest,
@@ -85,11 +84,12 @@ namespace occa
     {
 
       const bool async = props.get("async", false);
-      ::sycl::queue *q = getCommandQueue();
 
-      q->memcpy(&((char *)dest)[offset], &(this->ptr)[offset], bytes);
-      if (!async)
-        q->wait();
+      occa::dpcpp::stream& q = getDpcppStream(modeDevice->currentStream);
+      occa::dpcpp::streamTag e = q.memcpy(&((char *)dest)[offset], &(this->ptr)[offset], bytes);
+
+      if(!async)
+        e.waitFor();
     }
 
     void memory::detach()
