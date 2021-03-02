@@ -28,6 +28,8 @@ opt
 /scripts/compiler/fortranCompilerSupportsMPI
 /scripts/compiler/fortranCompilerSupportsOpenMP
 
+# Documentation
+.doxygen_output
 
 # Debug
 .DS_Store

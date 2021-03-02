@@ -1,4 +1,4 @@
-### Example: Add Vectors
+# Example: Add Vectors
 
 A 'Hello World' example showing the basics
 
@@ -6,13 +6,13 @@ A 'Hello World' example showing the basics
 - Allocating and setting memory
 - Building a kernel (function that runs on the device)
 
-### Compiling the Example
+# Compiling the Example
 
 ```bash
 make
 ```
 
-### Usage
+## Usage
 
 ```
 > ./main --help

@@ -440,8 +440,8 @@ namespace occa {
     modeMemory_t* device::malloc(const udim_t bytes,
                                  const void *src,
                                  const occa::json &props) {
-      if (props.get("mapped", false)) {
-        return mappedAlloc(bytes, src, props);
+      if (props.get("host", false)) {
+        return hostAlloc(bytes, src, props);
       }
       if (props.get("unified", false)) {
         return unifiedAlloc(bytes, src, props);
@@ -460,23 +460,25 @@ namespace occa {
       return &mem;
     }
 
-    modeMemory_t* device::mappedAlloc(const udim_t bytes,
-                                      const void *src,
-                                      const occa::json &props) {
+    modeMemory_t* device::hostAlloc(const udim_t bytes,
+                                    const void *src,
+                                    const occa::json &props) {
 
       cuda::memory &mem = *(new cuda::memory(this, bytes, props));
 
       setCudaContext();
 
       OCCA_CUDA_ERROR("Device: malloc host",
-                      cuMemAllocHost((void**) &(mem.mappedPtr), bytes));
+                      cuMemAllocHost((void**) &(mem.ptr), bytes));
       OCCA_CUDA_ERROR("Device: get device pointer from host",
                       cuMemHostGetDevicePointer(&(mem.cuPtr),
-                                                mem.mappedPtr,
+                                                mem.ptr,
                                                 0));
 
+      mem.useHostPtr=true;
+
       if (src != NULL) {
-        ::memcpy(mem.mappedPtr, src, bytes);
+        ::memcpy(mem.ptr, src, bytes);
       }
       return &mem;
     }
@@ -517,7 +519,6 @@ namespace occa {
                                props);
 
       mem->ptr = (char*) ptr;
-      mem->mappedPtr = NULL;
       mem->isUnified = props.get("unified", false);
 
       return mem;

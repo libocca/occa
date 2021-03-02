@@ -91,6 +91,10 @@ namespace occa {
     return *this;
   }
 
+  int hash_t::getInt() const {
+    return h[0];
+  }
+
   std::string hash_t::getFullString() const {
     std::string ret;
     for (int i = 0; i < 8; ++i) {
@@ -157,7 +161,7 @@ namespace occa {
   }
 
   hash_t hashFile(const std::string &filename) {
-    const char *c = io::c_read(io::filename(filename));
+    const char *c = io::c_read(io::expandFilename(filename));
     hash_t ret = hash(c);
     delete [] c;
     return ret;

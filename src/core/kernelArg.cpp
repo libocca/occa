@@ -183,7 +183,41 @@ namespace occa {
   //====================================
 
   //---[ scopeKernelArg ]---------------
+  scopeKernelArg::scopeKernelArg(const std::string &name_,
+                                 const kernelArg &arg,
+                                 const dtype_t &dtype_,
+                                 const bool isConst_) :
+    kernelArg(arg),
+    name(name_),
+    dtype(dtype_),
+    isConst(isConst_) {}
+
+  scopeKernelArg::scopeKernelArg(const std::string &name_,
+                                 occa::memory &value_) :
+    kernelArg(value_),
+    name(name_),
+    dtype(value_.dtype()),
+    isConst(false) {}
+
+  scopeKernelArg::scopeKernelArg(const std::string &name_,
+                                 const occa::memory &value_) :
+    kernelArg(value_),
+    name(name_),
+    dtype(value_.dtype()),
+    isConst(false) {}
+
+  scopeKernelArg::scopeKernelArg(const std::string &name_,
+                                 const primitive &value_) :
+    name(name_),
+    isConst(true) {
+    primitiveConstructor(value_);
+  }
+
   scopeKernelArg::~scopeKernelArg() {}
+
+  hash_t scopeKernelArg::hash() const {
+    return occa::hash(getDeclaration());
+  }
 
   std::string scopeKernelArg::getDeclaration() const {
     std::stringstream ss;
@@ -197,16 +231,25 @@ namespace occa {
       if (isConst) {
         ss << "const ";
       }
-      ss << dtype << ' ';
+
+      const dtype_t &safeDtype = dtype || dtype::void_;
       if (arg.isPointer()) {
-        ss << '*';
+        ss << safeDtype << " *";
+      } else {
+        ss << safeDtype << ' ';
       }
+
       ss << name;
 
       isFirst = false;
     }
 
     return ss.str();
+  }
+
+  template <>
+  hash_t hash(const occa::scopeKernelArg &arg) {
+    return arg.hash();
   }
   //====================================
 }

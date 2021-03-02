@@ -173,6 +173,14 @@ namespace occa {
       }
 
       dtype_t dtype = type->dtype();
+      if (dtype == dtype::int_) {
+        if (qualifiers.has(long_)) {
+          dtype = dtype::get<long int>();
+        } else if (qualifiers.has(longlong_)) {
+          dtype = dtype::get<long long int>();
+        }
+      }
+
       const int arrayCount = (int) arrays.size();
       for (int i = 0; i < arrayCount; ++i) {
         primitive primSize = arrays[i].size->evaluate();

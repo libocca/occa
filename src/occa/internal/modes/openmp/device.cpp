@@ -10,6 +10,13 @@ namespace occa {
     device::device(const occa::json &properties_) :
       serial::device(properties_) {}
 
+    hash_t device::hash() const {
+      return (
+        serial::device::hash()
+        ^ occa::hash("openmp")
+      );
+    }
+
     hash_t device::kernelHash(const occa::json &props) const {
       return (
         serial::device::kernelHash(props)
@@ -27,7 +34,7 @@ namespace occa {
       // Verify if parsing succeeded
       if (!parser.succeeded()) {
         if (!kernelProps.get("silent", false)) {
-          OCCA_FORCE_ERROR("Unable to transform OKL kernel");
+          OCCA_FORCE_ERROR("Unable to transform OKL kernel [" << filename << "]");
         }
         return false;
       }

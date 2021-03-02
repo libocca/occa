@@ -13,8 +13,6 @@ namespace occa {
 
       friend cl_mem getCLMemory(occa::memory memory);
 
-      friend void* getMappedPtr(occa::memory memory);
-
       friend occa::memory wrapMemory(occa::device device,
                                      cl_mem clMem,
                                      const udim_t bytes,
@@ -25,7 +23,7 @@ namespace occa {
       dim_t rootOffset;
 
       cl_mem clMem;
-      void *mappedPtr;
+      bool useHostPtr;
 
     public:
       memory(modeDevice_t *modeDevice_,
@@ -39,7 +37,7 @@ namespace occa {
 
       modeMemory_t* addOffset(const dim_t offset);
 
-      void* getPtr(const occa::json &props);
+      void* getPtr();
 
       void copyTo(void *dest,
                   const udim_t bytes,

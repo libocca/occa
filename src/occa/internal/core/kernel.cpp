@@ -49,11 +49,15 @@ namespace occa {
                ((int) arguments.size() + 1) < OCCA_MAX_ARGS);
   }
 
-  void modeKernel_t::assertArgInDevice(const kernelArgData &arg) const {
+  void modeKernel_t::assertArgInDevice(const kernelArgData &arg,
+                                       const int argIndex) const {
     // Make sure the argument is from the same device as the kernel
     occa::modeDevice_t *argDevice = arg.getModeDevice();
-    OCCA_ERROR("(" << name << ") Kernel argument was not created from the same device as the kernel",
-               !argDevice || (argDevice == modeDevice));
+    OCCA_ERROR("(" << hash << ":" << name << ") Kernel argument ["
+               << argIndex << "] was not created from the same device as the kernel\n"
+               << "Kernel device: " << modeDevice->mode << "\n"
+               << "Argument device: " << argDevice->mode << " \n",
+               !argDevice || (argDevice->mode == modeDevice->mode));
   }
 
   void modeKernel_t::setArguments(kernelArg *args,
@@ -69,7 +73,7 @@ namespace occa {
     const int argCount = (int) arg.size();
     for (int i = 0; i < argCount; ++i) {
       const kernelArgData &argi = arg[i];
-      assertArgInDevice(argi);
+      assertArgInDevice(argi, (int) arguments.size());
       arguments.push_back(argi);
     }
 
@@ -87,7 +91,7 @@ namespace occa {
     if (validateTypes) {
       const int metaArgc = (int) metadata.arguments.size();
 
-      OCCA_ERROR("(" << name << ") Kernel expects ["
+      OCCA_ERROR("(" << hash << ":" << name << ") Kernel expects ["
                  << metaArgc << "] argument"
                  << (metaArgc != 1 ? "s," : ",")
                  << " received ["
@@ -104,10 +108,10 @@ namespace occa {
         const bool isPtr = mem || isNull;
         if (isPtr != argInfo.isPtr) {
           if (argInfo.isPtr) {
-            OCCA_FORCE_ERROR("(" << name << ") Kernel expects an occa::memory for argument ["
+            OCCA_FORCE_ERROR("(" << hash << ":" << name << ") Kernel expects an occa::memory for argument ["
                              << (i + 1) << "]");
           } else {
-            OCCA_FORCE_ERROR("(" << name << ") Kernel expects a non-occa::memory type for argument ["
+            OCCA_FORCE_ERROR("(" << hash << ":" << name << ") Kernel expects a non-occa::memory type for argument ["
                              << (i + 1) << "]");
           }
         }
@@ -116,7 +120,7 @@ namespace occa {
           continue;
         }
 
-        OCCA_ERROR("(" << name << ") Argument [" << (i + 1) << "] has wrong runtime type.\n"
+        OCCA_ERROR("(" << hash << ":" << name << ") Argument [" << (i + 1) << "] has wrong runtime type.\n"
                    << "Expected type: " << argInfo.dtype << '\n'
                    << "Received type: " << *(mem->dtype_) << '\n',
                    mem->dtype_->canBeCastedTo(argInfo.dtype));

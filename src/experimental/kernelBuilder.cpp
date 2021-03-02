@@ -5,107 +5,65 @@
 #include <occa/internal/utils/lex.hpp>
 #include <occa/internal/utils/string.hpp>
 #include <occa/experimental/kernelBuilder.hpp>
-#include <occa/experimental/scope.hpp>
+#include <occa/functional/scope.hpp>
 
 namespace occa {
-  //---[ kernelBuilder ]----------------
-  kernelBuilder::kernelBuilder() {}
-
-  kernelBuilder::kernelBuilder(const kernelBuilder &k) :
-    source_(k.source_),
-    function_(k.function_),
-    defaultProps(k.defaultProps),
-    kernelMap(k.kernelMap),
-    buildingFromFile(k.buildingFromFile) {}
-
-  kernelBuilder& kernelBuilder::operator = (const kernelBuilder &k) {
-    source_      = k.source_;
-    function_    = k.function_;
-    defaultProps = k.defaultProps;
-    kernelMap    = k.kernelMap;
-    buildingFromFile = k.buildingFromFile;
-    return *this;
-  }
-
-  const occa::json& kernelBuilder::defaultProperties() const {
-    return defaultProps;
-  }
-
-  kernelBuilder kernelBuilder::fromFile(const std::string &filename,
-                                        const std::string &function,
-                                        const occa::json &defaultProps_) {
-    kernelBuilder builder;
-    builder.source_      = filename;
-    builder.function_    = function;
-    builder.defaultProps = defaultProps_;
-    builder.buildingFromFile = true;
-    return builder;
-  }
-
-  kernelBuilder kernelBuilder::fromString(const std::string &content,
-                                          const std::string &function,
-                                          const occa::json &defaultProps_) {
-    kernelBuilder builder;
-    builder.source_      = content;
-    builder.function_    = function;
-    builder.defaultProps = defaultProps_;
-    builder.buildingFromFile = false;
-    return builder;
-  }
+  kernelBuilder::kernelBuilder(const std::string &source_,
+                               const std::string &kernelName_) :
+    source(strip(source_)),
+    kernelName(strip(kernelName_)) {}
 
   bool kernelBuilder::isInitialized() {
-    return (0 < function_.size());
+    return (0 < kernelName.size());
   }
 
-  occa::kernel kernelBuilder::build(occa::device device) {
-    return build(device, hash(device), defaultProps);
+  std::string kernelBuilder::getKernelName() {
+    return kernelName;
   }
 
-  occa::kernel kernelBuilder::build(occa::device device,
-                                    const occa::json &props) {
-    occa::json kernelProps = defaultProps;
-    kernelProps += props;
-    return build(device,
-                 hash(device) ^ hash(kernelProps),
-                 kernelProps);
+  std::string kernelBuilder::buildKernelSource(const occa::scope &scope) {
+    const int charCount = (int) source.size();
+
+    // Remove first and last () characters
+    if ((source[0] == '(') && (source[charCount - 1] == ')')) {
+      source = source.substr(1, charCount - 2);
+    }
+
+    std::stringstream ss;
+    ss << "@kernel void " << kernelName << "("
+       << scope.getDeclarationSource()
+       << ") {" << source << "}";
+
+    return ss.str();
   }
 
-  occa::kernel kernelBuilder::build(occa::device device,
-                                    const hash_t &hash) {
-    return build(device, hash, defaultProps);
-  }
+  occa::kernel kernelBuilder::getOrBuildKernel(const occa::scope &scope) {
+    occa::device device = scope.getDevice();
+    const hash_t hash = (
+      occa::hash(device) ^ occa::hash(scope)
+    );
 
-  occa::kernel kernelBuilder::build(occa::device device,
-                                    const hash_t &hash,
-                                    const occa::json &props) {
     occa::kernel &kernel = kernelMap[hash];
     if (!kernel.isInitialized()) {
-      if (buildingFromFile) {
-        kernel = device.buildKernel(source_, function_, props);
-      } else {
-        kernel = device.buildKernelFromString(source_, function_, props);
-      }
+      kernel = device.buildKernelFromString(
+        buildKernelSource(scope),
+        kernelName,
+        scope.props
+      );
     }
     return kernel;
   }
 
-  occa::kernel kernelBuilder::operator [] (occa::device device) {
-    return build(device, hash(device));
-  }
-
-  void kernelBuilder::run(occa::scope &scope) {
-    occa::kernel kernel = build(scope.getDevice(),
-                                scope.props);
-    kernel.clearArgs();
+  void kernelBuilder::run(const occa::scope &scope) {
+    occa::kernel kernel = getOrBuildKernel(scope);
 
     // Get argument metadata
     const lang::kernelMetadata_t &metadata = kernel.getModeKernel()->getMetadata();
     const std::vector<lang::argMetadata_t> &arguments = metadata.arguments;
 
     // Insert arguments in the proper order
-    const int argCount = (int) arguments.size();
-    for (int i = 0; i < argCount; ++i) {
-      const lang::argMetadata_t &arg = arguments[i];
+    kernel.clearArgs();
+    for (const lang::argMetadata_t &arg : arguments) {
       kernel.pushArg(scope.getArg(arg.name));
     }
 
@@ -120,36 +78,4 @@ namespace occa {
     }
     kernelMap.clear();
   }
-  //====================================
-
-
-  //---[ Inlined Kernel ]---------------
-  std::string formatInlinedKernelFromScope(occa::scope &scope,
-                                           const std::string &oklSource,
-                                           const std::string &kernelName) {
-    std::string source = strip(oklSource);
-    const int charCount = (int) source.size();
-
-    // Remove first and last () characters
-    if ((source[0] == '(') && (source[charCount - 1] == ')')) {
-      source = source.substr(1, charCount - 2);
-    }
-
-    std::stringstream ss;
-    ss << "@kernel void " << kernelName << "(";
-
-    bool isFirst = true;
-    for (scopeKernelArg &arg : scope.args) {
-      if (!isFirst) {
-        ss << ", ";
-      }
-      ss << arg.getDeclaration();
-      isFirst = false;
-    }
-
-    ss << ") {" << source << "}";
-
-    return ss.str();
-  }
-  //====================================
 }

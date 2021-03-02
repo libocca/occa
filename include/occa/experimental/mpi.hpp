@@ -27,7 +27,7 @@ namespace occa {
     void barrier();
 
     //---[ Types ]----------------------
-    template <class TM>
+    template <class T>
     MPI_Datatype type() {
       return MPI_BYTE;
     }
@@ -88,14 +88,14 @@ namespace occa {
     //==================================
 
     //---[ Methods ]--------------------
-    template <class TM>
+    template <class T>
     tag send(const int receiverID,
              const occa::memory &data,
              const dim_t entries_ = -1,
              const int messageID  = defaultMessageID) {
       tag tag_;
       const dim_t entries = ((entries_ == -1)
-                             ? (data.size() / sizeof(TM))
+                             ? (data.size() / sizeof(T))
                              : entries_);
       if ((receiverID < 0)            ||
           (mpi::size() <= receiverID) ||
@@ -107,14 +107,14 @@ namespace occa {
           .hasSeparateMemorySpace()) {
         MPI_Isend((void*) data.ptr(),
                   entries,
-                  type<TM>(),
+                  type<T>(),
                   receiverID,
                   messageID,
                   MPI_COMM_WORLD,
                   &tag_.mpiRequest);
         tag_.initialized = true;
       } else {
-        int bufferEntries = buffer_t::size / sizeof(TM);
+        int bufferEntries = buffer_t::size / sizeof(T);
         void *buffer = getBuffer();
 
         for (int offset = 0; offset < entries; offset += bufferEntries) {
@@ -124,12 +124,12 @@ namespace occa {
           }
 
           data.copyTo(buffer,
-                      count * sizeof(TM),
+                      count * sizeof(T),
                       offset);
 
           MPI_Send(buffer,
                    count,
-                   type<TM>(),
+                   type<T>(),
                    receiverID,
                    messageID,
                    MPI_COMM_WORLD);
@@ -138,14 +138,14 @@ namespace occa {
       return tag_;
     }
 
-    template <class TM>
+    template <class T>
     tag get(const int senderID,
             occa::memory data,
             const dim_t entries_ = -1,
             const int messageID  = defaultMessageID) {
       tag tag_;
       const dim_t entries = ((entries_ == -1)
-                             ? (data.size() / sizeof(TM))
+                             ? (data.size() / sizeof(T))
                              : entries_);
       if ((senderID < 0)            ||
           (mpi::size() <= senderID) ||
@@ -157,14 +157,14 @@ namespace occa {
           .hasSeparateMemorySpace()) {
         MPI_Irecv(data.ptr(),
                   entries,
-                  type<TM>(),
+                  type<T>(),
                   senderID,
                   messageID,
                   MPI_COMM_WORLD,
                   &tag_.mpiRequest);
         tag_.initialized = true;
       } else {
-        int bufferEntries = buffer_t::size / sizeof(TM);
+        int bufferEntries = buffer_t::size / sizeof(T);
         void *buffer = getBuffer();
 
         for (int offset = 0; offset < entries; offset += bufferEntries) {
@@ -176,14 +176,14 @@ namespace occa {
           MPI_Status mpiStatus;
           MPI_Recv(buffer,
                    count,
-                   type<TM>(),
+                   type<T>(),
                    senderID,
                    messageID,
                    MPI_COMM_WORLD,
                    &mpiStatus);
 
           data.copyFrom(buffer,
-                        count * sizeof(TM),
+                        count * sizeof(T),
                         offset);
         }
       }

@@ -51,6 +51,8 @@ namespace occa {
                                         variable_t &blockIter,
                                         forStatement &blockForSmnt,
                                         forStatement &innerForSmnt);
+
+        static void floatOuterLoopUp(forStatement &outerForSmnt);
       };
     }
   }

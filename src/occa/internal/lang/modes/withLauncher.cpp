@@ -324,7 +324,7 @@ namespace occa {
 
       void withLauncher::setupLauncherHeaders() {
         directiveToken token(root.source->origin,
-                             "include <occa/core/base.hpp>");
+                             "include <occa/core/kernel.hpp>");
         launcherParser.root.addFirst(
           *(new directiveStatement(&root, token))
         );

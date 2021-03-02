@@ -2,10 +2,10 @@
 
 #include <occa/internal/c/types.hpp>
 #include <occa/internal/core/memory.hpp>
+#include <occa/utils/uva.hpp>
 
 namespace occa {
   namespace c {
-
     occaType undefinedOccaType() {
       occaType oType;
       oType.magicHeader = OCCA_C_TYPE_UNDEFINED_HEADER;
@@ -812,6 +812,211 @@ void occaFree(occaType *value) {
       break;
     }}
   valueRef.magicHeader = occaUndefined.magicHeader;
+}
+
+void occaPrintTypeInfo(occaType value) {
+  occa::json info({
+    {"type", "undefined"}
+  });
+
+  if (!occaIsUndefined(value)) {
+    switch (value.type) {
+      case occa::c::typeType::default_:
+        info["type"] = "default";
+        break;
+      case occa::c::typeType::null_:
+        info["type"]  = "ptr";
+        info["value"] = "NULL";
+
+        break;
+      case occa::c::typeType::ptr:
+        info["type"]  = "ptr";
+        info["value"] = (void*) value.value.ptr;
+
+        break;
+      case occa::c::typeType::bool_:
+        info["type"]  = "bool";
+        info["value"] = (bool) value.value.int8_;
+
+        break;
+      case occa::c::typeType::int8_:
+        info["type"]  = "int8";
+        info["value"] = value.value.int8_;
+
+        break;
+      case occa::c::typeType::uint8_:
+        info["type"]  = "uint8";
+        info["value"] = value.value.uint8_;
+
+        break;
+      case occa::c::typeType::int16_:
+        info["type"]  = "int16";
+        info["value"] = value.value.int16_;
+
+        break;
+      case occa::c::typeType::uint16_:
+        info["type"]  = "uint16";
+        info["value"] = value.value.uint16_;
+
+        break;
+      case occa::c::typeType::int32_:
+        info["type"]  = "int32";
+        info["value"] = value.value.int32_;
+
+        break;
+      case occa::c::typeType::uint32_:
+        info["type"]  = "uint32";
+        info["value"] = value.value.uint32_;
+
+        break;
+      case occa::c::typeType::int64_:
+        info["type"]  = "int64";
+        info["value"] = value.value.int64_;
+
+        break;
+      case occa::c::typeType::uint64_:
+        info["type"]  = "uint64";
+        info["value"] = value.value.uint64_;
+
+        break;
+      case occa::c::typeType::float_:
+        info["type"]  = "float";
+        info["value"] = value.value.float_;
+
+        break;
+      case occa::c::typeType::double_:
+        info["type"]  = "double";
+        info["value"] = value.value.double_;
+
+        break;
+      case occa::c::typeType::struct_:
+        info["type"]  = "struct";
+        info["value"] = (void*) value.value.ptr;
+        info["bytes"] = value.bytes;
+
+        break;
+      case occa::c::typeType::string:
+        info["type"]  = "string";
+        info["value"] = std::string(value.value.ptr);
+
+        break;
+      case occa::c::typeType::device: {
+        info["type"]  = "device";
+        info["value"] = (void*) value.value.ptr;
+
+        occa::device device = occa::c::device(value);
+        if (device.isInitialized()) {
+        info["mode"]  = device.mode();
+        info["props"] = device.properties();
+        } else {
+          info["initialized"] = false;
+        }
+
+        break;
+      }
+      case occa::c::typeType::kernel: {
+        info["type"]  = "kernel";
+        info["value"] = (void*) value.value.ptr;
+
+        occa::kernel kernel = occa::c::kernel(value);
+        if (kernel.isInitialized()) {
+          info["mode"]  = kernel.mode();
+          info["props"] = kernel.properties();
+          info["name"]  = kernel.name();
+        } else {
+          info["initialized"] = false;
+        }
+
+        break;
+      }
+      case occa::c::typeType::kernelBuilder: {
+        info["type"]  = "kernelBuilder";
+        info["value"] = (void*) value.value.ptr;
+
+        occa::kernelBuilder kernelBuilder = occa::c::kernelBuilder(value);
+        if (kernelBuilder.isInitialized()) {
+          info["kernel_name"] = kernelBuilder.getKernelName();
+        } else {
+          info["initialized"] = false;
+        }
+
+        break;
+      }
+      case occa::c::typeType::memory: {
+        info["type"]  = "memory";
+        info["value"] = (void*) value.value.ptr;
+
+        occa::memory mem = occa::c::memory(value);
+        if (mem.isInitialized()) {
+          info["mode"]   = mem.mode();
+          info["props"]  = mem.properties();
+          info["dtype"]  = mem.dtype().toJson();
+          info["length"] = mem.length();
+          info["size"]   = mem.size();
+        } else {
+          info["initialized"] = false;
+        }
+
+        break;
+      }
+      case occa::c::typeType::stream: {
+        info["type"]  = "stream";
+        info["value"] = (void*) value.value.ptr;
+
+        occa::stream stream = occa::c::stream(value);
+        if (stream.isInitialized()) {
+          info["mode"]  = stream.getDevice().mode();
+        } else {
+          info["initialized"] = false;
+        }
+
+        break;
+      }
+      case occa::c::typeType::streamTag: {
+        info["type"]  = "streamTag";
+        info["value"] = (void*) value.value.ptr;
+
+        occa::streamTag streamTag = occa::c::streamTag(value);
+        if (streamTag.isInitialized()) {
+          info["mode"]  = streamTag.getDevice().mode();
+        } else {
+          info["initialized"] = false;
+        }
+
+        break;
+      }
+      case occa::c::typeType::dtype: {
+        info["type"]  = "dtype";
+        info["value"] = (void*) value.value.ptr;
+        info["dtype"] = occa::c::dtype(value).toJson();
+
+        break;
+      }
+      case occa::c::typeType::scope: {
+        occa::scope &scope = occa::c::scope(value);
+
+        info["type"]  = "scope";
+        info["value"] = (void*) value.value.ptr;
+        info["props"] = scope.props;
+
+        occa::json args = info["args"].asArray();
+        for (auto &arg : scope.args) {
+          args += occa::json({
+            {"name", arg.name},
+            {"dtype", arg.dtype.toJson()},
+            {"is_const", arg.isConst}
+          });
+        }
+
+        break;
+      }
+      case occa::c::typeType::json:
+        info["type"]  = "json";
+        info["value"] = occa::c::json(value);
+    }
+  }
+
+  std::cout << info << '\n';
 }
 
 OCCA_END_EXTERN_C

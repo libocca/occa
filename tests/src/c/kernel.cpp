@@ -1,7 +1,7 @@
 #define OCCA_DISABLE_VARIADIC_MACROS
 
-#include <occa.hpp>
 #include <occa.h>
+#include <occa.hpp>
 
 #include <occa/internal/io.hpp>
 #include <occa/internal/c/types.hpp>
@@ -152,6 +152,27 @@ void testRun() {
   occaKernelPushArg(argKernel, occaStruct(xy, sizeof(xy)));
   occaKernelPushArg(argKernel, occaString(str.c_str()));
   occaKernelRunFromArgs(argKernel);
+
+  // Test array call
+  occaType args[15] = {
+    occaNull,
+    mem,
+    occaPtr(uvaPtr),
+    occaInt8(3),
+    occaUInt8(4),
+    occaInt16(5),
+    occaUInt16(6),
+    occaInt32(7),
+    occaUInt32(8),
+    occaInt64(9),
+    occaUInt64(10),
+    occaFloat(11.0),
+    occaDouble(12.0),
+    occaStruct(xy, sizeof(xy)),
+    occaString(str.c_str())
+  };
+
+  occaKernelRunWithArgs(argKernel, 15, args);
 
   // Bad argument types
   ASSERT_THROW(

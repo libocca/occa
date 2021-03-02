@@ -584,6 +584,8 @@ void testSpecialMacros() {
     "__FILE__ __LINE__\n"
     "__COUNTER__\n"
     "__DATE__ __TIME__\n"
+    "OKL(\"123\")\n"
+    "OKL(\"\\\"456\\\"\");\n"
   );
 
   // __COUNTER__
@@ -629,6 +631,12 @@ void testSpecialMacros() {
   getToken();
   ASSERT_EQ_BINARY(tokenType::string,
                    token->type());
+
+  // OKL
+  ASSERT_EQ(123,
+            (int) nextTokenPrimitiveValue());
+  ASSERT_EQ("456",
+            nextTokenStringValue());
 
   while(!tokenStream.isEmpty()) {
     getToken();

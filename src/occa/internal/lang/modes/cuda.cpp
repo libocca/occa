@@ -138,17 +138,17 @@ namespace occa {
       void cudaParser::setupAtomics() {
         success &= attributes::atomic::applyCodeTransformation(
           root,
-          transformBlockStatement,
-          transformBasicExpressionStatement
+          transformAtomicBlockStatement,
+          transformAtomicBasicExpressionStatement
         );
       }
 
-      bool cudaParser::transformBlockStatement(blockStatement &blockSmnt) {
+      bool cudaParser::transformAtomicBlockStatement(blockStatement &blockSmnt) {
         blockSmnt.printError("Unable to transform general @atomic code");
         return false;
       }
 
-      bool cudaParser::transformBasicExpressionStatement(expressionStatement &exprSmnt) {
+      bool cudaParser::transformAtomicBasicExpressionStatement(expressionStatement &exprSmnt) {
         // TODO: Create actual statements + expressions, don't just shove strings in
         const opType_t &opType = expr(exprSmnt.expr).opType();
 
@@ -180,6 +180,9 @@ namespace occa {
           // Cases:
           //   @atomic i += 1;
           //   @atomic i -= 1;
+          //   @atomic i &= 1;
+          //   @atomic i |= 1;
+          //   @atomic i ^= 1;
           binaryOpNode &binaryNode = (binaryOpNode&) *exprSmnt.expr;
           expr variable = binaryNode.leftValue;
           expr value = binaryNode.rightValue;
@@ -187,6 +190,12 @@ namespace occa {
             pout << "atomicAdd(&" << expr::parens(variable) << ", " << value << ");";
           } else if (opType & operatorType::subEq) {
             pout << "atomicSub(&" << expr::parens(variable) << ", " << value << ");";
+          } else if (opType & operatorType::andEq) {
+            pout << "atomicAnd(&" << expr::parens(variable) << ", " << value << ");";
+          } else if (opType & operatorType::orEq) {
+            pout << "atomicOr(&" << expr::parens(variable) << ", " << value << ");";
+          } else if (opType & operatorType::xorEq) {
+            pout << "atomicXor(&" << expr::parens(variable) << ", " << value << ");";
           } else {
             exprSmnt.printError("Unable to transform @atomic code");
             return false;

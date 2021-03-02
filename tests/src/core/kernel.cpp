@@ -1,6 +1,7 @@
 #include <occa.hpp>
 
 #include <occa/internal/io.hpp>
+#include <occa/internal/core/device.hpp>
 #include <occa/internal/utils/testing.hpp>
 
 occa::kernel addVectors;
@@ -137,7 +138,10 @@ void testArgumentFailure() {
   occa::device dev({
     {"mode", "Serial"}
   });
-  occa::memory arg = dev.malloc(N * sizeof(float));
+  occa::modeDevice_t *modeDev = dev.getModeDevice();
+  modeDev->mode = "foobar";
+
+  occa::memory arg = dev.malloc<int>(N);
 
   ASSERT_THROW(
     kernel(N, arg);

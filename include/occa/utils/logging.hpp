@@ -2,6 +2,7 @@
 #define OCCA_UTILS_LOGGING_HEADER
 
 #include <iostream>
+#include <sstream>
 
 namespace occa {
   namespace io {

@@ -6,6 +6,7 @@
 #include <occa/defines.hpp>
 #include <occa/types/generic.hpp>
 #include <occa/types/primitive.hpp>
+#include <occa/utils/hash.hpp>
 #include <occa/dtype.hpp>
 
 namespace occa {
@@ -41,6 +42,19 @@ namespace occa {
   //====================================
 
   //---[ kernelArg ]--------------------
+  /**
+   * @startDoc{kernelArg}
+   *
+   * Description:
+   *   [[kernel]] arguments must be of type [[kernelArg]].
+   *   Custom user types can be passed to a kernel by implementing a cast operator such as:
+   *
+   *   ```cpp
+   *   operator occa::kernelArg() const;
+   *   ```
+   *
+   * @endDoc
+   */
   class kernelArg : public generic {
    public:
     kernelArgDataVector args;
@@ -66,14 +80,14 @@ namespace occa {
 
     OCCA_GENERIC_CLASS_CONSTRUCTORS(kernelArg);
 
-    template <class TM>
-    kernelArg(const type2<TM> &arg) {
-      addPointer((void*) const_cast<type2<TM>*>(&arg), sizeof(type2<TM>), false);
+    template <class T>
+    kernelArg(const type2<T> &arg) {
+      addPointer((void*) const_cast<type2<T>*>(&arg), sizeof(type2<T>), false);
     }
 
-    template <class TM>
-    kernelArg(const type4<TM> &arg) {
-      addPointer((void*) const_cast<type4<TM>*>(&arg), sizeof(type4<TM>), false);
+    template <class T>
+    kernelArg(const type4<T> &arg) {
+      addPointer((void*) const_cast<type4<T>*>(&arg), sizeof(type4<T>), false);
     }
 
     int size() const;
@@ -109,39 +123,39 @@ namespace occa {
     dtype_t dtype;
     bool isConst;
 
-    inline scopeKernelArg(const std::string &name_,
-                          const kernelArg &arg,
-                          const dtype_t &dtype_,
-                          const bool isConst_) :
-      kernelArg(arg),
-      name(name_),
-      dtype(dtype_),
-      isConst(isConst_) {}
+    scopeKernelArg(const std::string &name_,
+                   const kernelArg &arg,
+                   const dtype_t &dtype_,
+                   const bool isConst_);
 
-    inline scopeKernelArg(const std::string &name_,
-                          const primitive &value_) :
-      name(name_),
-      isConst(true) {
-      primitiveConstructor(value_);
-    }
+    scopeKernelArg(const std::string &name_,
+                   occa::memory &value_);
 
-    template <class TM>
+    scopeKernelArg(const std::string &name_,
+                   const occa::memory &value_);
+
+    scopeKernelArg(const std::string &name_,
+                   const primitive &value_);
+
+    template <class T>
     inline scopeKernelArg(const std::string &name_,
-                          TM *value_) :
+                          T *value_) :
       name(name_),
       isConst(false) {
-      pointerConstructor(value_, dtype::get<TM>());
+      pointerConstructor(value_, dtype::get<T>());
     }
 
-    template <class TM>
+    template <class T>
     inline scopeKernelArg(const std::string &name_,
-                          const TM *value_) :
+                          const T *value_) :
       name(name_),
       isConst(true) {
-      pointerConstructor(value_, dtype::get<TM>());
+      pointerConstructor(value_, dtype::get<T>());
     }
 
     virtual ~scopeKernelArg();
+
+    hash_t hash() const;
 
     inline void primitiveConstructor(const primitive &value) {
       dtype = value.dtype();
@@ -168,6 +182,9 @@ namespace occa {
 
     std::string getDeclaration() const;
   };
+
+  template <>
+  hash_t hash(const occa::scopeKernelArg &arg);
   //====================================
 }
 

@@ -8,8 +8,7 @@ OCCA_START_EXTERN_C
 
 bool occaMemoryIsInitialized(occaMemory memory);
 
-void* occaMemoryPtr(occaMemory memory,
-                    occaJson props);
+void* occaMemoryPtr(occaMemory memory);
 
 occaDevice occaMemoryGetDevice(occaMemory memory);
 

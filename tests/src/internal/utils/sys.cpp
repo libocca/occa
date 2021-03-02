@@ -53,7 +53,7 @@ void testRmrf() {
   // Make 100% sure we're trying to delete the non-existent directory
   std::string filename = "/fake_occa_directory_for_this_sys_test";
   std::string expFilename = (
-    occa::io::filename("/fake_occa_directory_for_this_sys_test")
+    occa::io::expandFilename("/fake_occa_directory_for_this_sys_test")
   );
   ASSERT_EQ(filename, expFilename);
   ASSERT_FALSE(occa::io::isDir(filename));

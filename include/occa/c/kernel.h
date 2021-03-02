@@ -51,6 +51,10 @@ void occaKernelVaRun(occaKernel kernel,
                      const int argc,
                      va_list args);
 
+void occaKernelRunWithArgs(occaKernel kernel,
+                           const int argc,
+                           occaType *args);
+
 OCCA_END_EXTERN_C
 
 #endif

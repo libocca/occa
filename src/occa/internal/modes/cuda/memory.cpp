@@ -9,23 +9,24 @@ namespace occa {
                    const occa::json &properties_) :
         occa::modeMemory_t(modeDevice_, size_, properties_),
         cuPtr(reinterpret_cast<CUdeviceptr&>(ptr)),
-        mappedPtr(NULL),
-        isUnified(false) {}
+        isUnified(false),
+        useHostPtr(false) {}
 
     memory::~memory() {
       if (isOrigin) {
-        if (mappedPtr) {
+        if (useHostPtr) {
           OCCA_CUDA_DESTRUCTOR_ERROR(
-            "Device: mappedFree()",
-            cuMemFreeHost(mappedPtr)
+            "Device: hostFree()",
+            cuMemFreeHost(ptr)
           );
         } else if (cuPtr) {
           cuMemFree(cuPtr);
         }
       }
+      ptr = nullptr;
       cuPtr = 0;
-      mappedPtr = NULL;
       size = 0;
+      useHostPtr = false;
     }
 
     CUstream& memory::getCuStream() const {
@@ -41,18 +42,20 @@ namespace occa {
                              size - offset,
                              properties);
       m->cuPtr = cuPtr + offset;
-      if (mappedPtr) {
-        m->mappedPtr = mappedPtr + offset;
+      if (useHostPtr) {
+        m->ptr = ptr + offset;
       }
       m->isUnified = isUnified;
+      m->useHostPtr = useHostPtr;
       return m;
     }
 
-    void* memory::getPtr(const occa::json &props) {
-      if (props.get("mapped", false)) {
-        return mappedPtr;
+    void* memory::getPtr() {
+      if (useHostPtr) {
+        return ptr;
+      } else {
+        return (void*) cuPtr;
       }
-      return ptr;
     }
 
     void memory::copyFrom(const void *src,
@@ -61,17 +64,21 @@ namespace occa {
                           const occa::json &props) {
       const bool async = props.get("async", false);
 
-      if (!async) {
-        OCCA_CUDA_ERROR("Memory: Copy From",
-                        cuMemcpyHtoD(cuPtr + offset,
-                                     src,
-                                     bytes));
+      if (useHostPtr) {
+        ::memcpy(ptr+offset, src, bytes);
       } else {
-        OCCA_CUDA_ERROR("Memory: Async Copy From",
-                        cuMemcpyHtoDAsync(cuPtr + offset,
-                                          src,
-                                          bytes,
-                                          getCuStream()));
+        if (!async) {
+          OCCA_CUDA_ERROR("Memory: Copy From",
+                          cuMemcpyHtoD(cuPtr + offset,
+                                       src,
+                                       bytes));
+        } else {
+          OCCA_CUDA_ERROR("Memory: Async Copy From",
+                          cuMemcpyHtoDAsync(cuPtr + offset,
+                                            src,
+                                            bytes,
+                                            getCuStream()));
+        }
       }
     }
 
@@ -82,17 +89,51 @@ namespace occa {
                           const occa::json &props) {
       const bool async = props.get("async", false);
 
-      if (!async) {
-        OCCA_CUDA_ERROR("Memory: Copy From",
-                        cuMemcpyDtoD(cuPtr + destOffset,
-                                     ((memory*) src)->cuPtr + srcOffset,
-                                     bytes));
+      if (useHostPtr && ((memory*) src)->useHostPtr) {
+        // src: host, dest: host
+        ::memcpy(ptr + destOffset, src->ptr + srcOffset, bytes);
+      } else if (((memory*) src)->useHostPtr) {
+        // src: host, dest: device
+        if (!async) {
+          OCCA_CUDA_ERROR("Memory: Copy From",
+                          cuMemcpyHtoD(cuPtr + destOffset,
+                                       src->ptr + srcOffset,
+                                       bytes));
+        } else {
+          OCCA_CUDA_ERROR("Memory: Async Copy From",
+                          cuMemcpyHtoDAsync(cuPtr + destOffset,
+                                            src->ptr + srcOffset,
+                                            bytes,
+                                            getCuStream()));
+        }
+      } else if (useHostPtr) {
+        // src: device, dest: host
+        if (!async) {
+          OCCA_CUDA_ERROR("Memory: Copy From",
+                          cuMemcpyDtoH(ptr + destOffset,
+                                       ((memory*) src)->cuPtr + srcOffset,
+                                       bytes));
+        } else {
+          OCCA_CUDA_ERROR("Memory: Async Copy From",
+                          cuMemcpyDtoHAsync(ptr + destOffset,
+                                            ((memory*) src)->cuPtr + srcOffset,
+                                            bytes,
+                                            getCuStream()));
+        }
       } else {
-        OCCA_CUDA_ERROR("Memory: Async Copy From",
-                        cuMemcpyDtoDAsync(cuPtr + destOffset,
-                                          ((memory*) src)->cuPtr + srcOffset,
-                                          bytes,
-                                          getCuStream()));
+        // src: device, dest: device
+        if (!async) {
+          OCCA_CUDA_ERROR("Memory: Copy From",
+                          cuMemcpyDtoD(cuPtr + destOffset,
+                                       ((memory*) src)->cuPtr + srcOffset,
+                                       bytes));
+        } else {
+          OCCA_CUDA_ERROR("Memory: Async Copy From",
+                          cuMemcpyDtoDAsync(cuPtr + destOffset,
+                                            ((memory*) src)->cuPtr + srcOffset,
+                                            bytes,
+                                            getCuStream()));
+        }
       }
     }
 
@@ -102,23 +143,29 @@ namespace occa {
                         const occa::json &props) const {
       const bool async = props.get("async", false);
 
-      if (!async) {
-        OCCA_CUDA_ERROR("Memory: Copy From",
-                        cuMemcpyDtoH(dest,
-                                     cuPtr + offset,
-                                     bytes));
+      if (useHostPtr) {
+        ::memcpy(dest, ptr+offset, bytes);
       } else {
-        OCCA_CUDA_ERROR("Memory: Async Copy From",
-                        cuMemcpyDtoHAsync(dest,
-                                          cuPtr + offset,
-                                          bytes,
-                                          getCuStream()));
+        if (!async) {
+          OCCA_CUDA_ERROR("Memory: Copy From",
+                          cuMemcpyDtoH(dest,
+                                       cuPtr + offset,
+                                       bytes));
+        } else {
+          OCCA_CUDA_ERROR("Memory: Async Copy From",
+                          cuMemcpyDtoHAsync(dest,
+                                            cuPtr + offset,
+                                            bytes,
+                                            getCuStream()));
+        }
       }
     }
 
     void memory::detach() {
+      ptr = nullptr;
       cuPtr = 0;
       size = 0;
+      useHostPtr = false;
     }
   }
 }

@@ -65,7 +65,7 @@ namespace occa {
                       const void *src = NULL,
                       const occa::json &props = occa::json());
 
-  template <class TM = void>
+  template <class T = void>
   occa::memory malloc(const dim_t entries,
                       const void *src = NULL,
                       const occa::json &props = occa::json());
@@ -80,8 +80,8 @@ namespace occa {
                 const void *src = NULL,
                 const occa::json &props = occa::json());
 
-  template <class TM = void>
-  TM* umalloc(const dim_t entries,
+  template <class T = void>
+  T* umalloc(const dim_t entries,
               const void *src = NULL,
               const occa::json &props = occa::json());
 
@@ -127,10 +127,10 @@ namespace occa {
                           const dtype_t &dtype,
                           const occa::json &props = occa::json());
 
-  template <class TM = void>
-  occa::memory wrapMemory(const TM *ptr,
+  template <class T = void>
+  occa::memory wrapMemory(const T *ptr,
                           const dim_t entries,
-                          const occa::json &props);
+                          const occa::json &props = occa::json());
 
   template <>
   occa::memory wrapMemory<void>(const void *ptr,

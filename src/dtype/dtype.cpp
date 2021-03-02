@@ -129,7 +129,7 @@ namespace occa {
     return 0;
   }
 
-  const strVector& dtype_t::structFields() const {
+  const strVector& dtype_t::structFieldNames() const {
     const dtypeStruct_t *structPtr = self().struct_;
     OCCA_ERROR("Cannot get fields from a non-struct dtype_t",
                structPtr != NULL);
@@ -200,6 +200,14 @@ namespace occa {
 
   bool dtype_t::operator != (const dtype_t &other) const {
     return !(*this == other);
+  }
+
+  const dtype_t& dtype_t::operator || (const dtype_t &other) const {
+    return (
+      (*this == dtype::none)
+      ? other
+      : *this
+    );
   }
 
   bool dtype_t::matches(const dtype_t &other) const {
@@ -381,6 +389,12 @@ namespace occa {
     }
 
     return dtype::none;
+  }
+
+  json dtype_t::toJson(const std::string &name) const {
+    json output;
+    toJson(output, name);
+    return output;
   }
 
   void dtype_t::toJson(json &j, const std::string &name) const {
