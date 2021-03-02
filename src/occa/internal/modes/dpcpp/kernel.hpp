@@ -36,9 +36,6 @@ namespace occa
 
       ~kernel();
 
-      // ::sycl::queue *getCommandQueue() const;
-      // const lang::kernelMetadata_t &getMetadata() const;
-
       int maxDims() const;
       dim maxOuterDims() const;
       dim maxInnerDims() const;

@@ -11,13 +11,13 @@ namespace occa {
     
     class stream : public occa::modeStream_t {
     public:
-	    ::sycl::queue* commandQueue;
+	    ::sycl::queue commandQueue;
 
       stream(modeDevice_t *modeDevice_,
              const occa::json &properties_,
-             ::sycl::queue* commandQueue_);
+             ::sycl::queue commandQueue_);
 
-      virtual ~stream();
+      virtual ~stream()=default;
 
       void finish();
 

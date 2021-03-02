@@ -54,9 +54,9 @@ namespace occa
 
       std::vector<void *> args;
 
-      auto* q{getDpcppStream(modeDevice->currentStream).commandQueue};
+      auto& q{getDpcppStream(modeDevice->currentStream).commandQueue};
 
-      args.push_back(q);
+      args.push_back(&q);
       args.push_back(&ndrange);
       for (size_t i = 0; i < arguments.size(); ++i)
       {

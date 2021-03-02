@@ -23,7 +23,6 @@ namespace occa
                                      const occa::json &props);
 
     public:
-
       memory(modeDevice_t *modeDevice_,
              udim_t size_,
              const occa::json &properties_ = occa::json());

@@ -6,24 +6,19 @@ namespace occa {
   namespace dpcpp {
     stream::stream(modeDevice_t *modeDevice_,
                    const occa::json &properties_,
-                   ::sycl::queue* commandQueue_) :
+                   ::sycl::queue commandQueue_) :
       modeStream_t(modeDevice_, properties_),
       commandQueue(commandQueue_) {}
-
-    stream::~stream() {
-     OCCA_DPCPP_ERROR("Stream: Freeing dpcpp queue",
-                        free(commandQueue))
-    }
 
     void stream::finish()
     {
       OCCA_DPCPP_ERROR("stream::finish",
-                       commandQueue->wait_and_throw());
+                       commandQueue.wait_and_throw());
     }
 
     occa::dpcpp::streamTag stream::memcpy(void * dest,const void* src, size_t num_bytes)
     {
-      ::sycl::event e{commandQueue->memcpy(dest, src, num_bytes)};
+      ::sycl::event e{commandQueue.memcpy(dest, src, num_bytes)};
       return dpcpp::streamTag(modeDevice, e);
     }
   }

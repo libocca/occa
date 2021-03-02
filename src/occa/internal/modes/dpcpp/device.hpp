@@ -13,9 +13,6 @@ namespace occa
 
     class device : public occa::launchedModeDevice_t
     {
-      friend ::sycl::context getContext(occa::device device);
-      // friend class kernel;
-
     private:
       mutable hash_t hash_;
 
@@ -45,8 +42,6 @@ namespace occa
       virtual void waitFor(occa::streamTag tag);
       virtual double timeBetween(const occa::streamTag &startTag,
                                  const occa::streamTag &endTag);
-
-      // occa::dpcpp::stream & getDpcppStream() const;
       //================================
 
       //---[ Kernel ]-------------------
