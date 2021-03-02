@@ -43,10 +43,10 @@ namespace occa
       return m;
     }
 
-    void *memory::getPtr(const occa::json &props)
-    {
-      return this->ptr;
-    }
+    // void *memory::getPtr(const occa::json &props)
+    // {
+    //   return this->ptr;
+    // }
 
     void memory::copyFrom(const void *src,
                           const udim_t bytes,

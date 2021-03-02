@@ -29,14 +29,11 @@ namespace occa
 
       ~memory();
 
-      // ::sycl::queue *getCommandQueue() const;
-      // occa::dpcpp::device &getDpcppDevice() const;
-
       void *getKernelArgPtr() const;
 
       modeMemory_t *addOffset(const dim_t offset);
 
-      void *getPtr(const occa::json &props);
+      // void *getPtr(const occa::json &props);
 
       void copyTo(void *dest,
                   const udim_t bytes,
