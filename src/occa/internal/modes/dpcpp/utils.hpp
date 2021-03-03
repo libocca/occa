@@ -19,47 +19,7 @@ namespace occa {
     constexpr int y_index{1};
     constexpr int z_index{0};
 
-    namespace info {
-      static const int CPU     = (1 << 0);
-      static const int GPU     = (1 << 1);
-      static const int FPGA    = (1 << 2);
-      //static const int XeonPhi = (1 << 2);
-      static const int anyType = (CPU | GPU | FPGA);
-
-      static const int Intel     = (1 << 3);
-      static const int AMD       = (1 << 4);
-      static const int Altera    = (1 << 5);
-      static const int NVIDIA    = (1 << 6);
-      static const int anyVendor = (Intel | AMD | Altera | NVIDIA);
-
-      static const int any = (anyType | anyVendor);
-
-      std::string deviceType(int type);
-      std::string vendor(int type);
-    }
-
     bool isEnabled();
-
-    ::sycl::info::device_type deviceType(int type);
-
-    int getPlatformID(const occa::json &properties);
-    int getDeviceID(const occa::json &properties);
-
-    int getPlatformCount();
-    ::sycl::platform getPlatformByID(int pID);
-
-    int getDeviceCount(int type = info::anyType);
-    int getDeviceCountInPlatform(int pID, int type = info::anyType);
-    ::sycl::device getDeviceByID(int pID, int dID, int type = info::anyType);
-
-    std::string deviceName(int pID, int dID);
-
-    int deviceType(int pID, int dID);
-    int deviceVendor(int pID, int dID);
-    int deviceCoreCount(int pID, int dID);
-
-    udim_t getDeviceMemorySize(const ::sycl::device &devPtr);
-    udim_t getDeviceMemorySize(int pID, int dID);
 
     void setCompiler(occa::json &dpcpp_properties) noexcept;
     void setCompilerFlags(occa::json &dpcpp_properties) noexcept;
@@ -77,6 +37,9 @@ namespace occa {
     occa::dpcpp::device& getDpcppDevice(modeDevice_t* device_);
     occa::dpcpp::stream& getDpcppStream(const occa::stream& stream_);
     occa::dpcpp::streamTag &getDpcppStreamTag(const occa::streamTag& tag);
+
+    occa::device wrapDevice(::sycl::device device,
+                            const occa::properties &props = occa::properties());
 
     void warn(const ::sycl::exception &e,
                const std::string &filename,

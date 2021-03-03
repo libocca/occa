@@ -17,16 +17,14 @@ namespace occa
 
         dpcppParser(const occa::json &settings_ = occa::json());
 
-        virtual void onClear();
+        virtual void onClear() override;
 
-        virtual void beforePreprocessing();
-        virtual void beforeKernelSplit();
-        virtual void afterKernelSplit();
+        virtual void beforePreprocessing() override;
+        virtual void beforeKernelSplit() override;
+        virtual void afterKernelSplit() override;
 
-        virtual std::string getOuterIterator(const int loopIndex);
-        virtual std::string getInnerIterator(const int loopIndex);
-
-        // void updateConstToConstant();
+        virtual std::string getOuterIterator(const int loopIndex) override;
+        virtual std::string getInnerIterator(const int loopIndex) override;
 
         void addExtensions();
         void addBarriers();
@@ -39,9 +37,6 @@ namespace occa
         void setKernelQualifiers(function_t &function);
         void migrateLocalDecls(blockStatement &fromSmnt,
                                blockStatement &toSmnt);
-
-        // static bool transformBlockStatement(blockStatement &blockSmnt);
-        // static bool transformBasicExpressionStatement(expressionStatement &exprSmnt);
 
       private:
         inline static const std::string sycl_header{"CL/sycl.hpp"};

@@ -63,17 +63,11 @@ namespace occa
         args.push_back(arguments[i].ptr());
       }
 
-      for (size_t i{}; i < args.size(); ++i)
-      {
-        OCCA_ERROR("[dpcpp] Nullptr argument " << toString(i), nullptr != args[i]);
-      }
       sys::runFunction(function, args.size(), &(args[0]));
     }
 
     int kernel::maxDims() const
     {
-      // auto dpcpp_device = dynamic_cast<occa::dpcpp::device *>(modeDevice);
-      // return dpcpp_device->maxDims();
       return occa::dpcpp::max_dimensions;
     }
 

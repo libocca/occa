@@ -50,6 +50,7 @@ namespace sycl
       device_type,
       max_compute_units,
       global_mem_size,
+      local_mem_size,
       platform,
       name,
       vendor,
@@ -94,6 +95,13 @@ namespace sycl
 
     template <>
     class param_traits<device, device::global_mem_size>
+    {
+    public:
+      using return_type = uint64_t;
+    };
+
+    template <>
+    class param_traits<device, device::local_mem_size>
     {
     public:
       using return_type = uint64_t;
@@ -176,6 +184,24 @@ namespace sycl
 
     template <info::device I>
     typename info::param_traits<info::device, I>::return_type get_info() const;
+
+    bool is_cpu() const
+    {
+      throw sycl::exception();
+      return false;
+    }
+
+    bool is_gpu() const
+    {
+      throw sycl::exception();
+      return false;
+    }
+
+    bool is_accelerator() const
+    {
+      throw sycl::exception();
+      return false;
+    }
   };
 
   template <>
@@ -189,6 +215,14 @@ namespace sycl
   template <>
   inline info::param_traits<info::device, info::device::global_mem_size>::return_type
   device::get_info<info::device::global_mem_size>() const
+  {
+    throw sycl::exception();
+    return uint64_t(0);
+  }
+
+  template <>
+  inline info::param_traits<info::device, info::device::local_mem_size>::return_type
+  device::get_info<info::device::local_mem_size>() const
   {
     throw sycl::exception();
     return uint64_t(0);
@@ -251,6 +285,12 @@ namespace sycl
 
     template <info::platform I>
     typename info::param_traits<info::platform, I>::return_type get_info() const;
+
+    bool is_host() const
+    {
+      throw sycl::exception();
+      return false;  
+    }
   };
 
   template <>

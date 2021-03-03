@@ -4,7 +4,6 @@
 #include <occa/internal/core/launchedKernel.hpp>
 #include <occa/internal/modes/dpcpp/polyfill.hpp>
 #include <occa/internal/utils/sys.hpp>
-// #include <occa/internal/modes/dpcpp/utils.hpp>
 
 namespace occa
 {
@@ -18,8 +17,8 @@ namespace occa
 
 //@todo: Check public/private/protected here
     public:
-      void *dlHandle;
-      functionPtr_t function;
+      void *dlHandle{nullptr};
+      functionPtr_t function{nullptr};
 
     public:
       kernel(modeDevice_t *modeDevice_,
@@ -34,14 +33,14 @@ namespace occa
              functionPtr_t function_,
              const occa::json &properties_);
 
-      ~kernel();
+      virtual ~kernel();
 
-      int maxDims() const;
-      dim maxOuterDims() const;
-      dim maxInnerDims() const;
+      virtual int maxDims() const override;
+      virtual dim maxOuterDims() const override;
+      virtual dim maxInnerDims() const override;
       udim_t maxInnerSize() const;
 
-      void deviceRun() const;
+      virtual void deviceRun() const override;
     };
   } // namespace dpcpp
 } // namespace occa

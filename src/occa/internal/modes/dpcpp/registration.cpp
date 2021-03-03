@@ -1,6 +1,7 @@
 #include <occa/defines.hpp>
-#include <occa/internal/modes/dpcpp/utils.hpp>
 #include <occa/internal/modes/dpcpp/registration.hpp>
+#include <occa/internal/modes/dpcpp/device.hpp>
+#include <occa/internal/modes/dpcpp/utils.hpp>
 #include <occa/internal/utils/string.hpp>
 #include <iostream>
 namespace occa {
@@ -19,20 +20,61 @@ namespace occa {
     styling::section& dpcppMode::getDescription() {
       static styling::section section("dpcpp");
       if (section.size() == 0) {
-        int platformCount = getPlatformCount();
-        for (int platformId = 0; platformId < platformCount; ++platformId) {
-          int deviceCount = getDeviceCountInPlatform(platformId);
-          for (int deviceId = 0; deviceId < deviceCount; ++deviceId) {
-            udim_t bytes = getDeviceMemorySize(platformId, deviceId);
-            std::string bytesStr = stringifyBytes(bytes);
-
+        int platform_id{0};
+        auto platform_list = ::sycl::platform::get_platforms();
+        for (auto p : platform_list)
+        {
+          if (!p.is_host())
+          {
             section
-              .add("Device Name"  , deviceName(platformId, deviceId))
-              .add("Driver Vendor", info::vendor(deviceVendor(platformId, deviceId)))
-              .add("Platform ID"  , toString(platformId))
-              .add("Device ID"    , toString(deviceId))
-              .add("Memory"       , bytesStr)
-              .addDivider();
+                .add("Platform " + toString(platform_id), p.get_info<::sycl::info::platform::name>())
+                .addDivider();
+
+            int device_id{0};
+            auto device_list = p.get_devices();
+            for (auto d : device_list)
+            {
+              std::string device_type_str;
+              if (d.is_gpu())
+              {
+                device_type_str = "gpu";
+              }
+              else if (d.is_cpu())
+              {
+                device_type_str = "cpu";
+              }
+              else if (d.is_accelerator())
+              {
+                device_type_str = "accelerator";
+              }
+              else
+              {
+                device_type_str = "TYPE UNKNOWN";
+              }
+
+              std::string device_name_str = d.get_info<::sycl::info::device::name>();
+
+              uint32_t max_compute_units = d.get_info<::sycl::info::device::max_compute_units>();
+
+              // Global memory is returned in bytes
+              uint64_t global_memory_B = d.get_info<::sycl::info::device::global_mem_size>();
+              std::string global_memory_str = stringifyBytes(global_memory_B);
+
+              // Local memory is returned in bytes
+              uint64_t local_memory_B = d.get_info<::sycl::info::device::local_mem_size>();
+              std::string local_memory_str = stringifyBytes(local_memory_B);
+
+              section
+                  .add("Device " + toString(device_id), device_name_str)
+                  .add("Device Type", device_type_str)
+                  .add("Compute Cores", toString(max_compute_units))
+                  .add("Global Memory", global_memory_str)
+                  .add("Local Memory", local_memory_str)
+                  .addDivider();
+
+              ++device_id;
+            }
+            ++platform_id;
           }
         }
         // Remove last divider
@@ -42,13 +84,17 @@ namespace occa {
     }
 
     modeDevice_t* dpcppMode::newDevice(const occa::json &props) {
-      return new device(setModeProp(props));
+      return new occa::dpcpp::device(setModeProp(props));
     }
 
     int dpcppMode::getDeviceCount(const occa::json& props) {
-      int platformId{getPlatformID(props)};
+       OCCA_ERROR(
+            "[dpcppMode::getDeviceCount] not given a [platform_id] integer",
+            props.has("platform_id") && props["platform_id"].isNumber());
 
-      return getDeviceCountInPlatform(platformId);
+      int pID{props.get<int>("platform_id")};
+
+      return static_cast<int>(::sycl::platform::get_platforms()[pID].get_devices().size());
     }
 
     dpcppMode mode;

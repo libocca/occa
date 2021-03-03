@@ -3,7 +3,6 @@
 
 #include <occa/internal/core/memory.hpp>
 #include <occa/internal/modes/dpcpp/polyfill.hpp>
-// #include <occa/internal/modes/dpcpp/device.hpp>
 
 namespace occa
 {
@@ -15,8 +14,6 @@ namespace occa
     {
       friend class dpcpp::device;
 
-      friend void *getMappedPtr(occa::memory memory);
-
       friend occa::memory wrapMemory(occa::device device,
                                      void *dpcppMem,
                                      const udim_t bytes,
@@ -27,30 +24,29 @@ namespace occa
              udim_t size_,
              const occa::json &properties_ = occa::json());
 
-      ~memory();
+      virtual ~memory();
 
-      void *getKernelArgPtr() const;
+      virtual void *getKernelArgPtr() const override;
 
-      modeMemory_t *addOffset(const dim_t offset);
+      virtual modeMemory_t *addOffset(const dim_t offset) override;
 
-      // void *getPtr(const occa::json &props);
-
-      void copyTo(void *dest,
+      virtual void copyTo(void *dest,
                   const udim_t bytes,
                   const udim_t destOffset = 0,
-                  const occa::json &props = occa::json()) const;
+                  const occa::json &props = occa::json()) const override;
 
-      void copyFrom(const void *src,
+      virtual void copyFrom(const void *src,
                     const udim_t bytes,
                     const udim_t offset = 0,
-                    const occa::json &props = occa::json());
+                    const occa::json &props = occa::json()) override;
 
-      void copyFrom(const modeMemory_t *src,
+      virtual void copyFrom(const modeMemory_t *src,
                     const udim_t bytes,
                     const udim_t destOffset = 0,
                     const udim_t srcOffset = 0,
-                    const occa::json &props = occa::json());
-      void detach();
+                    const occa::json &props = occa::json()) override;
+
+      virtual void detach() override;
     };
   } // namespace dpcpp
 } // namespace occa

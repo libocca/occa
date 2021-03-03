@@ -3,7 +3,6 @@
 
 #include <occa/internal/core/stream.hpp>
 #include <occa/internal/modes/dpcpp/polyfill.hpp>
-// #include <occa/internal/modes/dpcpp/streamTag.hpp>
 
 namespace occa {
   namespace dpcpp {

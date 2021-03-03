@@ -4,9 +4,6 @@
 #define OCCA_MODES_DPCPP_REGISTRATION_HEADER
 
 #include <occa/internal/modes.hpp>
-#include <occa/internal/modes/dpcpp/device.hpp>
-#include <occa/internal/modes/dpcpp/kernel.hpp>
-#include <occa/internal/modes/dpcpp/memory.hpp>
 #include <occa/internal/utils/styling.hpp>
 #include <occa/core/base.hpp>
 
@@ -16,13 +13,13 @@ namespace occa {
     public:
       dpcppMode();
 
-      bool init();
+      virtual bool init() override;
 
-      styling::section& getDescription();
+      virtual styling::section& getDescription() override;
 
-      modeDevice_t* newDevice(const occa::json &props);
+      virtual modeDevice_t* newDevice(const occa::json &props) override;
 
-      int getDeviceCount(const occa::json &props);
+      virtual int getDeviceCount(const occa::json &props) override;
     };
 
     extern dpcppMode mode;
