@@ -58,10 +58,12 @@ namespace occa
 
         if (!success)
           return;
-        setupKernels();
+        setupAtomics();
 
-        //  if (!success) return;
-        // setupAtomics();
+        if (!success)
+          return;
+        // Do this last!
+        setupKernels();
       }
 
       std::string dpcppParser::getOuterIterator(const int loopIndex)
@@ -259,7 +261,7 @@ namespace occa
               variable_t &var = decl.variable();
               if (var.hasAttribute("shared"))
               {
-                auto shared_value = new dpcppAccessorNode(var.source->clone(),
+                auto* shared_value = new dpcppAccessorNode(var.source->clone(),
                                                           var.vartype,
                                                           group_handler_name);
 
@@ -298,14 +300,67 @@ namespace occa
             });
       }
 
-      // static bool transformBlockStatement(blockStatement &blockSmnt)
-      // {
-      //   return false;
-      // }
-      // static bool transformBasicExpressionStatement(expressionStatement &exprSmnt)
-      // {
-      //   return false;
-      // }
+      void dpcppParser::setupAtomics() {
+        success &= attributes::atomic::applyCodeTransformation(
+            root,
+            transformAtomicBlockStatement,
+            transformAtomicBasicExpressionStatement);
+      }
+
+      bool dpcppParser::transformAtomicBlockStatement(blockStatement &blockSmnt) {
+        bool transform_successful{true};
+        statementArray::from(blockSmnt)
+            .flatFilterByStatementType(statementType::expression)
+            .forEach([&](statement_t *smnt) {
+              expressionStatement &exprSmnt = static_cast<expressionStatement&>(*smnt);
+
+              // if(!transformAtomicBasicExpressionStatement(exprSmnt))
+              // {
+              //   transform_successful = false;
+              //   return;
+              // }
+              transformAtomicBasicExpressionStatement(exprSmnt);
+            });
+
+        return transform_successful;
+      }
+
+      bool dpcppParser::transformAtomicBasicExpressionStatement(expressionStatement &exprSmnt) 
+      {
+        expressionStatement& atomicSmnt = dynamic_cast<expressionStatement&>(exprSmnt.clone());
+        
+        const opType_t &opType = expr(atomicSmnt.expr).opType();
+
+        exprNode *variable_node{nullptr};
+        if (opType & operatorType::unary) {
+          if (opType & operatorType::leftUnary)
+          {
+            variable_node = ((leftUnaryOpNode*) atomicSmnt.expr)->value;
+          }
+          else if (opType & operatorType::rightUnary) {
+            variable_node = ((rightUnaryOpNode*) atomicSmnt.expr)->value;
+          }
+        }
+        else if (opType & operatorType::binary) {
+          binaryOpNode &binaryNode = *static_cast<binaryOpNode*>(atomicSmnt.expr);
+          variable_node = binaryNode.leftValue;
+        }
+        else {
+          atomicSmnt.printError("Unable to transform @atomic code");
+          return false;
+        }
+
+        variable_t & atomic_var = *(variable_node->getVariable());
+        vartype_t atomic_type = atomic_var.vartype;
+
+        auto *atomic_ref = new dpcppAtomicNode(atomic_var.source, atomic_type, *variable_node);
+        atomicSmnt.replaceExprNode(variable_node, atomic_ref);
+
+        exprSmnt.replaceWith(atomicSmnt);
+        delete &exprSmnt;
+
+        return true;
+      }
 
     } // namespace okl
   }   // namespace lang

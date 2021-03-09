@@ -30,13 +30,16 @@ namespace occa
         void addBarriers();
         void setupHeaders();
         void setupKernels();
-        // void setupAtomics();
 
         void setFunctionQualifiers();
         void setSharedQualifiers();
         void setKernelQualifiers(function_t &function);
         void migrateLocalDecls(blockStatement &fromSmnt,
                                blockStatement &toSmnt);
+
+      void setupAtomics();
+      static bool transformAtomicBlockStatement(blockStatement &blockSmnt);
+      static bool transformAtomicBasicExpressionStatement(expressionStatement &exprSmnt);
 
       private:
         inline static const std::string sycl_header{"CL/sycl.hpp"};

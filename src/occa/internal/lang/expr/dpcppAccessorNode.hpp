@@ -5,6 +5,16 @@
 
 namespace occa {
   namespace lang {
+    /**
+     * Defines a SYCL local accessor (SLM).
+     * 
+     * Given a variable type, and the name of a SYCL command-group 
+     * handler, defines a SYCL accessor with `access::mode::read_write` 
+     * and `access::target::local`.
+     * 
+     * \note: dpcppParser uses this class on the RHS of 
+     * variableDeclarations with type `auto`.
+     */
     class dpcppAccessorNode : public exprNode {
     public:
       vartype_t shared_type;

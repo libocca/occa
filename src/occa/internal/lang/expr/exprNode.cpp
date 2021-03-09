@@ -62,6 +62,7 @@ namespace occa {
       const udim_t cudaCall          = (((uint64_t) 1) << 37);
       const udim_t lambda	           = (((uint64_t) 1) << 38);
       const udim_t dpcppAccessor     = (((uint64_t) 1) << 39);
+      const udim_t dpcppAtomic       = (((uint64_t) 1) << 40);
     }
 
     exprNode::exprNode(token_t *token_) :

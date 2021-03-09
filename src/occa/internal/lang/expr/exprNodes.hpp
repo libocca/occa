@@ -9,6 +9,7 @@
 #include <occa/internal/lang/expr/cudaCallNode.hpp>
 #include <occa/internal/lang/expr/deleteNode.hpp>
 #include <occa/internal/lang/expr/dpcppAccessorNode.hpp>
+#include <occa/internal/lang/expr/dpcppAtomicNode.hpp>
 #include <occa/internal/lang/expr/dynamicCastNode.hpp>
 #include <occa/internal/lang/expr/emptyNode.hpp>
 #include <occa/internal/lang/expr/exprNode.hpp>
