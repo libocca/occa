@@ -1,35 +1,62 @@
-# Test occa binary (based on run_bin_tests)
-if (ENABLE_UTILITY)
-  add_test(NAME occa-autocomplete            COMMAND occa autocomplete)
-  add_test(NAME occa-clear                   COMMAND occa clear)
-  add_test(NAME occa-compile-help            COMMAND occa compile --help)
-  add_test(NAME occa-env                     COMMAND occa env)
-  add_test(NAME occa-info                    COMMAND occa info)
-  add_test(NAME occa-modes                   COMMAND occa modes)
-  add_test(NAME occa-translate-help          COMMAND occa translate --help)
-  add_test(NAME occa-translate-serial        COMMAND occa translate --mode Serial ${OCCA_SOURCE_DIR}/examples/cpp/01_add_vectors/addVectors.okl)
-  if (OCCA_OPENMP_ENABLED)
-    add_test(NAME occa-translate-openmp          COMMAND occa translate --mode OpenMP ${OCCA_SOURCE_DIR}/examples/cpp/01_add_vectors/addVectors.okl)
-    set_property(TEST occa-translate-openmp APPEND PROPERTY ENVIRONMENT OCCA_CACHE_DIR=${OCCA_BUILD_DIR}/occa)
-  endif()
-  if (OCCA_CUDA_ENABLED)
-    add_test(NAME occa-translate-cuda          COMMAND occa translate --mode CUDA ${OCCA_SOURCE_DIR}/examples/cpp/01_add_vectors/addVectors.okl)
-    add_test(NAME occa-translate-cuda-launcher COMMAND occa translate --mode CUDA --launcher ${OCCA_SOURCE_DIR}/examples/cpp/01_add_vectors/addVectors.okl)
-    set_property(TEST occa-translate-cuda occa-translate-cuda-launcher APPEND PROPERTY ENVIRONMENT OCCA_CACHE_DIR=${OCCA_BUILD_DIR}/occa)
-  endif()
-  if (OCCA_HIP_ENABLED)
-    add_test(NAME occa-translate-hip          COMMAND occa translate --mode HIP ${OCCA_SOURCE_DIR}/examples/cpp/01_add_vectors/addVectors.okl)
-    add_test(NAME occa-translate-hip-launcher COMMAND occa translate --mode HIP --launcher ${OCCA_SOURCE_DIR}/examples/cpp/01_add_vectors/addVectors.okl)
-    set_property(TEST occa-translate-hip occa-translate-hip-launcher APPEND PROPERTY ENVIRONMENT OCCA_CACHE_DIR=${OCCA_BUILD_DIR}/occa)
-  endif()
-  if (OCCA_OPENCL_ENABLED)
-    add_test(NAME occa-translate-opencl          COMMAND occa translate --mode OpenCL ${OCCA_SOURCE_DIR}/examples/cpp/01_add_vectors/addVectors.okl)
-    add_test(NAME occa-translate-opencl-launcher COMMAND occa translate --mode OpenCL --launcher ${OCCA_SOURCE_DIR}/examples/cpp/01_add_vectors/addVectors.okl)
-    set_property(TEST occa-translate-opencl occa-translate-opencl-launcher APPEND PROPERTY ENVIRONMENT OCCA_CACHE_DIR=${OCCA_BUILD_DIR}/occa)
-  endif()
-  add_test(NAME occa-version                 COMMAND occa version)
+function(add_occa_test test_source)
+  # Metadata
+  get_filename_component(source_directory ${test_source} DIRECTORY)
+  get_filename_component(test_name ${test_source} NAME_WLE)
 
-  set_property(TEST occa-autocomplete occa-clear occa-compile-help occa-env occa-info occa-modes occa-translate-help occa-translate-serial occa-version APPEND PROPERTY ENVIRONMENT OCCA_CACHE_DIR=${OCCA_BUILD_DIR}/occa)
-endif (ENABLE_UTILITY)
+  string(REGEX REPLACE "src/" "bin/" test_directory "${source_directory}")
 
-add_subdirectory(src)
+  set(test_binary "${test_directory}/${test_name}")
+
+  string(REGEX REPLACE "/" "-" cmake_test_target "${test_binary}")
+
+  # Setup executable target
+  add_executable(${cmake_test_target} ${test_source})
+
+  set_target_properties(${cmake_test_target} PROPERTIES
+    OUTPUT_NAME ${test_name}
+    RUNTIME_OUTPUT_DIRECTORY ${test_directory})
+
+  # Build config
+  target_link_libraries(${cmake_test_target} libocca ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+  target_include_directories(${cmake_test_target} PRIVATE
+    $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/src>)
+
+  if (${test_source} MATCHES "typedefs.f90")
+    target_link_libraries(${cmake_test_target} libtypedefs_helper libocca ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+  endif()
+
+  add_test(
+    NAME ${cmake_test_target}
+    COMMAND ${test_binary})
+
+  # Expected defines
+  set_property(TEST ${cmake_test_target} APPEND PROPERTY
+    ENVIRONMENT OCCA_CACHE_DIR=${OCCA_BUILD_DIR}/occa)
+endfunction()
+
+#---[ Setup Tests ]---------------------
+file(
+  GLOB_RECURSE occa_tests
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.cpp")
+
+if (ENABLE_FORTRAN)
+  file(
+    GLOB_RECURSE occa_fortran_tests
+    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.f90")
+
+  list(APPEND occa_tests ${occa_fortran_tests})
+
+  list(FILTER occa_tests
+    EXCLUDE REGEX "src/fortran/typedefs_helper.cpp")
+
+  add_library(libtypedefs_helper SHARED "src/fortran/typedefs_helper.cpp")
+  target_link_libraries(libtypedefs_helper libocca)
+else()
+  list(FILTER occa_tests
+    EXCLUDE REGEX "src/fortran")
+endif()
+
+foreach(occa_test ${occa_tests})
+  add_occa_test("${occa_test}")
+endforeach()
+#=======================================

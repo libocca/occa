@@ -13,15 +13,15 @@ program main
   real(C_float) :: sig
 
   ! OCCA device, kernel, memory and property objects
-  type(occaKernel)     :: reduction
-  type(occaMemory)     :: o_vec, o_blockSum
-  type(occaProperties) :: reductionProps
+  type(occaKernel) :: reduction
+  type(occaMemory) :: o_vec, o_blockSum
+  type(occaJson)   :: reductionProps
 
   ! Set default OCCA device info
-  info = "mode: 'Serial'"
-  !info = "mode: 'OpenMP', schedule: 'compact', chunk: 10"
-  !info = "mode: 'CUDA'  , device_id: 0"
-  !info = "mode: 'OpenCL', platform_id: 0, device_id: 0"
+  info = "{mode: 'Serial'}"
+  !info = "{mode: 'OpenMP', schedule: 'compact', chunk: 10}"
+  !info = "{mode: 'CUDA'  , device_id: 0}"
+  !info = "{mode: 'OpenCL', platform_id: 0, device_id: 0}"
 
   ! Parse command arguments
   i = 1
@@ -30,7 +30,7 @@ program main
 
     select case (arg)
       case ("-v", "--verbose")
-        call occaPropertiesSet(occaSettings(), "kernel/verbose", occaTrue)
+        call occaJsonObjectSet(occaSettings(), "kernel/verbose", occaTrue)
       case ("-d", "--device")
         i = i+1
         call get_command_argument(i, info)
@@ -64,8 +64,8 @@ program main
   o_blockSum = occaTypedMalloc(blks,    occaDtypeFloat, C_NULL_ptr, occaDefault)
 
   ! Pass value of 'block' at kernel compile-time
-  reductionProps = occaCreateProperties()
-  call occaPropertiesSet(reductionProps, F_C_str("defines/block"), occaInt(blk))
+  reductionProps = occaCreateJson()
+  call occaJsonObjectSet(reductionProps, F_C_str("defines/block"), occaInt(blk))
 
   reduction = occaBuildKernel(F_C_str("reduction.okl"), &
                               F_C_str("reduction"), &
@@ -105,7 +105,7 @@ contains
     write(*,'(a, /)') "Example of a reduction kernel which sums a vector in parallel"
     write(*,'(a, /)') "command-line options:"
     write(*,'(a)')    "  -v, --verbose     Compile kernels in verbose mode"
-    write(*,'(a)')    "  -d, --device      Device properties (default: ""mode: 'Serial'"")"
+    write(*,'(a)')    "  -d, --device      Device properties (default: ""{mode: 'Serial'}"")"
     write(*,'(a)')    "  -h, --help        Print this information and exit"
   end subroutine print_help
 end program main

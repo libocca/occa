@@ -7,72 +7,79 @@
 OCCA_START_EXTERN_C
 
 //---[ Globals & Flags ]----------------
-OCCA_LFUNC occaProperties OCCA_RFUNC occaSettings();
+occaJson occaSettings();
 
-OCCA_LFUNC void OCCA_RFUNC occaPrintModeInfo();
+void occaPrintModeInfo();
 //======================================
 
 //---[ Device ]-------------------------
-OCCA_LFUNC occaDevice OCCA_RFUNC occaHost();
+occaDevice occaHost();
 
-OCCA_LFUNC occaDevice OCCA_RFUNC occaGetDevice();
+occaDevice occaGetDevice();
 
-OCCA_LFUNC void OCCA_RFUNC occaSetDevice(occaDevice device);
+void occaSetDevice(occaDevice device);
 
-OCCA_LFUNC void OCCA_RFUNC occaSetDeviceFromString(const char *info);
+void occaSetDeviceFromString(const char *info);
 
-OCCA_LFUNC occaProperties OCCA_RFUNC occaDeviceProperties();
+occaJson occaDeviceProperties();
 
-OCCA_LFUNC void OCCA_RFUNC occaLoadKernels(const char *library);
+void occaFinish();
 
-OCCA_LFUNC void OCCA_RFUNC occaFinish();
+occaStream occaCreateStream(occaJson props);
 
-OCCA_LFUNC occaStream OCCA_RFUNC occaCreateStream(occaProperties props);
+occaStream occaGetStream();
 
-OCCA_LFUNC occaStream OCCA_RFUNC occaGetStream();
+void occaSetStream(occaStream stream);
 
-OCCA_LFUNC void OCCA_RFUNC occaSetStream(occaStream stream);
+occaStreamTag occaTagStream();
 
-OCCA_LFUNC occaStreamTag OCCA_RFUNC occaTagStream();
+void occaWaitForTag(occaStreamTag tag);
 
-OCCA_LFUNC void OCCA_RFUNC occaWaitForTag(occaStreamTag tag);
-
-OCCA_LFUNC double OCCA_RFUNC occaTimeBetweenTags(occaStreamTag startTag,
-                                                 occaStreamTag endTag);
+double occaTimeBetweenTags(occaStreamTag startTag,
+                           occaStreamTag endTag);
 //======================================
 
 //---[ Kernel ]-------------------------
-OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernel(const char *filename,
-                                                 const char *kernelName,
-                                                 const occaProperties props);
+occaKernel occaBuildKernel(const char *filename,
+                           const char *kernelName,
+                           const occaJson props);
 
-OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromString(const char *source,
-                                                           const char *kernelName,
-                                                           const occaProperties props);
+occaKernel occaBuildKernelFromString(const char *source,
+                                     const char *kernelName,
+                                     const occaJson props);
 
-OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromBinary(const char *filename,
-                                                           const char *kernelName,
-                                                           const occaProperties props);
+occaKernel occaBuildKernelFromBinary(const char *filename,
+                                     const char *kernelName,
+                                     const occaJson props);
 //======================================
 
 //---[ Memory ]-------------------------
-OCCA_LFUNC occaMemory OCCA_RFUNC occaMalloc(const occaUDim_t bytes,
-                                            const void *src,
-                                            occaProperties props);
+occaMemory occaMalloc(const occaUDim_t bytes,
+                      const void *src,
+                      occaJson props);
 
-OCCA_LFUNC occaMemory OCCA_RFUNC occaTypedMalloc(const occaUDim_t entries,
-                                                 const occaDtype type,
-                                                 const void *src,
-                                                 occaProperties props);
+occaMemory occaTypedMalloc(const occaUDim_t entries,
+                           const occaDtype type,
+                           const void *src,
+                           occaJson props);
 
-OCCA_LFUNC void* OCCA_RFUNC occaUMalloc(const occaUDim_t bytes,
-                                        const void *src,
-                                        occaProperties props);
+void* occaUMalloc(const occaUDim_t bytes,
+                  const void *src,
+                  occaJson props);
 
-OCCA_LFUNC void* OCCA_RFUNC occaTypedUMalloc(const occaUDim_t entries,
-                                             const occaDtype type,
-                                             const void *src,
-                                             occaProperties props);
+void* occaTypedUMalloc(const occaUDim_t entries,
+                       const occaDtype type,
+                       const void *src,
+                       occaJson props);
+
+occaMemory occaWrapMemory(const void *ptr,
+                          const occaUDim_t bytes,
+                          occaJson props);
+
+occaMemory occaTypedWrapMemory(const void *ptr,
+                               const occaUDim_t entries,
+                               const occaDtype dtype,
+                               occaJson props);
 //======================================
 
 OCCA_END_EXTERN_C

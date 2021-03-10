@@ -66,10 +66,16 @@ namespace occa {
                z / d.z);
   }
 
-  bool dim::hasNegativeEntries() {
-    return ((x & (1 << (sizeof(udim_t) - 1))) ||
-            (y & (1 << (sizeof(udim_t) - 1))) ||
-            (z & (1 << (sizeof(udim_t) - 1))));
+  bool dim::isZero() const {
+    return !(x && y && z);
+  }
+
+  bool dim::hasNegativeEntries() const {
+    return (
+      hasNegativeBitSet(x) ||
+      hasNegativeBitSet(y) ||
+      hasNegativeBitSet(z)
+    );
   }
 
   udim_t& dim::operator [] (int i) {

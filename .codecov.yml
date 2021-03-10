@@ -19,21 +19,16 @@ ignore:
   - scripts
   - include/occa/scripts
   # Auto-generated files
-  - include/occa/core/kernelOperators.hpp
-  - src/core/kernelOperators.cpp
-  - src/tools/runFunction.cpp
+  - include/occa/core/kernelOperators.hpp_codegen
+  - src/core/kernelOperators.cpp_codegen
+  - src/occa/internal/utils/runFunction.cpp_codegen
   # Exception is not tracked properly
-  - src/tools/exception.cpp
+  - src/utils/exception.cpp
   # Modes that can't be tested with CI
-  - include/occa/modes/cuda
-  - include/occa/modes/hip
-  - include/occa/modes/opencl
-  - include/occa/modes/dpcpp
-  - include/occa/modes/metal
-  - src/modes/cuda
-  - src/modes/hip
-  - src/modes/opencl
-  - src/modes/metal
+  - src/occa/internal/modes/cuda
+  - src/occa/internal/modes/hip
+  - src/occa/internal/modes/opencl
+  - src/occa/internal/modes/metal
 
 comment:
   layout: 'reach, diff, files'

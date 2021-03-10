@@ -33,12 +33,12 @@ program main
   end if
 
   ! Set OCCA device info
-  !info = "mode: 'Serial'"
-  !info = "mode: 'OpenMP', schedule: 'compact', chunk: 2"
-  !info(0) = "mode: 'OpenMP', schedule: 'compact', chunk: 2"
-  !info(1) = "mode: 'CUDA'  , device_id: 0"
-  info(0) = "mode: 'OpenMP', schedule: 'compact', chunk: 2"
-  info(1) = "mode: 'OpenCL', platform_id: 0, device_id: 0"
+  !info = "{mode: 'Serial'}"
+  !info = "{mode: 'OpenMP', schedule: 'compact', chunk: 2}"
+  !info(0) = "{mode: 'OpenMP', schedule: 'compact', chunk: 2}"
+  !info(1) = "{mode: 'CUDA'  , device_id: 0}"
+  info(0) = "{mode: 'OpenMP', schedule: 'compact', chunk: 2}"
+  info(1) = "{mode: 'OpenCL', platform_id: 0, device_id: 0}"
 
   ! Print device infos
   if(myid == 0) then

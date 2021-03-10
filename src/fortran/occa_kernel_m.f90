@@ -1,9 +1,10 @@
 ! --------------[ DO NOT EDIT ]--------------
 !  THIS IS AN AUTOMATICALLY GENERATED FILE
 !  EDIT:
-!    scripts/create_fortran_kernel_module.py
-!    scripts/occa_kernel_m.f90.in
+!    scripts/codegen/create_fortran_kernel_interface.py
+!    scripts/codegen/occa_kernel_m.f90.in
 ! ===========================================
+
 module occa_kernel_m
   ! occa/c/kernel.h
 
@@ -20,10 +21,10 @@ module occa_kernel_m
       type(occaKernel), value :: kernel
     end function
 
-    ! occaProperties occaKernelGetProperties(occaKernel kernel);
-    type(occaProperties) function occaKernelGetProperties(kernel) &
-                                  bind(C, name="occaKernelGetProperties")
-      import occaKernel, occaProperties
+    ! occaJson occaKernelGetProperties(occaKernel kernel);
+    type(occaJson) function occaKernelGetProperties(kernel) &
+         bind(C, name="occaKernelGetProperties")
+      import occaKernel, occaJson
       implicit none
       type(occaKernel), value :: kernel
     end function
@@ -144,7 +145,7 @@ module occa_kernel_m
     ! void occaKernelRunN(occaKernel kernel, const int argc, ...);
     !
     subroutine occaKernelRunN01(kernel, argc, arg01) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF01")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -153,7 +154,7 @@ module occa_kernel_m
     end subroutine
 
     subroutine occaKernelRunN02(kernel, argc, arg01, arg02) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF02")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -162,7 +163,7 @@ module occa_kernel_m
     end subroutine
 
     subroutine occaKernelRunN03(kernel, argc, arg01, arg02, arg03) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF03")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -171,7 +172,7 @@ module occa_kernel_m
     end subroutine
 
     subroutine occaKernelRunN04(kernel, argc, arg01, arg02, arg03, arg04) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF04")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -181,7 +182,7 @@ module occa_kernel_m
 
     subroutine occaKernelRunN05(kernel, argc, arg01, arg02, arg03, arg04, &
                                               arg05) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF05")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -191,7 +192,7 @@ module occa_kernel_m
 
     subroutine occaKernelRunN06(kernel, argc, arg01, arg02, arg03, arg04, &
                                               arg05, arg06) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF06")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -201,7 +202,7 @@ module occa_kernel_m
 
     subroutine occaKernelRunN07(kernel, argc, arg01, arg02, arg03, arg04, &
                                               arg05, arg06, arg07) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF07")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -212,7 +213,7 @@ module occa_kernel_m
 
     subroutine occaKernelRunN08(kernel, argc, arg01, arg02, arg03, arg04, &
                                               arg05, arg06, arg07, arg08) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF08")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -224,7 +225,7 @@ module occa_kernel_m
     subroutine occaKernelRunN09(kernel, argc, arg01, arg02, arg03, arg04, &
                                               arg05, arg06, arg07, arg08, &
                                               arg09) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF09")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -236,7 +237,7 @@ module occa_kernel_m
     subroutine occaKernelRunN10(kernel, argc, arg01, arg02, arg03, arg04, &
                                               arg05, arg06, arg07, arg08, &
                                               arg09, arg10) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF10")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -248,7 +249,7 @@ module occa_kernel_m
     subroutine occaKernelRunN11(kernel, argc, arg01, arg02, arg03, arg04, &
                                               arg05, arg06, arg07, arg08, &
                                               arg09, arg10, arg11) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF11")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -260,7 +261,7 @@ module occa_kernel_m
     subroutine occaKernelRunN12(kernel, argc, arg01, arg02, arg03, arg04, &
                                               arg05, arg06, arg07, arg08, &
                                               arg09, arg10, arg11, arg12) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF12")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -273,7 +274,7 @@ module occa_kernel_m
                                               arg05, arg06, arg07, arg08, &
                                               arg09, arg10, arg11, arg12, &
                                               arg13) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF13")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -287,7 +288,7 @@ module occa_kernel_m
                                               arg05, arg06, arg07, arg08, &
                                               arg09, arg10, arg11, arg12, &
                                               arg13, arg14) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF14")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -301,7 +302,7 @@ module occa_kernel_m
                                               arg05, arg06, arg07, arg08, &
                                               arg09, arg10, arg11, arg12, &
                                               arg13, arg14, arg15) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF15")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -315,7 +316,7 @@ module occa_kernel_m
                                               arg05, arg06, arg07, arg08, &
                                               arg09, arg10, arg11, arg12, &
                                               arg13, arg14, arg15, arg16) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF16")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -330,7 +331,7 @@ module occa_kernel_m
                                               arg09, arg10, arg11, arg12, &
                                               arg13, arg14, arg15, arg16, &
                                               arg17) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF17")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -345,7 +346,7 @@ module occa_kernel_m
                                               arg09, arg10, arg11, arg12, &
                                               arg13, arg14, arg15, arg16, &
                                               arg17, arg18) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF18")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -360,7 +361,7 @@ module occa_kernel_m
                                               arg09, arg10, arg11, arg12, &
                                               arg13, arg14, arg15, arg16, &
                                               arg17, arg18, arg19) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF19")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel
@@ -376,7 +377,7 @@ module occa_kernel_m
                                               arg09, arg10, arg11, arg12, &
                                               arg13, arg14, arg15, arg16, &
                                               arg17, arg18, arg19, arg20) &
-               bind(C, name="occaKernelRunN")
+               bind(C, name="occaKernelRunF20")
       import occaKernel, C_int, occaType
       implicit none
       type(occaKernel), value :: kernel

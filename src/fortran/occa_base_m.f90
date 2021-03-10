@@ -7,9 +7,9 @@ module occa_base_m
 
   interface
     ! ---[ Globals & Flags ]----------------
-    ! occaProperties occaSettings();
-    type(occaProperties) function occaSettings() bind(C, name="occaSettings")
-      import occaProperties
+    ! occaJson occaSettings();
+    type(occaJson) function occaSettings() bind(C, name="occaSettings")
+      import occaJson
     end function
 
     ! void occaPrintModeInfo();
@@ -43,29 +43,22 @@ module occa_base_m
       character(len=1,kind=C_char), dimension(*), intent(in) :: info
     end subroutine
 
-    ! occaProperties occaDeviceProperties();
-    type(occaProperties) function occaDeviceProperties() &
+    ! occaJson occaDeviceProperties();
+    type(occaJson) function occaDeviceProperties() &
                                   bind(C, name="occaDeviceProperties")
-      import occaProperties
+      import occaJson
     end function
-
-    ! void occaLoadKernels(const char *library);
-    subroutine occaLoadKernels(library) bind(C, name="occaLoadKernels")
-      import C_char
-      implicit none
-      character(len=1,kind=C_char), dimension(*), intent(in) :: library
-    end subroutine
 
     ! void occaFinish();
     subroutine occaFinish() bind(C, name="occaFinish")
     end subroutine
 
-    ! occaStream occaCreateStream(occaProperties props);
+    ! occaStream occaCreateStream(occaJson props);
     type(occaStream) function occaCreateStream(props) &
                               bind(C, name="occaCreateStream")
-      import occaStream, occaProperties
+      import occaStream, occaJson
       implicit none
-      type(occaProperties), value :: props
+      type(occaJson), value :: props
     end function
 
     ! occaStream occaGetStream();
@@ -104,98 +97,98 @@ module occa_base_m
     ! ---[ Kernel ]-------------------------
     ! occaKernel occaBuildKernel(const char *filename,
     !                            const char *kernelName,
-    !                            const occaProperties props);
+    !                            const occaJson props);
     type(occaKernel) function occaBuildKernel(filename, &
                                               kernelName, &
                                               props) &
                               bind(C, name="occaBuildKernel")
-      import C_char, occaKernel, occaProperties
+      import C_char, occaKernel, occaJson
       implicit none
       character(len=1,kind=C_char), dimension(*), intent(in) :: filename, &
                                                                 kernelName
-      type(occaProperties), value, intent(in) :: props
+      type(occaJson), value, intent(in) :: props
     end function
 
     ! occaKernel occaBuildKernelFromString(const char *source,
     !                                      const char *kernelName,
-    !                                      const occaProperties props);
+    !                                      const occaJson props);
     type(occaKernel) function occaBuildKernelFromString(str, &
                                                         kernelName, &
                                                         props) &
                               bind(C, name="occaBuildKernelFromString")
-      import C_char, occaKernel, occaProperties
+      import C_char, occaKernel, occaJson
       implicit none
       character(len=1,kind=C_char), dimension(*), intent(in) :: str, &
                                                                 kernelName
-      type(occaProperties), value, intent(in) :: props
+      type(occaJson), value, intent(in) :: props
     end function
 
     ! occaKernel occaBuildKernelFromBinary(const char *filename,
     !                                      const char *kernelName,
-    !                                      const occaProperties props);
+    !                                      const occaJson props);
     type(occaKernel) function occaBuildKernelFromBinary(filename, &
                                                         kernelName, &
                                                         props) &
                               bind(C, name="occaBuildKernelFromBinary")
-      import C_char, occaKernel, occaProperties
+      import C_char, occaKernel, occaJson
       implicit none
       character(len=1,kind=C_char), dimension(*), intent(in) :: filename, &
                                                                 kernelName
-      type(occaProperties), value, intent(in) :: props
+      type(occaJson), value, intent(in) :: props
     end function
     ! ======================================
 
     ! ---[ Memory ]-------------------------
     ! occaMemory occaMalloc(const occaUDim_t bytes,
     !                       const void *src,
-    !                       occaProperties props);
+    !                       occaJson props);
     type(occaMemory) function occaMalloc(bytes, src, props) &
                               bind(C, name="occaMalloc")
-      import occaMemory, occaUDim_t, C_void_ptr, occaProperties
+      import occaMemory, occaUDim_t, C_void_ptr, occaJson
       implicit none
       integer(occaUDim_t), value, intent(in) :: bytes
       type(C_void_ptr), value, intent(in) :: src
-      type(occaProperties), value :: props
+      type(occaJson), value :: props
     end function
 
     ! occaMemory occaTypedMalloc(const occaUDim_t entries,
     !                            const occaDtype type,
     !                            const void *src,
-    !                            occaProperties props);
+    !                            occaJson props);
     type(occaMemory) function occaTypedMalloc(entries, type, src, props) &
                               bind(C, name="occaTypedMalloc")
-      import occaMemory, occaUDim_t, occaDtype, C_void_ptr, occaProperties
+      import occaMemory, occaUDim_t, occaDtype, C_void_ptr, occaJson
       implicit none
       integer(occaUDim_t), value, intent(in) :: entries
       type(occaDtype), value, intent(in) :: type
       type(C_void_ptr), value, intent(in) :: src
-      type(occaProperties), value :: props
+      type(occaJson), value :: props
     end function
 
     ! void* occaUMalloc(const occaUDim_t bytes,
     !                   const void *src,
-    !                   occaProperties props);
+    !                   occaJson props);
     type(C_void_ptr) function occaUMalloc(bytes, src, props) &
                               bind(C, name="occaUMalloc")
-      import occaUDim_t, C_void_ptr, occaProperties
+      import occaUDim_t, C_void_ptr, occaJson
       implicit none
       integer(occaUDim_t), value, intent(in) :: bytes
       type(C_void_ptr), value, intent(in) :: src
-      type(occaProperties), value :: props
+      type(occaJson), value :: props
     end function
 
     ! void* occaTypedUMalloc(const occaUDim_t entries,
     !                        const occaDtype type,
     !                        const void *src,
-    !                        occaProperties props);
+    !                        occaJson props);
     type(C_void_ptr) function occaTypedUMalloc(entries, type, src, props) &
                               bind(C, name="occaTypedUMalloc")
-      import occaUDim_t, occaDtype, C_void_ptr, occaProperties
+      import occaUDim_t, occaDtype, C_void_ptr, occaJson
       implicit none
       integer(occaUDim_t), value, intent(in) :: entries
       type(occaDtype), value, intent(in) :: type
       type(C_void_ptr), value, intent(in) :: src
-      type(occaProperties), value :: props
+      type(occaJson), value :: props
     end function
     ! ======================================
   end interface

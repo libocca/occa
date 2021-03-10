@@ -1,0 +1,250 @@
+#---[ Configurable Options ]------------
+# Project
+DOXYFILE_ENCODING      = UTF-8
+OUTPUT_LANGUAGE        = English
+
+# Output
+GENERATE_XML           = YES
+XML_OUTPUT             = $(DOXYGEN_OUTPUT)
+XML_PROGRAMLISTING     = NO
+CREATE_SUBDIRS         = NO
+MARKDOWN_SUPPORT       = YES
+
+# Input
+INPUT                  = $(OCCA_DIR)/include
+RECURSIVE              = YES
+SEARCH_INCLUDES        = NO
+FILE_PATTERNS          = *.cpp \
+                         *.hpp \
+                         *.tpp \
+                         *.c   \
+                         *.h
+
+# Configs
+TAB_SIZE               = 2
+
+# Custom commands
+ALIASES =
+ALIASES += rawXmlStart="<![CDATA["
+ALIASES += rawXmlEnd="]]>"
+
+ALIASES += startDoc{1}="\xmlonly <occa-doc id=\"\1\">@rawXmlStart "
+ALIASES += endDoc=" @rawXmlEnd</occa-doc> \endxmlonly"
+
+ALIASES += doc{1}="\xmlonly <occa-doc id=\"\1\"></occa-doc> \endxmlonly"
+#=======================================
+
+
+#---[ Known Options ]-------------------
+# Options that might matter
+
+# Project
+ALLOW_UNICODE_NAMES    = NO
+OUTPUT_DIRECTORY       =
+PROJECT_BRIEF          =
+PROJECT_LOGO           =
+PROJECT_NAME           = "OCCA"
+PROJECT_NUMBER         =
+
+
+# Preprocessor
+ENABLE_PREPROCESSING   = YES
+EXPAND_AS_DEFINED      =
+EXPAND_ONLY_PREDEF     = NO
+INCLUDE_FILE_PATTERNS  =
+INCLUDE_PATH           =
+MACRO_EXPANSION        = NO
+PREDEFINED             =
+SKIP_FUNCTION_MACROS   = YES
+
+# Extracted
+EXTRACT_ALL            = NO
+EXTRACT_ANON_NSPACES   = NO
+EXTRACT_LOCAL_CLASSES  = YES
+EXTRACT_LOCAL_METHODS  = NO
+EXTRACT_PACKAGE        = NO
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = NO
+
+# Error handling
+WARNINGS               = NO
+WARN_AS_ERROR          = NO
+WARN_FORMAT            = "$file:$line: $text"
+WARN_IF_DOC_ERROR      = NO
+WARN_IF_UNDOCUMENTED   = NO
+WARN_LOGFILE           =
+WARN_NO_PARAMDOC       = NO
+#=======================================
+
+
+#---[ Unused Outputs ]------------------
+# All non-XML outputs set to no NO
+GENERATE_AUTOGEN_DEF   = NO
+GENERATE_CHI           = NO
+GENERATE_DOCBOOK       = NO
+GENERATE_DOCSET        = NO
+GENERATE_ECLIPSEHELP   = NO
+GENERATE_HTML          = NO
+GENERATE_HTMLHELP      = NO
+GENERATE_LATEX         = NO
+GENERATE_MAN           = NO
+GENERATE_PERLMOD       = NO
+GENERATE_QHP           = NO
+GENERATE_RTF           = NO
+GENERATE_TREEVIEW      = NO
+#=======================================
+
+
+#---[ Unknown Options ]-----------------
+# Too lazy to read (Kept their default values)
+ABBREVIATE_BRIEF       =
+ALPHABETICAL_INDEX     = YES
+ALWAYS_DETAILED_SEC    = NO
+AUTOLINK_SUPPORT       = YES
+BRIEF_MEMBER_DESC      = YES
+BUILTIN_STL_SUPPORT    = NO
+CASE_SENSE_NAMES       = YES
+CITE_BIB_FILES         =
+CLANG_ASSISTED_PARSING = NO
+COLS_IN_ALPHA_INDEX    = 5
+CPP_CLI_SUPPORT        = NO
+DISTRIBUTE_GROUP_DOC   = NO
+ENABLED_SECTIONS       =
+EXAMPLE_PATH           =
+EXAMPLE_PATTERNS       = *
+EXAMPLE_RECURSIVE      = NO
+EXCLUDE                =
+EXCLUDE_PATTERNS       =
+EXCLUDE_SYMBOLS        =
+EXCLUDE_SYMLINKS       = NO
+EXTENSION_MAPPING      =
+FILE_VERSION_FILTER    =
+FILTER_PATTERNS        =
+FILTER_SOURCE_FILES    = NO
+FILTER_SOURCE_PATTERNS =
+FORCE_LOCAL_INCLUDES   = NO
+FULL_PATH_NAMES        = YES
+GENERATE_BUGLIST       = YES
+GENERATE_DEPRECATEDLIST= YES
+GENERATE_TESTLIST      = YES
+GENERATE_TODOLIST      = YES
+GROUP_NESTED_COMPOUNDS = NO
+HIDE_COMPOUND_REFERENCE= NO
+HIDE_FRIEND_COMPOUNDS  = NO
+HIDE_IN_BODY_DOCS      = NO
+HIDE_SCOPE_NAMES       = NO
+HIDE_UNDOC_CLASSES     = NO
+HIDE_UNDOC_MEMBERS     = NO
+IDL_PROPERTY_SUPPORT   = YES
+IMAGE_PATH             =
+INHERIT_DOCS           = YES
+INLINE_GROUPED_CLASSES = NO
+INLINE_INFO            = YES
+INLINE_INHERITED_MEMB  = NO
+INLINE_SIMPLE_STRUCTS  = NO
+INLINE_SOURCES         = NO
+INPUT_ENCODING         = UTF-8
+INPUT_FILTER           =
+INTERNAL_DOCS          = NO
+JAVADOC_AUTOBRIEF      = NO
+LAYOUT_FILE            =
+LOOKUP_CACHE_SIZE      = 0
+MAX_INITIALIZER_LINES  = 30
+MULTILINE_CPP_IS_BRIEF = NO
+OPTIMIZE_FOR_FORTRAN   = NO
+OPTIMIZE_OUTPUT_FOR_C  = NO
+OPTIMIZE_OUTPUT_JAVA   = NO
+OPTIMIZE_OUTPUT_VHDL   = NO
+QT_AUTOBRIEF           = NO
+QUIET                  = NO
+REFERENCED_BY_RELATION = NO
+REFERENCES_LINK_SOURCE = YES
+REFERENCES_RELATION    = NO
+REPEAT_BRIEF           = YES
+SEPARATE_MEMBER_PAGES  = NO
+SHORT_NAMES            = NO
+SHOW_FILES             = YES
+SHOW_GROUPED_MEMB_INC  = NO
+SHOW_INCLUDE_FILES     = YES
+SHOW_NAMESPACES        = YES
+SHOW_USED_FILES        = YES
+SIP_SUPPORT            = NO
+SORT_BRIEF_DOCS        = NO
+SORT_BY_SCOPE_NAME     = NO
+SORT_GROUP_NAMES       = NO
+SORT_MEMBERS_CTORS_1ST = NO
+SORT_MEMBER_DOCS       = YES
+SOURCE_BROWSER         = NO
+SOURCE_TOOLTIPS        = YES
+STRICT_PROTO_MATCHING  = NO
+STRIP_CODE_COMMENTS    = YES
+STRIP_FROM_INC_PATH    =
+STRIP_FROM_PATH        =
+SUBGROUPING            = YES
+TCL_SUBST              =
+TOC_INCLUDE_HEADINGS   = 0
+TYPEDEF_HIDES_STRUCT   = NO
+USE_HTAGS              = NO
+USE_MDFILE_AS_MAINPAGE =
+VERBATIM_HEADERS       = YES
+#=======================================
+
+
+#---[ Unused Output Options ]-----------
+# Options related to unused outputs (Kept their default values)
+BINARY_TOC             = NO
+COMPACT_LATEX          = NO
+COMPACT_RTF            = NO
+DISABLE_INDEX          = NO
+DOCBOOK_OUTPUT         = docbook
+DOCBOOK_PROGRAMLISTING = NO
+DOCSET_BUNDLE_ID       = org.doxygen.Project
+DOCSET_FEEDNAME        = "Doxygen generated docs"
+DOCSET_PUBLISHER_ID    = org.doxygen.Publisher
+DOCSET_PUBLISHER_NAME  = Publisher
+ECLIPSE_DOC_ID         = org.doxygen.Project
+ENUM_VALUES_PER_LINE   = 4
+EXTERNAL_SEARCH        = NO
+EXT_LINKS_IN_WINDOW    = NO
+FORMULA_FONTSIZE       = 10
+FORMULA_TRANSPARENT    = YES
+HTML_COLORSTYLE_GAMMA  = 80
+HTML_COLORSTYLE_HUE    = 220
+HTML_COLORSTYLE_SAT    = 100
+HTML_DYNAMIC_SECTIONS  = NO
+HTML_FILE_EXTENSION    = .html
+HTML_INDEX_NUM_ENTRIES = 100
+HTML_OUTPUT            = html
+HTML_TIMESTAMP         = NO
+LATEX_BATCHMODE        = NO
+LATEX_BIB_STYLE        = plain
+LATEX_CMD_NAME         = latex
+LATEX_HIDE_INDICES     = NO
+LATEX_OUTPUT           = latex
+LATEX_SOURCE_CODE      = NO
+LATEX_TIMESTAMP        = NO
+MAKEINDEX_CMD_NAME     = makeindex
+MAN_EXTENSION          = .3
+MAN_LINKS              = NO
+MAN_OUTPUT             = man
+MAN_SUBDIR             =
+MATHJAX_FORMAT         = HTML-CSS
+MATHJAX_RELPATH        = http://cdn.mathjax.org/mathjax/latest
+PAPER_TYPE             = a4
+PDF_HYPERLINKS         = YES
+PERLMOD_LATEX          = NO
+PERLMOD_MAKEVAR_PREFIX =
+PERLMOD_PRETTY         = YES
+QHP_NAMESPACE          = org.doxygen.Project
+QHP_VIRTUAL_FOLDER     = doc
+RTF_HYPERLINKS         = NO
+RTF_OUTPUT             = rtf
+RTF_SOURCE_CODE        = NO
+SEARCHDATA_FILE        = searchdata.xml
+SEARCHENGINE           = YES
+SERVER_BASED_SEARCH    = NO
+TOC_EXPAND             = NO
+TREEVIEW_WIDTH         = 250
+USE_MATHJAX            = NO
+USE_PDFLATEX           = YES
+#=======================================

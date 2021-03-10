@@ -1,4 +1,4 @@
 add_subdirectory(01_add_vectors)
 add_subdirectory(02_background_device)
-add_subdirectory(03_inline_okl)
+add_subdirectory(03_generic_inline_kernel)
 add_subdirectory(04_reduction)

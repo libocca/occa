@@ -6,21 +6,25 @@
 
 #include <occa.hpp>
 #include <occa.h>
-#include <occa/c/types.hpp>
-#include <occa/tools/testing.hpp>
+
+#include <occa/internal/c/types.hpp>
+#include <occa/internal/io.hpp>
+#include <occa/internal/utils/testing.hpp>
 
 const std::string deviceStr = (
-  "mode: 'Serial',"
-  "dkey: 1,"
-  "kernel: {"
-  "  kkey: 2,"
-  "},"
-  "memory: {"
-  "  mkey: 3,"
-  "},"
+  "{"
+  "  mode: 'Serial',"
+  "  dkey: 1,"
+  "  kernel: {"
+  "    kkey: 2,"
+  "  },"
+  "  memory: {"
+  "    mkey: 3,"
+  "  },"
+  "}"
 );
 
-occaProperties props = occaCreatePropertiesFromString(
+occaJson props = occaJsonParse(
   deviceStr.c_str()
 );
 
@@ -29,6 +33,7 @@ void testProperties();
 void testMemoryMethods();
 void testKernelMethods();
 void testStreamMethods();
+void testWrapMemory();
 
 int main(const int argc, const char **argv) {
   srand(time(NULL));
@@ -38,6 +43,7 @@ int main(const int argc, const char **argv) {
   testMemoryMethods();
   testKernelMethods();
   testStreamMethods();
+  testWrapMemory();
 
   occaFree(&props);
 
@@ -54,6 +60,8 @@ void testInit() {
   ASSERT_FALSE(occaIsUndefined(device));
   ASSERT_EQ(device.type,
             OCCA_DEVICE);
+
+  occaPrintTypeInfo(device);
 
   occaFree(&device);
 
@@ -82,14 +90,14 @@ void testProperties() {
   ASSERT_EQ((const char*) occaDeviceMode(device),
             (const char*) "Serial");
 
-  occaProperties deviceProps = occaDeviceGetProperties(device);
-  ASSERT_TRUE(occaPropertiesHas(deviceProps, "dkey"));
+  occaJson deviceProps = occaDeviceGetProperties(device);
+  ASSERT_TRUE(occaJsonObjectHas(deviceProps, "dkey"));
 
-  occaProperties kernelProps = occaDeviceGetKernelProperties(device);
-  ASSERT_TRUE(occaPropertiesHas(kernelProps, "kkey"));
+  occaJson kernelProps = occaDeviceGetKernelProperties(device);
+  ASSERT_TRUE(occaJsonObjectHas(kernelProps, "kkey"));
 
-  occaProperties memoryProps = occaDeviceGetMemoryProperties(device);
-  ASSERT_TRUE(occaPropertiesHas(memoryProps, "mkey"));
+  occaJson memoryProps = occaDeviceGetMemoryProperties(device);
+  ASSERT_TRUE(occaJsonObjectHas(memoryProps, "mkey"));
 
   occaFree(&device);
 }
@@ -111,6 +119,8 @@ void testMemoryMethods() {
   // Test malloc + umalloc
   occaMemory mem1 = occaDeviceMalloc(device, memBytes, NULL, occaDefault);
   allocatedBytes += memBytes;
+
+  occaPrintTypeInfo(mem1);
 
   ASSERT_EQ((size_t) occaDeviceMemoryAllocated(device),
             allocatedBytes);
@@ -182,6 +192,8 @@ void testKernelMethods() {
     occa::c::kernel(addVectors).binaryFilename()
   );
 
+  occaPrintTypeInfo(addVectors);
+
   occaFree(&addVectors);
 
   addVectors = occaDeviceBuildKernel(device,
@@ -226,6 +238,8 @@ void testStreamMethods() {
   occaStream cStream = occaDeviceCreateStream(device, occaDefault);
   occa::stream stream = occa::c::stream(cStream);
 
+  occaPrintTypeInfo(cStream);
+
   occaDeviceSetStream(device, cStream);
 
   ASSERT_EQ(stream.getModeStream(),
@@ -257,4 +271,55 @@ void testStreamMethods() {
 
   occaFree(&cStream);
   occaFree(&device);
+}
+
+void testWrapMemory() {
+  occaDevice device = occaCreateDevice(props);
+  const int entries = 10;
+  const size_t bytes = entries * sizeof(int);
+
+  occaMemory mem1 = occaMalloc(bytes, NULL, occaDefault);
+  occaMemory mem2 = occaMemoryClone(mem1);
+
+  ASSERT_EQ(occaMemorySize(mem1),
+            occaMemorySize(mem2));
+
+  ASSERT_NEQ(occa::c::memory(mem1),
+             occa::c::memory(mem2));
+
+  int *ptr = (int*) occaMemoryPtr(mem2);
+  occaMemoryDetach(mem2);
+
+  for (int i = 0; i < entries; ++i) {
+    ptr[i] = i;
+  }
+
+  mem2 = occaDeviceWrapMemory(occaHost(),
+                              ptr,
+                              bytes,
+                              occaDefault);
+
+  mem2 = occaDeviceTypedWrapMemory(device,
+                                   ptr,
+                                   entries,
+                                   occaDtypeInt,
+                                   occaDefault);
+
+  occaJson memProps = (
+    occaJsonParse("{foo: 'bar'}")
+  );
+
+  mem2 = occaDeviceWrapMemory(occaHost(),
+                              ptr,
+                              bytes,
+                              memProps);
+
+  mem2 = occaDeviceTypedWrapMemory(device,
+                                   ptr,
+                                   entries,
+                                   occaDtypeInt,
+                                   memProps);
+
+  occaFree(&device);
+  occaFree(&memProps);
 }

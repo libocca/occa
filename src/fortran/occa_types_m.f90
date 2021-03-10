@@ -14,8 +14,7 @@ module occa_types_m
 
     occaDtype => occaType, &
     occaScope => occaType, &
-    occaJson => occaType, &
-    occaProperties => occaType
+    occaJson => occaType
 
   implicit none
 
@@ -213,7 +212,6 @@ module occa_types_m
   integer(C_int), bind(C, name="OCCA_DTYPE")         :: OCCA_C_DTYPE
   integer(C_int), bind(C, name="OCCA_SCOPE")         :: OCCA_C_SCOPE
   integer(C_int), bind(C, name="OCCA_JSON")          :: OCCA_C_JSON
-  integer(C_int), bind(C, name="OCCA_PROPERTIES")    :: OCCA_C_PROPERTIES
   ! ======================================
 
   ! ---[ Globals & Flags ]----------------

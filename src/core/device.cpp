@@ -1,138 +1,54 @@
 #include <occa/core/device.hpp>
 #include <occa/core/base.hpp>
-#include <occa/modes.hpp>
-#include <occa/tools/env.hpp>
-#include <occa/tools/sys.hpp>
-#include <occa/io.hpp>
+#include <occa/internal/core/device.hpp>
+#include <occa/internal/core/kernel.hpp>
+#include <occa/internal/core/memory.hpp>
+#include <occa/internal/modes.hpp>
+#include <occa/internal/utils/sys.hpp>
+#include <occa/internal/utils/env.hpp>
+#include <occa/internal/io.hpp>
 
 namespace occa {
-  //---[ modeDevice_t ]-----------------
-  modeDevice_t::modeDevice_t(const occa::properties &properties_) :
-    mode((std::string) properties_["mode"]),
-    properties(properties_),
-    needsLauncherKernel(false),
-    bytesAllocated(0) {}
+  //---[ Utils ]------------------------
+  occa::json getModeSpecificProps(const std::string &mode,
+                                  const occa::json &props) {
+    occa::json allProps = (
+      props
+      + props["modes/" + mode]
+    );
 
-  modeDevice_t::~modeDevice_t() {
-    // Null all wrappers
-    while (deviceRing.head) {
-      device *mem = (device*) deviceRing.head;
-      deviceRing.removeRef(mem);
-      mem->modeDevice = NULL;
-    }
+    allProps.remove("modes");
+
+    return allProps;
   }
 
-  // Must be called before ~modeDevice_t()!
-  void modeDevice_t::freeResources() {
-    freeRing<modeKernel_t>(kernelRing);
-    freeRing<modeMemory_t>(memoryRing);
-    freeRing<modeStream_t>(streamRing);
-    freeRing<modeStreamTag_t>(streamTagRing);
+  occa::json getObjectSpecificProps(const std::string &mode,
+                                    const std::string &object,
+                                    const occa::json &props) {
+    occa::json allProps = (
+      props[object]
+      + props[object + "/modes/" + mode]
+      + props["modes/" + mode + "/" + object]
+    );
+
+    allProps.remove(object + "/modes");
+    allProps.remove("modes");
+
+    return allProps;
   }
 
-  void modeDevice_t::dontUseRefs() {
-    deviceRing.dontUseRefs();
-  }
-
-  void modeDevice_t::addDeviceRef(device *dev) {
-    deviceRing.addRef(dev);
-  }
-
-  void modeDevice_t::removeDeviceRef(device *dev) {
-    deviceRing.removeRef(dev);
-  }
-
-  bool modeDevice_t::needsFree() const {
-    return deviceRing.needsFree();
-  }
-
-  void modeDevice_t::addKernelRef(modeKernel_t *kernel) {
-    kernelRing.addRef(kernel);
-  }
-
-  void modeDevice_t::removeKernelRef(modeKernel_t *kernel) {
-    kernelRing.removeRef(kernel);
-  }
-
-  void modeDevice_t::addMemoryRef(modeMemory_t *memory) {
-    memoryRing.addRef(memory);
-  }
-
-  void modeDevice_t::removeMemoryRef(modeMemory_t *memory) {
-    memoryRing.removeRef(memory);
-  }
-
-  void modeDevice_t::addStreamRef(modeStream_t *stream) {
-    streamRing.addRef(stream);
-  }
-
-  void modeDevice_t::removeStreamRef(modeStream_t *stream) {
-    streamRing.removeRef(stream);
-  }
-
-  void modeDevice_t::addStreamTagRef(modeStreamTag_t *streamTag) {
-    streamTagRing.addRef(streamTag);
-  }
-
-  void modeDevice_t::removeStreamTagRef(modeStreamTag_t *streamTag) {
-    streamTagRing.removeRef(streamTag);
-  }
-
-  hash_t modeDevice_t::versionedHash() const {
-    return (occa::hash(settings()["version"])
-            ^ hash());
-  }
-
-  void modeDevice_t::writeKernelBuildFile(const std::string &filename,
-                                          const hash_t &kernelHash,
-                                          const occa::properties &kernelProps,
-                                          const lang::sourceMetadata_t &sourceMetadata) const {
-    occa::properties infoProps;
-
-    infoProps["device"]       = properties;
-    infoProps["device/hash"]  = versionedHash().getFullString();
-    infoProps["kernel/props"] = kernelProps;
-    infoProps["kernel/hash"]  = kernelHash.getFullString();
-    infoProps["kernel/metadata"] = sourceMetadata.getKernelMetadataJson();
-    infoProps["kernel/dependencies"] = sourceMetadata.getDependencyJson();
-
-    io::writeBuildFile(filename, kernelHash, infoProps);
-  }
-
-  std::string modeDevice_t::getKernelHash(const std::string &fullHash,
-                                          const std::string &kernelName) {
-    return (fullHash + "-" + kernelName);
-  }
-
-  std::string modeDevice_t::getKernelHash(const hash_t &kernelHash,
-                                          const std::string &kernelName) {
-    return getKernelHash(kernelHash.getFullString(),
-                         kernelName);
-  }
-
-  std::string modeDevice_t::getKernelHash(modeKernel_t *kernel) {
-    return getKernelHash(kernel->properties["hash"],
-                         kernel->name);
-  }
-
-  kernel& modeDevice_t::getCachedKernel(const hash_t &kernelHash,
-                                        const std::string &kernelName) {
-
-    return cachedKernels[getKernelHash(kernelHash, kernelName)];
-  }
-
-  void modeDevice_t::removeCachedKernel(modeKernel_t *kernel) {
-    if (kernel == NULL) {
-      return;
-    }
-    cachedKernelMapIterator it = cachedKernels.find(getKernelHash(kernel));
-    if (it != cachedKernels.end()) {
-      cachedKernels.erase(it);
-    }
+  occa::json initialObjectProps(const std::string &mode,
+                                const std::string &object,
+                                const occa::json &props) {
+    occa::json objectProps = (
+      getObjectSpecificProps(mode, object, settings())
+      + getObjectSpecificProps(mode, object, props)
+    );
+    objectProps["mode"] = mode;
+    return objectProps;
   }
   //====================================
 
-  //---[ device ]-----------------------
   device::device() :
     modeDevice(NULL) {}
 
@@ -141,10 +57,16 @@ namespace occa {
     setModeDevice(modeDevice_);
   }
 
-  device::device(const occa::properties &props) :
+  device::device(const std::string &props) :
+    device(json::parse(props)) {}
+
+  device::device(const occa::json &props) :
     modeDevice(NULL) {
     setup(props);
   }
+
+  device::device(jsonInitializerList initializer) :
+    device(json(initializer)) {}
 
   device::device(const device &other) :
     modeDevice(NULL) {
@@ -207,15 +129,20 @@ namespace occa {
     return modeDevice;
   }
 
-  void device::setup(const occa::properties &props) {
+  void device::setup(const std::string &props) {
+    setup(json::parse(props));
+  }
+
+  void device::setup(const occa::json &props) {
     free();
 
     const std::string mode_ = props["mode"];
 
-    occa::properties deviceProps = (
+    occa::json deviceProps = (
       getObjectSpecificProps(mode_, "device", settings())
       + getModeSpecificProps(mode_, props)
     );
+
     deviceProps["kernel"] = initialObjectProps(mode_, "kernel", props);
     deviceProps["memory"] = initialObjectProps(mode_, "memory", props);
     deviceProps["stream"] = initialObjectProps(mode_, "stream", props);
@@ -243,41 +170,41 @@ namespace occa {
             : noMode);
   }
 
-  const occa::properties& device::properties() const {
+  const occa::json& device::properties() const {
     assertInitialized();
     return modeDevice->properties;
   }
 
-  const occa::properties& device::kernelProperties() const {
+  const occa::json& device::kernelProperties() const {
     assertInitialized();
-    return (const occa::properties&) modeDevice->properties["kernel"];
+    return (const occa::json&) modeDevice->properties["kernel"];
   }
 
-  occa::properties device::kernelProperties(const occa::properties &additionalProps) const {
+  occa::json device::kernelProperties(const occa::json &additionalProps) const {
     return (
       kernelProperties()
       + getModeSpecificProps(mode(), additionalProps)
     );
   }
 
-  const occa::properties& device::memoryProperties() const {
+  const occa::json& device::memoryProperties() const {
     assertInitialized();
-    return (const occa::properties&) modeDevice->properties["memory"];
+    return (const occa::json&) modeDevice->properties["memory"];
   }
 
-  occa::properties device::memoryProperties(const occa::properties &additionalProps) const {
+  occa::json device::memoryProperties(const occa::json &additionalProps) const {
     return (
       memoryProperties()
       + getModeSpecificProps(mode(), additionalProps)
     );
   }
 
-  const occa::properties& device::streamProperties() const {
+  const occa::json& device::streamProperties() const {
     assertInitialized();
-    return (const occa::properties&) modeDevice->properties["stream"];
+    return (const occa::json&) modeDevice->properties["stream"];
   }
 
-  occa::properties device::streamProperties(const occa::properties &additionalProps) const {
+  occa::json device::streamProperties(const occa::json &additionalProps) const {
     return (
       streamProperties()
       + getModeSpecificProps(mode(), additionalProps)
@@ -333,7 +260,7 @@ namespace occa {
   }
 
   //  |---[ Stream ]--------------------
-  stream device::createStream(const occa::properties &props) {
+  stream device::createStream(const occa::json &props) {
     assertInitialized();
     return modeDevice->createStream(streamProperties(props));
   }
@@ -365,9 +292,9 @@ namespace occa {
   //  |=================================
 
   //  |---[ Kernel ]--------------------
-  void device::setupKernelInfo(const occa::properties &props,
+  void device::setupKernelInfo(const occa::json &props,
                                const hash_t &sourceHash,
-                               occa::properties &kernelProps,
+                               occa::json &kernelProps,
                                hash_t &kernelHash) const {
     assertInitialized();
 
@@ -430,8 +357,8 @@ namespace occa {
 
   kernel device::buildKernel(const std::string &filename,
                              const std::string &kernelName,
-                             const occa::properties &props) const {
-    occa::properties allProps;
+                             const occa::json &props) const {
+    occa::json allProps;
     hash_t kernelHash;
     const std::string realFilename = io::findInPaths(filename, env::OCCA_KERNEL_PATH);
     setupKernelInfo(props, hashFile(realFilename),
@@ -464,8 +391,8 @@ namespace occa {
 
   kernel device::buildKernelFromString(const std::string &content,
                                        const std::string &kernelName,
-                                       const occa::properties &props) const {
-    occa::properties allProps;
+                                       const occa::json &props) const {
+    occa::json allProps;
     hash_t kernelHash;
     setupKernelInfo(props, occa::hash(content),
                     allProps, kernelHash);
@@ -488,69 +415,12 @@ namespace occa {
 
   kernel device::buildKernelFromBinary(const std::string &filename,
                                        const std::string &kernelName,
-                                       const occa::properties &props) const {
+                                       const occa::json &props) const {
     assertInitialized();
 
     return kernel(modeDevice->buildKernelFromBinary(filename,
                                                     kernelName,
                                                     props));
-  }
-
-  void device::loadKernels(const std::string &library) {
-    // TODO 1.1: Load kernels
-#if 0
-    assertInitialized();
-
-    std::string devHash = hash().getFullString();
-    strVector dirs = io::directories("occa://" + library);
-    const int dirCount = (int) dirs.size();
-    int kernelsLoaded = 0;
-
-    for (int d = 0; d < dirCount; ++d) {
-      const std::string buildFile = dirs[d] + kc::buildFile;
-
-      if (!io::isFile(buildFile)) {
-        continue;
-      }
-
-      json info = json::read(buildFile)["info"];
-      if ((std::string) info["device/hash"] != devHash) {
-        continue;
-      }
-      ++kernelsLoaded;
-
-      const std::string sourceFilename = dirs[d] + kc::parsedSourceFile;
-
-      json &kInfo = info["kernel"];
-      hash_t hash = hash_t::fromString(kInfo["hash"]);
-      jsonArray metadataArray = kInfo["metadata"].array();
-      occa::properties kernelProps = kInfo["props"];
-
-      // Ignore how the kernel was setup, turn off verbose
-      kernelProps["verbose"] = false;
-
-      const int kernels = metadataArray.size();
-      for (int k = 0; k < kernels; ++k) {
-        buildKernel(sourceFilename,
-                    hash,
-                    kernelProps,
-                    lang::kernelMetadata_t::fromJson(metadataArray[k]));
-      }
-    }
-
-    // Print loaded info
-    if (properties().get("verbose", false) && kernelsLoaded) {
-      io::stdout << "Loaded " << kernelsLoaded;
-      if (library.size()) {
-        io::stdout << " ["<< library << "]";
-      } else {
-        io::stdout << " cached";
-      }
-      io::stdout << ((kernelsLoaded == 1)
-                     ? " kernel\n"
-                     : " kernels\n");
-    }
-#endif
   }
   //  |=================================
 
@@ -558,7 +428,7 @@ namespace occa {
   occa::memory device::malloc(const dim_t entries,
                               const dtype_t &dtype,
                               const void *src,
-                              const occa::properties &props) {
+                              const occa::json &props) {
     assertInitialized();
 
     if (entries == 0) {
@@ -566,11 +436,10 @@ namespace occa {
     }
 
     const dim_t bytes = entries * dtype.bytes();
-    OCCA_ERROR("Trying to allocate "
-               << "negative bytes (" << bytes << ")",
+    OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
                bytes >= 0);
 
-    occa::properties memProps = memoryProperties(props);
+    occa::json memProps = memoryProperties(props);
 
     memory mem(modeDevice->malloc(bytes, src, memProps));
     mem.setDtype(dtype);
@@ -583,7 +452,7 @@ namespace occa {
   occa::memory device::malloc(const dim_t entries,
                               const dtype_t &dtype,
                               const occa::memory src,
-                              const occa::properties &props) {
+                              const occa::json &props) {
     memory mem = malloc(entries, dtype, NULL, props);
     if (entries && src.size()) {
       mem.copyFrom(src);
@@ -593,34 +462,34 @@ namespace occa {
 
   occa::memory device::malloc(const dim_t entries,
                               const dtype_t &dtype,
-                              const occa::properties &props) {
+                              const occa::json &props) {
     return malloc(entries, dtype, NULL, props);
   }
 
   template <>
   memory device::malloc<void>(const dim_t entries,
                               const void *src,
-                              const occa::properties &props) {
+                              const occa::json &props) {
     return malloc(entries, dtype::byte, src, props);
   }
 
   template <>
   memory device::malloc<void>(const dim_t entries,
                               const occa::memory src,
-                              const occa::properties &props) {
+                              const occa::json &props) {
     return malloc(entries, dtype::byte, src, props);
   }
 
   template <>
   memory device::malloc<void>(const dim_t entries,
-                              const occa::properties &props) {
+                              const occa::json &props) {
     return malloc(entries, dtype::byte, NULL, props);
   }
 
   void* device::umalloc(const dim_t entries,
                         const dtype_t &dtype,
                         const void *src,
-                        const occa::properties &props) {
+                        const occa::json &props) {
     void *ptr = umalloc(entries, dtype, occa::memory(), props);
 
     if (src && entries) {
@@ -634,14 +503,14 @@ namespace occa {
   void* device::umalloc(const dim_t entries,
                         const dtype_t &dtype,
                         const occa::memory src,
-                        const occa::properties &props) {
+                        const occa::json &props) {
     assertInitialized();
 
     if (entries == 0) {
       return NULL;
     }
 
-    occa::properties memProps = memoryProperties(props);
+    occa::json memProps = memoryProperties(props);
 
     memory mem = malloc(entries, dtype, src, memProps);
     mem.setDtype(dtype);
@@ -660,8 +529,35 @@ namespace occa {
 
   void* device::umalloc(const dim_t entries,
                         const dtype_t &dtype,
-                        const occa::properties &props) {
+                        const occa::json &props) {
     return umalloc(entries, dtype, NULL, props);
+  }
+
+  template <>
+  occa::memory device::wrapMemory<void>(const void *ptr,
+                                        const dim_t entries,
+                                        const occa::json &props) {
+    return wrapMemory(ptr, entries, dtype::byte, props);
+  }
+
+  occa::memory device::wrapMemory(const void *ptr,
+                                  const dim_t entries,
+                                  const dtype_t &dtype,
+                                  const occa::json &props) {
+    assertInitialized();
+
+    const dim_t bytes = entries * dtype.bytes();
+    OCCA_ERROR("Trying to wrap a pointer with negative bytes (" << bytes << ")",
+               bytes >= 0);
+
+    occa::json memProps = memoryProperties(props);
+
+    memory mem(modeDevice->wrapMemory(ptr, bytes, memProps));
+
+    mem.setDtype(dtype);
+    mem.dontUseRefs();
+
+    return mem;
   }
   //  |=================================
 
@@ -674,46 +570,6 @@ namespace occa {
                              const occa::device &device) {
     out << device.properties();
     return out;
-  }
-  //====================================
-
-  //---[ Utils ]------------------------
-  occa::properties getModeSpecificProps(const std::string &mode,
-                                        const occa::properties &props) {
-    occa::properties allProps = (
-      props
-      + props["modes/" + mode]
-    );
-
-    allProps.remove("modes");
-
-    return allProps;
-  }
-
-  occa::properties getObjectSpecificProps(const std::string &mode,
-                                          const std::string &object,
-                                          const occa::properties &props) {
-    occa::properties allProps = (
-      props[object]
-      + props[object + "/modes/" + mode]
-      + props["modes/" + mode + "/" + object]
-    );
-
-    allProps.remove(object + "/modes");
-    allProps.remove("modes");
-
-    return allProps;
-  }
-
-  occa::properties initialObjectProps(const std::string &mode,
-                                      const std::string &object,
-                                      const occa::properties &props) {
-    occa::properties objectProps = (
-      getObjectSpecificProps(mode, object, settings())
-      + getObjectSpecificProps(mode, object, props)
-    );
-    objectProps["mode"] = mode;
-    return objectProps;
   }
   //====================================
 }

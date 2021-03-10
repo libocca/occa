@@ -1,13 +1,15 @@
 #include <occa.hpp>
-#include <occa/tools/testing.hpp>
+#include <occa/internal/utils/testing.hpp>
 
 void testDtype();
 void testCasting();
+void testGet();
 void testJsonMethods();
 
 int main(const int argc, const char **argv) {
   testDtype();
   testCasting();
+  testGet();
   testJsonMethods();
 
   return 0;
@@ -113,8 +115,23 @@ void testCasting() {
   );
 }
 
+void testGet() {
+  ASSERT_EQ(occa::dtype::float_,
+            occa::dtype::get<float>());
+
+  occa::dtypeVector types = occa::dtype::getMany<float, double, int>();
+  ASSERT_EQ(3,
+            (int) types.size());
+  ASSERT_EQ(occa::dtype::float_,
+            types[0]);
+  ASSERT_EQ(occa::dtype::double_,
+            types[1]);
+  ASSERT_EQ(occa::dtype::int_,
+            types[2]);
+}
+
 void testJsonMethods() {
-  ASSERT_EQ(occa::dtype::double_.toJson().toString(),
+  ASSERT_EQ(occa::dtype::toJson(occa::dtype::double_).toString(),
             occa::json::parse("{ type: 'builtin', name: 'double' }").toString());
 
   occa::dtype_t foo("foo");
@@ -133,9 +150,9 @@ void testJsonMethods() {
 
   occa::json fooJson = occa::json::parse(fooJsonStr);
   ASSERT_EQ(fooJson.toString(),
-            foo.toJson().toString());
+            occa::dtype::toJson(foo).toString());
 
-  occa::dtype_t foo2 = occa::dtype_t::fromJson(fooJsonStr);
+  occa::dtype_t foo2 = occa::dtype::fromJson(fooJsonStr);
   ASSERT_NEQ(foo, foo2);
   ASSERT_TRUE(foo.matches(foo2));
 }

@@ -3,7 +3,7 @@ PROJ_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 ifndef OCCA_DIR
   OCCA_DIR=$(PROJ_DIR)/../../..
 endif
-include $(OCCA_DIR)/scripts/Makefile
+include $(OCCA_DIR)/scripts/build/Makefile
 
 # The OCCA source directory
 libSrcPath = $(OCCA_DIR)/src
@@ -21,7 +21,7 @@ all: main
 
 main: $(fObjects)
 
-include $(OCCA_DIR)/scripts/Make.fortran_rules
+include $(OCCA_DIR)/scripts/build/Make.fortran_rules
 
 %: %.f90
 	@mkdir -p $(abspath $(dir $@))

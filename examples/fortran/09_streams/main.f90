@@ -22,7 +22,7 @@ program main
 
     select case (arg)
       case ("-v", "--verbose")
-        call occaPropertiesSet(occaSettings(), "kernel/verbose", occaTrue)
+        call occaJsonObjectSet(occaSettings(), "kernel/verbose", occaTrue)
       case ("-h", "--help")
         call print_help()
         stop

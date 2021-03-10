@@ -3,8 +3,8 @@
 #if OCCA_MPI_ENABLED
 
 #include <occa/core/base.hpp>
-#include <occa/mpi.hpp>
-#include <occa/tools/tls.hpp>
+#include <occa/experimental/mpi.hpp>
+#include <occa/internal/utils/tls.hpp>
 
 namespace occa {
   namespace mpi {

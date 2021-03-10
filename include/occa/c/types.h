@@ -50,7 +50,6 @@ typedef occaType occaStreamTag;
 typedef occaType occaDtype;
 typedef occaType occaScope;
 typedef occaType occaJson;
-typedef occaType occaProperties;
 
 //---[ Type Flags ]---------------------
 extern const int OCCA_UNDEFINED;
@@ -84,7 +83,6 @@ extern const int OCCA_STREAMTAG;
 extern const int OCCA_DTYPE;
 extern const int OCCA_SCOPE;
 extern const int OCCA_JSON;
-extern const int OCCA_PROPERTIES;
 //======================================
 
 //---[ Globals & Flags ]----------------
@@ -97,49 +95,51 @@ extern const occaUDim_t occaAllBytes;
 //======================================
 
 //-----[ Known Types ]------------------
-OCCA_LFUNC bool OCCA_RFUNC occaIsUndefined(occaType value);
-OCCA_LFUNC bool OCCA_RFUNC occaIsDefault(occaType value);
+bool occaIsUndefined(occaType value);
+bool occaIsDefault(occaType value);
 
-OCCA_LFUNC occaType OCCA_RFUNC occaPtr(const void *value);
+occaType occaPtr(const void *value);
 
-OCCA_LFUNC occaType OCCA_RFUNC occaBool(bool value);
+occaType occaBool(bool value);
 
-OCCA_LFUNC occaType OCCA_RFUNC occaInt8(int8_t value);
-OCCA_LFUNC occaType OCCA_RFUNC occaUInt8(uint8_t value);
+occaType occaInt8(int8_t value);
+occaType occaUInt8(uint8_t value);
 
-OCCA_LFUNC occaType OCCA_RFUNC occaInt16(int16_t value);
-OCCA_LFUNC occaType OCCA_RFUNC occaUInt16(uint16_t value);
+occaType occaInt16(int16_t value);
+occaType occaUInt16(uint16_t value);
 
-OCCA_LFUNC occaType OCCA_RFUNC occaInt32(int32_t value);
-OCCA_LFUNC occaType OCCA_RFUNC occaUInt32(uint32_t value);
+occaType occaInt32(int32_t value);
+occaType occaUInt32(uint32_t value);
 
-OCCA_LFUNC occaType OCCA_RFUNC occaInt64(int64_t value);
-OCCA_LFUNC occaType OCCA_RFUNC occaUInt64(uint64_t value);
+occaType occaInt64(int64_t value);
+occaType occaUInt64(uint64_t value);
 //======================================
 
 //-----[ Ambiguous Types ]--------------
-OCCA_LFUNC occaType OCCA_RFUNC occaChar(char value);
-OCCA_LFUNC occaType OCCA_RFUNC occaUChar(unsigned char value);
+occaType occaChar(char value);
+occaType occaUChar(unsigned char value);
 
-OCCA_LFUNC occaType OCCA_RFUNC occaShort(short value);
-OCCA_LFUNC occaType OCCA_RFUNC occaUShort(unsigned short value);
+occaType occaShort(short value);
+occaType occaUShort(unsigned short value);
 
-OCCA_LFUNC occaType OCCA_RFUNC occaInt(int value);
-OCCA_LFUNC occaType OCCA_RFUNC occaUInt(unsigned int value);
+occaType occaInt(int value);
+occaType occaUInt(unsigned int value);
 
-OCCA_LFUNC occaType OCCA_RFUNC occaLong(long value);
-OCCA_LFUNC occaType OCCA_RFUNC occaULong(unsigned long value);
+occaType occaLong(long value);
+occaType occaULong(unsigned long value);
 
-OCCA_LFUNC occaType OCCA_RFUNC occaFloat(float value);
-OCCA_LFUNC occaType OCCA_RFUNC occaDouble(double value);
+occaType occaFloat(float value);
+occaType occaDouble(double value);
 
-OCCA_LFUNC occaType OCCA_RFUNC occaStruct(const void *value,
-                                          occaUDim_t bytes);
+occaType occaStruct(const void *value,
+                    occaUDim_t bytes);
 
-OCCA_LFUNC occaType OCCA_RFUNC occaString(const char *str);
+occaType occaString(const char *str);
 //======================================
 
-OCCA_LFUNC void OCCA_RFUNC occaFree(occaType *value);
+void occaFree(occaType *value);
+
+void occaPrintTypeInfo(occaType value);
 
 OCCA_END_EXTERN_C
 

@@ -7,19 +7,29 @@
 lib/
 obj/
 main
-opt/
+opt
 
 # CMake
-build/
+/build/
 
 # Bin
-bin/
+/bin/*
+/tests/bin
 !bin/occa.cpp
 
 # Auto-generated code
-.compiledDefines
-include/occa/defines/compiledDefines.hpp
-include/occa/scripts
+/.compiledDefines
+/include/occa/defines/compiledDefines.hpp
+/include/occa/scripts
+
+# Binaries generated to fetch compiler information
+/scripts/compiler/compilerSupportsMPI
+/scripts/compiler/findFortranCompilerVendor
+/scripts/compiler/fortranCompilerSupportsMPI
+/scripts/compiler/fortranCompilerSupportsOpenMP
+
+# Documentation
+.doxygen_output
 
 # Debug
 .DS_Store
