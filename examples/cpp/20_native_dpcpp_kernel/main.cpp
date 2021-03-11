@@ -1,8 +1,15 @@
 #include <iostream>
 
 #include <occa.hpp>
-#include <occa/types/fp.hpp>
-#include <CL/sycl.hpp>
+// #include <occa/types/fp.hpp>
+// #include <CL/sycl.hpp>
+
+//---[ Internal Tools ]-----------------
+// Note: These headers are not officially supported
+//       Please don't rely on it outside of the occa examples
+#include <occa/internal/utils/cli.hpp>
+#include <occa/internal/utils/testing.hpp>
+//======================================
 
 occa::json parseArgs(int argc, const char **argv);
 
@@ -10,7 +17,7 @@ occa::json parseArgs(int argc, const char **argv);
 int main(int argc, const char **argv) {
   occa::json args = parseArgs(argc, argv);
 
-  int entries = 8;
+  int entries = 16;
 
   int *a  = new int[entries];
   int *b  = new int[entries];
@@ -37,8 +44,8 @@ int main(int argc, const char **argv) {
   // Compile a regular DPCPP kernel at run-time
   occa::properties kernelProps;
   kernelProps["okl/enabled"] = false;
-  kernelProps["compiler"] = "dpcpp";
-  kernelProps["compiler_linker_flags"] = "-shared -fPIC";
+  // kernelProps["compiler"] = "dpcpp";
+  // kernelProps["compiler_linker_flags"] = "-shared -fPIC";
  
   occa::kernel addVectors = device.buildKernel("addVectors.cpp",
                                                "addVectors_it",
@@ -49,7 +56,7 @@ int main(int argc, const char **argv) {
   o_b.copyFrom(b);
   o_ab.copyFrom(ab);
 
-  addVectors.setRunDims(8, entries);
+  addVectors.setRunDims(entries/4,4);
   // Launch device kernel
   addVectors(entries, o_a, o_b, o_ab);
   // Copy result to the host

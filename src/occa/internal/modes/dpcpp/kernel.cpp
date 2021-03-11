@@ -43,7 +43,6 @@ namespace occa
       function = nullptr;
     }
 
-
     void kernel::deviceRun() const
     {
       // Setup kernel dimensions
