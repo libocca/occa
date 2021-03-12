@@ -121,6 +121,7 @@ namespace occa
       wrapper->dontUseRefs();
 
       wrapper->dpcppDevice = device;
+      wrapper->dpcppContext = ::sycl::context(device);
       wrapper->currentStream = wrapper->createStream(allProps["stream"]);
 
       return occa::device(wrapper);

@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <occa.hpp>
+#include <CL/sycl.hpp>
 
 //---[ Internal Tools ]-----------------
 // Note: These headers are not officially supported
@@ -27,32 +28,39 @@ int main(int argc, const char **argv) {
     ab[i] = 0;
   }
 
+  int platform_id = (int) args["options/platform-id"];
+  int device_id = (int) args["options/device-id"];
+
   // Setup the platform and device IDs
-  occa::properties deviceProps;
+  occa::json deviceProps;
   deviceProps["mode"] = "dpcpp";
-  deviceProps["platform_id"] = (int) args["options/platform-id"];
-  deviceProps["device_id"] = (int) args["options/device-id"];
+  deviceProps["platform_id"] = platform_id;
+  deviceProps["device_id"] = device_id;
 
   occa::device device(deviceProps);
-  // Allocate memory on the device
-  occa::memory o_a = device.malloc<int>(entries);
-  occa::memory o_b = device.malloc<int>(entries);
-  occa::memory o_ab = device.malloc<int>(entries);
 
-  // Compile a regular DPCPP kernel at run-time
-  occa::properties kernelProps;
-  kernelProps["okl/enabled"] = false;
- 
-  occa::kernel addVectors = device.buildKernel("addVectors.cpp",
-                                               "addVectors_it",
-                                               kernelProps);
- 
+  // Allocate dpcpp memory on the device
+  auto dpcpp_device = sycl::platform::get_platforms()[platform_id].get_devices()[device_id];
+  sycl::context dpcpp_context(dpcpp_device);
+
+  int *dpcpp_a = sycl::malloc_device<int>(entries, dpcpp_device, dpcpp_context);
+  int *dpcpp_b = sycl::malloc_device<int>(entries,dpcpp_device,dpcpp_context);
+  int *dpcpp_ab = sycl::malloc_device<int>(entries,dpcpp_device,dpcpp_context);
+  
+  // Wrap dpcpp memory in oc
+  // occa::setDevice(device);
+  device.dontUseRefs();
+  occa::memory o_a = device.wrapMemory<int>(dpcpp_a, entries);
+  occa::memory o_b = device.wrapMemory<int>(dpcpp_b, entries);
+  occa::memory o_ab = device.wrapMemory<int>(dpcpp_ab, entries);
+  
+  occa::kernel addVectors = device.buildKernel("addVectors.okl", "addVectors");
+
   // Copy memory to the device
   o_a.copyFrom(a);
   o_b.copyFrom(b);
   o_ab.copyFrom(ab);
 
-  addVectors.setRunDims(entries/4,4);
   // Launch device kernel
   addVectors(entries, o_a, o_b, o_ab);
   // Copy result to the host
@@ -67,6 +75,11 @@ int main(int argc, const char **argv) {
       throw 1;
     }
   }
+
+  // @todo: Do we need to free dpcpp memory? Or does OCCA handle this?
+  ::sycl::free(dpcpp_a, dpcpp_context);
+  ::sycl::free(dpcpp_b, dpcpp_context);
+  ::sycl::free(dpcpp_ab, dpcpp_context);
 
   // Free host memory
   delete [] a;
