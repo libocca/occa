@@ -327,8 +327,8 @@ namespace occa
                                  const void *src,
                                  const occa::json &props)
     {
-      if (props.get("mapped", false))
-        return mappedAlloc(bytes, src, props);
+      if (props.get("host", false))
+        return hostAlloc(bytes, src, props);
 
       if (props.get("unified", false))
         return unifiedAlloc(bytes, src, props);
@@ -347,7 +347,7 @@ namespace occa
     }
 
     // @todo: update to `hostMalloc`
-    modeMemory_t *device::mappedAlloc(const udim_t bytes,
+    modeMemory_t *device::hostAlloc(const udim_t bytes,
                                       const void *src,
                                       const occa::json &props)
     {

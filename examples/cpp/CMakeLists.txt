@@ -20,6 +20,7 @@ add_subdirectory(15_cuda_interop)
 
 add_subdirectory(20_native_dpcpp_kernel)
 add_subdirectory(27_dpcpp_interop)
+add_subdirectory(28_memory_flavors)
 
 add_subdirectory(21_iso3dfd_native_dpcpp)
 add_subdirectory(22_iso3dfd_native_dpcpp_optimized)
