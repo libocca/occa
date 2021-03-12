@@ -70,7 +70,7 @@ namespace occa {
       if (startsWith(arch, "sm_")) {
         archFlag = " -arch=" + arch;
       } else if (startsWith(arch, "gfx")) {
-#ifdef __HIP_ROCclr__
+#if HIP_VERSION >= 305
         archFlag = " --amdgpu-target=" + arch;
 #else
         archFlag = " -t " + arch;
@@ -236,7 +236,7 @@ namespace occa {
       );
 
       if (hipccCompilerFlags.find("-arch=sm") == std::string::npos &&
-#ifdef __HIP_ROCclr__
+#if HIP_VERSION >= 305
           hipccCompilerFlags.find("-t gfx") == std::string::npos
 #else
           hipccCompilerFlags.find("--amdgpu-target=gfx") == std::string::npos
@@ -278,13 +278,13 @@ namespace occa {
       //---[ Compiling Command ]--------
       command << compiler
               << " --genco"
-#if defined(__HIP_PLATFORM_NVCC___) || defined(__HIP_ROCclr__)
+#if defined(__HIP_PLATFORM_NVCC___) || (HIP_VERSION >= 305)
               << ' ' << compilerFlags
 #else
               << " -f=\\\"" << compilerFlags << "\\\""
 #endif
               << ' ' << hipccCompilerFlags
-#if defined(__HIP_PLATFORM_NVCC___) || defined(__HIP_ROCclr__)
+#if defined(__HIP_PLATFORM_NVCC___) || (HIP_VERSION >= 305)
               << " -I"        << env::OCCA_DIR << "include"
               << " -I"        << env::OCCA_INSTALL_DIR << "include"
 #endif
