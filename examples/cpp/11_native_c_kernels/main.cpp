@@ -28,7 +28,6 @@ int main(int argc, const char **argv) {
 
   occa::device device({
     {"mode", "Serial"},
-    {"kernel/compiler", "gcc"},
     // Defaults to 'C++' (not case-sensitive)
     {"kernel/compiler_language", "C"}
   });
