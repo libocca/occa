@@ -122,26 +122,19 @@ endif(ENABLE_OPENMP)
 
 #---[ CUDA ]----------------------------
 if(ENABLE_CUDA)
-  find_package(CUDA)
+  find_package(CUDAToolkit)
 
-  if(CUDA_FOUND)
+  if(CUDAToolkit_FOUND)
     set(OCCA_CUDA_ENABLED 1)
 
-    # Find the shared library rather than the static that find_package returns
-    find_library(CUDART_LIB
-      NAMES         cudart
-      PATHS         ${CUDA_TOOLKIT_ROOT_DIR}
-      PATH_SUFFIXES lib64 lib
-      DOC           "CUDA RT lib location")
+    message("-- CUDA include dirs: ${CUDAToolkit_INCLUDE_DIRS}")
+    message("-- CUDA driver library: ${CUDAToolkit_LIBRARY_DIR}")
 
-    message("-- CUDA include dirs: ${CUDA_INCLUDE_DIRS}")
-    message("-- CUDA libraries:    ${CUDART_LIB};cuda}")
+    target_link_libraries(libocca PRIVATE CUDA::cuda_driver)
 
-    target_include_directories(libocca PRIVATE ${CUDA_INCLUDE_DIRS})
-    target_link_libraries(libocca PRIVATE ${CUDART_LIB} cuda)
-  else (CUDA_FOUND)
+  else (CUDAToolkit_FOUND)
     set(OCCA_CUDA_ENABLED 0)
-  endif(CUDA_FOUND)
+  endif(CUDAToolkit_FOUND)
 endif(ENABLE_CUDA)
 #=======================================
 

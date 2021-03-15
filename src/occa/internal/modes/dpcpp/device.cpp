@@ -254,6 +254,13 @@ namespace occa
       for (int i = 0; i < launchedKernelsCount; ++i)
       {
         lang::kernelMetadata_t &metadata = launchedKernelsMetadata[i];
+        auto &arguments{metadata.arguments};
+
+        // The first two arguments are the sycl::queue
+        // and nd_range: these must be removed from the
+        // metadata for inline OKL to work.
+        arguments.erase(arguments.begin());
+        arguments.erase(arguments.begin());
 
         occa::functionPtr_t kernel_function = sys::dlsym(dl_handle, metadata.name,lock);
        
@@ -320,8 +327,8 @@ namespace occa
                                  const void *src,
                                  const occa::json &props)
     {
-      if (props.get("mapped", false))
-        return mappedAlloc(bytes, src, props);
+      if (props.get("host", false))
+        return hostAlloc(bytes, src, props);
 
       if (props.get("unified", false))
         return unifiedAlloc(bytes, src, props);
@@ -340,7 +347,7 @@ namespace occa
     }
 
     // @todo: update to `hostMalloc`
-    modeMemory_t *device::mappedAlloc(const udim_t bytes,
+    modeMemory_t *device::hostAlloc(const udim_t bytes,
                                       const void *src,
                                       const occa::json &props)
     {
