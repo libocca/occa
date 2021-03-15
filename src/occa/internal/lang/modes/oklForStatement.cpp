@@ -388,8 +388,11 @@ namespace occa {
             }
           });
 
-        // Index is 1 less than count
-        return maxInnerCount ? maxInnerCount - 1 : 0;
+        // @outer index is 1 less than count
+        if(oklAttr_ == "outer")
+          maxInnerCount--;
+
+        return maxInnerCount;
       }
 
       statementArray oklForStatement::getOklLoopPath() {
