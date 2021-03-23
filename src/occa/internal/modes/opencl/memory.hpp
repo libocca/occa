@@ -24,7 +24,7 @@ namespace occa {
 
       void* getKernelArgPtr() const;
 
-      void* getPtr();
+      void* getPtr() const;
 
       void copyTo(void *dest,
                   const udim_t bytes,

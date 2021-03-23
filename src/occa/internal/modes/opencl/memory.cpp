@@ -47,7 +47,7 @@ namespace occa {
       return (void*) &clMem;
     }
 
-    void* memory::getPtr() {
+    void* memory::getPtr() const {
       if (useHostPtr) {
         return ptr;
       } else {
