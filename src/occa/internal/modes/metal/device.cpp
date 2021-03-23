@@ -3,6 +3,7 @@
 #include <occa/internal/utils/sys.hpp>
 #include <occa/internal/modes/metal/device.hpp>
 #include <occa/internal/modes/metal/kernel.hpp>
+#include <occa/internal/modes/metal/buffer.hpp>
 #include <occa/internal/modes/metal/memory.hpp>
 #include <occa/internal/modes/metal/stream.hpp>
 #include <occa/internal/modes/metal/streamTag.hpp>
@@ -255,9 +256,15 @@ namespace occa {
     modeMemory_t* device::malloc(const udim_t bytes,
                                  const void *src,
                                  const occa::json &props) {
-      metal::memory *mem = new metal::memory(this, bytes, props);
+      //create allocation
+      buffer *buf = new metal::buffer(this, bytes, props);
+      buf->malloc(bytes);
 
-      mem->metalBuffer = metalDevice.malloc(bytes, src);
+      //create slice
+      memory *mem = new metal::memory(buf, bytes, 0);
+
+      if (src)
+        mem->copyFrom(src, bytes, 0, props);
 
       return mem;
     }
@@ -265,13 +272,11 @@ namespace occa {
     modeMemory_t* device::wrapMemory(const void *ptr,
                                      const udim_t bytes,
                                      const occa::json &props) {
-      memory *mem = new memory(this,
-                               bytes,
-                               props);
+      //create allocation
+      buffer *buf = new metal::buffer(this, bytes, props);
+      buf->wrapMemory(ptr, bytes);
 
-      mem->metalBuffer = api::metal::buffer_t(const_cast<void*>(ptr));
-
-      return mem;
+      return new metal::memory(buf, bytes, 0);
     }
 
     udim_t device::memorySize() const {

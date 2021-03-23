@@ -4,6 +4,7 @@
 #include <occa/internal/utils/sys.hpp>
 #include <occa/internal/modes/serial/device.hpp>
 #include <occa/internal/modes/serial/kernel.hpp>
+#include <occa/internal/modes/serial/buffer.hpp>
 #include <occa/internal/modes/serial/memory.hpp>
 #include <occa/internal/modes/serial/stream.hpp>
 #include <occa/internal/modes/serial/streamTag.hpp>
@@ -417,17 +418,20 @@ namespace occa {
     modeMemory_t* device::malloc(const udim_t bytes,
                                  const void *src,
                                  const occa::json &props) {
-      memory *mem = new memory(this, bytes, props);
+      //create allocation
+      buffer *buf = new serial::buffer(this, bytes, props);
 
       if (src && props.get("use_host_pointer", false)) {
-        mem->ptr = (char*) const_cast<void*>(src);
-        mem->isOrigin = props.get("own_host_pointer", false);
+        buf->wrapMemory(src, bytes);
       } else {
-        mem->ptr = (char*) sys::malloc(bytes);
-        if (src) {
-          ::memcpy(mem->ptr, src, bytes);
-        }
+        buf->malloc(bytes);
       }
+
+      //create slice
+      memory *mem = new serial::memory(buf, bytes, 0);
+
+      if (src && !props.get("use_host_pointer", false))
+        mem->copyFrom(src, bytes, 0, props);
 
       return mem;
     }
@@ -435,14 +439,12 @@ namespace occa {
     modeMemory_t* device::wrapMemory(const void *ptr,
                                      const udim_t bytes,
                                      const occa::json &props) {
-      memory *mem = new memory(this,
-                               bytes,
-                               props);
 
-      mem->ptr = (char*) const_cast<void*>(ptr);
-      mem->isOrigin = props.get("own_host_pointer", false);
+      //create allocation
+      buffer *buf = new serial::buffer(this, bytes, props);
+      buf->wrapMemory(ptr, bytes);
 
-      return mem;
+      return new serial::memory(buf, bytes, 0);
     }
 
     udim_t device::memorySize() const {

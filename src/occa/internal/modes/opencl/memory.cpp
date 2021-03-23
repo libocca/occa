@@ -1,3 +1,4 @@
+#include <occa/internal/modes/opencl/buffer.hpp>
 #include <occa/internal/modes/opencl/memory.hpp>
 #include <occa/internal/modes/opencl/device.hpp>
 #include <occa/internal/modes/opencl/utils.hpp>
@@ -5,74 +6,45 @@
 
 namespace occa {
   namespace opencl {
-    memory::memory(modeDevice_t *modeDevice_,
-                   udim_t size_,
-                   const occa::json &properties_) :
-        occa::modeMemory_t(modeDevice_, size_, properties_),
-        rootClMem(&clMem),
-        rootOffset(0),
-        useHostPtr(false) {}
+    memory::memory(modeBuffer_t *modeBuffer_,
+                   udim_t size_, dim_t offset_) :
+      occa::modeMemory_t(modeBuffer_, size_, offset_),
+      useHostPtr(false) {
+      buffer *b = dynamic_cast<buffer*>(modeBuffer);
+      useHostPtr = b->useHostPtr;
 
-    memory::~memory() {
-      if (isOrigin) {
-        // Free mapped-host pointer
+      if (offset==0 && size==b->size){
+        clMem = b->clMem;
+      } else {
+        cl_buffer_region info;
+        info.origin = offset;
+        info.size   = size;
+
+        cl_int error;
+        clMem = clCreateSubBuffer(b->clMem,
+                                  CL_MEM_READ_WRITE,
+                                  CL_BUFFER_CREATE_TYPE_REGION,
+                                  &info,
+                                  &error);
+        OCCA_OPENCL_ERROR("Device: clCreateSubBuffer", error);
+
         if (useHostPtr) {
-          OCCA_OPENCL_ERROR("Mapped Free: clEnqueueUnmapMemObject",
-                            clEnqueueUnmapMemObject(getCommandQueue(),
-                                                    clMem,
-                                                    ptr,
-                                                    0, NULL, NULL));
+          ptr = b->ptr + offset;
         }
       }
+    }
 
-      // Is the root cl_mem or the root cl_mem hasn't been freed yet
-      if (size && (isOrigin || *rootClMem)) {
-        OCCA_OPENCL_ERROR("Mapped Free: clReleaseMemObject",
-                          clReleaseMemObject(clMem));
-      }
-
-      rootClMem = NULL;
-      rootOffset = 0;
-
-      ptr = nullptr;
-      clMem = NULL;
+    memory::~memory() {
       size = 0;
       useHostPtr = false;
     }
 
     cl_command_queue& memory::getCommandQueue() const {
-      return ((device*) modeDevice)->getCommandQueue();
+      return dynamic_cast<device*>(getModeDevice())->getCommandQueue();
     }
 
     void* memory::getKernelArgPtr() const {
       return (void*) &clMem;
-    }
-
-    modeMemory_t* memory::addOffset(const dim_t offset) {
-      opencl::memory *m = new opencl::memory(modeDevice,
-                                             size - offset,
-                                             properties);
-
-      m->rootClMem = rootClMem;
-      m->rootOffset = rootOffset + offset;
-
-      cl_buffer_region info;
-      info.origin = m->rootOffset;
-      info.size   = m->size;
-
-      cl_int error;
-      m->clMem = clCreateSubBuffer(*rootClMem,
-                                   CL_MEM_READ_WRITE,
-                                   CL_BUFFER_CREATE_TYPE_REGION,
-                                   &info,
-                                   &error);
-
-      if (useHostPtr) {
-        m->ptr = ptr + offset;
-      }
-
-      OCCA_OPENCL_ERROR("Device: clCreateSubBuffer", error);
-      return m;
     }
 
     void* memory::getPtr() {
@@ -85,7 +57,7 @@ namespace occa {
 
     void memory::copyFrom(const void *src,
                           const udim_t bytes,
-                          const udim_t offset,
+                          const udim_t offset_,
                           const occa::json &props) {
       const bool async = props.get("async", false);
 
@@ -93,7 +65,7 @@ namespace occa {
                         clEnqueueWriteBuffer(getCommandQueue(),
                                              clMem,
                                              async ? CL_FALSE : CL_TRUE,
-                                             offset, bytes, src,
+                                             offset_, bytes, src,
                                              0, NULL, NULL));
     }
 
@@ -115,7 +87,7 @@ namespace occa {
 
     void memory::copyTo(void *dest,
                         const udim_t bytes,
-                        const udim_t offset,
+                        const udim_t offset_,
                         const occa::json &props) const {
 
       const bool async = props.get("async", false);
@@ -124,14 +96,8 @@ namespace occa {
                         clEnqueueReadBuffer(getCommandQueue(),
                                             clMem,
                                             async ? CL_FALSE : CL_TRUE,
-                                            offset, bytes, dest,
+                                            offset_, bytes, dest,
                                             0, NULL, NULL));
-    }
-
-    void memory::detach() {
-      ptr = nullptr;
-      size = 0;
-      useHostPtr = false;
     }
   }
 }

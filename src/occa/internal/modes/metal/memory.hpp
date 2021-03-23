@@ -6,24 +6,17 @@
 
 namespace occa {
   namespace metal {
-    class device;
-
     class memory : public occa::modeMemory_t {
-      friend class metal::device;
-
     private:
       api::metal::buffer_t metalBuffer;
       udim_t bufferOffset;
 
     public:
-      memory(modeDevice_t *modeDevice_,
-             udim_t size_,
-             const occa::json &properties_ = occa::json());
+      memory(modeBuffer_t *modeBuffer_,
+             udim_t size_, dim_t offset_);
       ~memory();
 
       void* getKernelArgPtr() const;
-
-      modeMemory_t* addOffset(const dim_t offset);
 
       const api::metal::buffer_t& getMetalBuffer();
 
@@ -46,7 +39,6 @@ namespace occa {
                     const udim_t destOffset = 0,
                     const udim_t srcOffset = 0,
                     const occa::json &props = occa::json());
-      void detach();
     };
   }
 }

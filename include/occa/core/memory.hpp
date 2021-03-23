@@ -11,6 +11,7 @@
 #include <occa/utils/gc.hpp>
 
 namespace occa {
+  class modeBuffer_t; class buffer;
   class modeMemory_t; class memory;
   class modeDevice_t; class device;
   class kernelArg;
@@ -477,8 +478,6 @@ namespace occa {
     void free();
 
     void detach();
-
-    void deleteRefs(const bool freeMemory = false);
   };
 
   extern memory null;
