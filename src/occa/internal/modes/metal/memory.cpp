@@ -27,7 +27,7 @@ namespace occa {
       return metalBuffer;
     }
 
-    void* memory::getPtr() {
+    void* memory::getPtr() const {
       if (!ptr) {
         ptr = (char*) metalBuffer.getPtr();
       }
