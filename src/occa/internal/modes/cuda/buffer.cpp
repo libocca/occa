@@ -76,11 +76,11 @@ namespace occa {
         ptr = (char*) const_cast<void*>(ptr_);
         useHostPtr=true;
       } else if (properties.get("unified", false)) {
-        cuPtr = reinterpret_cast<CUdeviceptr>(ptr_);
+        cuPtr = reinterpret_cast<CUdeviceptr>(const_cast<void*>(ptr_));
         ptr = (char*) const_cast<void*>(ptr_);
         isUnified = true;
       } else {
-        cuPtr = reinterpret_cast<CUdeviceptr>(ptr_);
+        cuPtr = reinterpret_cast<CUdeviceptr>(const_cast<void*>(ptr_));
       }
       size = bytes;
       isWrapped = true;
