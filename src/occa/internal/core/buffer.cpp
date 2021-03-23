@@ -41,8 +41,10 @@ namespace occa {
     uvaPtr = NULL;
 
     // Remove ref from device
-    if (modeDevice && !isWrapped) {
-      modeDevice->bytesAllocated -= size;
+    if (modeDevice) {
+      if (!isWrapped)
+        modeDevice->bytesAllocated -= size;
+
       modeDevice->removeMemoryRef(this);
     }
     size = 0;
