@@ -11,6 +11,7 @@ namespace occa {
       bufferOffset(offset) {
       buffer *b = dynamic_cast<buffer*>(modeBuffer);
       metalBuffer = b->metalBuffer;
+      ptr = (char*) metalBuffer.getPtr();
     }
 
     memory::~memory() {
@@ -28,9 +29,6 @@ namespace occa {
     }
 
     void* memory::getPtr() const {
-      if (!ptr) {
-        ptr = (char*) metalBuffer.getPtr();
-      }
       return ptr;
     }
 
