@@ -81,11 +81,9 @@ namespace occa {
       }
 
       if (!io::isFile(outputFile)) {
-        hash_t hash = occa::hash(outputFile);
-        io::lock_t lock(hash, "serial-parser");
-        if (lock.isMine()) {
-          parser.writeToFile(outputFile);
-        }
+        const std::string outputFileTmp = io::tmpFilenameBelow(outputFile);
+        parser.writeToFile(outputFile);
+        io::renameTmpFile(outputFileTmp.c_str(), outputFile.c_str());
       }
 
       parser.setSourceMetadata(metadata);
@@ -119,19 +117,13 @@ namespace occa {
         ? kc::launcherBinaryFile
         : kc::binaryFile
       );
-      std::string binaryFilename = hashDir + kcBinaryFile;
+      const std::string binaryFilename = hashDir + kcBinaryFile;
 
       // Check if binary exists and is finished
       bool foundBinary = (
         io::cachedFileIsComplete(hashDir, kcBinaryFile)
         && io::isFile(binaryFilename)
       );
-
-      io::lock_t lock;
-      if (!foundBinary) {
-        lock = io::lock_t(kernelHash, "serial-kernel");
-        foundBinary = !lock.isMine();
-      }
 
       const bool verbose = kernelProps.get("verbose", false);
       if (foundBinary) {
@@ -321,11 +313,13 @@ namespace occa {
         sys::addCompilerLibraryFlags(compilerFlags);
       }
 
+      const std::string binaryFilenameTmp = io::tmpFilenameBelow(binaryFilename);
+
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       command << compiler
               << ' '    << compilerFlags
               << ' '    << sourceFilename
-              << " -o " << binaryFilename
+              << " -o " << binaryFilenameTmp
               << " -I"  << env::OCCA_DIR << "include"
               << " -I"  << env::OCCA_INSTALL_DIR << "include"
               << " -L"  << env::OCCA_INSTALL_DIR << "lib -locca"
@@ -343,7 +337,7 @@ namespace occa {
               << ' '       << sourceFilename
               << " /link " << env::OCCA_INSTALL_DIR << "lib/libocca.lib",
               << ' '       << compilerLinkerFlags
-              << " /OUT:"  << binaryFilename
+              << " /OUT:"  << binaryFilenameTmp
               << std::endl;
 #endif
 
@@ -359,11 +353,12 @@ namespace occa {
       const int compileError = system(("\"" +  sCommand + "\"").c_str());
 #endif
 
-      lock.release();
       if (compileError) {
         OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
                          " Command: [" << sCommand << ']');
       }
+
+      io::renameTmpFile(binaryFilenameTmp.c_str(), binaryFilename.c_str());
 
       modeKernel_t *k = buildKernelFromBinary(binaryFilename,
                                               kernelName,

@@ -1,6 +1,5 @@
 #include <occa/defines.hpp>
 #include <occa/internal/io/cache.hpp>
-#include <occa/internal/io/lock.hpp>
 #include <occa/internal/io/utils.hpp>
 #include <occa/utils/hash.hpp>
 #include <occa/internal/utils/env.hpp>
@@ -115,12 +114,12 @@ namespace occa {
     void writeBuildFile(const std::string &filename,
                         const hash_t &hash,
                         const occa::json &props) {
-      io::lock_t lock(hash, "kernel-info");
-      if (lock.isMine() &&
-          !io::isFile(filename)) {
+      if (!io::isFile(filename)) {
+        const std::string filenameTmp = io::tmpFilenameBelow(filename);
         occa::json info = props;
         setBuildProps(info["build"]);
-        info.write(filename);
+        info.write(filenameTmp);
+        io::renameTmpFile(filenameTmp.c_str(), filename.c_str());
       }
     }
   }

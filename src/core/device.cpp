@@ -397,15 +397,13 @@ namespace occa {
     setupKernelInfo(props, occa::hash(content),
                     allProps, kernelHash);
 
-    io::lock_t lock(kernelHash, "occa-device");
     std::string stringSourceFile = io::hashDir(kernelHash);
     stringSourceFile += "string_source.cpp";
 
-    if (lock.isMine()) {
-      if (!io::isFile(stringSourceFile)) {
-        io::write(stringSourceFile, content);
-      }
-      lock.release();
+    if (!io::isFile(stringSourceFile)) {
+      const std::string stringSourceFileTmp = io::tmpFilenameBelow(stringSourceFile);
+      io::write(stringSourceFileTmp, content);
+      io::renameTmpFile(stringSourceFileTmp, stringSourceFile);
     }
 
     return buildKernel(stringSourceFile,

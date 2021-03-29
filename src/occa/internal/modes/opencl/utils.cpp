@@ -97,7 +97,7 @@ namespace occa {
     int getDeviceCountInPlatform(int pID, int type) {
       cl_platform_id clPID = platformID(pID);
       cl_uint deviceCount = 0;
-      
+
       clGetDeviceIDs(clPID, deviceType(type),
                      0, NULL, &deviceCount);
 
@@ -257,8 +257,7 @@ namespace occa {
                                 const std::string &kernelName,
                                 const std::string &compilerFlags,
                                 const std::string &sourceFile,
-                                const occa::json &properties,
-                                const io::lock_t &lock) {
+                                const occa::json &properties) {
       cl_int error = 1;
 
       const bool verbose = properties.get("verbose", false);
@@ -271,35 +270,28 @@ namespace occa {
                                                  &error);
 
       if (error) {
-        lock.release();
         OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Creating Program",
                           error);
       }
       if (verbose) {
-        if (lock.isInitialized()) {
-          io::stdout << "OpenCL compiling " << kernelName
-                     << " from [" << sourceFile << "]";
+        io::stdout << "OpenCL compiling " << kernelName
+                   << " from [" << sourceFile << "]";
 
-          if (compilerFlags.size()) {
-            io::stdout << " with compiler flags [" << compilerFlags << "]";
-          }
-          io::stdout << '\n';
-        } else {
-          io::stdout << "OpenCL compiling " << kernelName << '\n';
+        if (compilerFlags.size()) {
+          io::stdout << " with compiler flags [" << compilerFlags << "]";
         }
+        io::stdout << '\n';
       }
 
       buildProgram(info,
                    kernelName,
-                   compilerFlags,
-                   lock);
+                   compilerFlags);
     }
 
     void buildProgramFromBinary(info_t &info,
                                 const std::string &binaryFilename,
                                 const std::string &kernelName,
-                                const std::string &compilerFlags,
-                                const io::lock_t &lock) {
+                                const std::string &compilerFlags) {
       cl_int error = 1;
       cl_int binaryError = 1;
 
@@ -312,9 +304,6 @@ namespace occa {
                                                  &binaryError, &error);
       delete [] binary;
 
-      if (binaryError || error) {
-        lock.release();
-      }
       OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Creating Program",
                         binaryError);
       OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Creating Program",
@@ -322,14 +311,12 @@ namespace occa {
 
       buildProgram(info,
                    kernelName,
-                   compilerFlags,
-                   lock);
+                   compilerFlags);
     }
 
     void buildProgram(info_t &info,
                       const std::string &kernelName,
-                      const std::string &compilerFlags,
-                      const io::lock_t &lock) {
+                      const std::string &compilerFlags) {
       cl_int error = 1;
 
       error = clBuildProgram(info.clProgram,
@@ -365,31 +352,25 @@ namespace occa {
 
           delete [] log;
         }
-        lock.release();
         OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Building Program",
                           error);
       }
     }
 
     void buildKernelFromProgram(info_t &info,
-                                const std::string &kernelName,
-                                const io::lock_t &lock) {
+                                const std::string &kernelName) {
       cl_int error = 1;
 
       info.clKernel = clCreateKernel(info.clProgram,
                                      kernelName.c_str(),
                                      &error);
 
-      if (error) {
-        lock.release();
-      }
       OCCA_OPENCL_ERROR("Kernel [" + kernelName + "]: Creating Kernel",
                         error);
     }
 
     bool saveProgramBinary(info_t &info,
-                           const std::string &binaryFile,
-                           const io::lock_t &lock) {
+                           const std::string &binaryFile) {
       cl_int error = 1;
       cl_int binaryError = 1;
 
@@ -397,9 +378,6 @@ namespace occa {
       error = clGetProgramInfo(info.clProgram,
                                CL_PROGRAM_BINARY_SIZES,
                                sizeof(size_t), &binaryBytes, NULL);
-      if (error) {
-        lock.release();
-      }
       OCCA_OPENCL_ERROR("saveProgramBinary: Getting Binary Sizes",
                         error);
 
@@ -407,9 +385,6 @@ namespace occa {
       error = clGetProgramInfo(info.clProgram,
                                CL_PROGRAM_BINARIES,
                                sizeof(char*), &binary, NULL);
-      if (error) {
-        lock.release();
-      }
       OCCA_OPENCL_ERROR("saveProgramBinary: Getting Binary",
                         error);
 

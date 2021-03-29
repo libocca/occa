@@ -160,8 +160,7 @@ namespace occa {
       const bool usingOkl,
       lang::sourceMetadata_t &launcherMetadata,
       lang::sourceMetadata_t &deviceMetadata,
-      const occa::json &kernelProps,
-      io::lock_t lock
+      const occa::json &kernelProps
     ) {
       info_t clInfo;
       clInfo.clDevice  = clDevice;
@@ -175,12 +174,10 @@ namespace occa {
                                      kernelName,
                                      kernelProps["compiler_flags"],
                                      sourceFilename,
-                                     kernelProps,
-                                     lock);
+                                     kernelProps);
 
       opencl::saveProgramBinary(clInfo,
-                                binaryFilename,
-                                lock);
+                                binaryFilename);
 
       if (usingOkl) {
         return buildOKLKernelFromBinary(clInfo,
@@ -189,14 +186,12 @@ namespace occa {
                                         kernelName,
                                         launcherMetadata,
                                         deviceMetadata,
-                                        kernelProps,
-                                        lock);
+                                        kernelProps);
       }
 
       // Regular OpenCL Kernel
       opencl::buildKernelFromProgram(clInfo,
-                                     kernelName,
-                                     lock);
+                                     kernelName);
       return new kernel(this,
                         kernelName,
                         sourceFilename,
@@ -210,8 +205,7 @@ namespace occa {
                                                    const std::string &kernelName,
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::json &kernelProps,
-                                                   io::lock_t lock) {
+                                                   const occa::json &kernelProps) {
       info_t clInfo;
       clInfo.clDevice  = clDevice;
       clInfo.clContext = clContext;
@@ -222,8 +216,7 @@ namespace occa {
                                       kernelName,
                                       launcherMetadata,
                                       deviceMetadata,
-                                      kernelProps,
-                                      lock);
+                                      kernelProps);
     }
 
     modeKernel_t* device::buildOKLKernelFromBinary(info_t &clInfo,
@@ -232,8 +225,7 @@ namespace occa {
                                                    const std::string &kernelName,
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::json &kernelProps,
-                                                   io::lock_t lock) {
+                                                   const occa::json &kernelProps) {
 
       const std::string sourceFilename = hashDir + kc::sourceFile;
       const std::string binaryFilename = hashDir + kc::binaryFile;
@@ -242,8 +234,7 @@ namespace occa {
         opencl::buildProgramFromBinary(clInfo,
                                        binaryFilename,
                                        kernelName,
-                                       properties["compiler_flags"],
-                                       lock);
+                                       properties["compiler_flags"]);
       }
 
       // Create wrapper kernel and set launcherKernel
@@ -271,8 +262,7 @@ namespace occa {
       for (int i = 0; i < launchedKernelsCount; ++i) {
         lang::kernelMetadata_t &metadata = launchedKernelsMetadata[i];
         opencl::buildKernelFromProgram(clInfo,
-                                       metadata.name,
-                                       lock);
+                                       metadata.name);
 
         kernel *clKernel = new kernel(this,
                                       metadata.name,

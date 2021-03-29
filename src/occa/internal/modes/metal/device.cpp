@@ -112,30 +112,26 @@ namespace occa {
       const bool usingOkl,
       lang::sourceMetadata_t &launcherMetadata,
       lang::sourceMetadata_t &deviceMetadata,
-      const occa::json &kernelProps,
-      io::lock_t lock
+      const occa::json &kernelProps
     ) {
       OCCA_ERROR("Metal kernels need to use OKL for now",
                  usingOkl);
 
       compileKernel(hashDir,
                     kernelName,
-                    kernelProps,
-                    lock);
+                    kernelProps);
 
       return buildOKLKernelFromBinary(kernelHash,
                                       hashDir,
                                       kernelName,
                                       launcherMetadata,
                                       deviceMetadata,
-                                      kernelProps,
-                                      lock);
+                                      kernelProps);
     }
 
     void device::compileKernel(const std::string &hashDir,
                                const std::string &kernelName,
-                               const occa::json &kernelProps,
-                               io::lock_t &lock) {
+                               const occa::json &kernelProps) {
 
       occa::json allProps = kernelProps;
       const bool verbose = allProps.get("verbose", false);
@@ -144,13 +140,16 @@ namespace occa {
       const std::string binaryFilename = hashDir + kc::binaryFile;
       const std::string airBinaryFilename = hashDir + "binary.air";
 
+      const std::string airBinaryFilenameTmp = io::tmpFilenameBelow(airBinaryFilename);
+      const std::string binaryFilenameTmp = io::tmpFilenameBelow(binaryFilename);
+
       //---[ Compile Air Binary ]-------
       std::stringstream command;
 
       command << "xcrun -sdk macosx metal -x metal"
               << ' ' << allProps["compiler_flags"]
               << ' ' << sourceFilename
-              << " -c -o " << airBinaryFilename;
+              << " -c -o " << airBinaryFilenameTmp;
 
       if (!verbose) {
         command << " > /dev/null 2>&1";
@@ -162,18 +161,20 @@ namespace occa {
 
       int compileError = system(airCommand.c_str());
       if (compileError) {
-        lock.release();
         OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
                          " Command: [" << airCommand << ']');
         return;
       }
+
+      io::renameTmpFile(airBinaryFilenameTmp.c_str(), airBinaryFilename.c_str());
+
       //================================
 
       //---[ Compile Metallib Command ]---
       command.str("");
       command << "xcrun -sdk macosx metallib"
               << ' ' << airBinaryFilename
-              << " -o " << binaryFilename;
+              << " -o " << binaryFilenameTmp;
 
       if (!verbose) {
         command << " > /dev/null 2>&1";
@@ -185,10 +186,12 @@ namespace occa {
 
       compileError = system(metallibCommand.c_str());
 
-      lock.release();
       OCCA_ERROR("Error compiling [" << kernelName << "],"
                  " Command: [" << metallibCommand << ']',
                  !compileError);
+
+      io::renameTmpFile(binaryFilenameTmp.c_str(), binaryFilename.c_str());
+
       //================================
     }
 
@@ -197,8 +200,7 @@ namespace occa {
                                                    const std::string &kernelName,
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::json &kernelProps,
-                                                   io::lock_t lock) {
+                                                   const occa::json &kernelProps) {
 
       const std::string sourceFilename = hashDir + kc::sourceFile;
       const std::string binaryFilename = hashDir + kc::binaryFile;
@@ -226,8 +228,7 @@ namespace occa {
 
         api::metal::function_t metalFunction = (
           metalDevice.buildKernel(binaryFilename,
-                                  metadata.name,
-                                  lock)
+                                  metadata.name)
         );
 
         kernel *deviceKernel = new kernel(this,

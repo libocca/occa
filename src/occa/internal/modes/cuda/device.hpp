@@ -64,24 +64,21 @@ namespace occa {
                                                    const bool usingOkl,
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::json &kernelProps,
-                                                   io::lock_t lock);
+                                                   const occa::json &kernelProps);
 
       void setArchCompilerFlags(const occa::json &kernelProps,
                                 std::string &compilerFlags);
 
       void compileKernel(const std::string &hashDir,
                          const std::string &kernelName,
-                         const occa::json &kernelProps,
-                         io::lock_t &lock);
+                         const occa::json &kernelProps);
 
       modeKernel_t* buildOKLKernelFromBinary(const hash_t kernelHash,
                                              const std::string &hashDir,
                                              const std::string &kernelName,
                                              lang::sourceMetadata_t &launcherMetadata,
                                              lang::sourceMetadata_t &deviceMetadata,
-                                             const occa::json &kernelProps,
-                                             io::lock_t lock);
+                                             const occa::json &kernelProps);
 
       virtual modeKernel_t* buildKernelFromBinary(const std::string &filename,
                                                   const std::string &kernelName,

@@ -45,19 +45,19 @@ namespace occa {
       hash ^= occa::hash(compiler);
 
       const std::string srcFilename = io::cacheFile(openmpTest, "compilerSupportsOpenMP.cpp", hash);
-      const std::string binaryFilename = io::dirname(srcFilename) + "binary";
       const std::string outFilename = io::dirname(srcFilename) + "output";
 
-      io::lock_t lock(hash, "openmp-compiler");
-      if (lock.isMine()
-          && !io::isFile(outFilename)) {
+      const std::string binaryFilenameTmp = io::tmpFilenameBelow(outFilename);
+      const std::string outFilenameTmp = io::tmpFilenameBelow(outFilename);
+
+      if (!io::isFile(outFilename)) {
         // Try to compile a minimal OpenMP file to see whether
         // the compiler supports OpenMP or not
         std::string flag = baseCompilerFlag(vendor_);
         ss << compiler
            << ' '    << flag
            << ' '    << srcFilename
-           << " -o " << binaryFilename
+           << " -o " << binaryFilenameTmp
            << " > /dev/null 2>&1";
 
         const std::string compileLine = ss.str();
@@ -67,7 +67,9 @@ namespace occa {
           flag = openmp::notSupported;
         }
 
-        io::write(outFilename, flag);
+        io::write(outFilenameTmp, flag);
+
+        io::renameTmpFile(outFilenameTmp.c_str(), outFilename.c_str());
 
         return flag;
       }

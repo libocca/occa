@@ -82,6 +82,11 @@ namespace occa {
 
     void write(const std::string &filename,
                const std::string &content);
+
+    std::string tmpFilenameBelow(const std::string &filename);
+
+    void renameTmpFile(const std::string &filenameIn,
+                       const std::string &filenameOut);
   }
 }
 

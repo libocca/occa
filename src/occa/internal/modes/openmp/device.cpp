@@ -40,11 +40,9 @@ namespace occa {
       }
 
       if (!io::isFile(outputFile)) {
-        hash_t hash = occa::hash(outputFile);
-        io::lock_t lock(hash, "openmp-parser");
-        if (lock.isMine()) {
-          parser.writeToFile(outputFile);
-        }
+        const std::string outputFileTmp = io::tmpFilenameBelow(outputFile);
+        parser.writeToFile(outputFileTmp);
+        io::renameTmpFile(outputFileTmp.c_str(), outputFile.c_str());
       }
 
       parser.setSourceMetadata(metadata);

@@ -55,8 +55,7 @@ namespace occa {
       const bool usingOkl,
       lang::sourceMetadata_t &launcherMetadata,
       lang::sourceMetadata_t &deviceMetadata,
-      const occa::json &kernelProps,
-      io::lock_t lock
+      const occa::json &kernelProps
     ) = 0;
 
     virtual modeKernel_t* buildOKLKernelFromBinary(
@@ -65,8 +64,7 @@ namespace occa {
       const std::string &kernelName,
       lang::sourceMetadata_t &launcherMetadata,
       lang::sourceMetadata_t &deviceMetadata,
-      const occa::json &kernelProps,
-      io::lock_t lock
+      const occa::json &kernelProps
     ) = 0;
     //==================================
   };

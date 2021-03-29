@@ -442,5 +442,65 @@ namespace occa {
       fsync(fileno(fp));
       fclose(fp);
     }
+
+    std::string tmpFilenameBelow(const std::string &filename) {
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+
+      /*
+        Return a temporary filename with the same basename as filename,
+        but in a temporary subdirectory.
+
+        This seems convoluted (and it is), but many variants to create
+        temporary file(name)s are unsafe, and we cannot use mkstemp
+        because it returns a file handle, not a file name, and we need
+        to able to pass the filename to e.g. compiler invocations as a string.
+
+        Unfortunate side effect: we have an extra directory that needs
+        to be cleaned. This is handled in the renameTmpFile function, so use
+        these in pairs.
+      */
+      const std::string expFilename = io::expandFilename(filename);
+      sys::mkpath(dirname(expFilename));
+      const std::string template_ = dirname(expFilename) + "XXXXXX";
+      size_t bufferSize = template_.size();
+      char buffer[bufferSize + 1];
+      ::memcpy(buffer, template_.c_str(), bufferSize);
+      // Set null terminator
+      buffer[bufferSize] = '\0';
+      char *dirname = mkdtemp(buffer);
+      OCCA_ERROR("Failed to create temporary directory for template [" << template_ << "]: " << strerror(errno),
+                 dirname != NULL);
+      return std::string(dirname) + "/" + std::string(basename(expFilename));
+#else
+#error "TODO: What to use on Windows?"
+#endif
+    }
+
+    void renameTmpFile(const std::string &filenameIn,
+                       const std::string &filenameOut) {
+      const std::string expFilename = io::expandFilename(filenameOut);
+      sys::mkpath(dirname(expFilename));
+
+      int status;
+      status = std::rename(filenameIn.c_str(), expFilename.c_str());
+      /*
+        On NFS filesystems, you can not assume that if the operation
+        failed, the file was not renamed. If the server does the rename
+        operation and then crashes, the retransmitted RPC which will be
+        processed when the server is up again causes a failure.
+      */
+      OCCA_ERROR("Failed to rename [" << filenameIn << "] to [" << expFilename << "]: " << strerror(errno),
+                 status == 0 || io::isFile(filenameOut));
+
+      /*
+        Assume the temporary file has been created using the tmpFilenameBelow
+        function, so we need to clean up the temporary directory as well.
+      */
+      const std::string tmpDirname = dirname(io::expandFilename(filenameIn));
+      status = rmdir(tmpDirname.c_str());
+      OCCA_ERROR("Failed to remove temporary directory [" << tmpDirname << "]: " << strerror(errno),
+                 status == 0);
+    }
+
   }
 }

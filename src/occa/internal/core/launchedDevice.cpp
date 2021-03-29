@@ -33,19 +33,15 @@ namespace occa {
     }
 
     if (!io::isFile(outputFile)) {
-      hash_t hash = occa::hash(outputFile);
-      io::lock_t lock(hash, "device-parser-device");
-      if (lock.isMine()) {
-        parser.writeToFile(outputFile);
-      }
+      const std::string outputFileTmp = io::tmpFilenameBelow(outputFile);
+      parser.writeToFile(outputFileTmp);
+      io::renameTmpFile(outputFileTmp.c_str(), outputFile.c_str());
     }
 
     if (!io::isFile(launcherOutputFile)) {
-      hash_t hash = occa::hash(launcherOutputFile);
-      io::lock_t lock(hash, "device-parser-launcher");
-      if (lock.isMine()) {
-        parser.launcherParser.writeToFile(launcherOutputFile);
-      }
+      const std::string launcherOutputFileTmp = io::tmpFilenameBelow(launcherOutputFile);
+      parser.launcherParser.writeToFile(launcherOutputFileTmp);
+      io::renameTmpFile(launcherOutputFileTmp.c_str(), launcherOutputFile.c_str());
     }
 
     parser.launcherParser.setSourceMetadata(launcherMetadata);
@@ -101,12 +97,6 @@ namespace occa {
       && io::isFile(binaryFilename)
     );
 
-    io::lock_t lock;
-    if (!foundBinary) {
-      lock = io::lock_t(kernelHash, "build-kernel");
-      foundBinary = !lock.isMine();
-    }
-
     const bool verbose = kernelProps.get("verbose", false);
     if (foundBinary) {
       if (verbose) {
@@ -128,8 +118,7 @@ namespace occa {
                                         kernelName,
                                         launcherMetadata,
                                         deviceMetadata,
-                                        kernelProps,
-                                        lock);
+                                        kernelProps);
       } else {
         return buildKernelFromBinary(binaryFilename,
                                      kernelName,
@@ -197,8 +186,7 @@ namespace occa {
                                                      usingOkl,
                                                      launcherMetadata,
                                                      deviceMetadata,
-                                                     kernelProps,
-                                                     lock);
+                                                     kernelProps);
 
     if (k) {
       io::markCachedFileComplete(hashDir, kc::binaryFile);
