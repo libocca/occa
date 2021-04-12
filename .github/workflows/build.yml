@@ -54,12 +54,12 @@ jobs:
             CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
 
-          - name: "[MacOS] gcc"
+          - name: "[MacOS] gcc-9"
             os: macos-latest
-            CC: gcc
-            CXX: g++
+            CC: gcc-9
+            CXX: g++-9
             CXXFLAGS: -Wno-maybe-uninitialized
-            GCOV: gcov
+            GCOV: gcov-9
             OCCA_COVERAGE: 1
 
           - name: "[MacOS] clang"
