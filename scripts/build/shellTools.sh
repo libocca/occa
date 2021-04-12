@@ -234,6 +234,11 @@ function compilerVendor {
     local binaryFilename="${OCCA_SOURCE_SCRIPTS_DIR}/findCompilerVendor"
 
     eval "${compiler}" "${testFilename}" -o "${binaryFilename}" > /dev/null 2>&1
+    if [[ "$?" -ne 0 ]]; then
+        echo "Failed to build findCompilerVendor:"
+        eval "${compiler}" "${testFilename}" -o "${binaryFilename}"
+    fi
+
     eval "${binaryFilename}"
     bit="$?"
 

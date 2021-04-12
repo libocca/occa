@@ -10,6 +10,11 @@ namespace occa {
     pointer_t::pointer_t(const pointer_t &other) :
       qualifiers(other.qualifiers) {}
 
+    pointer_t& pointer_t::operator = (const pointer_t &other) {
+      qualifiers = other.qualifiers;
+      return *this;
+    }
+
     bool pointer_t::has(const qualifier_t &qualifier) const {
       return qualifiers.has(qualifier);
     }
