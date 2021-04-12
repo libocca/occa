@@ -11,25 +11,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: "[Ubuntu] gcc-10"
-            os: ubuntu-latest
-            CC: gcc-10
-            CXX: g++-10
-            CXXFLAGS: -Wno-maybe-uninitialized
-            FC: gfortran-10
-            GCOV: gcov-10
-            OCCA_COVERAGE: 1
-            OCCA_FORTRAN_ENABLED: 1
-
-          - name: "[Ubuntu] CMake + gcc-10"
-            os: ubuntu-latest
-            CC: gcc-10
-            CXX: g++-10
-            CXXFLAGS: -Wno-maybe-uninitialized -Wno-cpp
-            GCOV: gcov-10
-            OCCA_COVERAGE: 1
-            useCMake: true
-
           - name: "[Ubuntu] gcc-9"
             os: ubuntu-latest
             CC: gcc-9
@@ -39,6 +20,15 @@ jobs:
             GCOV: gcov-9
             OCCA_COVERAGE: 1
             OCCA_FORTRAN_ENABLED: 1
+
+          - name: "[Ubuntu] CMake + gcc-9"
+            os: ubuntu-latest
+            CC: gcc-9
+            CXX: g++-9
+            CXXFLAGS: -Wno-maybe-uninitialized -Wno-cpp
+            GCOV: gcov-9
+            OCCA_COVERAGE: 1
+            useCMake: true
 
           - name: "[Ubuntu] clang-10"
             os: ubuntu-latest
