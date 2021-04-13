@@ -101,4 +101,18 @@ void testSlice() {
     ASSERT_SAME_SIZE(device.memoryAllocated(), 10 * sizeof(float));
   }
   ASSERT_SAME_SIZE(device.memoryAllocated(), 0);
+
+
+  {
+    occa::memory half1;
+    occa::memory half2;
+    {
+      occa::memory mem = device.malloc<float>(10, data);
+      half1 = mem.slice(0, 5);
+      half2 = mem.slice(5);
+      ASSERT_SAME_SIZE(device.memoryAllocated(), 10 * sizeof(float));
+    }
+    ASSERT_SAME_SIZE(device.memoryAllocated(), 10 * sizeof(float));
+  }
+  ASSERT_SAME_SIZE(device.memoryAllocated(), 0);
 }

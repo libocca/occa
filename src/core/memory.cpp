@@ -61,7 +61,8 @@ namespace occa {
     }
     modeMemory->removeMemoryRef(this);
     if (modeMemory->modeMemory_t::needsFree()) {
-      free();
+      delete modeMemory;
+      modeMemory = NULL;
     }
   }
 
@@ -101,12 +102,12 @@ namespace occa {
   }
 
   modeDevice_t* memory::getModeDevice() const {
-    return modeMemory->modeDevice;
+    return modeMemory->getModeDevice();
   }
 
   occa::device memory::getDevice() const {
     return occa::device(modeMemory
-                        ? modeMemory->modeDevice
+                        ? modeMemory->getModeDevice()
                         : NULL);
   }
 
@@ -117,14 +118,14 @@ namespace occa {
   const std::string& memory::mode() const {
     static const std::string noMode = "No Mode";
     return (modeMemory
-            ? modeMemory->modeDevice->mode
+            ? modeMemory->getModeDevice()->mode
             : noMode);
   }
 
   const occa::json& memory::properties() const {
     static const occa::json noProperties;
     return (modeMemory
-            ? modeMemory->properties
+            ? modeMemory->properties()
             : noProperties);
   }
 
@@ -172,23 +173,7 @@ namespace occa {
     if (!modeMemory) {
       return;
     }
-    if ( !(modeMemory->modeDevice->hasSeparateMemorySpace()) ) {
-      modeMemory->uvaPtr = modeMemory->ptr;
-    } else {
-      modeMemory->uvaPtr = (char*) sys::malloc(modeMemory->size);
-    }
-
-    ptrRange range;
-    range.start = modeMemory->uvaPtr;
-    range.end   = (range.start + modeMemory->size);
-
-    uvaMap[range] = modeMemory;
-    modeMemory->modeDevice->uvaMap[range] = modeMemory;
-
-    // Needed for kernelArg.void_ -> modeMemory checks
-    if (modeMemory->uvaPtr != modeMemory->ptr) {
-      uvaMap[modeMemory->ptr] = modeMemory;
-    }
+    modeMemory->setupUva();
   }
 
   void memory::startManaging() {
@@ -222,7 +207,7 @@ namespace occa {
                << " trying to access [" << offset << ", " << (offset + bytes_) << "]",
                (bytes_ + offset) <= modeMemory->size);
 
-    if (!modeMemory->modeDevice->hasSeparateMemorySpace()) {
+    if (!modeMemory->getModeDevice()->hasSeparateMemorySpace()) {
       return;
     }
 
@@ -253,7 +238,7 @@ namespace occa {
                << " trying to access [" << offset << ", " << (offset + bytes_) << "]",
                (bytes_ + offset) <= modeMemory->size);
 
-    if (!modeMemory->modeDevice->hasSeparateMemorySpace()) {
+    if (!modeMemory->getModeDevice()->hasSeparateMemorySpace()) {
       return;
     }
 
@@ -311,23 +296,12 @@ namespace occa {
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
                bytes >= 0);
 
-    OCCA_ERROR("Cannot have a negative offset (" << offset_ << ")",
-               offset_ >= 0);
-
     OCCA_ERROR("Cannot have offset and bytes greater than the memory size ("
                << offset_ << " + " << bytes << " > " << size() << ")",
                (offset_ + (dim_t) bytes) <= (dim_t) size());
 
-    occa::memory m(modeMemory->addOffset(offset_));
+    occa::memory m(modeMemory->slice(offset_, bytes));
     m.setDtype(dtype());
-
-    modeMemory_t &mm = *(m.modeMemory);
-    mm.modeDevice = modeMemory->modeDevice;
-    mm.size = bytes;
-    mm.isOrigin = false;
-    if (modeMemory->uvaPtr) {
-      mm.uvaPtr = (modeMemory->uvaPtr + offset_);
-    }
 
     return m;
   }
@@ -464,7 +438,7 @@ namespace occa {
     }
 
     occa::memory mem = (
-      occa::device(modeMemory->modeDevice)
+      occa::device(modeMemory->getModeDevice())
       .malloc(size(), *this, properties())
     );
     mem.setDtype(dtype());
@@ -473,48 +447,13 @@ namespace occa {
   }
 
   void memory::free() {
-    deleteRefs(true);
+    if (modeMemory == NULL) return;
+    modeMemory->free();
   }
 
   void memory::detach() {
-    deleteRefs(false);
-  }
-
-  void memory::deleteRefs(const bool freeMemory) {
-    if (modeMemory == NULL) {
-      return;
-    }
-
-    modeDevice_t *modeDevice = modeMemory->modeDevice;
-
-    // Free the actual backend memory object
-    if (modeMemory->isOrigin) {
-      modeDevice->bytesAllocated -= (modeMemory->size);
-
-      if (modeMemory->uvaPtr) {
-        void *memPtr = modeMemory->ptr;
-        void *uvaPtr = modeMemory->uvaPtr;
-
-        uvaMap.erase(uvaPtr);
-        modeDevice->uvaMap.erase(uvaPtr);
-
-        // CPU case where memory is shared
-        if (uvaPtr != memPtr) {
-          uvaMap.erase(memPtr);
-          modeDevice->uvaMap.erase(memPtr);
-
-          sys::free(uvaPtr);
-        }
-      }
-
-      if (!freeMemory) {
-        modeMemory->detach();
-      }
-    }
-
-    // ~modeMemory_t NULLs all wrappers
-    delete modeMemory;
-    modeMemory = NULL;
+    if (modeMemory == NULL) return;
+    modeMemory->detach();
   }
 
   memory null;

@@ -5,6 +5,7 @@
 #include <occa/internal/utils/sys.hpp>
 #include <occa/internal/modes/hip/device.hpp>
 #include <occa/internal/modes/hip/kernel.hpp>
+#include <occa/internal/modes/hip/buffer.hpp>
 #include <occa/internal/modes/hip/memory.hpp>
 #include <occa/internal/modes/hip/stream.hpp>
 #include <occa/internal/modes/hip/streamTag.hpp>
@@ -403,57 +404,32 @@ namespace occa {
                                  const void *src,
                                  const occa::json &props) {
 
-      if (props.get("host", false)) {
-        return hostAlloc(bytes, src, props);
-      }
-
-      hip::memory &mem = *(new hip::memory(this, bytes, props));
-
       OCCA_HIP_ERROR("Device: Setting Device",
                      hipSetDevice(deviceID));
 
-      OCCA_HIP_ERROR("Device: malloc",
-                     hipMalloc((void**) &(mem.hipPtr), bytes));
+      buffer *buf = new hip::buffer(this, bytes, props);
 
-      if (src != NULL) {
-        mem.copyFrom(src, bytes, 0);
-      }
-      return &mem;
-    }
+      //create allocation
+      buf->malloc(bytes);
 
-    modeMemory_t* device::hostAlloc(const udim_t bytes,
-                                    const void *src,
-                                    const occa::json &props) {
+      //create slice
+      memory *mem = new hip::memory(buf, bytes, 0);
 
-      hip::memory &mem = *(new hip::memory(this, bytes, props));
+      if (src != NULL)
+        mem->copyFrom(src, bytes, 0, props);
 
-      OCCA_HIP_ERROR("Device: Setting Device",
-                     hipSetDevice(deviceID));
-      OCCA_HIP_ERROR("Device: malloc host",
-                     hipHostMalloc((void**) &(mem.ptr), bytes));
-      OCCA_HIP_ERROR("Device: get device pointer from host",
-                     hipHostGetDevicePointer((void**) &(mem.hipPtr),
-                                             mem.ptr,
-                                             0));
-
-      mem.useHostPtr=true;
-
-      if (src != NULL) {
-        ::memcpy(mem.ptr, src, bytes);
-      }
-      return &mem;
+      return mem;
     }
 
     modeMemory_t* device::wrapMemory(const void *ptr,
                                      const udim_t bytes,
                                      const occa::json &props) {
-      memory *mem = new memory(this,
-                               bytes,
-                               props);
+      //create allocation
+      buffer *buf = new hip::buffer(this, bytes, props);
 
-      mem->ptr = (char*) ptr;
+      buf->wrapMemory(ptr, bytes);
 
-      return mem;
+      return new hip::memory(buf, bytes, 0);
     }
 
     udim_t device::memorySize() const {

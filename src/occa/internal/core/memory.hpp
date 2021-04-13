@@ -7,44 +7,51 @@
 
 namespace occa {
   class kernelArgData;
+  class modeBuffer_t;
 
   class modeMemory_t : public gc::ringEntry_t {
    public:
     int memInfo;
-    occa::json properties;
-
     gc::ring_t<memory> memoryRing;
+    occa::modeBuffer_t *modeBuffer;
 
     char *ptr;
     char *uvaPtr;
 
-    occa::modeDevice_t *modeDevice;
-
     const dtype_t *dtype_;
     udim_t size;
-    bool isOrigin;
+    dim_t offset;
 
-    modeMemory_t(modeDevice_t *modeDevice_,
-                 udim_t size_,
-                 const occa::json &json_);
+    modeMemory_t(modeBuffer_t *modeBuffer_,
+                 udim_t size_, dim_t offset_);
 
     void dontUseRefs();
     void addMemoryRef(memory *mem);
     void removeMemoryRef(memory *mem);
+    void removeModeMemoryRef();
     bool needsFree() const;
 
+    void setupUva();
     bool isManaged() const;
     bool inDevice() const;
     bool isStale() const;
 
+    modeDevice_t* getModeDevice() const;
+    const occa::json& properties() const;
+
+    modeMemory_t* slice(const dim_t offset_,
+                        const udim_t bytes);
+
+    void free();
+    void detach();
+
     //---[ Virtual Methods ]------------
-    virtual ~modeMemory_t() = 0;
+    virtual ~modeMemory_t();
 
     virtual void* getKernelArgPtr() const = 0;
 
-    virtual modeMemory_t* addOffset(const dim_t offset) = 0;
+    virtual void* getPtr() const;
 
-    virtual void* getPtr();
 
     virtual void copyTo(void *dest,
                         const udim_t bytes,
@@ -61,8 +68,6 @@ namespace occa {
                           const udim_t destOffset = 0,
                           const udim_t srcOffset = 0,
                           const occa::json &props = occa::json()) = 0;
-
-    virtual void detach() = 0;
     //==================================
 
     //---[ Friend Functions ]-----------

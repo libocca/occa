@@ -38,7 +38,7 @@ namespace occa {
     if (!modeMemory) {
       return NULL;
     }
-    return modeMemory->modeDevice;
+    return modeMemory->getModeDevice();
   }
 
   occa::modeMemory_t* kernelArgData::getModeMemory() const {
@@ -60,7 +60,7 @@ namespace occa {
   void kernelArgData::setupForKernelCall(const bool isConst) const {
     if (!modeMemory              ||
         !modeMemory->isManaged() ||
-        !modeMemory->modeDevice->hasSeparateMemorySpace()) {
+        !modeMemory->getModeDevice()->hasSeparateMemorySpace()) {
       return;
     }
     if (!modeMemory->inDevice()) {
@@ -111,7 +111,7 @@ namespace occa {
     for (int i = 0; i < argCount; ++i) {
       const kernelArgData &arg = args[i];
       if (arg.modeMemory) {
-        return device(arg.modeMemory->modeDevice);
+        return device(arg.modeMemory->getModeDevice());
       }
     }
 
