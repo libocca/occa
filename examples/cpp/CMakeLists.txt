@@ -19,12 +19,3 @@ add_subdirectory(15_cuda_interop)
 # add_subdirectory(17_mandelbulb)
 
 add_subdirectory(20_native_dpcpp_kernel)
-add_subdirectory(27_dpcpp_interop)
-add_subdirectory(28_memory_flavors)
-
-add_subdirectory(21_iso3dfd_native_dpcpp)
-add_subdirectory(22_iso3dfd_native_dpcpp_optimized)
-add_subdirectory(23_iso3dfd_okl)
-add_subdirectory(24_iso3dfd_okl_device_function)
-add_subdirectory(25_iso3dfd_okl_shared)
-add_subdirectory(26_iso3dfd_okl_shared_native)
