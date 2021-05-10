@@ -366,7 +366,7 @@ namespace occa {
           return (int) oklAttrToken.args[0].expr->evaluate();
         }
 
-        // Find index by looking at how many for-loops of the same attribute are in it
+        // Find index by looking at how many for-loops of the same attribute are inside
         int maxInnerCount = 0;
         forOklForLoopStatements(
           forSmnt_,
@@ -374,13 +374,19 @@ namespace occa {
               const std::string innerAttr,
               const statementArray &path) {
 
+            const auto isInnerOklLoop = [&](statement_t *smnt) {
+              return (
+                (smnt != &forSmnt_)
+                && (smnt->type() & statementType::for_)
+                && smnt->hasAttribute(oklAttr_)
+              );
+            };
+
+            // Check innerForSmnt first
+            // Then add to the matched statements between forSmnt_ and innerForSmnt
             const int innerCount = (
-              path
-              .filter([&](statement_t *smnt) {
-                  return ((smnt->type() & statementType::for_)
-                          && smnt->hasAttribute(oklAttr_));
-                })
-              .length()
+              isInnerOklLoop(&innerForSmnt)
+              + path.filter(isInnerOklLoop).length()
             );
 
             if (innerCount > maxInnerCount)
@@ -388,10 +394,6 @@ namespace occa {
               maxInnerCount = innerCount;
             }
           });
-
-        // @outer index is 1 less than count
-        if(oklAttr_ == "outer")
-          maxInnerCount--;
 
         return maxInnerCount;
       }
