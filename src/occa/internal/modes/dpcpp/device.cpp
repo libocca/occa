@@ -322,7 +322,6 @@ namespace occa
     //==================================
 
     //---[ Memory ]---------------------
-    // @todo: change "mapped" to "host"
     modeMemory_t *device::malloc(const udim_t bytes,
                                  const void *src,
                                  const occa::json &props)
@@ -346,7 +345,6 @@ namespace occa
       return mem;
     }
 
-    // @todo: update to `hostMalloc`
     modeMemory_t *device::hostAlloc(const udim_t bytes,
                                       const void *src,
                                       const occa::json &props)
