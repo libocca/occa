@@ -22,6 +22,9 @@ namespace occa
       return new dpcppAccessorNode(*this);
     }
 
+    //@todo: Determine the performance implications of index-ordering
+    // E.g., the ordering of the SYCL work-item ID triple is reversed
+    // from the OKL `@inner` indices.
     void dpcppAccessorNode::print(printer &pout) const
     {
       const arrayVector &var_dims = shared_type.arrays;
@@ -39,11 +42,12 @@ namespace occa
       {
         pout << "{" << *(var_dims[0].size);
         
-        if(var_rank > 1)
+        if(var_rank > 1) {
           pout << "," << *(var_dims[1].size);
 
-        if(var_rank > 2)
-          pout << "," << *(var_dims[1].size);
+          if(var_rank > 2)
+            pout << "," << *(var_dims[2].size);
+        }
 
         pout<< "},";
       }

@@ -256,20 +256,52 @@ namespace occa
 
       void dpcppParser::setSharedQualifiers()
       {
-        statementArray::from(root)
-            .nestedForEachDeclaration([&](variableDeclaration &decl) {
-              variable_t &var = decl.variable();
-              if (var.hasAttribute("shared"))
-              {
-                auto* shared_value = new dpcppAccessorNode(var.source->clone(),
-                                                          var.vartype,
-                                                          group_handler_name);
+        statementArray::from(root).nestedForEachDeclaration(
+          [&](variableDeclaration &decl,declarationStatement &declSmnt) {
 
-                decl.setValue(shared_value);
-                var.vartype.setType(auto_);
-                var.vartype.arrays.clear();
-              }
-            });
+            variable_t &var = decl.variable();
+
+            if (var.hasAttribute("shared"))
+            {
+              auto* acc_value = new dpcppAccessorNode(var.source->clone(),
+                                                      var.vartype,
+                                                      group_handler_name);
+
+              std::string var_name = var.name();
+              std::string acc_name = var_name + "_acc";
+
+              size_t var_rank = var.vartype.arrays.size();
+
+              variableDeclaration acc_decl = decl.clone();
+              acc_decl.setValue(acc_value);
+              
+              variable_t& acc = acc_decl.variable();
+              acc.setName(acc_name);
+              acc.vartype.clear();
+              acc.vartype.setType(syclAccessor);
+
+              declarationStatement &acc_declSmnt = *(new declarationStatement(declSmnt.up, acc.source->clone()));
+              acc_declSmnt.addDeclaration(acc_decl,true);
+              declSmnt.up->addBefore(declSmnt, acc_declSmnt);
+
+              // This is a quick-and-dirty hack.
+              //@todo Implement a cleaner solution
+              std::string ptr_value_str = acc_name + ".get_pointer().get()";
+              auto* ptr_value = new identifierNode(var.source->clone(), ptr_value_str);
+              
+              expr ptr_asmt(var);
+              for (size_t i{1}; i < var_rank; ++i)
+                ptr_asmt = expr::leftUnaryOpExpr(op::dereference, ptr_asmt);
+
+              ptr_asmt = expr::binaryOpExpr(op::assign,ptr_asmt,ptr_value);
+              declSmnt.up->addAfter(declSmnt,*ptr_asmt.createStatement(declSmnt.up));
+
+              var.vartype.arrays.clear();
+              for (size_t i{}; i < var_rank; ++i)
+                var += pointer_t();
+            }
+          }
+        );
       }
 
       void dpcppParser::setKernelQualifiers(function_t &function)
@@ -292,10 +324,11 @@ namespace occa
         statementArray::from(fromSmnt)
             .nestedForEachDeclaration([&](variableDeclaration &decl, declarationStatement &declSmnt) {
               variable_t &var = decl.variable();
-              if (var.hasAttribute("shared"))
+              const type_t &var_type = *(var.vartype.type);
+              if ((syclAccessor == var_type) && var.hasAttribute("shared"))
               {
                 declSmnt.removeFromParent();
-                toSmnt.addFirst(declSmnt);
+                toSmnt.addLast(declSmnt);
               }
             });
       }

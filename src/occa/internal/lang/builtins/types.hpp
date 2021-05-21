@@ -98,6 +98,7 @@ namespace occa {
     extern const primitive_t syclNdRange;
     extern const primitive_t syclNdItem;
     extern const primitive_t syclHandler;
+    extern const primitive_t syclAccessor;
   } // namespace lang
 }
 #endif
