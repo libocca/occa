@@ -29,19 +29,25 @@ namespace occa {
     const char *c0 = c;
     primitive p;
 
-    if (strncmp(c, "true", 4) == 0) {
-      p = true;
-      p.source = "true";
+    const int cLength = strlen(c);
 
-      c += 4;
-      return p;
+    if(cLength >= 4){
+      if (strncmp(c, "true", 4) == 0) {
+        p = true;
+        p.source = "true";
+
+        c += 4;
+        return p;
+      }
     }
-    if (strncmp(c, "false", 5) == 0) {
-      p = false;
-      p.source = "false";
+    if(cLength >= 5){
+      if (strncmp(c, "false", 5) == 0) {
+        p = false;
+        p.source = "false";
 
-      c += 5;
-      return p;
+        c += 5;
+        return p;
+      }
     }
 
     if ((*c == '+') || (*c == '-')) {
