@@ -463,11 +463,9 @@ namespace occa {
       sys::mkpath(dirname(expFilename));
       const std::string template_ = dirname(expFilename) + "XXXXXX";
       size_t bufferSize = template_.size();
-      char buffer[bufferSize + 1];
-      ::memcpy(buffer, template_.c_str(), bufferSize);
-      // Set null terminator
-      buffer[bufferSize] = '\0';
-      char *dirname = mkdtemp(buffer);
+      std::vector<char> buffer(bufferSize + 1, '\0');
+      ::memcpy(buffer.data(), template_.c_str(), bufferSize);
+      char *dirname = mkdtemp(buffer.data());
       OCCA_ERROR("Failed to create temporary directory for template [" << template_ << "]: " << strerror(errno),
                  dirname != NULL);
       return std::string(dirname) + "/" + std::string(basename(expFilename));
