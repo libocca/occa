@@ -121,8 +121,13 @@ namespace occa {
 
       OCCA_HIP_ERROR("Device: Setting Device",
                      hipSetDevice(deviceID));
-      OCCA_HIP_ERROR("Device: createStream",
-                     hipStreamCreate(&hipStream));
+      if (props.get<bool>("nonblocking", false)) {
+        OCCA_HIP_ERROR("Device: createStream - NonBlocking",
+                       hipStreamCreateWithFlag(&hipStream, hipStreamNonBlocking));
+      } else {
+        OCCA_HIP_ERROR("Device: createStream",
+                       hipStreamCreate(&hipStream));
+      }
 
       return new stream(this, props, hipStream);
     }
