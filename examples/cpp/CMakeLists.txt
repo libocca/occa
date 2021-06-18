@@ -17,3 +17,5 @@ add_subdirectory(15_cuda_interop)
 # Don't force-compile OpenGL examples
 # add_subdirectory(16_finite_difference)
 # add_subdirectory(17_mandelbulb)
+
+add_subdirectory(18_nonblocking_streams)

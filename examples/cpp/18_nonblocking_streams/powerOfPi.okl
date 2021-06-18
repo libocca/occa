@@ -1,0 +1,10 @@
+@kernel void powerOfPi(float* x,
+                       int entries) {
+  for (int g = 0; g < group; g++; @outer) {
+    for (int i = 0; i < block; ++i; @inner) {
+      for (int j=i+g*block; j < entries; j+=block*group) {
+        x[j] = sqrt(pow(3.14159,j));
+      }
+    }
+  }
+}
