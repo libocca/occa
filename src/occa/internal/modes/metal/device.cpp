@@ -140,8 +140,8 @@ namespace occa {
       const std::string binaryFilename = hashDir + kc::binaryFile;
       const std::string airBinaryFilename = hashDir + "binary.air";
 
-      const std::string airBinaryFilenameTmp = io::tmpFilenameBelow(airBinaryFilename);
-      const std::string binaryFilenameTmp = io::tmpFilenameBelow(binaryFilename);
+      const std::string airBinaryFilenameTmp = io::tmpFilenameFor(airBinaryFilename);
+      const std::string binaryFilenameTmp = io::tmpFilenameFor(binaryFilename);
 
       //---[ Compile Air Binary ]-------
       std::stringstream command;

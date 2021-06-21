@@ -264,8 +264,8 @@ namespace occa {
       const std::string binaryFilename = hashDir + kc::binaryFile;
       const std::string ptxBinaryFilename = hashDir + "ptx_binary.o";
 
-      const std::string ptxBinaryFilenameTmp = io::tmpFilenameBelow(ptxBinaryFilename);
-      const std::string binaryFilenameTmp = io::tmpFilenameBelow(binaryFilename);
+      const std::string ptxBinaryFilenameTmp = io::tmpFilenameFor(ptxBinaryFilename);
+      const std::string binaryFilenameTmp = io::tmpFilenameFor(binaryFilename);
 
       const std::string compiler = allProps["compiler"];
       std::string compilerFlags = allProps["compiler_flags"];

@@ -736,7 +736,7 @@ namespace occa {
 
       // Avoid creating lockfile if possible
       if (!foundOutput) {
-        const std::string binaryFilenameTmp = io::tmpFilenameBelow(binaryFilename);
+        const std::string binaryFilenameTmp = io::tmpFilenameFor(binaryFilename);
         ss << compiler
            << ' '    << srcFilename
            << " -o " << binaryFilenameTmp
@@ -757,7 +757,7 @@ namespace occa {
           vendor_ = (1 << vendorBit);
         }
 
-        const std::string outFilenameTmp = io::tmpFilenameBelow(outFilename);
+        const std::string outFilenameTmp = io::tmpFilenameFor(outFilename);
         io::write(outFilenameTmp, std::to_string(vendor_));
         io::renameTmpFile(outFilenameTmp.c_str(), outFilename.c_str());
         io::markCachedFileComplete(hashDir, "output");

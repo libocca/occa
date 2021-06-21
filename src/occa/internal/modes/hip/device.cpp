@@ -251,7 +251,7 @@ namespace occa {
 
       const std::string sourceFilename = hashDir + kc::sourceFile;
       const std::string binaryFilename = hashDir + kc::binaryFile;
-      const std::string binaryFilenameTmp = io::tmpFilenameBelow(binaryFilename);
+      const std::string binaryFilenameTmp = io::tmpFilenameFor(binaryFilename);
 
       setArchCompilerFlags(allProps);
 

@@ -47,8 +47,8 @@ namespace occa {
       const std::string srcFilename = io::cacheFile(openmpTest, "compilerSupportsOpenMP.cpp", hash);
       const std::string outFilename = io::dirname(srcFilename) + "output";
 
-      const std::string binaryFilenameTmp = io::tmpFilenameBelow(outFilename);
-      const std::string outFilenameTmp = io::tmpFilenameBelow(outFilename);
+      const std::string binaryFilenameTmp = io::tmpFilenameFor(outFilename);
+      const std::string outFilenameTmp = io::tmpFilenameFor(outFilename);
 
       if (!io::isFile(outFilename)) {
         // Try to compile a minimal OpenMP file to see whether

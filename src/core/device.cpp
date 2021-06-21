@@ -401,7 +401,7 @@ namespace occa {
     stringSourceFile += "string_source.cpp";
 
     if (!io::isFile(stringSourceFile)) {
-      const std::string stringSourceFileTmp = io::tmpFilenameBelow(stringSourceFile);
+      const std::string stringSourceFileTmp = io::tmpFilenameFor(stringSourceFile);
       io::write(stringSourceFileTmp, content);
       io::renameTmpFile(stringSourceFileTmp, stringSourceFile);
     }

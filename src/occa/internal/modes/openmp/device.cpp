@@ -40,7 +40,7 @@ namespace occa {
       }
 
       if (!io::isFile(outputFile)) {
-        const std::string outputFileTmp = io::tmpFilenameBelow(outputFile);
+        const std::string outputFileTmp = io::tmpFilenameFor(outputFile);
         parser.writeToFile(outputFileTmp);
         io::renameTmpFile(outputFileTmp.c_str(), outputFile.c_str());
       }

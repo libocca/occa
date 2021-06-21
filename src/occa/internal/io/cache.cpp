@@ -115,7 +115,7 @@ namespace occa {
                         const hash_t &hash,
                         const occa::json &props) {
       if (!io::isFile(filename)) {
-        const std::string filenameTmp = io::tmpFilenameBelow(filename);
+        const std::string filenameTmp = io::tmpFilenameFor(filename);
         occa::json info = props;
         setBuildProps(info["build"]);
         info.write(filenameTmp);

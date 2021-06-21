@@ -313,7 +313,7 @@ namespace occa {
         sys::addCompilerLibraryFlags(compilerFlags);
       }
 
-      const std::string binaryFilenameTmp = io::tmpFilenameBelow(binaryFilename);
+      const std::string binaryFilenameTmp = io::tmpFilenameFor(binaryFilename);
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       command << compiler

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <random>
 #include <vector>
 #include <stddef.h>
 #include <sys/stat.h>
@@ -443,42 +444,34 @@ namespace occa {
       fclose(fp);
     }
 
-    std::string tmpFilenameBelow(const std::string &filename) {
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-
+    std::string tmpFilenameFor(const std::string &filename) {
       /*
-        Return a temporary filename with the same basename as filename,
-        but in a temporary subdirectory.
+        Generate a temporary file name for a file.
+        This will consist of the original file path followed by a hash for uniqueness.
 
-        This seems convoluted (and it is), but many variants to create
-        temporary file(name)s are unsafe, and we cannot use mkstemp
-        because it returns a file handle, not a file name, and we need
-        to able to pass the filename to e.g. compiler invocations as a string.
+        The hash is based on the current time, and a random component as a salt.
 
-        Unfortunate side effect: we have an extra directory that needs
-        to be cleaned. This is handled in the renameTmpFile function, so use
-        these in pairs.
+        We assume that there are not too many invocations of this function and
+        use std::random_device directly for a cheap source of randomness.
       */
       const std::string expFilename = io::expandFilename(filename);
-      sys::mkpath(dirname(expFilename));
-      const std::string template_ = dirname(expFilename) + "XXXXXX";
-      size_t bufferSize = template_.size();
-      std::vector<char> buffer(bufferSize + 1, '\0');
-      ::memcpy(buffer.data(), template_.c_str(), bufferSize);
-      char *dirname = mkdtemp(buffer.data());
-      OCCA_ERROR("Failed to create temporary directory for template [" << template_ << "]: " << strerror(errno),
-                 dirname != NULL);
-      return std::string(dirname) + "/" + std::string(basename(expFilename));
-#else
-#error "TODO: What to use on Windows?"
-#endif
+      const std::string dirName = dirname(expFilename);
+      sys::mkpath(dirname(dirName));
+
+      std::random_device rd;
+
+      const std::string hashStr =
+          std::string(std::to_string(std::time(nullptr))) +
+          std::string(std::to_string(rd()));
+
+      return expFilename + "." + std::to_string(std::hash<std::string>{}(hashStr));
     }
 
     void renameTmpFile(const std::string &filenameIn,
                        const std::string &filenameOut) {
       const std::string expFilename = io::expandFilename(filenameOut);
-      sys::mkpath(dirname(expFilename));
-
+      const std::string dirName = dirname(expFilename);
+      sys::mkpath(dirname(dirName));
       int status;
       status = std::rename(filenameIn.c_str(), expFilename.c_str());
       /*
@@ -489,16 +482,6 @@ namespace occa {
       */
       OCCA_ERROR("Failed to rename [" << filenameIn << "] to [" << expFilename << "]: " << strerror(errno),
                  status == 0 || io::isFile(filenameOut));
-
-      /*
-        Assume the temporary file has been created using the tmpFilenameBelow
-        function, so we need to clean up the temporary directory as well.
-      */
-      const std::string tmpDirname = dirname(io::expandFilename(filenameIn));
-      status = rmdir(tmpDirname.c_str());
-      OCCA_ERROR("Failed to remove temporary directory [" << tmpDirname << "]: " << strerror(errno),
-                 status == 0);
     }
-
   }
 }

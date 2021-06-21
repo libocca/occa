@@ -33,13 +33,13 @@ namespace occa {
     }
 
     if (!io::isFile(outputFile)) {
-      const std::string outputFileTmp = io::tmpFilenameBelow(outputFile);
+      const std::string outputFileTmp = io::tmpFilenameFor(outputFile);
       parser.writeToFile(outputFileTmp);
       io::renameTmpFile(outputFileTmp.c_str(), outputFile.c_str());
     }
 
     if (!io::isFile(launcherOutputFile)) {
-      const std::string launcherOutputFileTmp = io::tmpFilenameBelow(launcherOutputFile);
+      const std::string launcherOutputFileTmp = io::tmpFilenameFor(launcherOutputFile);
       parser.launcherParser.writeToFile(launcherOutputFileTmp);
       io::renameTmpFile(launcherOutputFileTmp.c_str(), launcherOutputFile.c_str());
     }
