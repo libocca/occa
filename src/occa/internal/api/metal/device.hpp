@@ -7,10 +7,6 @@
 #include <occa/internal/api/metal/function.hpp>
 
 namespace occa {
-  namespace io {
-    class lock_t;
-  }
-
   namespace api {
     namespace metal {
       class device_t {
@@ -33,8 +29,7 @@ namespace occa {
         commandQueue_t createCommandQueue() const;
 
         function_t buildKernel(const std::string &metallibFilename,
-                               const std::string &kernelName,
-                               io::lock_t &lock) const;
+                               const std::string &kernelName) const;
 
         buffer_t malloc(const udim_t bytes,
                         const void *src) const;

@@ -6,7 +6,6 @@
 #import <Metal/Metal.h>
 
 #include <occa/internal/api/metal/device.hpp>
-#include <occa/internal/io/lock.hpp>
 #include <occa/internal/utils/sys.hpp>
 
 namespace occa {
@@ -63,8 +62,7 @@ namespace occa {
       }
 
       function_t device_t::buildKernel(const std::string &metallibFilename,
-                                       const std::string &kernelName,
-                                       io::lock_t &lock) const {
+                                       const std::string &kernelName) const {
         id<MTLDevice> metalDevice = (__bridge id<MTLDevice>) deviceObj;
 
         NSString *metallibFilenameObj = [
@@ -84,7 +82,6 @@ namespace occa {
 
         if (!metalLibrary) {
           // An error occured building the library
-          lock.release();
           if (error) {
             std::string errorStr = [error.localizedDescription UTF8String];
             OCCA_FORCE_ERROR("Device: Unable to create library from ["
@@ -101,7 +98,6 @@ namespace occa {
 
         if (!metalFunction) {
           // An error occured fetching the function from the library
-          lock.release();
           OCCA_FORCE_ERROR("Device: Unable to get kernel ["
                            << kernelName << "] from library ["
                            << metallibFilename << "]");

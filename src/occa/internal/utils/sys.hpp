@@ -6,7 +6,6 @@
 
 #include <occa/defines.hpp>
 #include <occa/types.hpp>
-#include <occa/internal/io/lock.hpp>
 #include <occa/internal/io/output.hpp>
 #include <occa/internal/utils/enums.hpp>
 #include <occa/utils/hash.hpp>
@@ -154,12 +153,10 @@ namespace occa {
     void* malloc(udim_t bytes);
     void free(void *ptr);
 
-    void* dlopen(const std::string &filename,
-                 const io::lock_t &lock = io::lock_t());
+    void* dlopen(const std::string &filename);
 
     functionPtr_t dlsym(void *dlHandle,
-                        const std::string &functionName,
-                        const io::lock_t &lock = io::lock_t());
+                        const std::string &functionName);
 
     void dlclose(void *dlHandle);
 

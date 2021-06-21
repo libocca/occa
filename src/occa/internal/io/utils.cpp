@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <random>
 #include <vector>
 #include <stddef.h>
 #include <sys/stat.h>
@@ -441,6 +442,46 @@ namespace occa {
 
       fsync(fileno(fp));
       fclose(fp);
+    }
+
+    std::string tmpFilenameFor(const std::string &filename) {
+      /*
+        Generate a temporary file name for a file.
+        This will consist of the original file path followed by a hash for uniqueness.
+
+        The hash is based on the current time, and a random component as a salt.
+
+        We assume that there are not too many invocations of this function and
+        use std::random_device directly for a cheap source of randomness.
+      */
+      const std::string expFilename = io::expandFilename(filename);
+      const std::string dirName = dirname(expFilename);
+      sys::mkpath(dirname(dirName));
+
+      std::random_device rd;
+
+      const std::string hashStr =
+          std::string(std::to_string(std::time(nullptr))) +
+          std::string(std::to_string(rd()));
+
+      return expFilename + "." + std::to_string(std::hash<std::string>{}(hashStr));
+    }
+
+    void renameTmpFile(const std::string &filenameIn,
+                       const std::string &filenameOut) {
+      const std::string expFilename = io::expandFilename(filenameOut);
+      const std::string dirName = dirname(expFilename);
+      sys::mkpath(dirname(dirName));
+      int status;
+      status = std::rename(filenameIn.c_str(), expFilename.c_str());
+      /*
+        On NFS filesystems, you can not assume that if the operation
+        failed, the file was not renamed. If the server does the rename
+        operation and then crashes, the retransmitted RPC which will be
+        processed when the server is up again causes a failure.
+      */
+      OCCA_ERROR("Failed to rename [" << filenameIn << "] to [" << expFilename << "]: " << strerror(errno),
+                 status == 0 || io::isFile(filenameOut));
     }
   }
 }
