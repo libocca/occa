@@ -33,7 +33,7 @@ namespace occa {
       bool isNamed() const;
 
       std::string& name();
-      const std::string& name() const;
+      std::string name() const;
 
       void setName(const std::string &name_);
 

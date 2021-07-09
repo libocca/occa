@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
+#include <assert.h>
 
 #include <occa/internal/io/output.hpp>
 

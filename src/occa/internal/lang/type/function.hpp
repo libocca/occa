@@ -30,6 +30,7 @@ namespace occa {
 
       void addArgument(const variable_t &arg);
       void addArguments(const variableVector &args_);
+      void addArgumentFirst(const variable_t &arg);
 
       variable_t* removeArgument(const int index);
 

@@ -21,16 +21,15 @@ declare -a examples=()
 if [[ $CPP_EXAMPLES -eq 1 ]]; then
   examples+=(
     cpp/01_add_vectors
-    cpp/02_background_device
-    cpp/03_inline_okl
-    cpp/04_reduction
-    cpp/05_building_kernels
-    cpp/06_unified_memory
-    cpp/07_dtypes
-    cpp/08_arrays
-    cpp/09_streams
-    cpp/11_native_cpp_kernels
-    cpp/12_native_c_kernels
+    cpp/02_for_loops
+    cpp/03_arrays
+    cpp/04_generic_inline_kernels
+    cpp/05_custom_types
+    cpp/06_shared_memory
+    cpp/07_memory_management
+    cpp/08_streams
+    cpp/12_native_cuda_kernels
+    cpp/20_native_dpcpp_kernel
     )
 fi
 if [[ $C_EXAMPLES -eq 1 ]]; then
@@ -59,6 +58,7 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
         CUDA)   device="{mode: 'CUDA', device_id: 0}";;
         OpenCL) device="{mode: 'OpenCL', platform_id: 0, device_id: 0}";;
         Metal)  device="{mode: 'Metal', device_id: 0}";;
+        dpcpp) device="{mode: 'dpcpp', platform_id: 0, device_id: 0}";;
     esac
 
     for example_dir in "${examples[@]}"; do
@@ -80,13 +80,13 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
                 if [[ "${mode}" == OpenCL ]]; then
                     continue
                 fi;;
-            cpp/11_native_cpp_kernels)
+            cpp/10_native_cpp_kernels)
                 if [[ "${mode}" != Serial ]]; then
                     continue
                 fi
                 flags=(--verbose)
                 ;;
-            cpp/12_native_c_kernels)
+            cpp/11_native_c_kernels)
                 if [[ "${mode}" != Serial ]]; then
                     continue
                 fi
