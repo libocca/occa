@@ -123,19 +123,20 @@ namespace occa
       {
         statementArray::from(root)
             .flatFilterByStatementType(statementType::empty, "barrier")
-            .forEach([&](statement_t *smnt) {
-              // TODO 1.1: Implement proper barriers
-              emptyStatement &emptySmnt = (emptyStatement &)*smnt;
+            .forEach([&](statement_t *smnt)
+                     {
+                       // TODO 1.1: Implement proper barriers
+                       emptyStatement &emptySmnt = (emptyStatement &)*smnt;
 
-              statement_t &barrierSmnt = (*(new sourceCodeStatement(
-                  emptySmnt.up,
-                  emptySmnt.source,
-                  work_item_name + ".barrier(sycl::access::fence_space::local_space);")));
+                       statement_t &barrierSmnt = (*(new sourceCodeStatement(
+                           emptySmnt.up,
+                           emptySmnt.source,
+                           work_item_name + ".barrier(sycl::access::fence_space::local_space);")));
 
-              emptySmnt.replaceWith(barrierSmnt);
+                       emptySmnt.replaceWith(barrierSmnt);
 
-              delete &emptySmnt;
-            });
+                       delete &emptySmnt;
+                     });
       }
 
       void dpcppParser::setupKernels()
@@ -144,164 +145,137 @@ namespace occa
             .filterByStatementType(
                 statementType::functionDecl | statementType::function,
                 "kernel")
-            .forEach([&](statement_t *smnt) {
-              function_t *function;
+            .forEach([&](statement_t *smnt)
+                     {
+                       function_t *function;
 
-              if (smnt->type() & statementType::functionDecl)
-              {
-                functionDeclStatement &k = ((functionDeclStatement &)*smnt);
-                function = &(k.function());
+                       if (smnt->type() & statementType::functionDecl)
+                       {
+                         functionDeclStatement &k = ((functionDeclStatement &)*smnt);
+                         function = &(k.function());
 
-                variable_t sycl_nditem(syclNdItem, work_item_name);
+                         migrateLocalDecls(k);
+                         if (!success)
+                           return;
 
-                variable_t sycl_handler(syclHandler, group_handler_name);
-                sycl_handler.vartype.setReferenceToken(
-                    new operatorToken(sycl_handler.source->origin, op::address));
+                         variable_t sycl_nditem(syclNdItem, work_item_name);
 
-                variable_t sycl_ndrange(syclNdRange, ndrange_name);
-                sycl_ndrange += pointer_t();
+                         variable_t sycl_handler(syclHandler, group_handler_name);
+                         sycl_handler.vartype.setReferenceToken(
+                             new operatorToken(sycl_handler.source->origin, op::address));
 
-                variable_t sycl_queue(syclQueue, queue_name);
-                sycl_queue += pointer_t();
+                         variable_t sycl_ndrange(syclNdRange, ndrange_name);
+                         sycl_ndrange += pointer_t();
 
-                function->addArgumentFirst(sycl_ndrange);
-                function->addArgumentFirst(sycl_queue);
+                         variable_t sycl_queue(syclQueue, queue_name);
+                         sycl_queue += pointer_t();
 
-                lambda_t &cg_function = *(new lambda_t(capture_t::byReference));
-                cg_function.addArgument(sycl_handler);
+                         function->addArgumentFirst(sycl_ndrange);
+                         function->addArgumentFirst(sycl_queue);
 
-                migrateLocalDecls(k, *cg_function.body);
-                if (!success)
-                  return;
+                         lambda_t &cg_function = *(new lambda_t(capture_t::byReference));
+                         cg_function.addArgument(sycl_handler);
 
-                lambda_t &sycl_kernel = *(new lambda_t(capture_t::byValue));
-                sycl_kernel.addArgument(sycl_nditem);
+                         lambda_t &sycl_kernel = *(new lambda_t(capture_t::byValue));
+                         sycl_kernel.addArgument(sycl_nditem);
 
-                sycl_kernel.body->swap(k);
+                         sycl_kernel.body->swap(k);
 
-                lambdaNode sycl_kernel_node(sycl_kernel.source, sycl_kernel);
+                         lambdaNode sycl_kernel_node(sycl_kernel.source, sycl_kernel);
 
-                leftUnaryOpNode sycl_ndrange_node(
-                    sycl_ndrange.source,
-                    op::dereference,
-                    variableNode(sycl_ndrange.source, sycl_ndrange.clone()));
+                         leftUnaryOpNode sycl_ndrange_node(
+                             sycl_ndrange.source,
+                             op::dereference,
+                             variableNode(sycl_ndrange.source, sycl_ndrange.clone()));
 
-                exprNodeVector parallelfor_args;
-                parallelfor_args.push_back(&sycl_ndrange_node);
-                parallelfor_args.push_back(&sycl_kernel_node);
+                         exprNodeVector parallelfor_args;
+                         parallelfor_args.push_back(&sycl_ndrange_node);
+                         parallelfor_args.push_back(&sycl_kernel_node);
 
-                identifierNode parallelfor_node(
-                    new identifierToken(originSource::builtin, "parfor"),
-                    "parallel_for");
+                         identifierNode parallelfor_node(
+                             new identifierToken(originSource::builtin, "parfor"),
+                             "parallel_for");
 
-                callNode parallelfor_call_node(
-                    parallelfor_node.token,
-                    parallelfor_node,
-                    parallelfor_args);
+                         callNode parallelfor_call_node(
+                             parallelfor_node.token,
+                             parallelfor_node,
+                             parallelfor_args);
 
-                binaryOpNode cgh_parallelfor(
-                    sycl_handler.source,
-                    op::dot,
-                    variableNode(sycl_handler.source, sycl_handler.clone()),
-                    parallelfor_call_node);
+                         binaryOpNode cgh_parallelfor(
+                             sycl_handler.source,
+                             op::dot,
+                             variableNode(sycl_handler.source, sycl_handler.clone()),
+                             parallelfor_call_node);
 
-                cg_function.body->add(*(new expressionStatement(nullptr, cgh_parallelfor)));
+                         cg_function.body->add(*(new expressionStatement(nullptr, cgh_parallelfor)));
 
-                lambdaNode cg_function_node(cg_function.source, cg_function);
-                exprNodeVector submit_args;
-                submit_args.push_back(&cg_function_node);
+                         lambdaNode cg_function_node(cg_function.source, cg_function);
+                         exprNodeVector submit_args;
+                         submit_args.push_back(&cg_function_node);
 
-                identifierNode submit_node(
-                    new identifierToken(originSource::builtin, "qsub"),
-                    "submit");
+                         identifierNode submit_node(
+                             new identifierToken(originSource::builtin, "qsub"),
+                             "submit");
 
-                callNode submit_call_node(
-                    submit_node.token,
-                    submit_node,
-                    submit_args);
+                         callNode submit_call_node(
+                             submit_node.token,
+                             submit_node,
+                             submit_args);
 
-                binaryOpNode q_submit(
-                    sycl_queue.source,
-                    op::arrow,
-                    variableNode(sycl_queue.source, sycl_queue.clone()),
-                    submit_call_node);
+                         binaryOpNode q_submit(
+                             sycl_queue.source,
+                             op::arrow,
+                             variableNode(sycl_queue.source, sycl_queue.clone()),
+                             submit_call_node);
 
-                k.addFirst(*(new expressionStatement(nullptr, q_submit)));
-              }
-              else
-              {
-                function = &(((functionStatement *)smnt)->function());
-              }
-              setKernelQualifiers(*function);
-            });
+                         k.addFirst(*(new expressionStatement(nullptr, q_submit)));
+                       }
+                       else
+                       {
+                         function = &(((functionStatement *)smnt)->function());
+                       }
+                       setKernelQualifiers(*function);
+                     });
       }
 
       void dpcppParser::setFunctionQualifiers()
       {
         root.children
             .filterByStatementType(statementType::functionDecl)
-            .forEach([&](statement_t *smnt) {
-              functionDeclStatement &funcDeclSmnt = (functionDeclStatement &)*smnt;
+            .forEach([&](statement_t *smnt)
+                     {
+                       functionDeclStatement &funcDeclSmnt = (functionDeclStatement &)*smnt;
 
-              // Only add __device__ to non-kernel functions
-              if (funcDeclSmnt.hasAttribute("kernel"))
-              {
-                return;
-              }
+                       // Only add __device__ to non-kernel functions
+                       if (funcDeclSmnt.hasAttribute("kernel"))
+                       {
+                         return;
+                       }
 
-              vartype_t &vartype = funcDeclSmnt.function().returnType;
-              vartype.qualifiers.addFirst(vartype.origin(), device);
-            });
+                       vartype_t &vartype = funcDeclSmnt.function().returnType;
+                       vartype.qualifiers.addFirst(vartype.origin(), device);
+                     });
       }
 
       void dpcppParser::setSharedQualifiers()
       {
         statementArray::from(root).nestedForEachDeclaration(
-          [&](variableDeclaration &decl,declarationStatement &declSmnt) {
-
-            variable_t &var = decl.variable();
-
-            if (var.hasAttribute("shared"))
+            [&](variableDeclaration &decl, declarationStatement &declSmnt)
             {
-              auto* acc_value = new dpcppAccessorNode(var.source->clone(),
-                                                      var.vartype,
-                                                      group_handler_name);
+              variable_t &var = decl.variable();
 
-              std::string var_name = var.name();
-              std::string acc_name = var_name + "_acc";
+              if (var.hasAttribute("shared"))
+              {
+                auto *shared_value = new dpcppLocalMemoryNode(var.source->clone(),
+                                                              var.vartype,
+                                                              work_item_name);
 
-              size_t var_rank = var.vartype.arrays.size();
-
-              variableDeclaration acc_decl = decl.clone();
-              acc_decl.setValue(acc_value);
-              
-              variable_t& acc = acc_decl.variable();
-              acc.setName(acc_name);
-              acc.vartype.clear();
-              acc.vartype.setType(syclAccessor);
-
-              declarationStatement &acc_declSmnt = *(new declarationStatement(declSmnt.up, acc.source->clone()));
-              acc_declSmnt.addDeclaration(acc_decl,true);
-              declSmnt.up->addBefore(declSmnt, acc_declSmnt);
-
-              // This is a quick-and-dirty hack.
-              //@todo Implement a cleaner solution
-              std::string ptr_value_str = acc_name + ".get_pointer().get()";
-              auto* ptr_value = new identifierNode(var.source->clone(), ptr_value_str);
-              
-              expr ptr_asmt(var);
-              for (size_t i{1}; i < var_rank; ++i)
-                ptr_asmt = expr::leftUnaryOpExpr(op::dereference, ptr_asmt);
-
-              ptr_asmt = expr::binaryOpExpr(op::assign,ptr_asmt,ptr_value);
-              declSmnt.up->addAfter(declSmnt,*ptr_asmt.createStatement(declSmnt.up));
-
-              var.vartype.arrays.clear();
-              for (size_t i{}; i < var_rank; ++i)
-                var += pointer_t();
-            }
-          }
-        );
+                decl.setValue(shared_value);
+                var.vartype.setType(auto_);
+                var.vartype.setReferenceToken(var.source);
+                var.vartype.arrays.clear();
+              }
+            });
       }
 
       void dpcppParser::setKernelQualifiers(function_t &function)
@@ -319,71 +293,78 @@ namespace occa
         }
       }
 
-      void dpcppParser::migrateLocalDecls(blockStatement &fromSmnt, blockStatement &toSmnt)
+      void dpcppParser::migrateLocalDecls(functionDeclStatement &kernelSmnt)
       {
-        statementArray::from(fromSmnt)
-            .nestedForEachDeclaration([&](variableDeclaration &decl, declarationStatement &declSmnt) {
-              variable_t &var = decl.variable();
-              const type_t &var_type = *(var.vartype.type);
-              if ((syclAccessor == var_type) && var.hasAttribute("shared"))
-              {
-                declSmnt.removeFromParent();
-                toSmnt.addLast(declSmnt);
-              }
-            });
+        statementArray::from(kernelSmnt)
+            .nestedForEachDeclaration([&](variableDeclaration &decl, declarationStatement &declSmnt)
+                                      {
+                                        variable_t &var = decl.variable();
+                                        if (var.hasAttribute("shared"))
+                                        {
+                                          declSmnt.removeFromParent();
+                                          kernelSmnt.addFirst(declSmnt);
+                                        }
+                                      });
       }
 
-      void dpcppParser::setupAtomics() {
+      void dpcppParser::setupAtomics()
+      {
         success &= attributes::atomic::applyCodeTransformation(
             root,
             transformAtomicBlockStatement,
             transformAtomicBasicExpressionStatement);
       }
 
-      bool dpcppParser::transformAtomicBlockStatement(blockStatement &blockSmnt) {
+      bool dpcppParser::transformAtomicBlockStatement(blockStatement &blockSmnt)
+      {
         bool transform_successful{true};
         statementArray::from(blockSmnt)
             .flatFilterByStatementType(statementType::expression)
-            .forEach([&](statement_t *smnt) {
-              expressionStatement &exprSmnt = static_cast<expressionStatement&>(*smnt);
+            .forEach([&](statement_t *smnt)
+                     {
+                       expressionStatement &exprSmnt = static_cast<expressionStatement &>(*smnt);
 
-              // if(!transformAtomicBasicExpressionStatement(exprSmnt))
-              // {
-              //   transform_successful = false;
-              //   return;
-              // }
-              transformAtomicBasicExpressionStatement(exprSmnt);
-            });
+                       // if(!transformAtomicBasicExpressionStatement(exprSmnt))
+                       // {
+                       //   transform_successful = false;
+                       //   return;
+                       // }
+                       transformAtomicBasicExpressionStatement(exprSmnt);
+                     });
 
         return transform_successful;
       }
 
-      bool dpcppParser::transformAtomicBasicExpressionStatement(expressionStatement &exprSmnt) 
+      bool dpcppParser::transformAtomicBasicExpressionStatement(expressionStatement &exprSmnt)
       {
-        expressionStatement& atomicSmnt = dynamic_cast<expressionStatement&>(exprSmnt.clone());
-        
+        expressionStatement &atomicSmnt = dynamic_cast<expressionStatement &>(exprSmnt.clone());
+
         const opType_t &opType = expr(atomicSmnt.expr).opType();
 
         exprNode *variable_node{nullptr};
-        if (opType & operatorType::unary) {
+        if (opType & operatorType::unary)
+        {
           if (opType & operatorType::leftUnary)
           {
-            variable_node = ((leftUnaryOpNode*) atomicSmnt.expr)->value;
+            variable_node = ((leftUnaryOpNode *)atomicSmnt.expr)->value;
           }
-          else if (opType & operatorType::rightUnary) {
-            variable_node = ((rightUnaryOpNode*) atomicSmnt.expr)->value;
+          else if (opType & operatorType::rightUnary)
+          {
+            variable_node = ((rightUnaryOpNode *)atomicSmnt.expr)->value;
           }
         }
-        else if (opType & operatorType::binary) {
-          binaryOpNode &binaryNode = *static_cast<binaryOpNode*>(atomicSmnt.expr);
+        else if (opType & operatorType::binary)
+        {
+          binaryOpNode &binaryNode = *static_cast<binaryOpNode *>(atomicSmnt.expr);
           variable_node = binaryNode.leftValue;
         }
-        else {
+        else
+        {
           atomicSmnt.printError("Unable to transform @atomic code");
           return false;
         }
 
-        variable_t & atomic_var = *(variable_node->getVariable());
+        variable_t &atomic_var = *(variable_node->getVariable());
         vartype_t atomic_type = atomic_var.vartype;
 
         auto *atomic_ref = new dpcppAtomicNode(atomic_var.source, atomic_type, *variable_node);

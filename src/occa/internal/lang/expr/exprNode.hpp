@@ -10,22 +10,25 @@
 #include <occa/internal/lang/token.hpp>
 #include <occa/internal/lang/expr/exprNodeArray.hpp>
 
-namespace occa {
-  namespace lang {
+namespace occa
+{
+  namespace lang
+  {
     class exprNode;
     class type_t;
     class variable_t;
     class function_t;
 
-    typedef std::vector<exprNode*> exprNodeVector;
-    typedef std::stack<exprNode*>  exprNodeStack;
-    typedef std::vector<token_t*>  tokenVector;
+    typedef std::vector<exprNode *> exprNodeVector;
+    typedef std::stack<exprNode *> exprNodeStack;
+    typedef std::vector<token_t *> tokenVector;
 
     // Variables to help make output prettier
-    static const int PRETTIER_MAX_VAR_WIDTH  = 30;
+    static const int PRETTIER_MAX_VAR_WIDTH = 30;
     static const int PRETTIER_MAX_LINE_WIDTH = 80;
 
-    namespace exprNodeType {
+    namespace exprNodeType
+    {
       extern const udim_t empty;
       extern const udim_t primitive;
       extern const udim_t char_;
@@ -75,11 +78,12 @@ namespace occa {
       extern const udim_t tuple;
       extern const udim_t cudaCall;
       extern const udim_t lambda;
-      extern const udim_t dpcppAccessor;
+      extern const udim_t dpcppLocalMemory;
       extern const udim_t dpcppAtomic;
     } // namespace exprNodeType
 
-    class exprNode {
+    class exprNode
+    {
     public:
       token_t *token;
 
@@ -88,21 +92,24 @@ namespace occa {
       virtual ~exprNode();
 
       template <class TM>
-      inline bool is() const {
-        return (dynamic_cast<const TM*>(this) != NULL);
+      inline bool is() const
+      {
+        return (dynamic_cast<const TM *>(this) != NULL);
       }
 
       template <class TM>
-      inline TM& to() {
-        TM *ptr = dynamic_cast<TM*>(this);
+      inline TM &to()
+      {
+        TM *ptr = dynamic_cast<TM *>(this);
         OCCA_ERROR("Unable to cast exprNode::to",
                    ptr != NULL);
         return *ptr;
       }
 
       template <class TM>
-      inline const TM& to() const {
-        const TM *ptr = dynamic_cast<const TM*>(this);
+      inline const TM &to() const
+      {
+        const TM *ptr = dynamic_cast<const TM *>(this);
         OCCA_ERROR("Unable to cast exprNode::to",
                    ptr != NULL);
         return *ptr;
@@ -110,14 +117,14 @@ namespace occa {
 
       virtual udim_t type() const = 0;
 
-      virtual exprNode* clone() const = 0;
-      static exprNode* clone(exprNode *expr);
+      virtual exprNode *clone() const = 0;
+      static exprNode *clone(exprNode *expr);
 
       virtual bool canEvaluate() const;
       virtual primitive evaluate() const;
 
-      virtual exprNode* startNode();
-      virtual exprNode* endNode();
+      virtual exprNode *startNode();
+      virtual exprNode *endNode();
 
       exprNodeVector getNestedChildren();
 
@@ -131,9 +138,9 @@ namespace occa {
 
       virtual bool hasAttribute(const std::string &attr) const;
 
-      virtual variable_t* getVariable();
+      virtual variable_t *getVariable();
 
-      virtual exprNode* wrapInParentheses();
+      virtual exprNode *wrapInParentheses();
 
       virtual void print(printer &pout) const = 0;
 
@@ -149,11 +156,11 @@ namespace occa {
       void childDebugPrint(const std::string &prefix) const;
     };
 
-    io::output& operator << (io::output &out,
-                             const exprNode &node);
+    io::output &operator<<(io::output &out,
+                           const exprNode &node);
 
-    printer& operator << (printer &pout,
-                          const exprNode &node);
+    printer &operator<<(printer &pout,
+                        const exprNode &node);
 
     void cloneExprNodeVector(exprNodeVector &dest,
                              const exprNodeVector &src);
