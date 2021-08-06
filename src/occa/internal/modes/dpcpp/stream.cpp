@@ -16,7 +16,7 @@ namespace occa {
                        commandQueue.wait_and_throw());
     }
 
-    occa::dpcpp::streamTag stream::memcpy(void * dest,const void* src, size_t num_bytes)
+    occa::dpcpp::streamTag stream::memcpy(void * dest,const void* src, occa::udim_t num_bytes)
     {
       ::sycl::event e{commandQueue.memcpy(dest, src, num_bytes)};
       return dpcpp::streamTag(modeDevice, e);

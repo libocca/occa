@@ -20,7 +20,7 @@ namespace occa {
 
       void finish();
 
-      occa::dpcpp::streamTag memcpy(void *dest, const void *src, size_t num_bytes);
+      occa::dpcpp::streamTag memcpy(void *dest, const void *src, occa::udim_t num_bytes);
     };
   }
 }
