@@ -39,7 +39,7 @@ namespace occa
         auto devices{platforms[platformID].get_devices()};
         OCCA_ERROR(
             "Invalid device number (" + toString(deviceID) + ")",
-            (static_cast<size_t>(deviceID) < platforms.size()));
+            (static_cast<size_t>(deviceID) < devices.size()));
 
         dpcppDevice = devices[deviceID];
         dpcppContext = ::sycl::context(devices[deviceID]);
