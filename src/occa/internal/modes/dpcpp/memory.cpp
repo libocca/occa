@@ -51,7 +51,7 @@ namespace occa
       const bool async = props.get("async", false);
 
       occa::dpcpp::stream& q = getDpcppStream(modeDevice->currentStream);
-      occa::dpcpp::streamTag e = q.memcpy(&(this->ptr)[offset], &((char *)src)[offset], bytes);
+      occa::dpcpp::streamTag e = q.memcpy(&(this->ptr)[offset],src, bytes);
 
       if(!async)
         e.waitFor();
@@ -66,7 +66,7 @@ namespace occa
       const bool async = props.get("async", false);
 
       occa::dpcpp::stream& q = getDpcppStream(modeDevice->currentStream);
-      occa::dpcpp::streamTag e = q.memcpy(&(this->ptr)[destOffset], &(src->ptr)[srcOffset], bytes);
+      occa::dpcpp::streamTag e = q.memcpy(&(this->ptr)[destOffset],&(src->ptr)[srcOffset], bytes);
 
       if(!async)
         e.waitFor();
@@ -81,7 +81,7 @@ namespace occa
       const bool async = props.get("async", false);
 
       occa::dpcpp::stream& q = getDpcppStream(modeDevice->currentStream);
-      occa::dpcpp::streamTag e = q.memcpy(&((char *)dest)[offset], &(this->ptr)[offset], bytes);
+      occa::dpcpp::streamTag e = q.memcpy(dest, &(this->ptr)[offset], bytes);
 
       if(!async)
         e.waitFor();
