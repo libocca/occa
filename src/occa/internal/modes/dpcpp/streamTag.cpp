@@ -20,29 +20,32 @@ namespace occa
 
     double streamTag::submitTime()
     {
-      double submit_time;
-      OCCA_DPCPP_ERROR(
-          "streamTag: startTime",
-          submit_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_submit>())
-      return submit_time;
+      // double submit_time;
+      // OCCA_DPCPP_ERROR(
+      //     "streamTag: startTime",
+      //     submit_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_submit>())
+      // return submit_time;
+      return 0.0;
     }
 
     double streamTag::startTime()
     {
-      double start_time;
-      OCCA_DPCPP_ERROR(
-          "streamTag: startTime",
-          start_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_start>())
-      return start_time;
+      // double start_time;
+      // OCCA_DPCPP_ERROR(
+      //     "streamTag: startTime",
+      //     start_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_start>())
+      // return start_time;
+      return 0.0;
     }
 
     double streamTag::endTime()
     {
-     double end_time;
-      OCCA_DPCPP_ERROR(
-          "streamTag: endTime",
-          end_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_end>())
-      return end_time;
+    //  double end_time;
+    //   OCCA_DPCPP_ERROR(
+    //       "streamTag: endTime",
+    //       end_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_end>())
+    //   return end_time;
+      return 0.0;
     }
   } // namespace dpcpp
 } // namespace occa
