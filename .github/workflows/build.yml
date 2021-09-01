@@ -37,10 +37,10 @@ jobs:
             CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
 
-          - name: "[Ubuntu] clang-9"
+          - name: "[Ubuntu] clang-11"
             os: ubuntu-latest
-            CC: clang-9
-            CXX: clang++-9
+            CC: clang-11
+            CXX: clang++-11
             CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
 
