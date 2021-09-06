@@ -330,6 +330,7 @@ namespace occa {
               << " -I"  << env::OCCA_INSTALL_DIR << "include"
               << " -L"  << env::OCCA_INSTALL_DIR << "lib -locca"
               << ' '    << compilerLinkerFlags
+              << " 2>&1"
               << std::endl;
 #else
       command << kernelProps["compiler"]
@@ -348,21 +349,31 @@ namespace occa {
 #endif
 
       const std::string &sCommand = strip(command.str());
-
       if (verbose) {
         io::stdout << "Compiling [" << kernelName << "]\n" << sCommand << "\n";
       }
 
+      std::string commandOutput;
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-      const int compileError = system(sCommand.c_str());
+      const int commandExitCode = sys::call(
+        sCommand.c_str(),
+        commandOutput
+      );
 #else
-      const int compileError = system(("\"" +  sCommand + "\"").c_str());
+      const int commandExitCode = sys::call(
+        ("\"" +  sCommand + "\"").c_str(),
+        commandOutput
+      );
 #endif
 
       lock.release();
-      if (compileError) {
-        OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
-                         " Command: [" << sCommand << ']');
+      if (commandExitCode) {
+        OCCA_FORCE_ERROR(
+          "Error compiling [" << kernelName << "],"
+          " Command: [" << sCommand << "]\n"
+          << "Output:\n\n"
+          << commandOutput << "\n"
+        );
       }
 
       modeKernel_t *k = buildKernelFromBinary(binaryFilename,

@@ -326,22 +326,28 @@ namespace occa {
               << " -I"        << env::OCCA_INSTALL_DIR << "include"
               << " -L"        << env::OCCA_INSTALL_DIR << "lib -locca"
               << " -x cu " << sourceFilename
-              << " -o "    << binaryFilename;
+              << " -o "    << binaryFilename
+              << " 2>&1";
 
-      if (!verbose) {
-        command << " > /dev/null 2>&1";
-      }
       const std::string &sCommand = command.str();
       if (verbose) {
-        io::stdout << sCommand << '\n';
+        io::stdout << "Compiling [" << kernelName << "]\n" << sCommand << "\n";
       }
 
-      const int compileError = system(sCommand.c_str());
+      std::string commandOutput;
+      const int commandExitCode = sys::call(
+        sCommand.c_str(),
+        commandOutput
+      );
 
       lock.release();
-      if (compileError) {
-        OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
-                         " Command: [" << sCommand << ']');
+      if (commandExitCode) {
+        OCCA_FORCE_ERROR(
+          "Error compiling [" << kernelName << "],"
+          " Command: [" << sCommand << ']'
+          << "Output:\n\n"
+          << commandOutput << "\n"
+        );
       }
       //================================
     }
