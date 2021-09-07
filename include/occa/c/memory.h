@@ -20,31 +20,6 @@ occaMemory occaMemorySlice(occaMemory memory,
                            const occaDim_t offset,
                            const occaDim_t bytes);
 
-//---[ UVA ]----------------------------
-bool occaMemoryIsManaged(occaMemory memory);
-
-bool occaMemoryInDevice(occaMemory memory);
-
-bool occaMemoryIsStale(occaMemory memory);
-
-void occaMemoryStartManaging(occaMemory memory);
-
-void occaMemoryStopManaging(occaMemory memory);
-
-void occaMemorySyncToDevice(occaMemory memory,
-                            const occaDim_t bytes,
-                            const occaDim_t offset);
-
-void occaMemorySyncToHost(occaMemory memory,
-                          const occaDim_t bytes,
-                          const occaDim_t offset);
-//======================================
-
-void occaMemcpy(void *dest,
-                const void *src,
-                const occaUDim_t bytes,
-                occaJson props);
-
 void occaCopyMemToMem(occaMemory dest, occaMemory src,
                       const occaUDim_t bytes,
                       const occaUDim_t destOffset,

@@ -8,7 +8,6 @@
 #include <occa/c/json.h>
 #include <occa/c/kernel.h>
 #include <occa/c/memory.h>
-#include <occa/c/uva.h>
 
 // Just in case someone wants to run with an older format than C99
 #ifndef OCCA_DISABLE_VARIADIC_MACROS

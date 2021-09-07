@@ -635,34 +635,6 @@ namespace occa {
                         const dtype_t &dtype,
                         const occa::json &props);
 
-    void* umalloc(const dim_t entries,
-                  const dtype_t &dtype,
-                  const void *src = NULL,
-                  const occa::json &props = occa::json());
-
-    void* umalloc(const dim_t entries,
-                  const dtype_t &dtype,
-                  const occa::memory src,
-                  const occa::json &props = occa::json());
-
-    void* umalloc(const dim_t entries,
-                  const dtype_t &dtype,
-                  const occa::json &props);
-
-    template <class T = void>
-    T* umalloc(const dim_t entries,
-                const void *src = NULL,
-                const occa::json &props = occa::json());
-
-    template <class T = void>
-    T* umalloc(const dim_t entries,
-                const occa::memory src,
-                const occa::json &props = occa::json());
-
-    template <class T = void>
-    T* umalloc(const dim_t entries,
-                const occa::json &props);
-
     /**
      * @startDoc{wrapMemory}
      *

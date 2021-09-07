@@ -75,25 +75,6 @@ namespace occa {
                             const void *src,
                             const occa::json &props);
 
-  void* umalloc(const dim_t entries,
-                const dtype_t &dtype,
-                const void *src = NULL,
-                const occa::json &props = occa::json());
-
-  template <class T = void>
-  T* umalloc(const dim_t entries,
-              const void *src = NULL,
-              const occa::json &props = occa::json());
-
-  template <>
-  void* umalloc<void>(const dim_t entries,
-                      const void *src,
-                      const occa::json &props);
-
-  void memcpy(void *dest, const void *src,
-              const dim_t bytes,
-              const occa::json &props = json());
-
   void memcpy(memory dest, const void *src,
               const dim_t bytes = -1,
               const dim_t offset = 0,
@@ -109,9 +90,6 @@ namespace occa {
               const dim_t destOffset = 0,
               const dim_t srcOffset = 0,
               const occa::json &props = json());
-
-  void memcpy(void *dest, const void *src,
-              const occa::json &props);
 
   void memcpy(memory dest, const void *src,
               const occa::json &props);

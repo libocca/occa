@@ -37,9 +37,9 @@ int main(int argc, const char **argv) {
   int entries = 5;
   int i;
 
-  float *a  = (float*) occaTypedUMalloc(entries, occaDtypeFloat, NULL, occaDefault);
-  float *b  = (float*) occaTypedUMalloc(entries, occaDtypeFloat, NULL, occaDefault);
-  float *ab = (float*) occaTypedUMalloc(entries, occaDtypeFloat, NULL, occaDefault);
+  float *a  = (float*) malloc(entries*sizeof(float));
+  float *b  = (float*) malloc(entries*sizeof(float));
+  float *ab = (float*) malloc(entries*sizeof(float));
 
   for (i = 0; i < entries; ++i) {
     a[i]  = i;
@@ -47,23 +47,20 @@ int main(int argc, const char **argv) {
     ab[i] = 0;
   }
 
+  // Allocate memory on the background device
+  occaMemory o_a  = occaTypedMalloc(entries, occaDtypeFloat, a, occaDefault);
+  occaMemory o_b  = occaTypedMalloc(entries, occaDtypeFloat, b, occaDefault);
+  occaMemory o_ab = occaTypedMalloc(entries, occaDtypeFloat, ab, occaDefault);
+
   occaKernel addVectors = occaBuildKernel("addVectors.okl",
                                           "addVectors",
                                           occaDefault);
 
-  // Arrays a, b, and ab are now resident
-  //   on [device]
   occaKernelRun(addVectors,
                 occaInt(entries), occaPtr(a), occaPtr(b), occaPtr(ab));
 
-  // b is not const in the kernel, so we can use
-  //   dontSync(b) to manually force b to not sync
-  occaDontSync(b);
-
-  // Finish work queued up in [device],
-  //   synchronizing a, b, and ab and
-  //   making it safe to use them again
-  occaFinish();
+  // Copy result to the host
+  occaCopyMemToPtr(ab, o_ab, occaAllBytes, 0, occaDefault);
 
   for (i = 0; i < entries; ++i) {
     printf("%d = %f\n", i, ab[i]);
@@ -74,11 +71,18 @@ int main(int argc, const char **argv) {
     }
   }
 
+  // Free host memory
+  free(a);
+  free(b);
+  free(ab);
+
+  // Free device memory and occa objects
   occaFree(&args);
+  occaFree(&props);
   occaFree(&addVectors);
-  occaFreeUvaPtr(a);
-  occaFreeUvaPtr(b);
-  occaFreeUvaPtr(ab);
+  occaFree(&o_a);
+  occaFree(&o_b);
+  occaFree(&o_ab);
 
   return 0;
 }

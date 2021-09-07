@@ -63,15 +63,6 @@ occaMemory occaTypedMalloc(const occaUDim_t entries,
                            const void *src,
                            occaJson props);
 
-void* occaUMalloc(const occaUDim_t bytes,
-                  const void *src,
-                  occaJson props);
-
-void* occaTypedUMalloc(const occaUDim_t entries,
-                       const occaDtype type,
-                       const void *src,
-                       occaJson props);
-
 occaMemory occaWrapMemory(const void *ptr,
                           const occaUDim_t bytes,
                           occaJson props);

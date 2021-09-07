@@ -37,53 +37,6 @@ occaMemory occaMemorySlice(occaMemory memory,
   return occa::c::newOccaType(memSlice);
 }
 
-//---[ UVA ]----------------------------
-bool occaMemoryIsManaged(occaMemory memory) {
-  return (int) occa::c::memory(memory).isManaged();
-}
-
-bool occaMemoryInDevice(occaMemory memory) {
-  return (int) occa::c::memory(memory).inDevice();
-}
-
-bool occaMemoryIsStale(occaMemory memory) {
-  return (int) occa::c::memory(memory).isStale();
-}
-
-void occaMemoryStartManaging(occaMemory memory) {
-  occa::c::memory(memory).startManaging();
-}
-
-void occaMemoryStopManaging(occaMemory memory) {
-  occa::c::memory(memory).stopManaging();
-}
-
-void occaMemorySyncToDevice(occaMemory memory,
-                            const occaDim_t bytes,
-                            const occaDim_t offset) {
-
-  occa::c::memory(memory).syncToDevice(bytes, offset);
-}
-
-void occaMemorySyncToHost(occaMemory memory,
-                          const occaDim_t bytes,
-                          const occaDim_t offset) {
-
-  occa::c::memory(memory).syncToHost(bytes, offset);
-}
-//======================================
-
-void occaMemcpy(void *dest, const void *src,
-                const occaUDim_t bytes,
-                occaJson props) {
-  if (occa::c::isDefault(props)) {
-    occa::memcpy(dest, src, bytes);
-  } else {
-    occa::memcpy(dest, src, bytes,
-                 occa::c::json(props));
-  }
-}
-
 void occaCopyMemToMem(occaMemory dest, occaMemory src,
                       const occaUDim_t bytes,
                       const occaUDim_t destOffset,
