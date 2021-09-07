@@ -221,7 +221,7 @@ namespace occa {
      *
      * @endDoc
      */
-    bool isInitialized();
+    bool isInitialized() const;
 
     modeDevice_t* getModeDevice() const;
 

@@ -41,9 +41,9 @@ int main(int argc, const char **argv) {
 
   occa::scope scope({
     {"entries", entries},
-    {"a", a},
-    {"b", b},
-    {"ab", ab}
+    {"a", array_a},
+    {"b", array_b},
+    {"ab", array_ab}
   }, {
     // Define TILE_SIZE at compile-time
     {"defines/TILE_SIZE", 16}

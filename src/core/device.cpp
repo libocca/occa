@@ -121,7 +121,7 @@ namespace occa {
     return (modeDevice != other.modeDevice);
   }
 
-  bool device::isInitialized() {
+  bool device::isInitialized() const {
     return (modeDevice != NULL);
   }
 
