@@ -19,9 +19,9 @@ int main(int argc, const char **argv) {
 
   int entries = 5;
 
-  float *a  = occa::umalloc<float>(entries);
-  float *b  = occa::umalloc<float>(entries);
-  float *ab = occa::umalloc<float>(entries);
+  float *a  = new float[entries];
+  float *b  = new float[entries];
+  float *ab = new float[entries];
 
   for (int i = 0; i < entries; ++i) {
     a[i]  = i;
@@ -29,12 +29,21 @@ int main(int argc, const char **argv) {
     ab[i] = 0;
   }
 
+  // Uses the background device
+  occa::array<float> array_a(entries);
+  occa::array<float> array_b(entries);
+  occa::array<float> array_ab(entries);
+
+  // Copy over host data
+  array_a.copyFrom(a);
+  array_b.copyFrom(b);
+  array_ab.fill(0);
+
   occa::scope scope({
     {"entries", entries},
-    // Const-ness of variables is passed through, which can be useful for the compiler
-    {"a", (const float*) a},
-    {"b", (const float*) b},
-    {"ab", ab}
+    {"a", array_a},
+    {"b", array_b},
+    {"ab", array_ab}
   }, {
     // Define TILE_SIZE at compile-time
     {"defines/TILE_SIZE", 16}
@@ -46,7 +55,7 @@ int main(int argc, const char **argv) {
     }
   ));
 
-  occa::finish();
+  array_ab.copyTo(ab);
 
   for (int i = 0; i < entries; ++i) {
     std::cout << i << ": " << ab[i] << '\n';
@@ -57,9 +66,10 @@ int main(int argc, const char **argv) {
     }
   }
 
-  occa::free(a);
-  occa::free(b);
-  occa::free(ab);
+  // Free host memory
+  delete [] a;
+  delete [] b;
+  delete [] ab;
 
   return 0;
 }

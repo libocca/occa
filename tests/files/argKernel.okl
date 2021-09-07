@@ -1,6 +1,5 @@
 @kernel void argKernel(void *nullPtr,
                        int *mem,
-                       int *uvaPtr,
                        char i8,
                        char u8,
                        short i16,
@@ -18,7 +17,6 @@
     printf(
       "nullPtr: %p\n"
       "mem: %d\n"
-      "uvaPtr: %d\n"
       "i8: %d\n"
       "u8: %d\n"
       "i16: %d\n"
@@ -33,7 +31,6 @@
       "str: %s\n",
       nullPtr,
       (int) mem[0],
-      (int) uvaPtr[0],
       (int) i8,
       (int) u8,
       (int) i16,

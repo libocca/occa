@@ -2,7 +2,6 @@
 
 #include <occa/internal/c/types.hpp>
 #include <occa/internal/core/memory.hpp>
-#include <occa/utils/uva.hpp>
 
 namespace occa {
   namespace c {
@@ -398,8 +397,7 @@ namespace occa {
       switch (value.type) {
         case occa::c::typeType::ptr: {
           arg.addPointer(value.value.ptr,
-                         value.bytes,
-                         true, false);
+                         value.bytes);
           break;
         }
         case occa::c::typeType::int8_: {
@@ -434,14 +432,12 @@ namespace occa {
         }
         case occa::c::typeType::struct_: {
           arg.addPointer(value.value.ptr,
-                         value.bytes,
-                         false, false);
+                         value.bytes);
           break;
         }
         case occa::c::typeType::string: {
           arg.addPointer(value.value.ptr,
-                         value.bytes,
-                         false, false);
+                         value.bytes);
           break;
         }
         case occa::c::typeType::memory: {
@@ -586,14 +582,6 @@ namespace occa {
           return occa::c::memory(value).dtype();
         case occa::c::typeType::null_:
           return dtype::void_;
-        case occa::c::typeType::ptr: {
-          occa::modeMemory_t* mem = uvaToMemory(value.value.ptr);
-          if (mem) {
-            return *(mem->dtype_);
-          }
-          OCCA_FORCE_ERROR("Invalid pointer type");
-          return dtype::none;
-        }
         default:
           OCCA_FORCE_ERROR("Invalid value type");
           return dtype::none;

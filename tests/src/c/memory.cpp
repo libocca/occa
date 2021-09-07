@@ -6,12 +6,10 @@
 #include <occa/internal/utils/testing.hpp>
 
 void testInit();
-void testUvaMethods();
 void testCopyMethods();
 
 int main(const int argc, const char **argv) {
   testInit();
-  testUvaMethods();
   testCopyMethods();
 
   return 0;
@@ -75,47 +73,6 @@ void testInit() {
   occaFree(&mem);
 
   delete [] data;
-}
-
-void testUvaMethods() {
-  // Test with uninitialized memory
-  occaMemory mem = occaUndefined;
-
-  ASSERT_FALSE(occaMemoryIsManaged(mem));
-  ASSERT_FALSE(occaMemoryInDevice(mem));
-  ASSERT_FALSE(occaMemoryIsStale(mem));
-
-  occaMemoryStartManaging(mem);
-  ASSERT_FALSE(occaMemoryIsManaged(mem));
-
-  occaMemoryStopManaging(mem);
-  ASSERT_FALSE(occaMemoryIsManaged(mem));
-
-  ASSERT_THROW(
-    occaMemorySyncToDevice(mem, occaAllBytes, 0);
-  );
-
-  ASSERT_THROW(
-    occaMemorySyncToHost(mem, occaAllBytes, 0);
-  );
-
-  // Test with memory
-  mem = occaMalloc(10 * sizeof(int), NULL, occaDefault);
-
-  ASSERT_FALSE(occaMemoryIsManaged(mem));
-  ASSERT_FALSE(occaMemoryInDevice(mem));
-  ASSERT_FALSE(occaMemoryIsStale(mem));
-
-  occaMemoryStartManaging(mem);
-  ASSERT_TRUE(occaMemoryIsManaged(mem));
-
-  occaMemoryStopManaging(mem);
-  ASSERT_FALSE(occaMemoryIsManaged(mem));
-
-  occaMemorySyncToDevice(mem, occaAllBytes, 0);
-  occaMemorySyncToHost(mem, occaAllBytes, 0);
-
-  occaFree(&mem);
 }
 
 void testCopyMethods() {
@@ -191,40 +148,7 @@ void testCopyMethods() {
   occaFree(&mem2);
   occaFree(&mem4);
 
-  // UVA memory copy
-  int *o_data2 = (int*) occaUMalloc(bytes2, data2, occaDefault);
-  int *o_data4 = (int*) occaUMalloc(bytes4, data4, occaDefault);
-
-  o_data2[0] = -2;
-  o_data4[1] = -4;
-
-  occaMemcpy(o_data2, o_data4 + 1,
-             1 * sizeof(int),
-             occaDefault);
-
-  occaMemcpy(data2, o_data2,
-             occaAllBytes,
-             props);
-
-  ASSERT_EQ(data2[0], -4);
-
-  o_data2[0] = 1;
-  occaMemcpy(o_data2, data2,
-             occaAllBytes,
-             props);
-
-  ASSERT_EQ(o_data2[0], -4);
-
-  // Unable to find 'all bytes' from 2 non-occa pointers
-  ASSERT_THROW(
-    occaMemcpy(data2, data4,
-               occaAllBytes,
-               occaDefault);
-  );
-
   delete [] data2;
   delete [] data4;
-  occaFreeUvaPtr(o_data2);
-  occaFreeUvaPtr(o_data4);
   occaFree(&props);
 }

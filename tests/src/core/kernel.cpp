@@ -162,16 +162,12 @@ void testRun() {
   int value = 1;
   occa::memory mem = occa::malloc<int>(1, &value);
 
-  value = 2;
-  int *uvaPtr = occa::umalloc<int>(1, &value);
-
   int xy[2] = {13, 14};
   std::string str = "fifteen";
 
   argKernel(
     occa::null,
     mem,
-    uvaPtr,
     (int8_t) 3,
     (uint8_t) 4,
     (int16_t) 5,
@@ -185,6 +181,4 @@ void testRun() {
     xy,
     str.c_str()
   );
-
-  occa::freeUvaPtr(uvaPtr);
 }
