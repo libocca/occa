@@ -15,7 +15,6 @@ namespace occa {
     gc::ring_t<modeMemory_t> modeMemoryRing;
 
     char *ptr;
-    char *uvaPtr;
 
     occa::modeDevice_t *modeDevice;
 
@@ -31,8 +30,6 @@ namespace occa {
     void addModeMemoryRef(modeMemory_t *mem);
     void removeModeMemoryRef(modeMemory_t *mem);
     bool needsFree() const;
-
-    void setupUva();
 
     //---[ Virtual Methods ]------------
     virtual ~modeBuffer_t();
