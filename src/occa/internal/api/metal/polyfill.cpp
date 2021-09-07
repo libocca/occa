@@ -152,8 +152,7 @@ namespace occa {
       }
 
       function_t device_t::buildKernel(const std::string &metallibFilename,
-                                       const std::string &kernelName,
-                                       io::lock_t &lock) const {
+                                       const std::string &kernelName) const {
         return function_t();
       }
 

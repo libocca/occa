@@ -96,7 +96,7 @@ namespace occa {
     infoProps["kernel/metadata"] = sourceMetadata.getKernelMetadataJson();
     infoProps["kernel/dependencies"] = sourceMetadata.getDependencyJson();
 
-    io::writeBuildFile(filename, kernelHash, infoProps);
+    io::writeBuildFile(filename, infoProps);
   }
 
   std::string modeDevice_t::getKernelHash(const std::string &fullHash,
