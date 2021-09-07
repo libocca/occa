@@ -19,10 +19,7 @@ namespace occa
     bool isEnabled()
     {
       auto device_list = ::sycl::device::get_devices();
-      // The SYCL standard states that, when no arguments are passed to
-      // device::get_devices (default argument is info::device_type::all),
-      // at least one device is returned: i.e. the SYCL host device. 
-      return (device_list.size() > 1);
+      return (device_list.size() > 0);
     }
 
     void setCompiler(occa::json &dpcpp_properties) noexcept

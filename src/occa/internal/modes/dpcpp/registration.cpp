@@ -24,58 +24,59 @@ namespace occa {
         auto platform_list = ::sycl::platform::get_platforms();
         for (auto p : platform_list)
         {
-          if (!p.is_host())
+          section
+            .add("Platform " + toString(platform_id), p.get_info<::sycl::info::platform::name>())
+            .addDivider();
+
+          int device_id{0};
+          auto device_list = p.get_devices();
+          for (auto d : device_list)
           {
-            section
-                .add("Platform " + toString(platform_id), p.get_info<::sycl::info::platform::name>())
-                .addDivider();
-
-            int device_id{0};
-            auto device_list = p.get_devices();
-            for (auto d : device_list)
+            std::string device_type_str;
+            if (d.is_gpu())
             {
-              std::string device_type_str;
-              if (d.is_gpu())
-              {
-                device_type_str = "gpu";
-              }
-              else if (d.is_cpu())
-              {
-                device_type_str = "cpu";
-              }
-              else if (d.is_accelerator())
-              {
-                device_type_str = "accelerator";
-              }
-              else
-              {
-                device_type_str = "TYPE UNKNOWN";
-              }
-
-              std::string device_name_str = d.get_info<::sycl::info::device::name>();
-
-              uint32_t max_compute_units = d.get_info<::sycl::info::device::max_compute_units>();
-
-              // Global memory is returned in bytes
-              uint64_t global_memory_B = d.get_info<::sycl::info::device::global_mem_size>();
-              std::string global_memory_str = stringifyBytes(global_memory_B);
-
-              // Local memory is returned in bytes
-              uint64_t local_memory_B = d.get_info<::sycl::info::device::local_mem_size>();
-              std::string local_memory_str = stringifyBytes(local_memory_B);
-
-              section
-                  .add("Device " + toString(device_id), device_name_str)
-                  .add("Device Type", device_type_str)
-                  .add("Compute Cores", toString(max_compute_units))
-                  .add("Global Memory", global_memory_str)
-                  .add("Local Memory", local_memory_str)
-                  .addDivider();
-
-              ++device_id;
+              device_type_str = "gpu";
             }
-            ++platform_id;
+            else if (d.is_cpu())
+            {
+              device_type_str = "cpu";
+            }
+            else if (d.is_accelerator())
+            {
+              device_type_str = "accelerator";
+            }
+            else if(d.is_host())
+            {
+              device_type_str = "host";
+            }
+            else
+            {
+              device_type_str = "TYPE UNKNOWN";
+            }
+
+            std::string device_name_str = d.get_info<::sycl::info::device::name>();
+
+            uint32_t max_compute_units = d.get_info<::sycl::info::device::max_compute_units>();
+
+            // Global memory is returned in bytes
+            uint64_t global_memory_B = d.get_info<::sycl::info::device::global_mem_size>();
+            std::string global_memory_str = stringifyBytes(global_memory_B);
+
+            // Local memory is returned in bytes
+            uint64_t local_memory_B = d.get_info<::sycl::info::device::local_mem_size>();
+            std::string local_memory_str = stringifyBytes(local_memory_B);
+
+            section
+              .add("Device " + toString(device_id), device_name_str)
+              .add("Device Type", device_type_str)
+              .add("Compute Cores", toString(max_compute_units))
+              .add("Global Memory", global_memory_str)
+              .add("Local Memory", local_memory_str)
+              .addDivider();
+
+            ++device_id;
           }
+          ++platform_id;
         }
         // Remove last divider
         section.groups.pop_back();
