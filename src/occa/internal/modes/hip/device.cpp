@@ -184,43 +184,36 @@ namespace occa {
       const bool usingOkl,
       lang::sourceMetadata_t &launcherMetadata,
       lang::sourceMetadata_t &deviceMetadata,
-      const occa::json &kernelProps,
-      io::lock_t lock
+      const occa::json &kernelProps
     ) {
       compileKernel(hashDir,
                     kernelName,
-                    kernelProps,
-                    lock);
+                    sourceFilename,
+                    binaryFilename,
+                    kernelProps);
 
       if (usingOkl) {
         return buildOKLKernelFromBinary(kernelHash,
                                         hashDir,
                                         kernelName,
+                                        sourceFilename,
+                                        binaryFilename,
                                         launcherMetadata,
                                         deviceMetadata,
-                                        kernelProps,
-                                        lock);
+                                        kernelProps);
       }
 
       // Regular HIP Kernel
       hipModule_t hipModule = NULL;
       hipFunction_t hipFunction = NULL;
-      hipError_t error;
 
-      error = hipModuleLoad(&hipModule, binaryFilename.c_str());
-      if (error) {
-        lock.release();
-        OCCA_HIP_ERROR("Kernel [" + kernelName + "]: Loading Module",
-                       error);
-      }
-      error = hipModuleGetFunction(&hipFunction,
-                                   hipModule,
-                                   kernelName.c_str());
-      if (error) {
-        lock.release();
-        OCCA_HIP_ERROR("Kernel [" + kernelName + "]: Loading Function",
-                       error);
-      }
+      OCCA_HIP_ERROR("Kernel [" + kernelName + "]: Loading Module",
+                     hipModuleLoad(&hipModule, binaryFilename.c_str()));
+
+      OCCA_HIP_ERROR("Kernel [" + kernelName + "]: Loading Function",
+                     hipModuleGetFunction(&hipFunction,
+                                          hipModule,
+                                          kernelName.c_str()));
 
       return new kernel(this,
                         kernelName,
@@ -249,14 +242,12 @@ namespace occa {
 
     void device::compileKernel(const std::string &hashDir,
                                const std::string &kernelName,
-                               const occa::json &kernelProps,
-                               io::lock_t &lock) {
+                               const std::string &sourceFilename,
+                               const std::string &binaryFilename,
+                               const occa::json &kernelProps) {
 
       occa::json allProps = kernelProps;
       const bool verbose = allProps.get("verbose", false);
-
-      std::string sourceFilename = hashDir + kc::sourceFile;
-      std::string binaryFilename = hashDir + kc::binaryFile;
 
       setArchCompilerFlags(allProps);
 
@@ -305,7 +296,6 @@ namespace occa {
         commandOutput
       );
 
-      lock.release();
       if (commandExitCode) {
         OCCA_FORCE_ERROR(
           "Error compiling [" << kernelName << "],"
@@ -320,23 +310,15 @@ namespace occa {
     modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
                                                    const std::string &hashDir,
                                                    const std::string &kernelName,
+                                                   const std::string &sourceFilename,
+                                                   const std::string &binaryFilename,
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::json &kernelProps,
-                                                   io::lock_t lock) {
-
-      const std::string sourceFilename = hashDir + kc::sourceFile;
-      const std::string binaryFilename = hashDir + kc::binaryFile;
-
+                                                   const occa::json &kernelProps) {
       hipModule_t hipModule = NULL;
-      hipError_t error;
 
-      error = hipModuleLoad(&hipModule, binaryFilename.c_str());
-      if (error) {
-        lock.release();
-        OCCA_HIP_ERROR("Kernel [" + kernelName + "]: Loading Module",
-                       error);
-      }
+      OCCA_HIP_ERROR("Kernel [" + kernelName + "]: Loading Module",
+                     hipModuleLoad(&hipModule, binaryFilename.c_str()));
 
       // Create wrapper kernel and set launcherKernel
       kernel &k = *(new kernel(this,
@@ -360,14 +342,11 @@ namespace occa {
         lang::kernelMetadata_t &metadata = launchedKernelsMetadata[i];
 
         hipFunction_t hipFunction = NULL;
-        error = hipModuleGetFunction(&hipFunction,
-                                     hipModule,
-                                     metadata.name.c_str());
-        if (error) {
-          lock.release();
-          OCCA_HIP_ERROR("Kernel [" + metadata.name + "]: Loading Function",
-                         error);
-        }
+
+        OCCA_HIP_ERROR("Kernel [" + metadata.name + "]: Loading Function",
+                       hipModuleGetFunction(&hipFunction,
+                                            hipModule,
+                                            metadata.name.c_str()));
 
         kernel *hipKernel = new kernel(this,
                                        metadata.name,

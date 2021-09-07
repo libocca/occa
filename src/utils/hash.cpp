@@ -1,3 +1,4 @@
+#include <random>
 #include <sstream>
 #include <stdint.h>
 
@@ -123,6 +124,20 @@ namespace occa {
     fromHex(s, hash.h, 8 * sizeof(int));
     hash.initialized = true;
     return hash;
+  }
+
+  hash_t hash_t::random() {
+    /*
+      The hash is based on the current time, and a random component as a salt.
+      We assume that there are not too many invocations of this function and
+      use std::random_device directly for a cheap source of randomness.
+    */
+    std::random_device rd;
+
+    return (
+      hash(std::to_string(std::time(nullptr)))
+      ^ hash(std::to_string(rd()))
+    );
   }
 
   std::ostream& operator << (std::ostream &out, const hash_t &hash) {

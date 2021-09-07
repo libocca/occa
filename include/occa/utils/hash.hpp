@@ -160,6 +160,8 @@ namespace occa {
      */
     static hash_t fromString(const std::string &s);
 
+    static hash_t random();
+
     friend std::ostream& operator << (std::ostream &out,
                                     const hash_t &hash);
   };

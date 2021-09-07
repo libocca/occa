@@ -112,30 +112,28 @@ namespace occa {
       const bool usingOkl,
       lang::sourceMetadata_t &launcherMetadata,
       lang::sourceMetadata_t &deviceMetadata,
-      const occa::json &kernelProps,
-      io::lock_t lock
+      const occa::json &kernelProps
     ) {
       OCCA_ERROR("Metal kernels need to use OKL for now",
                  usingOkl);
 
       compileKernel(hashDir,
                     kernelName,
-                    kernelProps,
-                    lock);
+                    kernelProps);
 
       return buildOKLKernelFromBinary(kernelHash,
                                       hashDir,
                                       kernelName,
+                                      sourceFilename,
+                                      binaryFilename,
                                       launcherMetadata,
                                       deviceMetadata,
-                                      kernelProps,
-                                      lock);
+                                      kernelProps);
     }
 
     void device::compileKernel(const std::string &hashDir,
                                const std::string &kernelName,
-                               const occa::json &kernelProps,
-                               io::lock_t &lock) {
+                               const occa::json &kernelProps) {
 
       occa::json allProps = kernelProps;
       const bool verbose = allProps.get("verbose", false);
@@ -162,7 +160,6 @@ namespace occa {
 
       int compileError = system(airCommand.c_str());
       if (compileError) {
-        lock.release();
         OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
                          " Command: [" << airCommand << ']');
         return;
@@ -185,7 +182,6 @@ namespace occa {
 
       compileError = system(metallibCommand.c_str());
 
-      lock.release();
       OCCA_ERROR("Error compiling [" << kernelName << "],"
                  " Command: [" << metallibCommand << ']',
                  !compileError);
@@ -195,14 +191,11 @@ namespace occa {
     modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
                                                    const std::string &hashDir,
                                                    const std::string &kernelName,
+                                                   const std::string &sourceFilename,
+                                                   const std::string &binaryFilename,
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::json &kernelProps,
-                                                   io::lock_t lock) {
-
-      const std::string sourceFilename = hashDir + kc::sourceFile;
-      const std::string binaryFilename = hashDir + kc::binaryFile;
-
+                                                   const occa::json &kernelProps) {
       // Create wrapper kernel and set launcherKernel
       kernel &k = *(new kernel(this,
                                kernelName,
@@ -226,8 +219,7 @@ namespace occa {
 
         api::metal::function_t metalFunction = (
           metalDevice.buildKernel(binaryFilename,
-                                  metadata.name,
-                                  lock)
+                                  metadata.name)
         );
 
         kernel *deviceKernel = new kernel(this,
