@@ -11,12 +11,10 @@ namespace occa {
 
   class modeMemory_t : public gc::ringEntry_t {
    public:
-    int memInfo;
     gc::ring_t<memory> memoryRing;
     occa::modeBuffer_t *modeBuffer;
 
     char *ptr;
-    char *uvaPtr;
 
     const dtype_t *dtype_;
     udim_t size;
@@ -31,10 +29,6 @@ namespace occa {
     void removeModeMemoryRef();
     bool needsFree() const;
 
-    void setupUva();
-    bool isManaged() const;
-    bool inDevice() const;
-    bool isStale() const;
 
     modeDevice_t* getModeDevice() const;
     const occa::json& properties() const;
@@ -74,20 +68,6 @@ namespace occa {
     friend void memcpy(void *dest, void *src,
                        const dim_t bytes,
                        const occa::json &props);
-
-    friend void startManaging(void *ptr);
-    friend void stopManaging(void *ptr);
-
-    friend void syncToDevice(void *ptr, const dim_t bytes);
-    friend void syncToHost(void *ptr, const dim_t bytes);
-
-    friend void syncMemToDevice(occa::modeMemory_t *mem,
-                                const dim_t bytes,
-                                const dim_t offset);
-
-    friend void syncMemToHost(occa::modeMemory_t *mem,
-                              const dim_t bytes,
-                              const dim_t offset);
   };
 }
 

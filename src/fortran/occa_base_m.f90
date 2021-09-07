@@ -164,32 +164,6 @@ module occa_base_m
       type(C_void_ptr), value, intent(in) :: src
       type(occaJson), value :: props
     end function
-
-    ! void* occaUMalloc(const occaUDim_t bytes,
-    !                   const void *src,
-    !                   occaJson props);
-    type(C_void_ptr) function occaUMalloc(bytes, src, props) &
-                              bind(C, name="occaUMalloc")
-      import occaUDim_t, C_void_ptr, occaJson
-      implicit none
-      integer(occaUDim_t), value, intent(in) :: bytes
-      type(C_void_ptr), value, intent(in) :: src
-      type(occaJson), value :: props
-    end function
-
-    ! void* occaTypedUMalloc(const occaUDim_t entries,
-    !                        const occaDtype type,
-    !                        const void *src,
-    !                        occaJson props);
-    type(C_void_ptr) function occaTypedUMalloc(entries, type, src, props) &
-                              bind(C, name="occaTypedUMalloc")
-      import occaUDim_t, occaDtype, C_void_ptr, occaJson
-      implicit none
-      integer(occaUDim_t), value, intent(in) :: entries
-      type(occaDtype), value, intent(in) :: type
-      type(C_void_ptr), value, intent(in) :: src
-      type(occaJson), value :: props
-    end function
     ! ======================================
   end interface
 

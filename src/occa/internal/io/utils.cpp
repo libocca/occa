@@ -16,6 +16,7 @@
 #  include <algorithm> // std::replace
 #endif
 
+#include <occa/utils/hash.hpp>
 #include <occa/internal/io/cache.hpp>
 #include <occa/internal/io/utils.hpp>
 #include <occa/internal/utils/env.hpp>
@@ -441,6 +442,89 @@ namespace occa {
 
       fsync(fileno(fp));
       fclose(fp);
+    }
+
+    void stageFile(
+      const std::string &filename,
+      const bool skipExisting,
+      std::function<bool(const std::string &tempFilename)> func
+    ) {
+      stageFiles(
+        { filename },
+        skipExisting,
+        [&](const strVector &tempFilenames) -> bool {
+          return func(tempFilenames[0]);
+        }
+      );
+    }
+
+    void stageFiles(
+      const strVector &filenames,
+      const bool skipExisting,
+      std::function<bool(const strVector &tempFilenames)> func
+    ) {
+      strVector tempFilenames;
+      bool doNothing = skipExisting;
+      for (std::string filename : filenames) {
+        const std::string expFilename = io::expandFilename(filename);
+
+        sys::mkpath(dirname(expFilename));
+        tempFilenames.push_back(
+          getStagedTempFilename(expFilename)
+        );
+
+        doNothing &= isFile(expFilename);
+      }
+
+      if (doNothing) {
+        return;
+      }
+
+      if (!func(tempFilenames)) {
+        return;
+      }
+
+      for (int i = 0; i < (int) filenames.size(); ++i) {
+        moveStagedTempFile(
+          tempFilenames[i],
+          io::expandFilename(filenames[i])
+        );
+      }
+    }
+
+    std::string getStagedTempFilename(const std::string &expFilename) {
+      // Generate a temporary and unique filename
+      // ~/foo.cpp -> ~/1234.foo.cpp
+      return (
+        dirname(expFilename)
+        + hash_t::random().getString()
+        + "." + basename(expFilename)
+      );
+    }
+
+    void moveStagedTempFile(const std::string &tempFilename,
+                            const std::string &expFilename) {
+      // If the temporary file was not created, nothing is needed to be done
+      if (!isFile(tempFilename)) {
+        return;
+      }
+
+      const int status = std::rename(
+        tempFilename.c_str(),
+        expFilename.c_str()
+      );
+
+      /*
+        On NFS filesystems, you can not assume that if the operation
+        failed, the file was not renamed. If the server does the rename
+        operation and then crashes, the retransmitted RPC which will be
+        processed when the server is up again causes a failure.
+      */
+      OCCA_ERROR(
+        "Failed to rename [" << tempFilename << "] to"
+        << " [" << expFilename << "]: " << strerror(errno),
+        status == 0 || isFile(expFilename)
+      );
     }
   }
 }

@@ -1,9 +1,0 @@
-main
-main.o
-main.dSYM
-
-main_c
-main_c.dSYM
-
-fparser.log
-main_f90

@@ -114,6 +114,14 @@ namespace occa {
       return long_;
     }
 
+    template <> dtype_t get<long long>() {
+      return long_;
+    }
+
+    template <> dtype_t get<unsigned long long>() {
+      return long_;
+    }
+
     template <> dtype_t get<float>() {
       return float_;
     }

@@ -3,7 +3,6 @@
 #include <occa/core/device.hpp>
 #include <occa/core/memory.hpp>
 #include <occa/core/kernelArg.hpp>
-#include <occa/utils/uva.hpp>
 #include <occa/internal/core/memory.hpp>
 #include <occa/internal/core/device.hpp>
 
@@ -57,21 +56,6 @@ namespace occa {
     return value.isPointer();
   }
 
-  void kernelArgData::setupForKernelCall(const bool isConst) const {
-    if (!modeMemory              ||
-        !modeMemory->isManaged() ||
-        !modeMemory->getModeDevice()->hasSeparateMemorySpace()) {
-      return;
-    }
-    if (!modeMemory->inDevice()) {
-      modeMemory->copyFrom(modeMemory->uvaPtr, modeMemory->size);
-      modeMemory->memInfo |= uvaFlag::inDevice;
-    }
-    if (!isConst && !modeMemory->isStale()) {
-      uvaStaleMemory.push_back(modeMemory);
-      modeMemory->memInfo |= uvaFlag::isStale;
-    }
-  }
   //====================================
 
   //---[ kernelArg ]--------------------
@@ -129,28 +113,17 @@ namespace occa {
     }
   }
 
-  void kernelArg::addPointer(void *arg,
-                             bool lookAtUva, bool argIsUva) {
-    addPointer(arg, sizeof(void*), lookAtUva, argIsUva);
+  void kernelArg::addPointer(void *arg) {
+    addPointer(arg, sizeof(void*));
   }
 
-  void kernelArg::addPointer(void *arg, size_t bytes,
-                             bool lookAtUva, bool argIsUva) {
+  void kernelArg::addPointer(void *arg, size_t bytes) {
     if (!arg) {
       args.push_back((primitive) nullptr);
       return;
     }
 
     modeMemory_t *modeMemory = NULL;
-
-    if (argIsUva) {
-      modeMemory = (modeMemory_t*) arg;
-    } else if (lookAtUva) {
-      ptrRangeMap::iterator it = uvaMap.find(arg);
-      if (it != uvaMap.end()) {
-        modeMemory = it->second;
-      }
-    }
 
     if (modeMemory) {
       addMemory(modeMemory);

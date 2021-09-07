@@ -1,25 +1,13 @@
 #include <occa/core/base.hpp>
 #include <occa/core/memory.hpp>
 #include <occa/core/device.hpp>
-#include <occa/utils/uva.hpp>
 #include <occa/internal/core/device.hpp>
 #include <occa/internal/core/memory.hpp>
 #include <occa/internal/utils/sys.hpp>
-#include <occa/internal/utils/uva.hpp>
 
 namespace occa {
   memory::memory() :
       modeMemory(NULL) {}
-
-  memory::memory(void *uvaPtr) :
-      modeMemory(NULL) {
-    ptrRangeMap::iterator it = uvaMap.find(uvaPtr);
-    if (it != uvaMap.end()) {
-      setModeMemory(it->second);
-    } else {
-      setModeMemory((modeMemory_t*) uvaPtr);
-    }
-  }
 
   memory::memory(modeMemory_t *modeMemory_) :
       modeMemory(NULL) {
@@ -155,115 +143,6 @@ namespace occa {
       return 0;
     }
     return modeMemory->size / modeMemory->dtype_->bytes();
-  }
-
-  bool memory::isManaged() const {
-    return (modeMemory && modeMemory->isManaged());
-  }
-
-  bool memory::inDevice() const {
-    return (modeMemory && modeMemory->inDevice());
-  }
-
-  bool memory::isStale() const {
-    return (modeMemory && modeMemory->isStale());
-  }
-
-  void memory::setupUva() {
-    if (!modeMemory) {
-      return;
-    }
-    modeMemory->setupUva();
-  }
-
-  void memory::startManaging() {
-    if (modeMemory) {
-      modeMemory->memInfo |= uvaFlag::isManaged;
-    }
-  }
-
-  void memory::stopManaging() {
-    if (modeMemory) {
-      modeMemory->memInfo &= ~uvaFlag::isManaged;
-    }
-  }
-
-  void memory::syncToDevice(const dim_t bytes,
-                            const dim_t offset) {
-    assertInitialized();
-
-    udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
-
-    OCCA_ERROR("Trying to copy negative bytes (" << bytes << ")",
-               bytes >= -1);
-    OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
-               offset >= 0);
-
-    if (bytes_ == 0) {
-      return;
-    }
-
-    OCCA_ERROR("Memory has size [" << modeMemory->size << "],"
-               << " trying to access [" << offset << ", " << (offset + bytes_) << "]",
-               (bytes_ + offset) <= modeMemory->size);
-
-    if (!modeMemory->getModeDevice()->hasSeparateMemorySpace()) {
-      return;
-    }
-
-    copyFrom(modeMemory->uvaPtr, bytes_, offset);
-
-    modeMemory->memInfo |=  uvaFlag::inDevice;
-    modeMemory->memInfo &= ~uvaFlag::isStale;
-
-    removeFromStaleMap(modeMemory);
-  }
-
-  void memory::syncToHost(const dim_t bytes,
-                          const dim_t offset) {
-    assertInitialized();
-
-    udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
-
-    OCCA_ERROR("Trying to copy negative bytes (" << bytes << ")",
-               bytes >= -1);
-    OCCA_ERROR("Cannot have a negative offset (" << offset << ")",
-               offset >= 0);
-
-    if (bytes_ == 0) {
-      return;
-    }
-
-    OCCA_ERROR("Memory has size [" << modeMemory->size << "],"
-               << " trying to access [" << offset << ", " << (offset + bytes_) << "]",
-               (bytes_ + offset) <= modeMemory->size);
-
-    if (!modeMemory->getModeDevice()->hasSeparateMemorySpace()) {
-      return;
-    }
-
-    copyTo(modeMemory->uvaPtr, bytes_, offset);
-
-    modeMemory->memInfo &= ~uvaFlag::inDevice;
-    modeMemory->memInfo &= ~uvaFlag::isStale;
-
-    removeFromStaleMap(modeMemory);
-  }
-
-  bool memory::uvaIsStale() const {
-    return (modeMemory && modeMemory->isStale());
-  }
-
-  void memory::uvaMarkStale() {
-    if (modeMemory != NULL) {
-      modeMemory->memInfo |= uvaFlag::isStale;
-    }
-  }
-
-  void memory::uvaMarkFresh() {
-    if (modeMemory != NULL) {
-      modeMemory->memInfo &= ~uvaFlag::isStale;
-    }
   }
 
   bool memory::operator == (const occa::memory &other) const {

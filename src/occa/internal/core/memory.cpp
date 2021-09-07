@@ -1,15 +1,13 @@
 #include <occa/internal/modes/serial/device.hpp>
 #include <occa/internal/modes/serial/buffer.hpp>
 #include <occa/internal/modes/serial/memory.hpp>
-#include <occa/internal/utils/uva.hpp>
 
 namespace occa {
+
   modeMemory_t::modeMemory_t(modeBuffer_t *modeBuffer_,
                              udim_t size_, dim_t offset_) :
-    memInfo(uvaFlag::none),
     modeBuffer(modeBuffer_),
     ptr(NULL),
-    uvaPtr(NULL),
     dtype_(&dtype::byte),
     size(size_),
     offset(offset_) {
@@ -75,25 +73,6 @@ namespace occa {
     return memoryRing.needsFree();
   }
 
-  bool modeMemory_t::isManaged() const {
-    return (memInfo & uvaFlag::isManaged);
-  }
-
-  bool modeMemory_t::inDevice() const {
-    return (memInfo & uvaFlag::inDevice);
-  }
-
-  bool modeMemory_t::isStale() const {
-    return (memInfo & uvaFlag::isStale);
-  }
-
-  void modeMemory_t::setupUva() {
-    if (!modeBuffer) {
-      return;
-    }
-    modeBuffer->setupUva();
-  }
-
   modeDevice_t* modeMemory_t::getModeDevice() const {
     return modeBuffer->modeDevice;
   }
@@ -114,28 +93,9 @@ namespace occa {
     OCCA_ERROR("ModeMemory not initialized or has been freed",
                modeBuffer != NULL);
 
-
     OCCA_ERROR("Cannot have a negative offset (" << offset + offset_ << ")",
                offset + offset_ >= 0);
 
-    modeMemory_t* m = modeBuffer->slice(offset+offset_, bytes);
-
-    if (uvaPtr) {
-      m->uvaPtr = (uvaPtr + offset_);
-
-      ptrRange range;
-      range.start = m->uvaPtr;
-      range.end   = (range.start + m->size);
-
-      uvaMap[range] = m;
-      m->getModeDevice()->uvaMap[range] = m;
-
-      // Needed for kernelArg.void_ -> modeMemory checks
-      if (m->uvaPtr != m->ptr) {
-        uvaMap[m->ptr] = m;
-      }
-    }
-
-    return m;
+    return modeBuffer->slice(offset+offset_, bytes);
   }
 }

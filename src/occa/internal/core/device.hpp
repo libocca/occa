@@ -4,7 +4,6 @@
 #include <occa/core/device.hpp>
 #include <occa/types/json.hpp>
 #include <occa/internal/utils/gc.hpp>
-#include <occa/internal/utils/uva.hpp>
 #include <occa/internal/lang/kernelMetadata.hpp>
 
 namespace occa {
@@ -19,9 +18,6 @@ namespace occa {
     gc::ring_t<modeBuffer_t> memoryRing;
     gc::ring_t<modeStream_t> streamRing;
     gc::ring_t<modeStreamTag_t> streamTagRing;
-
-    ptrRangeMap uvaMap;
-    memoryVector uvaStaleMemory;
 
     stream currentStream;
     std::vector<modeStream_t*> streams;

@@ -5,7 +5,6 @@
 #include <occa/internal/utils/env.hpp>
 #include <occa/internal/utils/sys.hpp>
 #include <occa/internal/utils/tls.hpp>
-#include <occa/internal/utils/uva.hpp>
 
 namespace occa {
   //---[ Device Functions ]-------------
@@ -118,20 +117,6 @@ namespace occa {
     return getDevice().malloc(entries, dtype::byte, src, props);
   }
 
-  void* umalloc(const dim_t entries,
-                const dtype_t &dtype,
-                const void *src,
-                const occa::json &props) {
-    return getDevice().umalloc(entries, dtype, src, props);
-  }
-
-  template <>
-  void* umalloc<void>(const dim_t entries,
-                      const void *src,
-                      const occa::json &props) {
-    return getDevice().umalloc(entries, dtype::byte, src, props);
-  }
-
   occa::memory wrapMemory(const void *ptr,
                           const dim_t entries,
                           const dtype_t &dtype,
@@ -144,54 +129,6 @@ namespace occa {
                                 const dim_t entries,
                                 const occa::json &props) {
     return getDevice().wrapMemory(ptr, entries, dtype::byte, props);
-  }
-
-  void memcpy(void *dest, const void *src,
-              const dim_t bytes,
-              const occa::json &props) {
-
-    ptrRangeMap::iterator srcIt  = uvaMap.find(const_cast<void*>(src));
-    ptrRangeMap::iterator destIt = uvaMap.find(dest);
-
-    occa::modeMemory_t *srcMem  = ((srcIt  != uvaMap.end()) ? (srcIt->second)  : NULL);
-    occa::modeMemory_t *destMem = ((destIt != uvaMap.end()) ? (destIt->second) : NULL);
-
-    const udim_t srcOff  = (srcMem
-                            ? (((char*) src)  - srcMem->uvaPtr)
-                            : 0);
-    const udim_t destOff = (destMem
-                            ? (((char*) dest) - destMem->uvaPtr)
-                            : 0);
-
-    const bool usingSrcPtr  = (!srcMem ||
-                               ((srcMem->isManaged() && !srcMem->inDevice())));
-    const bool usingDestPtr = (!destMem ||
-                               ((destMem->isManaged() && !destMem->inDevice())));
-
-    if (usingSrcPtr && usingDestPtr) {
-      udim_t bytes_ = bytes;
-      if (bytes == -1) {
-        OCCA_ERROR("Unable to determine bytes to copy",
-                   srcMem || destMem);
-        bytes_ = (srcMem
-                  ? srcMem->size
-                  : destMem->size);
-      }
-
-      ::memcpy(dest, src, bytes_);
-      return;
-    }
-
-    if (usingSrcPtr) {
-      destMem->copyFrom(src, bytes, destOff, props);
-    } else if (usingDestPtr) {
-      srcMem->copyTo(dest, bytes, srcOff, props);
-    } else {
-      // Auto-detects peer-to-peer stuff
-      occa::memory srcMemory(srcMem);
-      occa::memory destMemory(destMem);
-      destMemory.copyFrom(srcMemory, bytes, destOff, srcOff, props);
-    }
   }
 
   void memcpy(memory dest, const void *src,
@@ -217,11 +154,6 @@ namespace occa {
               const occa::json &props) {
 
     dest.copyFrom(src, bytes, destOffset, srcOffset, props);
-  }
-
-  void memcpy(void *dest, const void *src,
-              const occa::json &props) {
-    memcpy(dest, src, -1, props);
   }
 
   void memcpy(memory dest, const void *src,

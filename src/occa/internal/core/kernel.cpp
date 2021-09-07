@@ -88,56 +88,45 @@ namespace occa {
       && properties.get("type_validation", true)
     );
 
-    if (validateTypes) {
-      const int metaArgc = (int) metadata.arguments.size();
-
-      OCCA_ERROR("(" << hash << ":" << name << ") Kernel expects ["
-                 << metaArgc << "] argument"
-                 << (metaArgc != 1 ? "s," : ",")
-                 << " received ["
-                 << argc << ']',
-                 argc == metaArgc);
-
-      // TODO: Get original arg #
-      for (int i = 0; i < argc; ++i) {
-        kernelArgData &arg = arguments[i];
-        lang::argMetadata_t &argInfo = metadata.arguments[i];
-
-        modeMemory_t *mem = arg.getModeMemory();
-        const bool isNull = arg.value.isNull();
-        const bool isPtr = mem || isNull;
-        if (isPtr != argInfo.isPtr) {
-          if (argInfo.isPtr) {
-            OCCA_FORCE_ERROR("(" << hash << ":" << name << ") Kernel expects an occa::memory for argument ["
-                             << (i + 1) << "]");
-          } else {
-            OCCA_FORCE_ERROR("(" << hash << ":" << name << ") Kernel expects a non-occa::memory type for argument ["
-                             << (i + 1) << "]");
-          }
-        }
-
-        if (!isPtr || isNull) {
-          continue;
-        }
-
-        OCCA_ERROR("(" << hash << ":" << name << ") Argument [" << (i + 1) << "] has wrong runtime type.\n"
-                   << "Expected type: " << argInfo.dtype << '\n'
-                   << "Received type: " << *(mem->dtype_) << '\n',
-                   mem->dtype_->canBeCastedTo(argInfo.dtype));
-
-        arg.setupForKernelCall(argInfo.isConst);
-      }
+    if (!validateTypes) {
       return;
     }
 
-    // Non-OKL kernel setup
-    // All memory arguments are expected to be non-const for UVA purposes
+    const int metaArgc = (int) metadata.arguments.size();
+
+    OCCA_ERROR("(" << hash << ":" << name << ") Kernel expects ["
+               << metaArgc << "] argument"
+               << (metaArgc != 1 ? "s," : ",")
+               << " received ["
+               << argc << ']',
+               argc == metaArgc);
+
+    // TODO: Get original arg #
     for (int i = 0; i < argc; ++i) {
       kernelArgData &arg = arguments[i];
+      lang::argMetadata_t &argInfo = metadata.arguments[i];
+
       modeMemory_t *mem = arg.getModeMemory();
-      if (mem) {
-        arg.setupForKernelCall(false);
+      const bool isNull = arg.value.isNull();
+      const bool isPtr = mem || isNull;
+      if (isPtr != argInfo.isPtr) {
+        if (argInfo.isPtr) {
+          OCCA_FORCE_ERROR("(" << hash << ":" << name << ") Kernel expects an occa::memory for argument ["
+                           << (i + 1) << "]");
+        } else {
+          OCCA_FORCE_ERROR("(" << hash << ":" << name << ") Kernel expects a non-occa::memory type for argument ["
+                           << (i + 1) << "]");
+        }
       }
+
+      if (!isPtr || isNull) {
+        continue;
+      }
+
+      OCCA_ERROR("(" << hash << ":" << name << ") Argument [" << (i + 1) << "] has wrong runtime type.\n"
+                 << "Expected type: " << argInfo.dtype << '\n'
+                 << "Received type: " << *(mem->dtype_) << '\n',
+                 mem->dtype_->canBeCastedTo(argInfo.dtype));
     }
   }
 
