@@ -1,6 +1,6 @@
 #include <CL/sycl.hpp>
 
-extern "C" void addVectors_it(::sycl::queue *q, ::sycl::nd_range<3> *ndrange, int &entries, int *oa, int *ob, int *oc)
+extern "C" void addVectors(::sycl::queue *q, ::sycl::nd_range<3> *ndrange, int &entries, int *oa, int *ob, int *oc)
 {
   q->submit([&](::sycl::handler &h) {
     h.parallel_for(*ndrange, [=](::sycl::nd_item<3> i) {

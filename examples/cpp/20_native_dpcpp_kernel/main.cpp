@@ -44,7 +44,7 @@ int main(int argc, const char **argv) {
   kernelProps["okl/enabled"] = false;
  
   occa::kernel addVectors = device.buildKernel("addVectors.cpp",
-                                               "addVectors_it",
+                                               "addVectors",
                                                kernelProps);
  
   // Copy memory to the device
