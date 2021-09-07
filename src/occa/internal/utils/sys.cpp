@@ -742,13 +742,14 @@ namespace occa {
           [&](const strVector &tempFilenames) -> bool {
             const std::string &tempBinaryFilename = tempFilenames[0];
             const std::string &tempBuildLogFilename = tempFilenames[1];
+            std::stringstream ss_;
 
-            ss << compiler
+            ss_ << compiler
                << ' '    << srcFilename
                << " -o " << tempBinaryFilename
                << " > " << tempBuildLogFilename << " 2>&1";
 
-            const std::string compileLine = ss.str();
+            const std::string compileLine = ss_.str();
             ignoreResult( system(compileLine.c_str()) );
 
             OCCA_ERROR(
