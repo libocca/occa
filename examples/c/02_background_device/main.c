@@ -57,7 +57,7 @@ int main(int argc, const char **argv) {
                                           occaDefault);
 
   occaKernelRun(addVectors,
-                occaInt(entries), occaPtr(a), occaPtr(b), occaPtr(ab));
+                occaInt(entries), o_a, o_b, o_ab);
 
   // Copy result to the host
   occaCopyMemToPtr(ab, o_ab, occaAllBytes, 0, occaDefault);
@@ -78,7 +78,6 @@ int main(int argc, const char **argv) {
 
   // Free device memory and occa objects
   occaFree(&args);
-  occaFree(&props);
   occaFree(&addVectors);
   occaFree(&o_a);
   occaFree(&o_b);
@@ -98,7 +97,7 @@ occaJson parseArgs(int argc, const char **argv) {
     "      shortname: 'd',"
     "      description: 'Device properties (default: \"{ mode: \\'Serial\\' }\")',"
     "      with_arg: true,"
-    "      default_value: { mode: 'Serial' },"
+    "      default_value: \"{ mode: 'Serial' }\","
     "    },"
     "    {"
     "      name: 'verbose',"

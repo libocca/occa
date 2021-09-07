@@ -27,9 +27,9 @@ int main(int argc, const char **argv) {
   int entries = 5;
   int i;
 
-  float *a  = (float*) occaTypedUMalloc(entries, occaDtypeFloat, NULL, occaDefault);
-  float *b  = (float*) occaTypedUMalloc(entries, occaDtypeFloat, NULL, occaDefault);
-  float *ab = (float*) occaTypedUMalloc(entries, occaDtypeFloat, NULL, occaDefault);
+  float *a  = (float*) malloc(entries*sizeof(float));
+  float *b  = (float*) malloc(entries*sizeof(float));
+  float *ab = (float*) malloc(entries*sizeof(float));
 
   for (i = 0; i < entries; ++i) {
     a[i]  = i;
@@ -110,7 +110,7 @@ occaJson parseArgs(int argc, const char **argv) {
     "      shortname: 'd',"
     "      description: 'Device properties (default: \"{ mode: \\'Serial\\' }\")',"
     "      with_arg: true,"
-    "      default_value: { mode: 'Serial' },"
+    "      default_value: \"{ mode: 'Serial' }\","
     "    },"
     "    {"
     "      name: 'verbose',"
