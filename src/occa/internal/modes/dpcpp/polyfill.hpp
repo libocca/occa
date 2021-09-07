@@ -202,6 +202,12 @@ namespace sycl
       throw sycl::exception();
       return false;
     }
+
+    bool is_host() const
+    {
+      throw sycl::exception();
+      return false;  
+    }
   };
 
   template <>
