@@ -119,6 +119,8 @@ namespace occa {
 
       compileKernel(hashDir,
                     kernelName,
+                    sourceFilename,
+                    binaryFilename,
                     kernelProps);
 
       return buildOKLKernelFromBinary(kernelHash,
@@ -133,35 +135,54 @@ namespace occa {
 
     void device::compileKernel(const std::string &hashDir,
                                const std::string &kernelName,
+                               const std::string &sourceFilename,
+                               const std::string &binaryFilename,
                                const occa::json &kernelProps) {
 
       occa::json allProps = kernelProps;
       const bool verbose = allProps.get("verbose", false);
 
-      const std::string sourceFilename = hashDir + kc::sourceFile;
-      const std::string binaryFilename = hashDir + kc::binaryFile;
       const std::string airBinaryFilename = hashDir + "binary.air";
 
       //---[ Compile Air Binary ]-------
       std::stringstream command;
 
-      command << "xcrun -sdk macosx metal -x metal"
-              << ' ' << allProps["compiler_flags"]
-              << ' ' << sourceFilename
-              << " -c -o " << airBinaryFilename;
+      int commandExitCode = 0;
+      io::stageFile(
+        airBinaryFilename,
+        true,
+        [&](const std::string &tempFilename) -> bool {
+          command << "xcrun -sdk macosx metal -x metal"
+                  << ' ' << allProps["compiler_flags"]
+                  << ' ' << sourceFilename
+                  << " -c -o " << tempFilename
+                  << " 2>&1";
 
-      if (!verbose) {
-        command << " > /dev/null 2>&1";
-      }
-      const std::string &airCommand = command.str();
-      if (verbose) {
-        io::stdout << "Compiling [" << kernelName << "]\n" << airCommand << "\n";
-      }
+          const std::string airCommand = command.str();
+          if (verbose) {
+            io::stdout << "Compiling [" << kernelName << "]\n" << airCommand << "\n";
+          }
 
-      int compileError = system(airCommand.c_str());
-      if (compileError) {
-        OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
-                         " Command: [" << airCommand << ']');
+          std::string commandOutput;
+          commandExitCode = sys::call(
+            airCommand.c_str(),
+            commandOutput
+          );
+
+          if (commandExitCode) {
+            OCCA_FORCE_ERROR(
+              "Error compiling [" << kernelName << "],"
+              " Command: [" << airCommand << ']'
+              << "Output:\n\n"
+              << commandOutput << "\n"
+            );
+          }
+
+          return true;
+        }
+      );
+
+      if (commandExitCode) {
         return;
       }
       //================================
@@ -170,21 +191,28 @@ namespace occa {
       command.str("");
       command << "xcrun -sdk macosx metallib"
               << ' ' << airBinaryFilename
-              << " -o " << binaryFilename;
+              << " -o " << binaryFilename
+              << " 2>&1";
 
-      if (!verbose) {
-        command << " > /dev/null 2>&1";
-      }
-      const std::string &metallibCommand = command.str();
+      const std::string metallibCommand = command.str();
       if (verbose) {
         io::stdout << metallibCommand << '\n';
       }
 
-      compileError = system(metallibCommand.c_str());
+      std::string commandOutput;
+      commandExitCode = sys::call(
+        metallibCommand.c_str(),
+        commandOutput
+      );
 
-      OCCA_ERROR("Error compiling [" << kernelName << "],"
-                 " Command: [" << metallibCommand << ']',
-                 !compileError);
+      if (commandExitCode) {
+        OCCA_FORCE_ERROR(
+          "Error compiling [" << kernelName << "],"
+          " Command: [" << metallibCommand << ']'
+          << "Output:\n\n"
+          << commandOutput << "\n"
+        );
+      }
       //================================
     }
 

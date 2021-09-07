@@ -54,6 +54,8 @@ namespace occa {
 
       void compileKernel(const std::string &hashDir,
                          const std::string &kernelName,
+                         const std::string &sourceFilename,
+                         const std::string &binaryFilename,
                          const occa::json &kernelProps);
 
       modeKernel_t* buildOKLKernelFromBinary(const hash_t kernelHash,
