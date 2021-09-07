@@ -90,11 +90,5 @@ namespace occa {
     const primitive_t double3       ("double3");
     const primitive_t double4       ("double4");
     
-    // DPCPP primitives
-    const primitive_t syclQueue     ("sycl::queue");
-    const primitive_t syclNdRange   ("sycl::nd_range<3>");
-    const primitive_t syclNdItem    ("sycl::nd_item<3>");
-    const primitive_t syclHandler   ("sycl::handler");
-    const primitive_t syclAccessor  ("auto");
   } // namespace lang
 }
