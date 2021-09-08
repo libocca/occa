@@ -11,9 +11,6 @@ namespace occa {
 
       pointer_t() = default;
       explicit pointer_t(const qualifiers_t &qualifiers_);
-      // pointer_t(const pointer_t &other);
-
-      // pointer_t& operator = (const pointer_t &other);
 
       bool has(const qualifier_t &qualifier) const;
 
