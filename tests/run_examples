@@ -29,7 +29,6 @@ if [[ $CPP_EXAMPLES -eq 1 ]]; then
     cpp/07_memory_management
     cpp/08_streams
     cpp/12_native_cuda_kernels
-    cpp/20_native_dpcpp_kernel
     )
 fi
 if [[ $C_EXAMPLES -eq 1 ]]; then
