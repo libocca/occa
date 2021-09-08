@@ -114,6 +114,8 @@ namespace occa {
     template <> dtype_t get<unsigned int>();
     template <> dtype_t get<long>();
     template <> dtype_t get<unsigned long>();
+    template <> dtype_t get<long long>();
+    template <> dtype_t get<unsigned long long>();
     template <> dtype_t get<float>();
     template <> dtype_t get<double>();
     template <> dtype_t get<occa::uchar2>();

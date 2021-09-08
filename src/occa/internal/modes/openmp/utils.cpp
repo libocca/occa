@@ -48,29 +48,35 @@ namespace occa {
       const std::string binaryFilename = io::dirname(srcFilename) + "binary";
       const std::string outFilename = io::dirname(srcFilename) + "output";
 
-      io::lock_t lock(hash, "openmp-compiler");
-      if (lock.isMine()
-          && !io::isFile(outFilename)) {
-        // Try to compile a minimal OpenMP file to see whether
-        // the compiler supports OpenMP or not
-        std::string flag = baseCompilerFlag(vendor_);
-        ss << compiler
-           << ' '    << flag
-           << ' '    << srcFilename
-           << " -o " << binaryFilename
-           << " > /dev/null 2>&1";
+      io::stageFiles(
+        { binaryFilename, outFilename },
+        true,
+        [&](const strVector &tempFilenames) -> bool {
+          const std::string &tempBinaryFilename = tempFilenames[0];
+          const std::string &tempOutFilename = tempFilenames[1];
+          std::stringstream ss_;
 
-        const std::string compileLine = ss.str();
-        const int compileError = system(compileLine.c_str());
+          // Try to compile a minimal OpenMP file to see whether
+          // the compiler supports OpenMP or not
+          std::string flag = baseCompilerFlag(vendor_);
+          ss_ << compiler
+             << ' '    << flag
+             << ' '    << srcFilename
+             << " -o " << tempBinaryFilename
+             << " > /dev/null 2>&1";
 
-        if (compileError) {
-          flag = openmp::notSupported;
+          const std::string compileLine = ss_.str();
+          const int compileError = system(compileLine.c_str());
+
+          if (compileError) {
+            flag = openmp::notSupported;
+          }
+
+          io::write(tempOutFilename, flag);
+
+          return true;
         }
-
-        io::write(outFilename, flag);
-
-        return flag;
-      }
+      );
 
       std::string flag = openmp::notSupported;
       ss << io::read(outFilename);

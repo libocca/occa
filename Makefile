@@ -150,12 +150,12 @@ $(OCCA_DIR)/obj/%.o: $(OCCA_DIR)/src/%.cpp \
 
 # Objective-C++
 $(OCCA_DIR)/obj/%.o: $(OCCA_DIR)/src/%.mm \
-                     $(OCCA_DIR)/src/%.hpp \
-                     $(OCCA_DIR)/include/%.hpp \
+                     $(wildcard $(OCCA_DIR)/src/%.hpp) \
+                     $(wildcard $(OCCA_DIR)/include/%.hpp) \
                      $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(abspath $(dir $@))
 	@echo " - [ObjC] $<"
-	@clang++ -x objective-c++ -o "$@" $(flags) -c $(paths) "$<"
+	@clang++ -x objective-c++ $(cpp11Flags) -o "$@" $(flags) -c $(paths) "$<"
 
 # Fortran
 include $(OCCA_DIR)/scripts/build/Make.fortran_rules

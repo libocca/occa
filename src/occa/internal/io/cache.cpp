@@ -1,6 +1,5 @@
 #include <occa/defines.hpp>
 #include <occa/internal/io/cache.hpp>
-#include <occa/internal/io/lock.hpp>
 #include <occa/internal/io/utils.hpp>
 #include <occa/utils/hash.hpp>
 #include <occa/internal/utils/env.hpp>
@@ -86,16 +85,6 @@ namespace occa {
       return sourceFile;
     }
 
-    void markCachedFileComplete(const std::string &hashDir,
-                                const std::string &filename) {
-      std::string successFile = hashDir;
-      successFile += ".success/";
-      sys::mkpath(successFile);
-
-      successFile += filename;
-      io::write(successFile, "");
-    }
-
     bool cachedFileIsComplete(const std::string &hashDir,
                               const std::string &filename) {
       std::string successFile = hashDir;
@@ -113,15 +102,18 @@ namespace occa {
     }
 
     void writeBuildFile(const std::string &filename,
-                        const hash_t &hash,
                         const occa::json &props) {
-      io::lock_t lock(hash, "kernel-info");
-      if (lock.isMine() &&
-          !io::isFile(filename)) {
-        occa::json info = props;
-        setBuildProps(info["build"]);
-        info.write(filename);
-      }
+      io::stageFile(
+        filename,
+        true,
+        [&](const std::string &tempFilename) -> bool {
+          occa::json info = props;
+          setBuildProps(info["build"]);
+          info.write(tempFilename);
+
+          return true;
+        }
+      );
     }
   }
 }

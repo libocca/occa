@@ -32,21 +32,19 @@ namespace occa {
       return false;
     }
 
-    if (!io::isFile(outputFile)) {
-      hash_t hash = occa::hash(outputFile);
-      io::lock_t lock(hash, "device-parser-device");
-      if (lock.isMine()) {
-        parser.writeToFile(outputFile);
-      }
-    }
+    io::stageFiles(
+      { outputFile, launcherOutputFile },
+      true,
+      [&](const strVector &tempFilenames) -> bool {
+        const std::string &tempOutputFilename = tempFilenames[0];
+        const std::string &tempLauncherOutputFilename = tempFilenames[1];
 
-    if (!io::isFile(launcherOutputFile)) {
-      hash_t hash = occa::hash(launcherOutputFile);
-      io::lock_t lock(hash, "device-parser-launcher");
-      if (lock.isMine()) {
-        parser.launcherParser.writeToFile(launcherOutputFile);
+        parser.writeToFile(tempOutputFilename);
+        parser.launcherParser.writeToFile(tempLauncherOutputFilename);
+
+        return true;
       }
-    }
+    );
 
     parser.launcherParser.setSourceMetadata(launcherMetadata);
     parser.setSourceMetadata(deviceMetadata);
@@ -93,19 +91,11 @@ namespace occa {
                                                   const bool usingOkl,
                                                   const occa::json &kernelProps) {
     const std::string hashDir = io::hashDir(filename, kernelHash);
+    std::string sourceFilename = hashDir + kc::sourceFile;
     const std::string binaryFilename = hashDir + kc::binaryFile;
 
     // Check if binary exists and is finished
-    bool foundBinary = (
-      io::cachedFileIsComplete(hashDir, kc::binaryFile)
-      && io::isFile(binaryFilename)
-    );
-
-    io::lock_t lock;
-    if (!foundBinary) {
-      lock = io::lock_t(kernelHash, "build-kernel");
-      foundBinary = !lock.isMine();
-    }
+    const bool foundBinary = io::isFile(binaryFilename);
 
     const bool verbose = kernelProps.get("verbose", false);
     if (foundBinary) {
@@ -113,9 +103,10 @@ namespace occa {
         io::stdout << "Loading cached ["
                    << kernelName
                    << "] from ["
-                   << io::shortname(filename)
-                   << "] in [" << io::shortname(binaryFilename) << "]\n";
+                   << filename
+                   << "] in [" << binaryFilename << "]\n";
       }
+
       if (usingOkl) {
         lang::sourceMetadata_t launcherMetadata = (
           lang::sourceMetadata_t::fromBuildFile(hashDir + kc::launcherBuildFile)
@@ -126,10 +117,11 @@ namespace occa {
         return buildOKLKernelFromBinary(kernelHash,
                                         hashDir,
                                         kernelName,
+                                        sourceFilename,
+                                        binaryFilename,
                                         launcherMetadata,
                                         deviceMetadata,
-                                        kernelProps,
-                                        lock);
+                                        kernelProps);
       } else {
         return buildKernelFromBinary(binaryFilename,
                                      kernelName,
@@ -138,7 +130,6 @@ namespace occa {
     }
 
     lang::sourceMetadata_t launcherMetadata, deviceMetadata;
-    std::string sourceFilename;
     if (usingOkl) {
       // Cache raw origin
       sourceFilename = (
@@ -189,20 +180,26 @@ namespace occa {
       );
     }
 
-    modeKernel_t *k = buildKernelFromProcessedSource(kernelHash,
-                                                     hashDir,
-                                                     kernelName,
-                                                     sourceFilename,
-                                                     binaryFilename,
-                                                     usingOkl,
-                                                     launcherMetadata,
-                                                     deviceMetadata,
-                                                     kernelProps,
-                                                     lock);
+    modeKernel_t *k;
+    io::stageFile(
+      binaryFilename,
+      false,
+      [&](const std::string &tempFilename) -> bool {
+        k = buildKernelFromProcessedSource(
+          kernelHash,
+          hashDir,
+          kernelName,
+          sourceFilename,
+          tempFilename,
+          usingOkl,
+          launcherMetadata,
+          deviceMetadata,
+          kernelProps
+        );
+        return true;
+      }
+    );
 
-    if (k) {
-      io::markCachedFileComplete(hashDir, kc::binaryFile);
-    }
     return k;
   }
 
@@ -216,9 +213,11 @@ namespace occa {
 
     serial::device *hostDevice = (serial::device*) host().getModeDevice();
 
-    modeKernel_t *launcherKernel = hostDevice->buildLauncherKernel(launcherOutputFile,
-                                                                   kernelName,
-                                                                   kernelHash);
+    modeKernel_t *launcherKernel = hostDevice->buildLauncherKernel(
+      launcherOutputFile,
+      kernelName,
+      kernelHash
+    );
     if (!launcherKernel) {
       return NULL;
     }
@@ -233,7 +232,8 @@ namespace occa {
   orderedKernelMetadata launchedModeDevice_t::getLaunchedKernelsMetadata(
     const std::string &kernelName,
     lang::sourceMetadata_t &deviceMetadata
-  ) {      // Find device kernels
+  ) {
+    // Find device kernels
     typedef std::map<int, lang::kernelMetadata_t> kernelOrderMap;
     kernelOrderMap kernelMetadataMap;
 

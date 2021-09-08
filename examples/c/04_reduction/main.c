@@ -114,7 +114,7 @@ occaJson parseArgs(int argc, const char **argv) {
     "      shortname: 'd',"
     "      description: 'Device properties (default: \"{ mode: \\'Serial\\' }\")',"
     "      with_arg: true,"
-    "      default_value: { mode: 'Serial' },"
+    "      default_value: \"{ mode: 'Serial' }\","
     "    },"
     "    {"
     "      name: 'verbose',"

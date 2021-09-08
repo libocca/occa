@@ -736,31 +736,41 @@ namespace occa {
 
       // Avoid creating lockfile if possible
       if (!foundOutput) {
-        io::lock_t lock(hash, "compiler");
-        if (lock.isMine()) {
-          ss << compiler
-             << ' '    << srcFilename
-             << " -o " << binaryFilename
-             << " > " << buildLogFilename << " 2>&1";
-          const std::string compileLine = ss.str();
+        io::stageFiles(
+          { binaryFilename, buildLogFilename},
+          true,
+          [&](const strVector &tempFilenames) -> bool {
+            const std::string &tempBinaryFilename = tempFilenames[0];
+            const std::string &tempBuildLogFilename = tempFilenames[1];
+            std::stringstream ss_;
 
-          ignoreResult( system(compileLine.c_str()) );
+            ss_ << compiler
+               << ' '    << srcFilename
+               << " -o " << tempBinaryFilename
+               << " > " << tempBuildLogFilename << " 2>&1";
 
-          OCCA_ERROR("Could not compile compilerVendorTest.cpp with following command:\n" << compileLine,
-                     io::isFile(binaryFilename));
+            const std::string compileLine = ss_.str();
+            ignoreResult( system(compileLine.c_str()) );
 
-          int exitStatus = system(binaryFilename.c_str());
-          int vendorBit  = WEXITSTATUS(exitStatus);
+            OCCA_ERROR(
+              "Could not compile compilerVendorTest.cpp with following command:\n" << compileLine,
+              io::isFile(tempBinaryFilename)
+            );
 
-          if (vendorBit < sys::vendor::b_max) {
-            vendor_ = (1 << vendorBit);
+            return true;
           }
+        );
 
-          io::write(outFilename, std::to_string(vendor_));
-          io::markCachedFileComplete(hashDir, "output");
+        int exitStatus = system(binaryFilename.c_str());
+        int vendorBit  = WEXITSTATUS(exitStatus);
 
-          return vendor_;
+        if (vendorBit < sys::vendor::b_max) {
+          vendor_ = (1 << vendorBit);
         }
+
+        io::write(outFilename, std::to_string(vendor_));
+
+        return vendor_;
       }
 
       ss << io::read(outFilename);
@@ -909,14 +919,12 @@ namespace occa {
       ::free(ptr);
     }
 
-    void* dlopen(const std::string &filename,
-                 const io::lock_t &lock) {
+    void* dlopen(const std::string &filename) {
 
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       void *dlHandle = ::dlopen(filename.c_str(),
                                 RTLD_NOW | RTLD_LOCAL);
       if (dlHandle == NULL) {
-        lock.release();
         char *error = dlerror();
         if (error) {
           OCCA_FORCE_ERROR("Error loading binary [" << io::shortname(filename) << "] with dlopen: " << error);
@@ -928,7 +936,6 @@ namespace occa {
       void *dlHandle = LoadLibraryA(filename.c_str());
 
       if (dlHandle == NULL) {
-        lock.release();
         OCCA_ERROR("Error loading .dll [" << io::shortname(filename) << "]: " << GetLastError(),
                    dlHandle != NULL);
       }
@@ -938,8 +945,7 @@ namespace occa {
     }
 
     functionPtr_t dlsym(void *dlHandle,
-                        const std::string &functionName,
-                        const io::lock_t &lock) {
+                        const std::string &functionName) {
       OCCA_ERROR("dl handle is NULL",
                  dlHandle);
 
@@ -947,7 +953,6 @@ namespace occa {
       void *sym = ::dlsym(dlHandle, functionName.c_str());
 
       if (!sym) {
-        lock.release();
         char *error = dlerror();
         if (error) {
           OCCA_FORCE_ERROR("Error loading symbol [" << functionName << "] from binary with dlsym: " << error << "");
@@ -959,7 +964,6 @@ namespace occa {
       void *sym = GetProcAddress((HMODULE) dlHandle, functionName.c_str());
 
       if (sym == NULL) {
-        lock.release();
         OCCA_FORCE_ERROR("Error loading symbol [" << functionName << "] from binary with GetProcAddress");
       }
 #endif

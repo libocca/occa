@@ -201,22 +201,23 @@ namespace occa {
       const bool usingOkl,
       lang::sourceMetadata_t &launcherMetadata,
       lang::sourceMetadata_t &deviceMetadata,
-      const occa::json &kernelProps,
-      io::lock_t lock
+      const occa::json &kernelProps
     ) {
       compileKernel(hashDir,
                     kernelName,
-                    kernelProps,
-                    lock);
+                    sourceFilename,
+                    binaryFilename,
+                    kernelProps);
 
       if (usingOkl) {
         return buildOKLKernelFromBinary(kernelHash,
                                         hashDir,
                                         kernelName,
+                                        sourceFilename,
+                                        binaryFilename,
                                         launcherMetadata,
                                         deviceMetadata,
-                                        kernelProps,
-                                        lock);
+                                        kernelProps);
       }
 
       // Regular CUDA Kernel
@@ -228,7 +229,6 @@ namespace occa {
 
       error = cuModuleLoad(&cuModule, binaryFilename.c_str());
       if (error) {
-        lock.release();
         OCCA_CUDA_ERROR("Kernel [" + kernelName + "]: Loading Module",
                         error);
       }
@@ -236,7 +236,6 @@ namespace occa {
                                   cuModule,
                                   kernelName.c_str());
       if (error) {
-        lock.release();
         OCCA_CUDA_ERROR("Kernel [" + kernelName + "]: Loading Function",
                         error);
       }
@@ -260,14 +259,13 @@ namespace occa {
 
     void device::compileKernel(const std::string &hashDir,
                                const std::string &kernelName,
-                               const occa::json &kernelProps,
-                               io::lock_t &lock) {
+                               const std::string &sourceFilename,
+                               const std::string &binaryFilename,
+                               const occa::json &kernelProps) {
 
       occa::json allProps = kernelProps;
       const bool verbose = allProps.get("verbose", false);
 
-      std::string sourceFilename = hashDir + kc::sourceFile;
-      std::string binaryFilename = hashDir + kc::binaryFile;
       const std::string ptxBinaryFilename = hashDir + "ptx_binary.o";
 
       const std::string compiler = allProps["compiler"];
@@ -326,22 +324,27 @@ namespace occa {
               << " -I"        << env::OCCA_INSTALL_DIR << "include"
               << " -L"        << env::OCCA_INSTALL_DIR << "lib -locca"
               << " -x cu " << sourceFilename
-              << " -o "    << binaryFilename;
+              << " -o "    << binaryFilename
+              << " 2>&1";
 
-      if (!verbose) {
-        command << " > /dev/null 2>&1";
-      }
       const std::string &sCommand = command.str();
       if (verbose) {
-        io::stdout << sCommand << '\n';
+        io::stdout << "Compiling [" << kernelName << "]\n" << sCommand << "\n";
       }
 
-      const int compileError = system(sCommand.c_str());
+      std::string commandOutput;
+      const int commandExitCode = sys::call(
+        sCommand.c_str(),
+        commandOutput
+      );
 
-      lock.release();
-      if (compileError) {
-        OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
-                         " Command: [" << sCommand << ']');
+      if (commandExitCode) {
+        OCCA_FORCE_ERROR(
+          "Error compiling [" << kernelName << "],"
+          " Command: [" << sCommand << ']'
+          << "Output:\n\n"
+          << commandOutput << "\n"
+        );
       }
       //================================
     }
@@ -349,14 +352,11 @@ namespace occa {
     modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
                                                    const std::string &hashDir,
                                                    const std::string &kernelName,
+                                                   const std::string &sourceFilename,
+                                                   const std::string &binaryFilename,
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::json &kernelProps,
-                                                   io::lock_t lock) {
-
-      const std::string sourceFilename = hashDir + kc::sourceFile;
-      const std::string binaryFilename = hashDir + kc::binaryFile;
-
+                                                   const occa::json &kernelProps) {
       CUmodule cuModule;
       CUresult error;
 
@@ -364,7 +364,6 @@ namespace occa {
 
       error = cuModuleLoad(&cuModule, binaryFilename.c_str());
       if (error) {
-        lock.release();
         OCCA_CUDA_ERROR("Kernel [" + kernelName + "]: Loading Module",
                         error);
       }
@@ -395,7 +394,6 @@ namespace occa {
                                     cuModule,
                                     metadata.name.c_str());
         if (error) {
-          lock.release();
           OCCA_CUDA_ERROR("Kernel [" + metadata.name + "]: Loading Function",
                           error);
         }

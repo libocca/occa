@@ -8,7 +8,6 @@
   - [Introduction](/guide/occa/introduction)
   - [Device Streams](/guide/occa/device-streams)
   - [Background Device](/guide/occa/background-device)
-  - [Unified Memory](/guide/occa/unified-memory)
 
 - **OKL**
   - [Introduction](/guide/okl/introduction)
