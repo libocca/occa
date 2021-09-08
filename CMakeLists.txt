@@ -177,28 +177,51 @@ endif(ENABLE_OPENCL)
 
 #---[ SYCL/DPCPP ]-----------------------
 if(ENABLE_DPCPP)
+  message(CHECK_START "Looking for DPC++")
+  unset(missingDpcppComponents)
+
+  message(CHECK_START "  Looking for sycl.hpp")
   find_path(
     SYCL_INCLUDE_DIRS
     NAMES
       CL/sycl.hpp
   )
-
+  string(COMPARE NOTEQUAL "SYCL_INCLUDE_DIRS-NOTFOUND" "${SYCL_INCLUDE_DIRS}" foundSyclInclude)
+  if(foundSyclInclude)
+    message(CHECK_PASS "found ${SYCL_INCLUDE_DIRS}")
+  else()
+    list(APPEND missingDpcppComponents "SYCL_INCLUDE_DIRS")
+    message(CHECK_FAIL "not found")
+  endif()
+      
+  message(CHECK_START "  Looking for libsycl")
   find_library(
     SYCL_LIBRARIES 
     NAMES 
       sycl libsycl 
   )
-  set(SYCL_CXX_FLAGS "-fsycl")
-
-  set(OCCA_DPCPP_ENABLED 1)
-
-  message("-- SYCL include dirs: ${SYCL_INCLUDE_DIRS}")
-  message("-- SYCL libraries: ${SYCL_LIBRARIES}")
-  message("-- SYCL CXX flags: ${SYCL_CXX_FLAGS}")
-
-  target_include_directories(libocca PRIVATE ${SYCL_INCLUDE_DIRS})
-  target_link_libraries(libocca PRIVATE ${SYCL_LIBRARIES})
-  target_compile_options(libocca BEFORE PRIVATE "${SYCL_CXX_FLAGS}")
+  string(COMPARE NOTEQUAL "SYCL_LIBRARIES-NOTFOUND" "${SYCL_LIBRARIES}" foundSyclLibraries)
+  if(foundSyclLibraries)
+    message(CHECK_PASS "found ${SYCL_LIBRARIES}")
+  else()
+    list(APPEND missingDpcppComponents "SYCL_LIBRARIES")
+    message(CHECK_FAIL "not found")
+  endif()
+  
+  if(missingDpcppComponents)
+    message(CHECK_FAIL "missing components: ${missingDpcppComponents}")
+    set(OCCA_DPCPP_ENABLED 0)
+  else()
+    message(CHECK_PASS "found all components")
+    set(OCCA_DPCPP_ENABLED 1)
+    
+    set(SYCL_CXX_FLAGS "-fsycl")
+    message("-- SYCL CXX flags: ${SYCL_CXX_FLAGS}")
+  
+    target_include_directories(libocca PRIVATE ${SYCL_INCLUDE_DIRS})
+    target_link_libraries(libocca PRIVATE ${SYCL_LIBRARIES})
+    target_compile_options(libocca BEFORE PRIVATE "${SYCL_CXX_FLAGS}")
+  endif()
 endif(ENABLE_DPCPP)
 #=======================================
 
