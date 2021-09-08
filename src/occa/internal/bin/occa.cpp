@@ -157,7 +157,7 @@ namespace occa {
         parser = new lang::okl::openclParser(kernelProps);
       } else if (mode == "metal") {
         parser = new lang::okl::metalParser(kernelProps);
-      }else if (mode == "dpcpp") {
+      } else if (mode == "dpcpp") {
         parser = new lang::okl::dpcppParser(kernelProps);
       }
 
