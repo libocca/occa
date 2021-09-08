@@ -260,6 +260,7 @@ cudaEnabled    = 0
 hipEnabled     = 0
 openclEnabled  = 0
 metalEnabled   = 0
+dpcppEnabled	 = 0
 
 
 #---[ Fortran ]-------------------------
@@ -416,10 +417,10 @@ ifdef OCCA_DPCPP_ENABLED
   endif
 else
   ifeq ($(usingLinux),1)
-    dpcppLibFlags = $(call libraryFlagsFor,dpcpp)
+    dpcppLibFlags = $(call libraryFlagsFor,sycl)
     ifneq (,$(dpcppLibFlags))
 
-      openclIncFlags = $(call includeFlagsFor,CL/sycl.hpp)
+      dpcppIncFlags = $(call includeFlagsFor,CL/sycl.hpp)
       ifneq (,$(dpcppIncFlags))
         dpcppEnabled = 1
         paths += $(dpcppIncFlags)
@@ -427,7 +428,7 @@ else
       endif
     endif
   else ifeq ($(usingMacOS),1)
-    dpcppLibFlags = $(call libraryFlagsFor,dpcpp)
+    dpcppLibFlags = $(call libraryFlagsFor,sycl)
 
     ifneq (,$(dpcppLibFlags))
       dpcppEnabled = 1
@@ -511,5 +512,5 @@ OCCA_CUDA_ENABLED    := $(cudaEnabled)
 OCCA_HIP_ENABLED     := $(hipEnabled)
 OCCA_OPENCL_ENABLED  := $(openclEnabled)
 OCCA_METAL_ENABLED   := $(metalEnabled)
-OCCA_DPCPP_ENABLED  := $(dpcppEnabled)
+OCCA_DPCPP_ENABLED   := $(dpcppEnabled)
 #=================================================
