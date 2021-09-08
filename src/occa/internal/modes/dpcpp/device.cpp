@@ -126,28 +126,27 @@ namespace occa
         const bool usingOkl,
         lang::sourceMetadata_t &launcherMetadata,
         lang::sourceMetadata_t &deviceMetadata,
-        const occa::json &kernelProps,
-        io::lock_t lock)
+        const occa::json &kernelProps)
     {
       compileKernel(hashDir,
                     kernelName,
-                    kernelProps,
-                    lock);
+                    kernelProps);
 
       if (usingOkl)
       {
         return buildOKLKernelFromBinary(kernelHash,
                                         hashDir,
                                         kernelName,
+                                        sourceFilename,
+                                        binaryFilename,
                                         launcherMetadata,
                                         deviceMetadata,
-                                        kernelProps,
-                                        lock);
+                                        kernelProps);
       }
       else
       {
-        void *kernel_dlhandle = sys::dlopen(binaryFilename, lock);
-        occa::functionPtr_t kernel_function = sys::dlsym(kernel_dlhandle, kernelName, lock);
+        void *kernel_dlhandle = sys::dlopen(binaryFilename);
+        occa::functionPtr_t kernel_function = sys::dlsym(kernel_dlhandle, kernelName);
 
         return new dpcpp::kernel(this,
                                  kernelName,
@@ -164,8 +163,7 @@ namespace occa
 
     void device::compileKernel(const std::string &hashDir,
                                const std::string &kernelName,
-                               const occa::json &kernelProps,
-                               io::lock_t &lock)
+                               const occa::json &kernelProps)
     {
       occa::json allProps = kernelProps;
       const bool verbose = allProps.get("verbose", false);
@@ -215,7 +213,6 @@ namespace occa
 
       const int compileError = system(sCommand.c_str());
 
-      lock.release();
       if (compileError)
       {
         OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
@@ -226,14 +223,12 @@ namespace occa
     modeKernel_t *device::buildOKLKernelFromBinary(const hash_t kernelHash,
                                                    const std::string &hashDir,
                                                    const std::string &kernelName,
+                                                   const std::string &sourceFilename,
+                                                   const std::string &binaryFilename,
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::json &kernelProps,
-                                                   io::lock_t lock)
+                                                   const occa::json &kernelProps)
     {
-      const std::string sourceFilename = hashDir + kc::sourceFile;
-      const std::string binaryFilename = hashDir + kc::binaryFile;
-
       dpcpp::kernel &k = *(new dpcpp::kernel(this,
                                              kernelName,
                                              sourceFilename,
@@ -248,7 +243,7 @@ namespace occa
           kernelName,
           deviceMetadata);
 
-      void *dl_handle = sys::dlopen(binaryFilename,lock);
+      void *dl_handle = sys::dlopen(binaryFilename);
 
       const int launchedKernelsCount = (int)launchedKernelsMetadata.size();
       for (int i = 0; i < launchedKernelsCount; ++i)
@@ -262,7 +257,7 @@ namespace occa
         arguments.erase(arguments.begin());
         arguments.erase(arguments.begin());
 
-        occa::functionPtr_t kernel_function = sys::dlsym(dl_handle, metadata.name,lock);
+        occa::functionPtr_t kernel_function = sys::dlsym(dl_handle, metadata.name);
        
         kernel *dpcppKernel = new dpcpp::kernel(this,
                                metadata.name,

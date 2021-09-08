@@ -5,7 +5,6 @@
 
 #include <occa/internal/modes/dpcpp/polyfill.hpp>
 #include <occa/internal/core/device.hpp>
-#include <occa/internal/io/lock.hpp>
 
 namespace occa {
 
