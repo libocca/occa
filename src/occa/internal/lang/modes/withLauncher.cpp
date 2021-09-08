@@ -19,13 +19,11 @@ namespace occa {
       }
 
       //---[ Public ]-------------------
-      bool withLauncher::succeeded() const
-      {
+      bool withLauncher::succeeded() const {
         return (success && launcherParser.success);
       }
 
-      void withLauncher::writeLauncherSourceToFile(const std::string &filename) const
-      {
+      void withLauncher::writeLauncherSourceToFile(const std::string &filename) const {
         launcherParser.writeToFile(filename);
       }
       //================================
@@ -43,24 +41,19 @@ namespace occa {
         if (!success) return;
         setOklLoopIndices();
 
-        if (!success)
-          return;
+        if (!success) return;
         setupLauncherParser();
 
-        if (!success)
-          return;
+        if (!success) return;
         beforeKernelSplit();
 
-        if (!success)
-          return;
+        if (!success) return;
         splitKernels();
 
-        if (!success)
-          return;
+        if (!success) return;
         setupKernels();
 
-        if (!success)
-          return;
+        if (!success) return;
         afterKernelSplit();
       }
 
@@ -81,10 +74,9 @@ namespace occa {
           .forEachKernelStatement(okl::setOklLoopIndices);
       }
 
-      void withLauncher::setupLauncherParser()
-      {
+      void withLauncher::setupLauncherParser() {
         // Clone source
-        blockStatement &rootClone = (blockStatement &)root.clone();
+        blockStatement &rootClone = (blockStatement&) root.clone();
 
         launcherParser.root.swap(rootClone);
         delete &rootClone;
@@ -137,13 +129,11 @@ namespace occa {
         kernelSmnt.updateVariableReferences();
       }
 
-      bool withLauncher::isOuterMostOuterLoop(forStatement &forSmnt)
-      {
+      bool withLauncher::isOuterMostOuterLoop(forStatement &forSmnt) {
         return isOuterMostOklLoop(forSmnt, "outer");
       }
 
-      bool withLauncher::isOuterMostInnerLoop(forStatement &forSmnt)
-      {
+      bool withLauncher::isOuterMostInnerLoop(forStatement &forSmnt) {
         return isOuterMostOklLoop(forSmnt, "inner");
       }
 
@@ -180,11 +170,9 @@ namespace occa {
 
       void withLauncher::setKernelLaunch(functionDeclStatement &kernelSmnt,
                                          forStatement &forSmnt,
-                                         const int kernelIndex)
-      {
+                                         const int kernelIndex) {
         forStatement *innerSmnt = getInnerMostInnerLoop(forSmnt);
-        if (!innerSmnt)
-        {
+        if (!innerSmnt) {
           success = false;
           forSmnt.printError("No [@inner] for-loop found");
           return;
@@ -205,8 +193,7 @@ namespace occa {
         for (int i = 0; i < pathCount; ++i) {
           forStatement &pathSmnt = *((forStatement*) path[i]);
           oklForStatement oklForSmnt(pathSmnt);
-          if (!oklForSmnt.isValid())
-          {
+          if (!oklForSmnt.isValid()) {
             success = false;
             return;
           }
@@ -218,9 +205,8 @@ namespace occa {
         const int innerDims = innerCount;
 
         // TODO 1.1: Properly fix this
-        for (int i = 0; i < pathCount; ++i)
-        {
-          forStatement &pathSmnt = *((forStatement *)path[i]);
+        for (int i = 0; i < pathCount; ++i) {
+          forStatement &pathSmnt = *((forStatement*) path[i]);
           oklForStatement oklForSmnt(pathSmnt);
 
           launchBlock.add(pathSmnt.init->clone(&launchBlock));
@@ -230,18 +216,20 @@ namespace occa {
           innerCount -= !isOuter;
 
           const int index = (isOuter
-                                 ? outerCount
-                                 : innerCount);
+                             ? outerCount
+                             : innerCount);
           token_t *source = pathSmnt.source;
           const std::string &name = (isOuter
                                      ? "outer"
                                      : "inner");
 
           launchBlock.add(
-              *(new expressionStatement(
-                  &launchBlock,
-                  setDim(source, name, index,
-                         oklForSmnt.getIterationCount()))));
+            *(new expressionStatement(
+                &launchBlock,
+                setDim(source, name, index,
+                       oklForSmnt.getIterationCount())
+              ))
+          );
         }
 
         // Kernel launch
@@ -295,9 +283,8 @@ namespace occa {
         type_t &memoryType = getMemoryModeType();
 
         // Convert pointer arguments to modeMemory_t
-        int argCount = (int)func.args.size();
-        for (int i = 0; i < argCount; ++i)
-        {
+        int argCount = (int) func.args.size();
+        for (int i = 0; i < argCount; ++i) {
           variable_t &arg = *(func.args[i]);
           arg.vartype = arg.vartype.flatten();
           if (arg.vartype.isPointerType()) {
@@ -330,14 +317,12 @@ namespace occa {
         );
       }
 
-      int withLauncher::getInnerLoopLevel(forStatement &forSmnt)
-      {
+      int withLauncher::getInnerLoopLevel(forStatement &forSmnt) {
         statement_t *smnt = forSmnt.up;
         int level = 0;
-        while (smnt)
-        {
-          if ((smnt->type() & statementType::for_) && smnt->hasAttribute("inner"))
-          {
+        while (smnt) {
+          if ((smnt->type() & statementType::for_)
+              && smnt->hasAttribute("inner")) {
             ++level;
           }
           smnt = smnt->up;
@@ -364,18 +349,19 @@ namespace occa {
         return innerMostInnerLoop;
       }
 
-      exprNode &withLauncher::setDim(token_t *source,
+      exprNode& withLauncher::setDim(token_t *source,
                                      const std::string &name,
                                      const int index,
-                                     exprNode *value)
-      {
+                                     exprNode *value) {
         identifierNode var(source, name);
         primitiveNode idx(source, index);
         subscriptNode access(source, var, idx);
-        exprNode &assign = (*(new binaryOpNode(source,
-                                               op::assign,
-                                               access,
-                                               *value)));
+        exprNode &assign = (
+          *(new binaryOpNode(source,
+                             op::assign,
+                             access,
+                             *value))
+        );
         delete value;
         return assign;
       }
@@ -407,8 +393,7 @@ namespace occa {
           });
 
         int smntIndex = kernelSmnt.childIndex();
-        for (int i = (kernelIndex - 1); i >= 0; --i)
-        {
+        for (int i = (kernelIndex - 1); i >= 0; --i) {
           root.add(*(newKernelSmnts[i]),
                    smntIndex);
         }
@@ -423,10 +408,9 @@ namespace occa {
         // delete &kernelSmnt;
       }
 
-      statement_t *withLauncher::extractLoopAsKernel(functionDeclStatement &kernelSmnt,
+      statement_t* withLauncher::extractLoopAsKernel(functionDeclStatement &kernelSmnt,
                                                      forStatement &forSmnt,
-                                                     const int kernelIndex)
-      {
+                                                     const int kernelIndex) {
 
         function_t &oldFunction = kernelSmnt.function();
         function_t &newFunction = (function_t&) oldFunction.clone();
@@ -435,12 +419,13 @@ namespace occa {
         newFunction.source->value = ss.str();
 
         functionDeclStatement &newKernelSmnt = *(
-            new functionDeclStatement(&root,
-                                      newFunction));
+          new functionDeclStatement(&root,
+                                    newFunction)
+        );
         newKernelSmnt.attributes = kernelSmnt.attributes;
 
         // Clone for-loop and replace argument variables
-        forStatement &newForSmnt = (forStatement &)forSmnt.clone();
+        forStatement &newForSmnt = (forStatement&) forSmnt.clone();
         newKernelSmnt.set(newForSmnt);
 
         const int argc = (int) newFunction.args.size();
@@ -506,21 +491,24 @@ namespace occa {
           return;
         }
 
-        statement_t &barrierSmnt = (*(new emptyStatement(forSmnt.up,
-                                                         forSmnt.source)));
+        statement_t &barrierSmnt = (
+          *(new emptyStatement(forSmnt.up,
+                               forSmnt.source))
+        );
 
         identifierToken barrierToken(forSmnt.source->origin,
                                      "barrier");
 
-        barrierSmnt.attributes["barrier"] = (attributeToken_t(*(getAttribute("barrier")),
-                                                              barrierToken));
+        barrierSmnt.attributes["barrier"] = (
+          attributeToken_t(*(getAttribute("barrier")),
+                           barrierToken)
+        );
 
         forSmnt.up->addAfter(forSmnt,
                              barrierSmnt);
       }
 
-      bool withLauncher::writesToShared(exprNode &expr)
-      {
+      bool withLauncher::writesToShared(exprNode &expr) {
         // TODO 1.1: Propertly check read<-->write or write<-->write ordering
         // exprOpNode &opNode = (exprOpNode&) expr;
         // if (!(opNode.opType() & (operatorType::increment |
@@ -535,18 +523,14 @@ namespace occa {
                 var->hasAttribute("shared"));
       }
 
-      void withLauncher::replaceOccaFor(forStatement &forSmnt)
-      {
+      void withLauncher::replaceOccaFor(forStatement &forSmnt) {
         oklForStatement oklForSmnt(forSmnt);
 
         std::string iteratorName;
         const int loopIndex = oklForSmnt.oklLoopIndex();
-        if (oklForSmnt.isOuterLoop())
-        {
+        if (oklForSmnt.isOuterLoop()) {
           iteratorName = getOuterIterator(loopIndex);
-        }
-        else
-        {
+        } else {
           iteratorName = getInnerIterator(loopIndex);
         }
 
@@ -569,18 +553,19 @@ namespace occa {
         blockSmnt.up->children[childIndex] = &blockSmnt;
 
         // Add declaration before block
-        declarationStatement &declSmnt = (*(new declarationStatement(blockSmnt.up,
-                                                                     forSmnt.source)));
+        declarationStatement &declSmnt = (
+          *(new declarationStatement(blockSmnt.up,
+                                     forSmnt.source))
+        );
         declSmnt.declarations.push_back(decl);
 
         blockSmnt.addFirst(declSmnt);
         delete &forSmnt;
       }
 
-      bool withLauncher::usesBarriers()
-      {
+      bool withLauncher::usesBarriers() {
         return true;
       }
-    } // namespace okl
-  }   // namespace lang
-} // namespace occa
+    }
+  }
+}
