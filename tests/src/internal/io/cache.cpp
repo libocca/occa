@@ -89,7 +89,7 @@ void testBuild() {
 
   // Write build file
   occa::hash_t hash = occa::hash(occa::toString(rand()));
-  occa::io::writeBuildFile("build.json", hash, props);
+  occa::io::writeBuildFile("build.json", props);
 
   ASSERT_TRUE(occa::io::isFile("build.json"));
 

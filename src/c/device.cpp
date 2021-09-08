@@ -219,34 +219,6 @@ occaMemory occaDeviceTypedMalloc(occaDevice device,
   return occa::c::newOccaType(memory);
 }
 
-void* occaDeviceUMalloc(occaDevice device,
-                        const occaUDim_t bytes,
-                        const void *src,
-                        occaJson props) {
-  return occaDeviceTypedUMalloc(device,
-                                bytes,
-                                occaDtypeByte,
-                                src,
-                                props);
-}
-
-void* occaDeviceTypedUMalloc(occaDevice device,
-                             const occaUDim_t entries,
-                             const occaDtype dtype,
-                             const void *src,
-                             occaJson props) {
-  occa::device device_ = occa::c::device(device);
-  const occa::dtype_t &dtype_ = occa::c::dtype(dtype);
-
-  if (occa::c::isDefault(props)) {
-    return device_.umalloc(entries, dtype_, src);
-  }
-  return device_.umalloc(entries,
-                         dtype_,
-                         src,
-                         occa::c::json(props));
-}
-
 occaMemory occaDeviceWrapMemory(occaDevice device,
                                 const void *ptr,
                                 const occaUDim_t bytes,

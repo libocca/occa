@@ -27,15 +27,20 @@ int main(int argc, const char **argv) {
   int entries = 5;
   int i;
 
-  float *a  = (float*) occaTypedUMalloc(entries, occaDtypeFloat, NULL, occaDefault);
-  float *b  = (float*) occaTypedUMalloc(entries, occaDtypeFloat, NULL, occaDefault);
-  float *ab = (float*) occaTypedUMalloc(entries, occaDtypeFloat, NULL, occaDefault);
+  float *a  = (float*) malloc(entries*sizeof(float));
+  float *b  = (float*) malloc(entries*sizeof(float));
+  float *ab = (float*) malloc(entries*sizeof(float));
 
   for (i = 0; i < entries; ++i) {
     a[i]  = i;
     b[i]  = 1 - i;
     ab[i] = 0;
   }
+
+  // Allocate memory on the background device
+  occaMemory o_a  = occaTypedMalloc(entries, occaDtypeFloat, a, occaDefault);
+  occaMemory o_b  = occaTypedMalloc(entries, occaDtypeFloat, b, occaDefault);
+  occaMemory o_ab = occaTypedMalloc(entries, occaDtypeFloat, ab, occaDefault);
 
   occaJson props = occaCreateJson();
   occaJsonObjectSet(props,
@@ -46,10 +51,10 @@ int main(int argc, const char **argv) {
 
   // Build the variable scope used inside the inlined OKL code
   occaScopeAddConst(scope, "entries", occaInt(entries));
-  occaScopeAddConst(scope, "a", occaPtr(a));
-  occaScopeAddConst(scope, "b", occaPtr(b));
+  occaScopeAddConst(scope, "a", o_a);
+  occaScopeAddConst(scope, "b", o_b);
   // We can name our scoped variales anything
-  occaScopeAdd(scope, "output", occaPtr(ab));
+  occaScopeAdd(scope, "output", o_ab);
   // We can also add unused variables to the scope which could be
   // useful while debugging
   occaScopeAdd(scope, "debugValue", occaInt(42));
@@ -66,7 +71,8 @@ int main(int argc, const char **argv) {
     )
   );
 
-  occaFinish();
+  // Copy result to the host
+  occaCopyMemToPtr(ab, o_ab, occaAllBytes, 0, occaDefault);
 
   for (i = 0; i < entries; ++i) {
     printf("%d = %f\n", i, ab[i]);
@@ -77,12 +83,18 @@ int main(int argc, const char **argv) {
     }
   }
 
+  // Free host memory
+  free(a);
+  free(b);
+  free(ab);
+
+  // Free device memory and occa objects
   occaFree(&args);
   occaFree(&props);
   occaFree(&scope);
-  occaFreeUvaPtr(a);
-  occaFreeUvaPtr(b);
-  occaFreeUvaPtr(ab);
+  occaFree(&o_a);
+  occaFree(&o_b);
+  occaFree(&o_ab);
 
   return 0;
 }
@@ -98,7 +110,7 @@ occaJson parseArgs(int argc, const char **argv) {
     "      shortname: 'd',"
     "      description: 'Device properties (default: \"{ mode: \\'Serial\\' }\")',"
     "      with_arg: true,"
-    "      default_value: { mode: 'Serial' },"
+    "      default_value: \"{ mode: 'Serial' }\","
     "    },"
     "    {"
     "      name: 'verbose',"
