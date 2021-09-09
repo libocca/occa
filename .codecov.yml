@@ -29,6 +29,7 @@ ignore:
   - src/occa/internal/modes/hip
   - src/occa/internal/modes/opencl
   - src/occa/internal/modes/metal
+  - src/occa/internal/modes/dpcpp
 
 comment:
   layout: 'reach, diff, files'

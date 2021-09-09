@@ -131,7 +131,8 @@ namespace occa {
         return false;
       }
       // Note that structs can be nameless so we have to catch this case separately
-      return (type_->isNamed() || type_->type() & typeType::struct_);
+      // ... also lambdas!
+      return (type_->isNamed() || type_->type() & (typeType::struct_ | typeType::lambda));
     }
 
     fileOrigin vartype_t::origin() const {
@@ -427,7 +428,8 @@ namespace occa {
       }
 
       if (customSuffix.size()) {
-        pout << ' ' << customSuffix;
+        pout.printSpace();
+        pout << customSuffix;
       }
 
       if (bitfield >= 0) {
