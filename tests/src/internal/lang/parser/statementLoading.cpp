@@ -329,7 +329,9 @@ void testFunctionLoading() {
   setStatement("void foo3(int a, int b) { int x; int y; }",
                statementType::functionDecl);
   ASSERT_EQ("foo3",
-            funcDecl.name());
+ 
+            funcDecl.name()) ; 
+ 
   ASSERT_EQ(&void_,
             funcDecl.returnType.type);
   ASSERT_EQ(2,
