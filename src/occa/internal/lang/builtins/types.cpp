@@ -89,5 +89,6 @@ namespace occa {
     const primitive_t double2       ("double2");
     const primitive_t double3       ("double3");
     const primitive_t double4       ("double4");
-  }
+    
+  } // namespace lang
 }

@@ -32,6 +32,7 @@ namespace occa {
       extern const int typedef_;
       extern const int functionPtr;
       extern const int function;
+      extern const int lambda;
 
       extern const int class_;
       extern const int struct_;
