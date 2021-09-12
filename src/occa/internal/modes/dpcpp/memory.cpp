@@ -30,13 +30,13 @@ namespace occa
 
     void memory::copyFrom(const void *src,
                           const udim_t bytes,
-                          const udim_t offset,
+                          const udim_t offset_,
                           const occa::json &props)
     {
       const bool async = props.get("async", false);
 
       occa::dpcpp::stream& q = getDpcppStream(getModeDevice()->currentStream);
-      occa::dpcpp::streamTag e = q.memcpy(&(this->ptr)[offset],src, bytes);
+      occa::dpcpp::streamTag e = q.memcpy(&(this->ptr)[offset_],src, bytes);
 
       if(!async)
         e.waitFor();
@@ -59,14 +59,14 @@ namespace occa
 
     void memory::copyTo(void *dest,
                         const udim_t bytes,
-                        const udim_t offset,
+                        const udim_t offset_,
                         const occa::json &props) const
     {
 
       const bool async = props.get("async", false);
 
       occa::dpcpp::stream& q = getDpcppStream(getModeDevice()->currentStream);
-      occa::dpcpp::streamTag e = q.memcpy(dest, &(this->ptr)[offset], bytes);
+      occa::dpcpp::streamTag e = q.memcpy(dest, &(this->ptr)[offset_], bytes);
 
       if(!async)
         e.waitFor();
