@@ -27,10 +27,9 @@ namespace occa {
                                   &info,
                                   &error);
         OCCA_OPENCL_ERROR("Device: clCreateSubBuffer", error);
-
-        if (useHostPtr) {
-          ptr = b->ptr + offset;
-        }
+      }
+      if (useHostPtr) {
+        ptr = b->ptr + offset;
       }
     }
 
