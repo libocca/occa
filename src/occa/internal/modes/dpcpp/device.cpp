@@ -130,6 +130,8 @@ namespace occa
     {
       compileKernel(hashDir,
                     kernelName,
+                    sourceFilename,
+                    binaryFilename,
                     kernelProps);
 
       if (usingOkl)
@@ -163,13 +165,12 @@ namespace occa
 
     void device::compileKernel(const std::string &hashDir,
                                const std::string &kernelName,
+                               const std::string &sourceFilename,
+                               const std::string &binaryFilename,
                                const occa::json &kernelProps)
     {
       occa::json allProps = kernelProps;
       const bool verbose = allProps.get("verbose", false);
-
-      std::string sourceFilename = hashDir + kc::sourceFile;
-      std::string binaryFilename = hashDir + kc::binaryFile;
 
       setArchCompilerFlags(allProps);
 
