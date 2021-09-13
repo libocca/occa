@@ -10,13 +10,11 @@ namespace occa {
 
   class modeMemory_t : public gc::ringEntry_t {
    public:
-    int memInfo;
     occa::json properties;
 
     gc::ring_t<memory> memoryRing;
 
     char *ptr;
-    char *uvaPtr;
 
     occa::modeDevice_t *modeDevice;
 
@@ -32,10 +30,6 @@ namespace occa {
     void addMemoryRef(memory *mem);
     void removeMemoryRef(memory *mem);
     bool needsFree() const;
-
-    bool isManaged() const;
-    bool inDevice() const;
-    bool isStale() const;
 
     //---[ Virtual Methods ]------------
     virtual ~modeMemory_t() = 0;

@@ -25,16 +25,12 @@ namespace occa {
                           const hash_t &hash,
                           const std::string &header = "");
 
-    void markCachedFileComplete(const std::string &hashDir,
-                                const std::string &filename);
-
     bool cachedFileIsComplete(const std::string &hashDir,
                               const std::string &filename);
 
     void setBuildProps(occa::json &props);
 
     void writeBuildFile(const std::string &filename,
-                        const hash_t &hash,
                         const occa::json &props);
   }
 }

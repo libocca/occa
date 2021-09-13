@@ -160,8 +160,7 @@ namespace occa {
       const bool usingOkl,
       lang::sourceMetadata_t &launcherMetadata,
       lang::sourceMetadata_t &deviceMetadata,
-      const occa::json &kernelProps,
-      io::lock_t lock
+      const occa::json &kernelProps
     ) {
       info_t clInfo;
       clInfo.clDevice  = clDevice;
@@ -175,28 +174,26 @@ namespace occa {
                                      kernelName,
                                      kernelProps["compiler_flags"],
                                      sourceFilename,
-                                     kernelProps,
-                                     lock);
+                                     kernelProps);
 
       opencl::saveProgramBinary(clInfo,
-                                binaryFilename,
-                                lock);
+                                binaryFilename);
 
       if (usingOkl) {
         return buildOKLKernelFromBinary(clInfo,
                                         kernelHash,
                                         hashDir,
                                         kernelName,
+                                        sourceFilename,
+                                        binaryFilename,
                                         launcherMetadata,
                                         deviceMetadata,
-                                        kernelProps,
-                                        lock);
+                                        kernelProps);
       }
 
       // Regular OpenCL Kernel
       opencl::buildKernelFromProgram(clInfo,
-                                     kernelName,
-                                     lock);
+                                     kernelName);
       return new kernel(this,
                         kernelName,
                         sourceFilename,
@@ -205,13 +202,16 @@ namespace occa {
                         kernelProps);
     }
 
-    modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
-                                                   const std::string &hashDir,
-                                                   const std::string &kernelName,
-                                                   lang::sourceMetadata_t &launcherMetadata,
-                                                   lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::json &kernelProps,
-                                                   io::lock_t lock) {
+    modeKernel_t* device::buildOKLKernelFromBinary(
+      const hash_t kernelHash,
+      const std::string &hashDir,
+      const std::string &kernelName,
+      const std::string &sourceFilename,
+      const std::string &binaryFilename,
+      lang::sourceMetadata_t &launcherMetadata,
+      lang::sourceMetadata_t &deviceMetadata,
+      const occa::json &kernelProps
+    ) {
       info_t clInfo;
       clInfo.clDevice  = clDevice;
       clInfo.clContext = clContext;
@@ -220,30 +220,29 @@ namespace occa {
                                       kernelHash,
                                       hashDir,
                                       kernelName,
+                                      sourceFilename,
+                                      binaryFilename,
                                       launcherMetadata,
                                       deviceMetadata,
-                                      kernelProps,
-                                      lock);
+                                      kernelProps);
     }
 
-    modeKernel_t* device::buildOKLKernelFromBinary(info_t &clInfo,
-                                                   const hash_t kernelHash,
-                                                   const std::string &hashDir,
-                                                   const std::string &kernelName,
-                                                   lang::sourceMetadata_t &launcherMetadata,
-                                                   lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::json &kernelProps,
-                                                   io::lock_t lock) {
-
-      const std::string sourceFilename = hashDir + kc::sourceFile;
-      const std::string binaryFilename = hashDir + kc::binaryFile;
-
+    modeKernel_t* device::buildOKLKernelFromBinary(
+      info_t &clInfo,
+      const hash_t kernelHash,
+      const std::string &hashDir,
+      const std::string &kernelName,
+      const std::string &sourceFilename,
+      const std::string &binaryFilename,
+      lang::sourceMetadata_t &launcherMetadata,
+      lang::sourceMetadata_t &deviceMetadata,
+      const occa::json &kernelProps
+    ) {
       if (!clInfo.clProgram) {
         opencl::buildProgramFromBinary(clInfo,
                                        binaryFilename,
                                        kernelName,
-                                       properties["compiler_flags"],
-                                       lock);
+                                       properties["compiler_flags"]);
       }
 
       // Create wrapper kernel and set launcherKernel
@@ -271,8 +270,7 @@ namespace occa {
       for (int i = 0; i < launchedKernelsCount; ++i) {
         lang::kernelMetadata_t &metadata = launchedKernelsMetadata[i];
         opencl::buildKernelFromProgram(clInfo,
-                                       metadata.name,
-                                       lock);
+                                       metadata.name);
 
         kernel *clKernel = new kernel(this,
                                       metadata.name,

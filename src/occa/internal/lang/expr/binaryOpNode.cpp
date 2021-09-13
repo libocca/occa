@@ -10,6 +10,13 @@ namespace occa {
       leftValue(leftValue_.clone()),
       rightValue(rightValue_.clone()) {}
 
+      binaryOpNode::binaryOpNode(const binaryOperator_t &op_,
+                           const exprNode &leftValue_,
+                           const exprNode &rightValue_) :
+      exprOpNode(leftValue_.token, op_),
+      leftValue(leftValue_.clone()),
+      rightValue(rightValue_.clone()) {}
+
     binaryOpNode::binaryOpNode(const binaryOpNode &node) :
       exprOpNode(node.token, node.op),
       leftValue(node.leftValue->clone()),

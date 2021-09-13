@@ -110,11 +110,31 @@ namespace occa {
             // TODO: Implement proper barriers
             emptyStatement &emptySmnt = *((emptyStatement*) smnt);
 
+            const attributes::barrier::SyncType syncType = (
+              emptySmnt.hasAttribute("barrier")
+              ? attributes::barrier::getBarrierSyncType(
+                &emptySmnt.attributes["barrier"]
+              )
+              : attributes::barrier::syncDefault
+            );
+
+            std::string source;
+            switch (syncType) {
+              case attributes::barrier::invalid:
+              case attributes::barrier::syncDefault:
+                source = "__syncthreads();";
+                break;
+
+              case attributes::barrier::syncWarp:
+                source = "__syncwarp();";
+                break;
+            }
+
             statement_t &barrierSmnt = (
               *(new sourceCodeStatement(
                   emptySmnt.up,
                   emptySmnt.source,
-                  " __syncthreads();"
+                  source
                 ))
             );
 

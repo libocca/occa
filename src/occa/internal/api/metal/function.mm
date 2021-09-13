@@ -125,8 +125,8 @@ namespace occa {
                               atIndex:index];
           } else {
             [computeEncoder setBytes:arg.ptr()
-                              length:arg.size
-                             atIndex:index];
+                            length:arg.size()
+                            atIndex:index];
           }
         }
 

@@ -6,6 +6,7 @@
 #include <occa/internal/lang/type/enum.hpp>
 #include <occa/internal/lang/type/function.hpp>
 #include <occa/internal/lang/type/functionPtr.hpp>
+#include <occa/internal/lang/type/lambda.hpp>
 #include <occa/internal/lang/type/pointer.hpp>
 #include <occa/internal/lang/type/primitive.hpp>
 #include <occa/internal/lang/type/struct.hpp>
