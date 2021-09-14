@@ -27,8 +27,9 @@ namespace occa {
 
     // Remove ref from device
     if (modeDevice) {
-      if (!isWrapped)
+      if (!isWrapped) {
         modeDevice->bytesAllocated -= size;
+      }
 
       modeDevice->removeMemoryRef(this);
     }

@@ -331,8 +331,9 @@ namespace occa
       //create slice
       memory *mem = new dpcpp::memory(buf, bytes, 0);
 
-      if (src != NULL)
+      if (src != NULL) {
         mem->copyFrom(src, bytes, 0, props);
+      }
 
       return mem;
     }

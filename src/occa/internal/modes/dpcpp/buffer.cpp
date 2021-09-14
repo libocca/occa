@@ -13,12 +13,10 @@ namespace occa {
       occa::modeBuffer_t(modeDevice_, size_, properties_) {}
 
     buffer::~buffer() {
-      if (!isWrapped) {
-        if (ptr) {
-          auto& dpcpp_device = getDpcppDevice(modeDevice);
-          OCCA_DPCPP_ERROR("Memory: Freeing SYCL alloc'd memory",
-                           ::sycl::free(ptr,dpcpp_device.dpcppContext));
-        }
+      if (!isWrapped && ptr) {
+        auto& dpcpp_device = getDpcppDevice(modeDevice);
+        OCCA_DPCPP_ERROR("Memory: Freeing SYCL alloc'd memory",
+                         ::sycl::free(ptr,dpcpp_device.dpcppContext));
       }
       ptr = nullptr;
       size = 0;

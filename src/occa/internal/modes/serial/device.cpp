@@ -439,8 +439,9 @@ namespace occa {
       //create slice
       memory *mem = new serial::memory(buf, bytes, 0);
 
-      if (src && !props.get("use_host_pointer", false))
+      if (src && !props.get("use_host_pointer", false)) {
         mem->copyFrom(src, bytes, 0, props);
+      }
 
       return mem;
     }

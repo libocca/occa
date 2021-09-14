@@ -11,12 +11,10 @@ namespace occa {
       buffer *b = dynamic_cast<buffer*>(modeBuffer);
       isUnified = b->isUnified;
       useHostPtr = b->useHostPtr;
-      if (useHostPtr) {
+      if (isUnified || useHostPtr) {
         ptr = b->ptr + offset;
-      } else if (isUnified) {
-        ptr = b->ptr + offset;
-        cuPtr = b->cuPtr + offset;
-      } else {
+      }
+      if (isUnified || !useHostPtr) {
         cuPtr = b->cuPtr + offset;
       }
     }
