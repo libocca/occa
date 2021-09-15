@@ -37,7 +37,7 @@ namespace occa {
     if (!modeMemory) {
       return NULL;
     }
-    return modeMemory->modeDevice;
+    return modeMemory->getModeDevice();
   }
 
   occa::modeMemory_t* kernelArgData::getModeMemory() const {
@@ -55,6 +55,7 @@ namespace occa {
   bool kernelArgData::isPointer() const {
     return value.isPointer();
   }
+
   //====================================
 
   //---[ kernelArg ]--------------------
@@ -94,7 +95,7 @@ namespace occa {
     for (int i = 0; i < argCount; ++i) {
       const kernelArgData &arg = args[i];
       if (arg.modeMemory) {
-        return device(arg.modeMemory->modeDevice);
+        return device(arg.modeMemory->getModeDevice());
       }
     }
 

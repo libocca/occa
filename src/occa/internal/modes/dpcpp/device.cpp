@@ -4,6 +4,7 @@
 #include <occa/internal/modes/dpcpp/utils.hpp>
 #include <occa/internal/modes/dpcpp/device.hpp>
 #include <occa/internal/modes/dpcpp/kernel.hpp>
+#include <occa/internal/modes/dpcpp/buffer.hpp>
 #include <occa/internal/modes/dpcpp/memory.hpp>
 #include <occa/internal/modes/dpcpp/stream.hpp>
 #include <occa/internal/modes/dpcpp/streamTag.hpp>
@@ -322,57 +323,16 @@ namespace occa
                                  const void *src,
                                  const occa::json &props)
     {
-      if (props.get("host", false))
-        return hostAlloc(bytes, src, props);
+      buffer *buf = new dpcpp::buffer(this, bytes, props);
 
-      if (props.get("unified", false))
-        return unifiedAlloc(bytes, src, props);
+      //create allocation
+      buf->malloc(bytes);
 
-      auto* mem = new dpcpp::memory(this, bytes, props);
+      //create slice
+      memory *mem = new dpcpp::memory(buf, bytes, 0);
 
-      mem->ptr = static_cast<char *>(::sycl::malloc_device(bytes,dpcppDevice,dpcppContext));
-      OCCA_ERROR("DPCPP: malloc_device failed!", nullptr != mem->ptr);
-
-      if (nullptr != src)
-      {
-        mem->copyFrom(src, bytes, 0);
-      }
-
-      return mem;
-    }
-
-    modeMemory_t *device::hostAlloc(const udim_t bytes,
-                                      const void *src,
-                                      const occa::json &props)
-    {
-      auto* mem = new dpcpp::memory(this, bytes, props);
-
-      mem->ptr = static_cast<char *>(::sycl::malloc_host(bytes,dpcppContext));
-      OCCA_ERROR("DPCPP: malloc_host failed!", nullptr != mem->ptr);
-
-      if (nullptr != src)
-      {
-        // Since memory resides on the host, call regular memcpy
-        ::memcpy(mem->ptr, src, bytes);
-      }
-
-      return mem;
-    }
-
-    modeMemory_t *device::unifiedAlloc(const udim_t bytes,
-                                       const void *src,
-                                       const occa::json &props)
-    {
-      auto* mem = new dpcpp::memory(this, bytes, props);
-
-      mem->ptr = static_cast<char *>(::sycl::malloc_shared(bytes,dpcppDevice,dpcppContext));
-      OCCA_ERROR("DPCPP: malloc_shared failed!", nullptr != mem->ptr);
-
-      if (nullptr != src)
-      {
-        // Since memory is automatically migrated, we only need to copy
-        // between host pointers.
-        ::memcpy(mem->ptr, src, bytes);
+      if (src != NULL) {
+        mem->copyFrom(src, bytes, 0, props);
       }
 
       return mem;
@@ -382,10 +342,12 @@ namespace occa
                                      const udim_t bytes,
                                      const occa::json &props)
     {
-      auto* mem = new dpcpp::memory(this,bytes,props);
-      mem->ptr = (char *)ptr;
+      //create allocation
+      buffer *buf = new dpcpp::buffer(this, bytes, props);
 
-      return mem;
+      buf->wrapMemory(ptr, bytes);
+
+      return new dpcpp::memory(buf, bytes, 0);
     }
 
     udim_t device::memorySize() const

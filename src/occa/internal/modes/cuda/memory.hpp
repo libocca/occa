@@ -11,30 +11,20 @@ namespace occa {
     class device;
 
     class memory : public occa::modeMemory_t {
-      friend class cuda::device;
-
-      friend occa::memory wrapMemory(occa::device device,
-                                     void *ptr,
-                                     const udim_t bytes,
-                                     const occa::json &props);
-
     public:
-      CUdeviceptr &cuPtr;
+      CUdeviceptr cuPtr;
       bool isUnified;
       bool useHostPtr;
 
-      memory(modeDevice_t *modeDevice_,
-             udim_t size_,
-             const occa::json &properties_ = occa::json());
+      memory(modeBuffer_t *modeBuffer_,
+             udim_t size_, dim_t offset_);
       ~memory();
 
       CUstream& getCuStream() const;
 
       void* getKernelArgPtr() const;
 
-      modeMemory_t* addOffset(const dim_t offset);
-
-      void* getPtr();
+      void* getPtr() const;
 
       void copyTo(void *dest,
                   const udim_t bytes,
@@ -51,7 +41,6 @@ namespace occa {
                     const udim_t destOffset = 0,
                     const udim_t srcOffset = 0,
                     const occa::json &props = occa::json());
-      void detach();
     };
   }
 }

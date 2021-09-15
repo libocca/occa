@@ -87,14 +87,6 @@ namespace occa
                                    const void *src,
                                    const occa::json &props) override;
 
-      modeMemory_t *hostAlloc(const udim_t bytes,
-                                const void *src,
-                                const occa::json &props);
-
-      modeMemory_t *unifiedAlloc(const udim_t bytes,
-                                 const void *src,
-                                 const occa::json &props);
-
       virtual modeMemory_t *wrapMemory(const void *ptr,
                                const udim_t bytes,
                                const occa::json &props) override;

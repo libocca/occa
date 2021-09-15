@@ -495,7 +495,6 @@ namespace occa {
     memory mem(modeDevice->wrapMemory(ptr, bytes, memProps));
 
     mem.setDtype(dtype);
-    mem.dontUseRefs();
 
     return mem;
   }

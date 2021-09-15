@@ -1,5 +1,6 @@
 #include <occa/internal/core/device.hpp>
 #include <occa/internal/core/kernel.hpp>
+#include <occa/internal/core/buffer.hpp>
 #include <occa/internal/core/memory.hpp>
 #include <occa/internal/core/stream.hpp>
 #include <occa/internal/core/streamTag.hpp>
@@ -25,7 +26,7 @@ namespace occa {
   // Must be called before ~modeDevice_t()!
   void modeDevice_t::freeResources() {
     freeRing<modeKernel_t>(kernelRing);
-    freeRing<modeMemory_t>(memoryRing);
+    freeRing<modeBuffer_t>(memoryRing);
     freeRing<modeStream_t>(streamRing);
     freeRing<modeStreamTag_t>(streamTagRing);
   }
@@ -54,12 +55,12 @@ namespace occa {
     kernelRing.removeRef(kernel);
   }
 
-  void modeDevice_t::addMemoryRef(modeMemory_t *memory) {
-    memoryRing.addRef(memory);
+  void modeDevice_t::addMemoryRef(modeBuffer_t *buffer) {
+    memoryRing.addRef(buffer);
   }
 
-  void modeDevice_t::removeMemoryRef(modeMemory_t *memory) {
-    memoryRing.removeRef(memory);
+  void modeDevice_t::removeMemoryRef(modeBuffer_t *buffer) {
+    memoryRing.removeRef(buffer);
   }
 
   void modeDevice_t::addStreamRef(modeStream_t *stream) {
