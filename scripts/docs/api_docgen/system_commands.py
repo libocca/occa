@@ -94,5 +94,5 @@ def get_git_hash():
     with the proper Github commit hash
     '''
     return subprocess.check_output(
-        'git rev-parse --short HEAD'.split(' ')
+        'git rev-parse --short origin/main'.split(' ')
     ).decode('utf-8').strip()
