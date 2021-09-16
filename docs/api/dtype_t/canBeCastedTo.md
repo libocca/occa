@@ -16,7 +16,7 @@
     <span class="token keyword">const</span> <a href="#/api/dtype_t/">occa::dtype&#95;t</a> &amp;other
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/dtype/dtype.hpp#L236" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d02eac1/include/occa/dtype/dtype.hpp#L236" target="_blank">Source</a>
     </div>
     
   </div>

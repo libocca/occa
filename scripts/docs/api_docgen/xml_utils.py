@@ -13,9 +13,22 @@ def parse_xml_file(filename: str) -> Tuple[Any, Any]:
     '''
     Return the top-level objects from an lxml-parsed file
     '''
-    tree = et.parse(
-        os.path.expanduser(filename)
-    )
+    filename = os.path.expanduser(filename)
+
+    # Super janky replacement of CDATA to avoid Doxygen parsing issues
+    with open(filename, 'r') as fd:
+        content = ''.join(
+            line
+            for line in fd.readlines()
+            if (
+                'rawXmlStart=' not in line
+                and 'rawXmlEnd=' not in line
+            )
+        )
+    with open(filename, 'w') as fd:
+        fd.write(content)
+
+    tree = et.parse(filename)
     root = tree.getroot()
 
     return (tree, root)

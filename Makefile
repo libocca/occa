@@ -284,6 +284,8 @@ print-%:
 
 #---[ Documentation ]-----------------------------
 # Auto-generate the API documentation
+.PHONY: docs
+
 docs:
 	@${OCCA_DIR}/scripts/docs/api-docgen
 #=================================================
