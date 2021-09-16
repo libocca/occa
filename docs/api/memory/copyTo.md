@@ -22,7 +22,7 @@
     <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/memory.hpp#L405" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d02eac1/include/occa/core/memory.hpp#L388" target="_blank">Source</a>
     </div>
     
   </div>
@@ -36,7 +36,7 @@
     <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/memory.hpp#L413" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d02eac1/include/occa/core/memory.hpp#L396" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -84,7 +84,7 @@ For example, `async: true`. :::
     <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/memory.hpp#L431" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d02eac1/include/occa/core/memory.hpp#L414" target="_blank">Source</a>
     </div>
     
   </div>
@@ -98,7 +98,7 @@ For example, `async: true`. :::
     <span class="token keyword">const</span> <a href="#/api/json/">occa::json</a> &amp;props
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/memory.hpp#L440" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d02eac1/include/occa/core/memory.hpp#L423" target="_blank">Source</a>
     </div>
     <div class="description">
 

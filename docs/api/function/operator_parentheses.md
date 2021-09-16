@@ -15,7 +15,7 @@
       <code class="mobile-only"><span class="token keyword">ReturnType</span> operator () (ArgTypes... args
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/functional/function.hpp#L99" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d02eac1/include/occa/functional/function.hpp#L99" target="_blank">Source</a>
     </div>
     
   </div>
