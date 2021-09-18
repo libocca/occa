@@ -3,6 +3,7 @@
 #include <occa/internal/utils/sys.hpp>
 #include <occa/internal/modes/metal/device.hpp>
 #include <occa/internal/modes/metal/kernel.hpp>
+#include <occa/internal/modes/metal/buffer.hpp>
 #include <occa/internal/modes/metal/memory.hpp>
 #include <occa/internal/modes/metal/stream.hpp>
 #include <occa/internal/modes/metal/streamTag.hpp>
@@ -112,59 +113,77 @@ namespace occa {
       const bool usingOkl,
       lang::sourceMetadata_t &launcherMetadata,
       lang::sourceMetadata_t &deviceMetadata,
-      const occa::json &kernelProps,
-      io::lock_t lock
+      const occa::json &kernelProps
     ) {
       OCCA_ERROR("Metal kernels need to use OKL for now",
                  usingOkl);
 
       compileKernel(hashDir,
                     kernelName,
-                    kernelProps,
-                    lock);
+                    sourceFilename,
+                    binaryFilename,
+                    kernelProps);
 
       return buildOKLKernelFromBinary(kernelHash,
                                       hashDir,
                                       kernelName,
+                                      sourceFilename,
+                                      binaryFilename,
                                       launcherMetadata,
                                       deviceMetadata,
-                                      kernelProps,
-                                      lock);
+                                      kernelProps);
     }
 
     void device::compileKernel(const std::string &hashDir,
                                const std::string &kernelName,
-                               const occa::json &kernelProps,
-                               io::lock_t &lock) {
+                               const std::string &sourceFilename,
+                               const std::string &binaryFilename,
+                               const occa::json &kernelProps) {
 
       occa::json allProps = kernelProps;
       const bool verbose = allProps.get("verbose", false);
 
-      const std::string sourceFilename = hashDir + kc::sourceFile;
-      const std::string binaryFilename = hashDir + kc::binaryFile;
       const std::string airBinaryFilename = hashDir + "binary.air";
 
       //---[ Compile Air Binary ]-------
       std::stringstream command;
 
-      command << "xcrun -sdk macosx metal -x metal"
-              << ' ' << allProps["compiler_flags"]
-              << ' ' << sourceFilename
-              << " -c -o " << airBinaryFilename;
+      int commandExitCode = 0;
+      io::stageFile(
+        airBinaryFilename,
+        true,
+        [&](const std::string &tempFilename) -> bool {
+          command << "xcrun -sdk macosx metal -x metal"
+                  << ' ' << allProps["compiler_flags"]
+                  << ' ' << sourceFilename
+                  << " -c -o " << tempFilename
+                  << " 2>&1";
 
-      if (!verbose) {
-        command << " > /dev/null 2>&1";
-      }
-      const std::string &airCommand = command.str();
-      if (verbose) {
-        io::stdout << "Compiling [" << kernelName << "]\n" << airCommand << "\n";
-      }
+          const std::string airCommand = command.str();
+          if (verbose) {
+            io::stdout << "Compiling [" << kernelName << "]\n" << airCommand << "\n";
+          }
 
-      int compileError = system(airCommand.c_str());
-      if (compileError) {
-        lock.release();
-        OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
-                         " Command: [" << airCommand << ']');
+          std::string commandOutput;
+          commandExitCode = sys::call(
+            airCommand.c_str(),
+            commandOutput
+          );
+
+          if (commandExitCode) {
+            OCCA_FORCE_ERROR(
+              "Error compiling [" << kernelName << "],"
+              " Command: [" << airCommand << ']'
+              << "Output:\n\n"
+              << commandOutput << "\n"
+            );
+          }
+
+          return true;
+        }
+      );
+
+      if (commandExitCode) {
         return;
       }
       //================================
@@ -173,36 +192,39 @@ namespace occa {
       command.str("");
       command << "xcrun -sdk macosx metallib"
               << ' ' << airBinaryFilename
-              << " -o " << binaryFilename;
+              << " -o " << binaryFilename
+              << " 2>&1";
 
-      if (!verbose) {
-        command << " > /dev/null 2>&1";
-      }
-      const std::string &metallibCommand = command.str();
+      const std::string metallibCommand = command.str();
       if (verbose) {
         io::stdout << metallibCommand << '\n';
       }
 
-      compileError = system(metallibCommand.c_str());
+      std::string commandOutput;
+      commandExitCode = sys::call(
+        metallibCommand.c_str(),
+        commandOutput
+      );
 
-      lock.release();
-      OCCA_ERROR("Error compiling [" << kernelName << "],"
-                 " Command: [" << metallibCommand << ']',
-                 !compileError);
+      if (commandExitCode) {
+        OCCA_FORCE_ERROR(
+          "Error compiling [" << kernelName << "],"
+          " Command: [" << metallibCommand << ']'
+          << "Output:\n\n"
+          << commandOutput << "\n"
+        );
+      }
       //================================
     }
 
     modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
                                                    const std::string &hashDir,
                                                    const std::string &kernelName,
+                                                   const std::string &sourceFilename,
+                                                   const std::string &binaryFilename,
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::json &kernelProps,
-                                                   io::lock_t lock) {
-
-      const std::string sourceFilename = hashDir + kc::sourceFile;
-      const std::string binaryFilename = hashDir + kc::binaryFile;
-
+                                                   const occa::json &kernelProps) {
       // Create wrapper kernel and set launcherKernel
       kernel &k = *(new kernel(this,
                                kernelName,
@@ -226,8 +248,7 @@ namespace occa {
 
         api::metal::function_t metalFunction = (
           metalDevice.buildKernel(binaryFilename,
-                                  metadata.name,
-                                  lock)
+                                  metadata.name)
         );
 
         kernel *deviceKernel = new kernel(this,
@@ -255,9 +276,16 @@ namespace occa {
     modeMemory_t* device::malloc(const udim_t bytes,
                                  const void *src,
                                  const occa::json &props) {
-      metal::memory *mem = new metal::memory(this, bytes, props);
+      //create allocation
+      buffer *buf = new metal::buffer(this, bytes, props);
+      buf->malloc(bytes);
 
-      mem->metalBuffer = metalDevice.malloc(bytes, src);
+      //create slice
+      memory *mem = new metal::memory(buf, bytes, 0);
+
+      if (src) {
+        mem->copyFrom(src, bytes, 0, props);
+      }
 
       return mem;
     }
@@ -265,13 +293,11 @@ namespace occa {
     modeMemory_t* device::wrapMemory(const void *ptr,
                                      const udim_t bytes,
                                      const occa::json &props) {
-      memory *mem = new memory(this,
-                               bytes,
-                               props);
+      //create allocation
+      buffer *buf = new metal::buffer(this, bytes, props);
+      buf->wrapMemory(ptr, bytes);
 
-      mem->metalBuffer = api::metal::buffer_t(const_cast<void*>(ptr));
-
-      return mem;
+      return new metal::memory(buf, bytes, 0);
     }
 
     udim_t device::memorySize() const {

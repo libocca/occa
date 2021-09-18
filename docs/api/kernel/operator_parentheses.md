@@ -15,7 +15,7 @@
       <code class="mobile-only"><span class="token keyword">void</span> operator () ([occa::kernelArg](/api/kernelArg)... args
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/kernelOperators.hpp_codegen#L7" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d02eac1/include/occa/core/kernel.hpp#L297" target="_blank">Source</a>
     </div>
     
   </div>

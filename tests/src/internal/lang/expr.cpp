@@ -85,6 +85,8 @@ void testStreamPrint() {
   args.push_back(&two);
   args.push_back(&three);
 
+  lambda_t lam;
+
   std::cerr
     << "\n---[ Testing << Printing ]------------------------\n"
     //---[ Left Unary ]---------------
@@ -133,6 +135,38 @@ void testStreamPrint() {
     << "rightShiftEq        : " << binaryOpNode(NULL, op::rightShiftEq, a, b).toString() << '\n'
     //================================
 
+//---[ Binary ]-------------------
+    << "add                 : " << binaryOpNode(op::add, a, b).toString() << '\n'
+    << "sub                 : " << binaryOpNode(op::sub, a, b).toString() << '\n'
+    << "mult                : " << binaryOpNode(op::mult, a, b).toString() << '\n'
+    << "div                 : " << binaryOpNode(op::div, a, b).toString() << '\n'
+    << "mod                 : " << binaryOpNode(op::mod, a, b).toString() << '\n'
+    << "lessThan            : " << binaryOpNode(op::lessThan, a, b).toString() << '\n'
+    << "lessThanEq          : " << binaryOpNode(op::lessThanEq, a, b).toString() << '\n'
+    << "equal               : " << binaryOpNode(op::equal, a, b).toString() << '\n'
+    << "compare             : " << binaryOpNode(op::compare, a, b).toString() << '\n'
+    << "notEqual            : " << binaryOpNode(op::notEqual, a, b).toString() << '\n'
+    << "greaterThan         : " << binaryOpNode(op::greaterThan, a, b).toString() << '\n'
+    << "greaterThanEq       : " << binaryOpNode(op::greaterThanEq, a, b).toString() << '\n'
+    << "and_                : " << binaryOpNode(op::and_, a, b).toString() << '\n'
+    << "or_                 : " << binaryOpNode(op::or_, a, b).toString() << '\n'
+    << "bitAnd              : " << binaryOpNode(op::bitAnd, a, b).toString() << '\n'
+    << "bitOr               : " << binaryOpNode(op::bitOr, a, b).toString() << '\n'
+    << "xor_                : " << binaryOpNode(op::xor_, a, b).toString() << '\n'
+    << "leftShift           : " << binaryOpNode(op::leftShift, a, b).toString() << '\n'
+    << "rightShift          : " << binaryOpNode(op::rightShift, a, b).toString() << '\n'
+    << "addEq               : " << binaryOpNode(op::addEq, a, b).toString() << '\n'
+    << "subEq               : " << binaryOpNode(op::subEq, a, b).toString() << '\n'
+    << "multEq              : " << binaryOpNode(op::multEq, a, b).toString() << '\n'
+    << "divEq               : " << binaryOpNode(op::divEq, a, b).toString() << '\n'
+    << "modEq               : " << binaryOpNode(op::modEq, a, b).toString() << '\n'
+    << "andEq               : " << binaryOpNode(op::andEq, a, b).toString() << '\n'
+    << "orEq                : " << binaryOpNode(op::orEq, a, b).toString() << '\n'
+    << "xorEq               : " << binaryOpNode(op::xorEq, a, b).toString() << '\n'
+    << "leftShiftEq         : " << binaryOpNode(op::leftShiftEq, a, b).toString() << '\n'
+    << "rightShiftEq        : " << binaryOpNode(op::rightShiftEq, a, b).toString() << '\n'
+    //================================
+
     //---[ Ternary ]------------------
     << "ternary             : " << ternaryOpNode(a, b, c).toString() << '\n'
     //================================
@@ -156,6 +190,9 @@ void testStreamPrint() {
     << "dynamicCastNode     : " << dynamicCastNode(NULL, t1, var).toString() << '\n'
     << "parenthesesNode     : " << parenthesesNode(NULL, var).toString() << '\n'
     << "cudaCallNode        : " << cudaCallNode(NULL, var, one, two).toString() << '\n'
+    << "dpcppAtomicNode     : " << dpcppAtomicNode(NULL,t1,var).toString() << '\n'
+    << "dpcppLocalMemoryNode: " << dpcppLocalMemoryNode(NULL,t1,"cgh").toString() << '\n'
+    << "lambdaNode          : " << lambdaNode(NULL,lam).toString() << '\n'
     //================================
     ;
 }
@@ -188,6 +225,8 @@ void testPoutPrint() {
   args.push_back(&one);
   args.push_back(&two);
   args.push_back(&three);
+
+  lambda_t lam;
 
   printer pout(io::stderr);
 
@@ -239,6 +278,38 @@ void testPoutPrint() {
   binaryOpNode(NULL, op::rightShiftEq, a, b).print(pout); pout << '\n';
   //================================
 
+//---[ Binary ]-------------------
+  binaryOpNode(op::add, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::sub, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::mult, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::div, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::mod, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::lessThan, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::lessThanEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::equal, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::compare, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::notEqual, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::greaterThan, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::greaterThanEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::and_, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::or_, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::bitAnd, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::bitOr, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::xor_, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::leftShift, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::rightShift, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::addEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::subEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::multEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::divEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::modEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::andEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::orEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::xorEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::leftShiftEq, a, b).print(pout); pout << '\n';
+  binaryOpNode(op::rightShiftEq, a, b).print(pout); pout << '\n';
+  //================================
+
   //---[ Ternary ]------------------
   ternaryOpNode(a, b, c).print(pout); pout << '\n';
   //================================
@@ -262,6 +333,9 @@ void testPoutPrint() {
   dynamicCastNode(NULL, t1, var).print(pout); pout << '\n';
   parenthesesNode(NULL, var).print(pout); pout << '\n';
   cudaCallNode(NULL, var, one, two).print(pout); pout << '\n';
+  dpcppAtomicNode(NULL,t1,var).print(pout); pout << '\n';
+  dpcppLocalMemoryNode(NULL,t1,"cgh").print(pout); pout << '\n';
+  lambdaNode(NULL, lam).print(pout); pout << '\n';
   //================================
 }
 
@@ -293,6 +367,9 @@ void testDebugPrint() {
   args.push_back(&one);
   args.push_back(&two);
   args.push_back(&three);
+
+  lambda_t lam;
+
 
   std::cerr << "\n---[ Testing Debug Printing ]---------------------\n";
 
@@ -365,6 +442,9 @@ void testDebugPrint() {
   dynamicCastNode(NULL, t1, var).debugPrint("");
   parenthesesNode(NULL, var).debugPrint("");
   cudaCallNode(NULL, var, one, two).debugPrint("");
+  dpcppAtomicNode(NULL,t1,var).debugPrint("");
+  dpcppLocalMemoryNode(NULL,t1,"cgh").debugPrint("");
+  lambdaNode(NULL, lam).debugPrint("");
   //================================
 }
 

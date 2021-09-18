@@ -8,14 +8,11 @@ namespace occa {
   namespace serial {
     class memory : public occa::modeMemory_t {
     public:
-      memory(modeDevice_t *modeDevice_,
-             udim_t size_,
-             const occa::json &properties_ = occa::json());
+      memory(modeBuffer_t *modeBuffer_,
+             udim_t size_, dim_t offset_);
       ~memory();
 
       void* getKernelArgPtr() const;
-
-      modeMemory_t* addOffset(const dim_t offset);
 
       void copyTo(void *dest,
                   const udim_t bytes,
@@ -32,7 +29,6 @@ namespace occa {
                     const udim_t destOffset,
                     const udim_t srcOffset,
                     const occa::json &props);
-      void detach();
     };
   }
 }

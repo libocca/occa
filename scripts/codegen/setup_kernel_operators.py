@@ -103,8 +103,9 @@ def run_function_from_argument(N):
 
 @to_file('include/occa/core/kernelOperators.hpp_codegen')
 def operator_declarations(N):
+    # We manually define the 0-argument kernel for documentation purposes
     return '\n\n'.join(
-        operator_declaration(n) for n in range(N + 1)
+        operator_declaration(n + 1) for n in range(N)
     )
 
 

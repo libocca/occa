@@ -83,17 +83,6 @@ void testMemoryMethods() {
             bytes);
   occaFree(&mem);
 
-  // umalloc
-  void *ptr = occaUMalloc(bytes,
-                          NULL,
-                          occaDefault);
-  occaFreeUvaPtr(ptr);
-
-  ptr = occaUMalloc(bytes,
-                    NULL,
-                    props);
-  occaFreeUvaPtr(ptr);
-
   occaFree(&props);
 }
 

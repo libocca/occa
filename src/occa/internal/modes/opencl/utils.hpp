@@ -5,7 +5,6 @@
 
 #include <occa/internal/modes/opencl/polyfill.hpp>
 #include <occa/internal/core/device.hpp>
-#include <occa/internal/io/lock.hpp>
 
 namespace occa {
   class streamTag;
@@ -72,27 +71,22 @@ namespace occa {
                                 const std::string &kernelName,
                                 const std::string &compilerFlags = "",
                                 const std::string &sourceFile = "",
-                                const occa::json &properties = occa::json(),
-                                const io::lock_t &lock = io::lock_t());
+                                const occa::json &properties = occa::json());
 
     void buildProgramFromBinary(info_t &info,
                                 const std::string &binaryFilename,
                                 const std::string &kernelName,
-                                const std::string &compilerFlags = "",
-                                const io::lock_t &lock = io::lock_t());
+                                const std::string &compilerFlags = "");
 
     void buildProgram(info_t &info,
                       const std::string &kernelName,
-                      const std::string &compilerFlags,
-                      const io::lock_t &lock = io::lock_t());
+                      const std::string &compilerFlags);
 
     void buildKernelFromProgram(info_t &info,
-                                const std::string &kernelName,
-                                const io::lock_t &lock = io::lock_t());
+                                const std::string &kernelName);
 
     bool saveProgramBinary(info_t &info,
-                           const std::string &binaryFile,
-                           const io::lock_t &lock = io::lock_t());
+                           const std::string &binaryFile);
 
     cl_context getCLContext(occa::device device);
 

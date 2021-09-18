@@ -389,7 +389,8 @@ namespace occa {
               + path.filter(isInnerOklLoop).length()
             );
 
-            if (innerCount > maxInnerCount) {
+            if (innerCount > maxInnerCount)
+            {
               maxInnerCount = innerCount;
             }
           });

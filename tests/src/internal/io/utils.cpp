@@ -125,14 +125,12 @@ void testDirMethods() {
   // Find files
   occa::strVector files = occa::io::files(ioDir);
   ASSERT_EQ((int) files.size(),
-            3);
+            2);
   ASSERT_IN(ioDir + "cache.cpp", files);
-  ASSERT_IN(ioDir + "lock.cpp", files);
   ASSERT_IN(ioDir + "utils.cpp", files);
 
   // Check if files exists
   ASSERT_TRUE(occa::io::exists(ioDir + "cache.cpp"));
-  ASSERT_TRUE(occa::io::exists(ioDir + "lock.cpp"));
   ASSERT_TRUE(occa::io::exists(ioDir + "utils.cpp"));
   ASSERT_FALSE(occa::io::exists(ioDir + "foo.okl"));
 

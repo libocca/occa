@@ -1,6 +1,7 @@
 #ifndef OCCA_INTERNAL_IO_UTILS_HEADER
 #define OCCA_INTERNAL_IO_UTILS_HEADER
 
+#include <functional>
 #include <iostream>
 
 #include <occa/types.hpp>
@@ -82,6 +83,23 @@ namespace occa {
 
     void write(const std::string &filename,
                const std::string &content);
+
+    void stageFile(
+      const std::string &filename,
+      const bool skipExisting,
+      std::function<bool(const std::string &tempFilename)> func
+    );
+
+    void stageFiles(
+      const strVector &filenames,
+      const bool skipExisting,
+      std::function<bool(const strVector &tempFilenames)> func
+    );
+
+    std::string getStagedTempFilename(const std::string &expFilename);
+
+    void moveStagedTempFile(const std::string &tempFilename,
+                            const std::string &expFilename);
   }
 }
 

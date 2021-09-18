@@ -1,5 +1,6 @@
 #include <sstream>
 
+#include <occa/core/base.hpp>
 #include <occa/functional/scope.hpp>
 
 namespace occa {
@@ -47,7 +48,11 @@ namespace occa {
   }
 
   occa::device scope::getDevice() const {
-    return device;
+    return (
+      device.isInitialized()
+      ? device
+      : occa::getDevice()
+    );
   }
 
   int scope::size() const {

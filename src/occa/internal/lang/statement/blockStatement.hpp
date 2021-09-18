@@ -3,6 +3,7 @@
 
 #include <occa/internal/lang/statement/statement.hpp>
 #include <occa/internal/lang/scope.hpp>
+#include <occa/internal/lang/statement/statementArray.hpp>
 
 namespace occa {
   namespace lang {

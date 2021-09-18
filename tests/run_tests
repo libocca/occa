@@ -12,7 +12,7 @@ HEADER_CHARS=80
 RED='\e[31m'
 NORM='\e[0m'
 
-tests=$(find "${TEST_BIN_DIR}" -type f -executable)
+tests=$(find "${TEST_BIN_DIR}" -type f -perm -111)
 failed_tests=""
 
 for test in ${tests[@]}; do

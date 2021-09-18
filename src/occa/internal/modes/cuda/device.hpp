@@ -64,24 +64,25 @@ namespace occa {
                                                    const bool usingOkl,
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::json &kernelProps,
-                                                   io::lock_t lock);
+                                                   const occa::json &kernelProps);
 
       void setArchCompilerFlags(const occa::json &kernelProps,
                                 std::string &compilerFlags);
 
       void compileKernel(const std::string &hashDir,
                          const std::string &kernelName,
-                         const occa::json &kernelProps,
-                         io::lock_t &lock);
+                         const std::string &sourceFilename,
+                         const std::string &binaryFilename,
+                         const occa::json &kernelProps);
 
       modeKernel_t* buildOKLKernelFromBinary(const hash_t kernelHash,
                                              const std::string &hashDir,
                                              const std::string &kernelName,
+                                             const std::string &sourceFilename,
+                                             const std::string &binaryFilename,
                                              lang::sourceMetadata_t &launcherMetadata,
                                              lang::sourceMetadata_t &deviceMetadata,
-                                             const occa::json &kernelProps,
-                                             io::lock_t lock);
+                                             const occa::json &kernelProps);
 
       virtual modeKernel_t* buildKernelFromBinary(const std::string &filename,
                                                   const std::string &kernelName,
@@ -92,14 +93,6 @@ namespace occa {
       virtual modeMemory_t* malloc(const udim_t bytes,
                                    const void *src,
                                    const occa::json &props);
-
-      virtual modeMemory_t* hostAlloc(const udim_t bytes,
-                                      const void *src,
-                                      const occa::json &props);
-
-      modeMemory_t* unifiedAlloc(const udim_t bytes,
-                                 const void *src,
-                                 const occa::json &props);
 
       modeMemory_t* wrapMemory(const void *ptr,
                                const udim_t bytes,

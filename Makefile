@@ -96,6 +96,7 @@ MAKE_COMPILED_DEFINES := $(shell cat "$(OCCA_DIR)/scripts/build/compiledDefinesT
                                       s,@@OCCA_HIP_ENABLED@@,$(OCCA_HIP_ENABLED),g;\
                                       s,@@OCCA_OPENCL_ENABLED@@,$(OCCA_OPENCL_ENABLED),g;\
                                       s,@@OCCA_METAL_ENABLED@@,$(OCCA_METAL_ENABLED),g;\
+				      												s,@@OCCA_DPCPP_ENABLED@@,$(OCCA_DPCPP_ENABLED),g;\
                                       s,@@OCCA_BUILD_DIR@@,$(OCCA_BUILD_DIR),g;"\
                                       > "$(NEW_COMPILED_DEFINES)")
 
@@ -149,12 +150,12 @@ $(OCCA_DIR)/obj/%.o: $(OCCA_DIR)/src/%.cpp \
 
 # Objective-C++
 $(OCCA_DIR)/obj/%.o: $(OCCA_DIR)/src/%.mm \
-                     $(OCCA_DIR)/src/%.hpp \
-                     $(OCCA_DIR)/include/%.hpp \
+                     $(wildcard $(OCCA_DIR)/src/%.hpp) \
+                     $(wildcard $(OCCA_DIR)/include/%.hpp) \
                      $(COMPILED_DEFINES_CHANGED)
 	@mkdir -p $(abspath $(dir $@))
 	@echo " - [ObjC] $<"
-	@clang++ -x objective-c++ -o "$@" $(flags) -c $(paths) "$<"
+	@clang++ -x objective-c++ $(cpp11Flags) -o "$@" $(flags) -c $(paths) "$<"
 
 # Fortran
 include $(OCCA_DIR)/scripts/build/Make.fortran_rules
@@ -263,6 +264,7 @@ info:
 	$(info metalEnabled   = $(metalEnabled))
 	$(info cudaEnabled    = $(cudaEnabled))
 	$(info hipEnabled     = $(hipEnabled))
+	$(info dpcppEnabled   = $(dpcppEnabled))
 	$(info --------------------------------)
 	@true
 #=================================================
@@ -282,6 +284,8 @@ print-%:
 
 #---[ Documentation ]-----------------------------
 # Auto-generate the API documentation
+.PHONY: docs
+
 docs:
 	@${OCCA_DIR}/scripts/docs/api-docgen
 #=================================================

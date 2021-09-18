@@ -16,7 +16,7 @@
     <span class="token keyword">const</span> <a href="#/api/memory/">occa::memory</a> &amp;other
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/memory.hpp#L260" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d02eac1/include/occa/core/memory.hpp#L243" target="_blank">Source</a>
     </div>
     <div class="description">
 
@@ -36,7 +36,7 @@
     <span class="token keyword">const</span> <a href="#/api/memory/">occa::memory</a> &amp;other
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/memory.hpp#L273" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d02eac1/include/occa/core/memory.hpp#L256" target="_blank">Source</a>
     </div>
     <div class="description">
 

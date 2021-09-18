@@ -1,5 +1,6 @@
-#include <occa/internal/modes/hip/memory.hpp>
 #include <occa/internal/modes/hip/device.hpp>
+#include <occa/internal/modes/hip/buffer.hpp>
+#include <occa/internal/modes/hip/memory.hpp>
 #include <occa/internal/modes/hip/utils.hpp>
 
 namespace occa {
@@ -8,49 +9,32 @@ namespace occa {
       return (hipDeviceptr_t) (((char*) hipPtr) + offset);
     }
 
-    memory::memory(modeDevice_t *modeDevice_,
-                   udim_t size_,
-                   const occa::json &properties_) :
-      occa::modeMemory_t(modeDevice_, size_, properties_),
-      hipPtr(reinterpret_cast<hipDeviceptr_t&>(ptr)),
-      useHostPtr(false) {}
+    memory::memory(modeBuffer_t *modeBuffer_,
+                   udim_t size_, dim_t offset_) :
+      occa::modeMemory_t(modeBuffer_, size_, offset_) {
+      buffer *b = dynamic_cast<buffer*>(modeBuffer);
+      useHostPtr = b->useHostPtr;
+      if (useHostPtr) {
+        ptr = b->ptr + offset;
+      } else {
+        hipPtr = addHipPtrOffset(b->hipPtr, offset);
+      }
+    }
 
     memory::~memory() {
-      if (isOrigin) {
-        if (useHostPtr) {
-          OCCA_HIP_ERROR("Device: hostFree()",
-                         hipHostFree(ptr));
-        } else if (hipPtr) {
-          hipFree((void*) hipPtr);
-        }
-      }
-      ptr = nullptr;
-      hipPtr = 0;
-      size = 0;
+      hipPtr = NULL;
       useHostPtr = false;
     }
 
     hipStream_t& memory::getHipStream() const {
-      return ((device*) modeDevice)->getHipStream();
+      return dynamic_cast<device*>(getModeDevice())->getHipStream();
     }
 
     void* memory::getKernelArgPtr() const {
-      return (void*) hipPtr;
+      return getPtr();
     }
 
-    modeMemory_t* memory::addOffset(const dim_t offset) {
-      memory *m = new memory(modeDevice,
-                             size - offset,
-                             properties);
-      m->hipPtr = addHipPtrOffset(hipPtr, offset);
-      if (useHostPtr) {
-        m->ptr = ptr + offset;
-      }
-      m->useHostPtr = useHostPtr;
-      return m;
-    }
-
-    void* memory::getPtr() {
+    void* memory::getPtr() const {
       if (useHostPtr) {
         return ptr;
       } else {
@@ -60,21 +44,21 @@ namespace occa {
 
     void memory::copyFrom(const void *src,
                           const udim_t bytes,
-                          const udim_t offset,
+                          const udim_t offset_,
                           const occa::json &props) {
       const bool async = props.get("async", false);
 
       if (useHostPtr) {
-        ::memcpy(ptr+offset, src, bytes);
+        ::memcpy(ptr+offset_, src, bytes);
       } else {
         if (!async) {
           OCCA_HIP_ERROR("Memory: Copy From",
-                         hipMemcpyHtoD(addHipPtrOffset(hipPtr, offset),
+                         hipMemcpyHtoD(addHipPtrOffset(hipPtr, offset_),
                                        const_cast<void*>(src),
                                        bytes) );
         } else {
           OCCA_HIP_ERROR("Memory: Async Copy From",
-                         hipMemcpyHtoDAsync(addHipPtrOffset(hipPtr, offset),
+                         hipMemcpyHtoDAsync(addHipPtrOffset(hipPtr, offset_),
                                             const_cast<void*>(src),
                                             bytes,
                                             getHipStream()) );
@@ -89,10 +73,10 @@ namespace occa {
                           const occa::json &props) {
       const bool async = props.get("async", false);
 
-      if (useHostPtr && ((memory*) src)->useHostPtr) {
+      if (useHostPtr && dynamic_cast<const memory*>(src)->useHostPtr) {
         // src: host, dest: host
         ::memcpy(ptr + destOffset, src->ptr + srcOffset, bytes);
-      } else if (((memory*) src)->useHostPtr) {
+      } else if (dynamic_cast<const memory*>(src)->useHostPtr) {
         // src: host, dest: device
         if (!async) {
           OCCA_HIP_ERROR("Memory: Copy From",
@@ -139,33 +123,26 @@ namespace occa {
 
     void memory::copyTo(void *dest,
                         const udim_t bytes,
-                        const udim_t offset,
+                        const udim_t offset_,
                         const occa::json &props) const {
       const bool async = props.get("async", false);
 
       if (useHostPtr) {
-        ::memcpy(dest, ptr+offset, bytes);
+        ::memcpy(dest, ptr+offset_, bytes);
       } else {
         if (!async) {
           OCCA_HIP_ERROR("Memory: Copy From",
                          hipMemcpyDtoH(dest,
-                                       addHipPtrOffset(hipPtr, offset),
+                                       addHipPtrOffset(hipPtr, offset_),
                                        bytes) );
         } else {
           OCCA_HIP_ERROR("Memory: Async Copy From",
                          hipMemcpyDtoHAsync(dest,
-                                            addHipPtrOffset(hipPtr, offset),
+                                            addHipPtrOffset(hipPtr, offset_),
                                             bytes,
                                             getHipStream()) );
         }
       }
-    }
-
-    void memory::detach() {
-      ptr = 0;
-      hipPtr = 0;
-      size = 0;
-      useHostPtr = false;
     }
   }
 }

@@ -7,6 +7,7 @@
 namespace occa {
   namespace lang {
     namespace attributes {
+
       barrier::barrier() {}
 
       const std::string& barrier::name() const {
@@ -19,23 +20,50 @@ namespace occa {
       }
 
       bool barrier::isValid(const attributeToken_t &attr) const {
-        if (attr.kwargs.size()) {
-          attr.printError("[@barrier] does not take kwargs");
-          return false;
+        return getBarrierSyncType(&attr) != invalid;
+      }
+
+      barrier::SyncType barrier::getBarrierSyncType(const attributeToken_t *attr) {
+        if (!attr) {
+          return invalid;
         }
-        const int argCount = (int) attr.args.size();
+
+        if (attr->kwargs.size()) {
+          attr->printError("[@barrier] does not take kwargs");
+          return invalid;
+        }
+
+        const int argCount = (int) attr->args.size();
+
+        // Default to syncDefault
+        if (!argCount) {
+          return syncDefault;
+        }
+
         if (argCount > 1) {
-          attr.printError("[@barrier] takes at most one argument");
-          return false;
+          attr->printError("[@barrier] takes at most one argument");
+          return invalid;
         }
         if ((argCount == 1) &&
-            (!attr.args[0].expr ||
-             attr.args[0].expr->type() != exprNodeType::string)) {
-          attr.printError("[@barrier] must have no arguments"
+            (!attr->args[0].expr ||
+             attr->args[0].expr->type() != exprNodeType::string)) {
+          attr->printError("[@barrier] must have no arguments"
                           " or have one string argument");
-          return false;
+          return invalid;
         }
-        return true;
+
+        const std::string barrierType = (
+          attr->args[0].expr->to<stringNode>().value
+        );
+
+        if (barrierType == "warp") {
+          return syncWarp;
+        }
+
+        attr->printError(
+          "[@barrier] has an invalid barrier type: " + barrierType
+        );
+        return invalid;
       }
     }
   }
