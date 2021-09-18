@@ -19,7 +19,7 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
 endif()
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -28,9 +28,10 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 option(ENABLE_OPENMP "Build with OpenMP if available" ON)
 option(ENABLE_CUDA   "Build with CUDA if available"   ON)
 option(ENABLE_OPENCL "Build with OpenCL if available" ON)
-option(ENABLE_HIP    "Build with HIP if available"    ON)
-option(ENABLE_METAL  "Build with Metal if available"  ON)
-option(ENABLE_MPI    "Build with MPI if available"    ON)
+option(ENABLE_HIP    "Build with HIP if available" ON)
+option(ENABLE_METAL  "Build with Metal if available" ON)
+option(ENABLE_DPCPP "Build with SYCL/DPCPP if available" ON)
+option(ENABLE_MPI    "Build with MPI if available" ON)
 
 option(ENABLE_TESTS    "Build tests"               OFF)
 option(ENABLE_EXAMPLES "Build simple examples"     OFF)
@@ -121,26 +122,19 @@ endif(ENABLE_OPENMP)
 
 #---[ CUDA ]----------------------------
 if(ENABLE_CUDA)
-  find_package(CUDA)
+  find_package(CUDAToolkit)
 
-  if(CUDA_FOUND)
+  if(CUDAToolkit_FOUND)
     set(OCCA_CUDA_ENABLED 1)
 
-    # Find the shared library rather than the static that find_package returns
-    find_library(CUDART_LIB
-      NAMES         cudart
-      PATHS         ${CUDA_TOOLKIT_ROOT_DIR}
-      PATH_SUFFIXES lib64 lib
-      DOC           "CUDA RT lib location")
+    message("-- CUDA include dirs: ${CUDAToolkit_INCLUDE_DIRS}")
+    message("-- CUDA driver library: ${CUDAToolkit_LIBRARY_DIR}")
 
-    message("-- CUDA include dirs: ${CUDA_INCLUDE_DIRS}")
-    message("-- CUDA libraries:    ${CUDART_LIB};cuda}")
+    target_link_libraries(libocca PRIVATE CUDA::cuda_driver)
 
-    target_include_directories(libocca PRIVATE ${CUDA_INCLUDE_DIRS})
-    target_link_libraries(libocca PRIVATE ${CUDART_LIB} cuda)
-  else (CUDA_FOUND)
+  else (CUDAToolkit_FOUND)
     set(OCCA_CUDA_ENABLED 0)
-  endif(CUDA_FOUND)
+  endif(CUDAToolkit_FOUND)
 endif(ENABLE_CUDA)
 #=======================================
 
@@ -179,6 +173,56 @@ if(ENABLE_OPENCL)
     set(OCCA_OPENCL_ENABLED 0)
   endif(OpenCL_FOUND)
 endif(ENABLE_OPENCL)
+#=======================================
+
+#---[ SYCL/DPCPP ]-----------------------
+if(ENABLE_DPCPP)
+  message(CHECK_START "Looking for DPC++")
+  unset(missingDpcppComponents)
+
+  message(CHECK_START "  Looking for sycl.hpp")
+  find_path(
+    SYCL_INCLUDE_DIRS
+    NAMES
+      CL/sycl.hpp
+  )
+  string(COMPARE NOTEQUAL "SYCL_INCLUDE_DIRS-NOTFOUND" "${SYCL_INCLUDE_DIRS}" foundSyclInclude)
+  if(foundSyclInclude)
+    message(CHECK_PASS "found ${SYCL_INCLUDE_DIRS}")
+  else()
+    list(APPEND missingDpcppComponents "SYCL_INCLUDE_DIRS")
+    message(CHECK_FAIL "not found")
+  endif()
+      
+  message(CHECK_START "  Looking for libsycl")
+  find_library(
+    SYCL_LIBRARIES 
+    NAMES 
+      sycl libsycl 
+  )
+  string(COMPARE NOTEQUAL "SYCL_LIBRARIES-NOTFOUND" "${SYCL_LIBRARIES}" foundSyclLibraries)
+  if(foundSyclLibraries)
+    message(CHECK_PASS "found ${SYCL_LIBRARIES}")
+  else()
+    list(APPEND missingDpcppComponents "SYCL_LIBRARIES")
+    message(CHECK_FAIL "not found")
+  endif()
+  
+  if(missingDpcppComponents)
+    message(CHECK_FAIL "missing components: ${missingDpcppComponents}")
+    set(OCCA_DPCPP_ENABLED 0)
+  else()
+    message(CHECK_PASS "found all components")
+    set(OCCA_DPCPP_ENABLED 1)
+    
+    set(SYCL_CXX_FLAGS "-fsycl")
+    message("-- SYCL CXX flags: ${SYCL_CXX_FLAGS}")
+  
+    target_include_directories(libocca PRIVATE ${SYCL_INCLUDE_DIRS})
+    target_link_libraries(libocca PRIVATE ${SYCL_LIBRARIES})
+    target_compile_options(libocca BEFORE PRIVATE "${SYCL_CXX_FLAGS}")
+  endif()
+endif(ENABLE_DPCPP)
 #=======================================
 
 #---[ HIP ]-----------------------------
@@ -256,6 +300,10 @@ file(
 if(OCCA_OPENMP_ENABLED)
   set_source_files_properties(${OCCA_SRC_cpp} PROPERTIES
     COMPILE_FLAGS ${OpenMP_CXX_FLAGS})
+endif()
+
+if(OCCA_DPCPP_ENABLED)
+  set_source_files_properties(${OCCA_SRC_cpp} PROPERTIES COMPILE_FLAGS ${SYCL_CXX_FLAGS})
 endif()
 
 if(ENABLE_FORTRAN)

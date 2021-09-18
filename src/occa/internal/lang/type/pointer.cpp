@@ -2,13 +2,9 @@
 
 namespace occa {
   namespace lang {
-    pointer_t::pointer_t() {}
 
     pointer_t::pointer_t(const qualifiers_t &qualifiers_) :
       qualifiers(qualifiers_) {}
-
-    pointer_t::pointer_t(const pointer_t &other) :
-      qualifiers(other.qualifiers) {}
 
     bool pointer_t::has(const qualifier_t &qualifier) const {
       return qualifiers.has(qualifier);

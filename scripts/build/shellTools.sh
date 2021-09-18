@@ -234,6 +234,11 @@ function compilerVendor {
     local binaryFilename="${OCCA_SOURCE_SCRIPTS_DIR}/findCompilerVendor"
 
     eval "${compiler}" "${testFilename}" -o "${binaryFilename}" > /dev/null 2>&1
+    if [[ "$?" -ne 0 ]]; then
+        echo "Failed to build findCompilerVendor:"
+        eval "${compiler}" "${testFilename}" -o "${binaryFilename}"
+    fi
+
     eval "${binaryFilename}"
     bit="$?"
 
@@ -258,13 +263,13 @@ function compilerCpp11Flags {
 
     case "$vendor" in
         GCC|LLVM|INTEL|PGI|POWERPC)
-            echo "-std=c++11";;
-        CRAY)      echo "-hstd=c++11"          ;;
+            echo "-std=c++17";;
+        CRAY)      echo "-hstd=c++17"          ;;
         IBM)       echo "-qlanglvl=extended0x" ;;
         # Unknown
-        PATHSCALE) echo "-std=c++11"           ;;
+        PATHSCALE) echo "-std=c++17"           ;;
         # Unknown
-        HP)        echo "-std=c++11"           ;;
+        HP)        echo "-std=c++17"           ;;
         *) ;;
     esac
 }

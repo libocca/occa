@@ -10,6 +10,7 @@
 #include <occa/internal/lang/modes/hip.hpp>
 #include <occa/internal/lang/modes/opencl.hpp>
 #include <occa/internal/lang/modes/metal.hpp>
+#include <occa/internal/lang/modes/dpcpp.hpp>
 #include <occa/internal/modes.hpp>
 
 namespace occa {
@@ -156,6 +157,8 @@ namespace occa {
         parser = new lang::okl::openclParser(kernelProps);
       } else if (mode == "metal") {
         parser = new lang::okl::metalParser(kernelProps);
+      } else if (mode == "dpcpp") {
+        parser = new lang::okl::dpcppParser(kernelProps);
       }
 
       if (!parser) {
@@ -193,6 +196,7 @@ namespace occa {
       if (printLauncher && ((mode == "cuda")
                             || (mode == "hip")
                             || (mode == "opencl")
+                            || (mode == "dpcpp")
                             || (mode == "metal"))) {
         launcherParser = &(((occa::lang::okl::withLauncher*) parser)->launcherParser);
         io::stdout << launcherParser->toString();
@@ -242,6 +246,8 @@ namespace occa {
                  << "  Makefile:\n"
                  << "    - CXX                        : " << envEcho("CXX") << "\n"
                  << "    - CXXFLAGS                   : " << envEcho("CXXFLAGS") << "\n"
+                 << "    - CC                         : " << envEcho("CC") << "\n"
+                 << "    - CFLAGS                     : " << envEcho("CFLAGS") << "\n"
                  << "    - FC                         : " << envEcho("FC") << "\n"
                  << "    - FCFLAGS                    : " << envEcho("FCFLAGS") << "\n"
                  << "    - LDFLAGS                    : " << envEcho("LDFLAGS") << "\n"
@@ -251,18 +257,23 @@ namespace occa {
                  << "    - OCCA_CUDA_ENABLED          : " << envEcho("OCCA_CUDA_ENABLED", OCCA_CUDA_ENABLED) << "\n"
                  << "    - OCCA_HIP_ENABLED           : " << envEcho("OCCA_HIP_ENABLED", OCCA_HIP_ENABLED) << "\n"
                  << "    - OCCA_OPENCL_ENABLED        : " << envEcho("OCCA_OPENCL_ENABLED", OCCA_OPENCL_ENABLED) << "\n"
+                 << "    - OCCA_DPCPP_ENABLED         : " << envEcho("OCCA_DPCPP_ENABLED", OCCA_DPCPP_ENABLED) << "\n"
                  << "    - OCCA_METAL_ENABLED         : " << envEcho("OCCA_METAL_ENABLED", OCCA_METAL_ENABLED) << "\n"
                  << "    - OCCA_MPI_ENABLED           : " << envEcho("OCCA_MPI_ENABLED", OCCA_MPI_ENABLED) << "\n"
 
                  << "  Run-Time Options:\n"
                  << "    - OCCA_CXX                   : " << envEcho("OCCA_CXX") << "\n"
                  << "    - OCCA_CXXFLAGS              : " << envEcho("OCCA_CXXFLAGS") << "\n"
+                 << "    - OCCA_CC                    : " << envEcho("OCCA_CC") << "\n"
+                 << "    - OCCA_CFLAGS                : " << envEcho("OCCA_CFLAGS") << "\n"
                  << "    - OCCA_LDFLAGS               : " << envEcho("OCCA_LDFLAGS") << "\n"
                  << "    - OCCA_COMPILER_SHARED_FLAGS : " << envEcho("OCCA_COMPILER_SHARED_FLAGS") << "\n"
                  << "    - OCCA_INCLUDE_PATH          : " << envEcho("OCCA_INCLUDE_PATH") << "\n"
                  << "    - OCCA_LIBRARY_PATH          : " << envEcho("OCCA_LIBRARY_PATH") << "\n"
                  << "    - OCCA_KERNEL_PATH           : " << envEcho("OCCA_KERNEL_PATH") << "\n"
                  << "    - OCCA_OPENCL_COMPILER_FLAGS : " << envEcho("OCCA_OPENCL_COMPILER_FLAGS") << "\n"
+                 << "    - OCCA_DPCPP_COMPILER        : " << envEcho("OCCA_DPCPP_COMPILER") << "\n"
+                 << "    - OCCA_DPCPP_COMPILER_FLAGS  : " << envEcho("OCCA_DPCPP_COMPILER_FLAGS") << "\n"
                  << "    - OCCA_CUDA_COMPILER         : " << envEcho("OCCA_CUDA_COMPILER") << "\n"
                  << "    - OCCA_CUDA_COMPILER_FLAGS   : " << envEcho("OCCA_CUDA_COMPILER_FLAGS") << "\n"
                  << "    - OCCA_HIP_COMPILER          : " << envEcho("OCCA_HIP_COMPILER") << "\n"

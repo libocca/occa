@@ -60,6 +60,10 @@ namespace occa {
       }
     }
 
+    void function_t::addArgumentFirst(const variable_t &arg) {
+      args.insert(args.begin(), &(arg.clone()));
+    }
+
     variable_t* function_t::removeArgument(const int index) {
       const int argCount = (int) args.size();
       if (index < 0 || argCount <= index ) {

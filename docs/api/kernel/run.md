@@ -16,7 +16,7 @@
     
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/kernel.hpp#L277" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d02eac1/include/occa/core/kernel.hpp#L277" target="_blank">Source</a>
     </div>
     
   </div>
@@ -28,7 +28,7 @@
     <span class="token keyword">std::initializer_list<</span> <a href="#/api/kernelArg">occa::kernelArg</a> &gt;args
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/kernel.hpp#L282" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d02eac1/include/occa/core/kernel.hpp#L282" target="_blank">Source</a>
     </div>
     
   </div>

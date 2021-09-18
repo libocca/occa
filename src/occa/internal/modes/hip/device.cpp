@@ -5,6 +5,7 @@
 #include <occa/internal/utils/sys.hpp>
 #include <occa/internal/modes/hip/device.hpp>
 #include <occa/internal/modes/hip/kernel.hpp>
+#include <occa/internal/modes/hip/buffer.hpp>
 #include <occa/internal/modes/hip/memory.hpp>
 #include <occa/internal/modes/hip/stream.hpp>
 #include <occa/internal/modes/hip/streamTag.hpp>
@@ -70,7 +71,7 @@ namespace occa {
       if (startsWith(arch, "sm_")) {
         archFlag = " -arch=" + arch;
       } else if (startsWith(arch, "gfx")) {
-#ifdef __HIP_ROCclr__
+#if HIP_VERSION >= 305
         archFlag = " --amdgpu-target=" + arch;
 #else
         archFlag = " -t " + arch;
@@ -184,43 +185,36 @@ namespace occa {
       const bool usingOkl,
       lang::sourceMetadata_t &launcherMetadata,
       lang::sourceMetadata_t &deviceMetadata,
-      const occa::json &kernelProps,
-      io::lock_t lock
+      const occa::json &kernelProps
     ) {
       compileKernel(hashDir,
                     kernelName,
-                    kernelProps,
-                    lock);
+                    sourceFilename,
+                    binaryFilename,
+                    kernelProps);
 
       if (usingOkl) {
         return buildOKLKernelFromBinary(kernelHash,
                                         hashDir,
                                         kernelName,
+                                        sourceFilename,
+                                        binaryFilename,
                                         launcherMetadata,
                                         deviceMetadata,
-                                        kernelProps,
-                                        lock);
+                                        kernelProps);
       }
 
       // Regular HIP Kernel
       hipModule_t hipModule = NULL;
       hipFunction_t hipFunction = NULL;
-      hipError_t error;
 
-      error = hipModuleLoad(&hipModule, binaryFilename.c_str());
-      if (error) {
-        lock.release();
-        OCCA_HIP_ERROR("Kernel [" + kernelName + "]: Loading Module",
-                       error);
-      }
-      error = hipModuleGetFunction(&hipFunction,
-                                   hipModule,
-                                   kernelName.c_str());
-      if (error) {
-        lock.release();
-        OCCA_HIP_ERROR("Kernel [" + kernelName + "]: Loading Function",
-                       error);
-      }
+      OCCA_HIP_ERROR("Kernel [" + kernelName + "]: Loading Module",
+                     hipModuleLoad(&hipModule, binaryFilename.c_str()));
+
+      OCCA_HIP_ERROR("Kernel [" + kernelName + "]: Loading Function",
+                     hipModuleGetFunction(&hipFunction,
+                                          hipModule,
+                                          kernelName.c_str()));
 
       return new kernel(this,
                         kernelName,
@@ -236,7 +230,7 @@ namespace occa {
       );
 
       if (hipccCompilerFlags.find("-arch=sm") == std::string::npos &&
-#ifdef __HIP_ROCclr__
+#if HIP_VERSION >= 305
           hipccCompilerFlags.find("-t gfx") == std::string::npos
 #else
           hipccCompilerFlags.find("--amdgpu-target=gfx") == std::string::npos
@@ -249,14 +243,12 @@ namespace occa {
 
     void device::compileKernel(const std::string &hashDir,
                                const std::string &kernelName,
-                               const occa::json &kernelProps,
-                               io::lock_t &lock) {
+                               const std::string &sourceFilename,
+                               const std::string &binaryFilename,
+                               const occa::json &kernelProps) {
 
       occa::json allProps = kernelProps;
       const bool verbose = allProps.get("verbose", false);
-
-      std::string sourceFilename = hashDir + kc::sourceFile;
-      std::string binaryFilename = hashDir + kc::binaryFile;
 
       setArchCompilerFlags(allProps);
 
@@ -278,35 +270,40 @@ namespace occa {
       //---[ Compiling Command ]--------
       command << compiler
               << " --genco"
-#if defined(__HIP_PLATFORM_NVCC___) || defined(__HIP_ROCclr__)
+#if defined(__HIP_PLATFORM_NVCC___) || (HIP_VERSION >= 305)
               << ' ' << compilerFlags
 #else
               << " -f=\\\"" << compilerFlags << "\\\""
 #endif
               << ' ' << hipccCompilerFlags
-#if defined(__HIP_PLATFORM_NVCC___) || defined(__HIP_ROCclr__)
+#if defined(__HIP_PLATFORM_NVCC___) || (HIP_VERSION >= 305)
               << " -I"        << env::OCCA_DIR << "include"
               << " -I"        << env::OCCA_INSTALL_DIR << "include"
 #endif
               /* NC: hipcc doesn't seem to like linking a library in */
               //<< " -L"        << env::OCCA_INSTALL_DIR << "lib -locca"
               << ' '    << sourceFilename
-              << " -o " << binaryFilename;
+              << " -o " << binaryFilename
+              << " 2>&1";
 
-      if (!verbose) {
-        command << " > /dev/null 2>&1";
-      }
       const std::string &sCommand = command.str();
       if (verbose) {
-        io::stdout << sCommand << '\n';
+        io::stdout << "Compiling [" << kernelName << "]\n" << sCommand << "\n";
       }
 
-      const int compileError = system(sCommand.c_str());
+      std::string commandOutput;
+      const int commandExitCode = sys::call(
+        sCommand.c_str(),
+        commandOutput
+      );
 
-      lock.release();
-      if (compileError) {
-        OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
-                         " Command: [" << sCommand << ']');
+      if (commandExitCode) {
+        OCCA_FORCE_ERROR(
+          "Error compiling [" << kernelName << "],"
+          " Command: [" << sCommand << "]\n"
+          << "Output:\n\n"
+          << commandOutput << "\n"
+        );
       }
       //================================
     }
@@ -314,23 +311,15 @@ namespace occa {
     modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
                                                    const std::string &hashDir,
                                                    const std::string &kernelName,
+                                                   const std::string &sourceFilename,
+                                                   const std::string &binaryFilename,
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::json &kernelProps,
-                                                   io::lock_t lock) {
-
-      const std::string sourceFilename = hashDir + kc::sourceFile;
-      const std::string binaryFilename = hashDir + kc::binaryFile;
-
+                                                   const occa::json &kernelProps) {
       hipModule_t hipModule = NULL;
-      hipError_t error;
 
-      error = hipModuleLoad(&hipModule, binaryFilename.c_str());
-      if (error) {
-        lock.release();
-        OCCA_HIP_ERROR("Kernel [" + kernelName + "]: Loading Module",
-                       error);
-      }
+      OCCA_HIP_ERROR("Kernel [" + kernelName + "]: Loading Module",
+                     hipModuleLoad(&hipModule, binaryFilename.c_str()));
 
       // Create wrapper kernel and set launcherKernel
       kernel &k = *(new kernel(this,
@@ -354,14 +343,11 @@ namespace occa {
         lang::kernelMetadata_t &metadata = launchedKernelsMetadata[i];
 
         hipFunction_t hipFunction = NULL;
-        error = hipModuleGetFunction(&hipFunction,
-                                     hipModule,
-                                     metadata.name.c_str());
-        if (error) {
-          lock.release();
-          OCCA_HIP_ERROR("Kernel [" + metadata.name + "]: Loading Function",
-                         error);
-        }
+
+        OCCA_HIP_ERROR("Kernel [" + metadata.name + "]: Loading Function",
+                       hipModuleGetFunction(&hipFunction,
+                                            hipModule,
+                                            metadata.name.c_str()));
 
         kernel *hipKernel = new kernel(this,
                                        metadata.name,
@@ -403,57 +389,32 @@ namespace occa {
                                  const void *src,
                                  const occa::json &props) {
 
-      if (props.get("host", false)) {
-        return hostAlloc(bytes, src, props);
-      }
-
-      hip::memory &mem = *(new hip::memory(this, bytes, props));
-
       OCCA_HIP_ERROR("Device: Setting Device",
                      hipSetDevice(deviceID));
 
-      OCCA_HIP_ERROR("Device: malloc",
-                     hipMalloc((void**) &(mem.hipPtr), bytes));
+      buffer *buf = new hip::buffer(this, bytes, props);
 
-      if (src != NULL) {
-        mem.copyFrom(src, bytes, 0);
-      }
-      return &mem;
-    }
+      //create allocation
+      buf->malloc(bytes);
 
-    modeMemory_t* device::hostAlloc(const udim_t bytes,
-                                    const void *src,
-                                    const occa::json &props) {
+      //create slice
+      memory *mem = new hip::memory(buf, bytes, 0);
 
-      hip::memory &mem = *(new hip::memory(this, bytes, props));
+      if (src != NULL)
+        mem->copyFrom(src, bytes, 0, props);
 
-      OCCA_HIP_ERROR("Device: Setting Device",
-                     hipSetDevice(deviceID));
-      OCCA_HIP_ERROR("Device: malloc host",
-                     hipHostMalloc((void**) &(mem.ptr), bytes));
-      OCCA_HIP_ERROR("Device: get device pointer from host",
-                     hipHostGetDevicePointer((void**) &(mem.hipPtr),
-                                             mem.ptr,
-                                             0));
-
-      mem.useHostPtr=true;
-
-      if (src != NULL) {
-        ::memcpy(mem.ptr, src, bytes);
-      }
-      return &mem;
+      return mem;
     }
 
     modeMemory_t* device::wrapMemory(const void *ptr,
                                      const udim_t bytes,
                                      const occa::json &props) {
-      memory *mem = new memory(this,
-                               bytes,
-                               props);
+      //create allocation
+      buffer *buf = new hip::buffer(this, bytes, props);
 
-      mem->ptr = (char*) ptr;
+      buf->wrapMemory(ptr, bytes);
 
-      return mem;
+      return new hip::memory(buf, bytes, 0);
     }
 
     udim_t device::memorySize() const {

@@ -14,7 +14,7 @@ occa::json parseArgs(int argc, const char **argv);
 int main(int argc, const char **argv) {
   occa::json args = parseArgs(argc, argv);
 
-  int entries = 5;
+  int entries = 12;
 
   float *a  = new float[entries];
   float *b  = new float[entries];
@@ -27,7 +27,6 @@ int main(int argc, const char **argv) {
   }
 
   occa::device device;
-  occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
 
   //---[ Device Setup ]-------------------------------------
@@ -78,8 +77,7 @@ int main(int argc, const char **argv) {
   o_ab = device.malloc(entries * sizeof(float));
 
   // Compile the kernel at run-time
-  addVectors = device.buildKernel("addVectors.okl",
-                                  "addVectors");
+  occa::kernel addVectors = device.buildKernel("addVectors.okl","addVectors");
 
   // Copy memory to the device
   o_a.copyFrom(a);

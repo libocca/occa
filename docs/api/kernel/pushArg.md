@@ -16,7 +16,7 @@
     <span class="token keyword">const</span> <a href="#/api/kernelArg">occa::kernelArg</a> &amp;arg
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/kernel.hpp#L249" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d02eac1/include/occa/core/kernel.hpp#L249" target="_blank">Source</a>
     </div>
     
   </div>

@@ -4,6 +4,7 @@
 #include <occa/internal/utils/sys.hpp>
 #include <occa/internal/modes/cuda/device.hpp>
 #include <occa/internal/modes/cuda/kernel.hpp>
+#include <occa/internal/modes/cuda/buffer.hpp>
 #include <occa/internal/modes/cuda/memory.hpp>
 #include <occa/internal/modes/cuda/stream.hpp>
 #include <occa/internal/modes/cuda/streamTag.hpp>
@@ -201,22 +202,23 @@ namespace occa {
       const bool usingOkl,
       lang::sourceMetadata_t &launcherMetadata,
       lang::sourceMetadata_t &deviceMetadata,
-      const occa::json &kernelProps,
-      io::lock_t lock
+      const occa::json &kernelProps
     ) {
       compileKernel(hashDir,
                     kernelName,
-                    kernelProps,
-                    lock);
+                    sourceFilename,
+                    binaryFilename,
+                    kernelProps);
 
       if (usingOkl) {
         return buildOKLKernelFromBinary(kernelHash,
                                         hashDir,
                                         kernelName,
+                                        sourceFilename,
+                                        binaryFilename,
                                         launcherMetadata,
                                         deviceMetadata,
-                                        kernelProps,
-                                        lock);
+                                        kernelProps);
       }
 
       // Regular CUDA Kernel
@@ -228,7 +230,6 @@ namespace occa {
 
       error = cuModuleLoad(&cuModule, binaryFilename.c_str());
       if (error) {
-        lock.release();
         OCCA_CUDA_ERROR("Kernel [" + kernelName + "]: Loading Module",
                         error);
       }
@@ -236,7 +237,6 @@ namespace occa {
                                   cuModule,
                                   kernelName.c_str());
       if (error) {
-        lock.release();
         OCCA_CUDA_ERROR("Kernel [" + kernelName + "]: Loading Function",
                         error);
       }
@@ -260,14 +260,13 @@ namespace occa {
 
     void device::compileKernel(const std::string &hashDir,
                                const std::string &kernelName,
-                               const occa::json &kernelProps,
-                               io::lock_t &lock) {
+                               const std::string &sourceFilename,
+                               const std::string &binaryFilename,
+                               const occa::json &kernelProps) {
 
       occa::json allProps = kernelProps;
       const bool verbose = allProps.get("verbose", false);
 
-      std::string sourceFilename = hashDir + kc::sourceFile;
-      std::string binaryFilename = hashDir + kc::binaryFile;
       const std::string ptxBinaryFilename = hashDir + "ptx_binary.o";
 
       const std::string compiler = allProps["compiler"];
@@ -326,22 +325,27 @@ namespace occa {
               << " -I"        << env::OCCA_INSTALL_DIR << "include"
               << " -L"        << env::OCCA_INSTALL_DIR << "lib -locca"
               << " -x cu " << sourceFilename
-              << " -o "    << binaryFilename;
+              << " -o "    << binaryFilename
+              << " 2>&1";
 
-      if (!verbose) {
-        command << " > /dev/null 2>&1";
-      }
       const std::string &sCommand = command.str();
       if (verbose) {
-        io::stdout << sCommand << '\n';
+        io::stdout << "Compiling [" << kernelName << "]\n" << sCommand << "\n";
       }
 
-      const int compileError = system(sCommand.c_str());
+      std::string commandOutput;
+      const int commandExitCode = sys::call(
+        sCommand.c_str(),
+        commandOutput
+      );
 
-      lock.release();
-      if (compileError) {
-        OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
-                         " Command: [" << sCommand << ']');
+      if (commandExitCode) {
+        OCCA_FORCE_ERROR(
+          "Error compiling [" << kernelName << "],"
+          " Command: [" << sCommand << ']'
+          << "Output:\n\n"
+          << commandOutput << "\n"
+        );
       }
       //================================
     }
@@ -349,14 +353,11 @@ namespace occa {
     modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
                                                    const std::string &hashDir,
                                                    const std::string &kernelName,
+                                                   const std::string &sourceFilename,
+                                                   const std::string &binaryFilename,
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::json &kernelProps,
-                                                   io::lock_t lock) {
-
-      const std::string sourceFilename = hashDir + kc::sourceFile;
-      const std::string binaryFilename = hashDir + kc::binaryFile;
-
+                                                   const occa::json &kernelProps) {
       CUmodule cuModule;
       CUresult error;
 
@@ -364,7 +365,6 @@ namespace occa {
 
       error = cuModuleLoad(&cuModule, binaryFilename.c_str());
       if (error) {
-        lock.release();
         OCCA_CUDA_ERROR("Kernel [" + kernelName + "]: Loading Module",
                         error);
       }
@@ -395,7 +395,6 @@ namespace occa {
                                     cuModule,
                                     metadata.name.c_str());
         if (error) {
-          lock.release();
           OCCA_CUDA_ERROR("Kernel [" + metadata.name + "]: Loading Function",
                           error);
         }
@@ -440,88 +439,32 @@ namespace occa {
     modeMemory_t* device::malloc(const udim_t bytes,
                                  const void *src,
                                  const occa::json &props) {
-      if (props.get("host", false)) {
-        return hostAlloc(bytes, src, props);
-      }
-      if (props.get("unified", false)) {
-        return unifiedAlloc(bytes, src, props);
-      }
-
-      cuda::memory &mem = *(new cuda::memory(this, bytes, props));
 
       setCudaContext();
 
-      OCCA_CUDA_ERROR("Device: malloc",
-                      cuMemAlloc(&(mem.cuPtr), bytes));
+      buffer *buf = new cuda::buffer(this, bytes, props);
 
-      if (src != NULL) {
-        mem.copyFrom(src, bytes, 0);
-      }
-      return &mem;
-    }
+      //create allocation
+      buf->malloc(bytes);
 
-    modeMemory_t* device::hostAlloc(const udim_t bytes,
-                                    const void *src,
-                                    const occa::json &props) {
+      //create slice
+      memory *mem = new cuda::memory(buf, bytes, 0);
 
-      cuda::memory &mem = *(new cuda::memory(this, bytes, props));
+      if (src != NULL)
+        mem->copyFrom(src, bytes, 0, props);
 
-      setCudaContext();
-
-      OCCA_CUDA_ERROR("Device: malloc host",
-                      cuMemAllocHost((void**) &(mem.ptr), bytes));
-      OCCA_CUDA_ERROR("Device: get device pointer from host",
-                      cuMemHostGetDevicePointer(&(mem.cuPtr),
-                                                mem.ptr,
-                                                0));
-
-      mem.useHostPtr=true;
-
-      if (src != NULL) {
-        ::memcpy(mem.ptr, src, bytes);
-      }
-      return &mem;
-    }
-
-    modeMemory_t* device::unifiedAlloc(const udim_t bytes,
-                                       const void *src,
-                                       const occa::json &props) {
-      cuda::memory &mem = *(new cuda::memory(this, bytes, props));
-#if CUDA_VERSION >= 8000
-      mem.isUnified = true;
-
-      const unsigned int flags = (props.get("attached_host", false) ?
-                                  CU_MEM_ATTACH_HOST : CU_MEM_ATTACH_GLOBAL);
-
-      setCudaContext();
-
-      OCCA_CUDA_ERROR("Device: Unified alloc",
-                      cuMemAllocManaged(&(mem.cuPtr),
-                                        bytes,
-                                        flags));
-
-      if (src != NULL) {
-        mem.copyFrom(src, bytes, 0);
-      }
-#else
-      OCCA_FORCE_ERROR("CUDA version ["
-                       << cuda::getVersion()
-                       << "] does not support unified memory allocation");
-#endif
-      return &mem;
+      return mem;
     }
 
     modeMemory_t* device::wrapMemory(const void *ptr,
                                      const udim_t bytes,
                                      const occa::json &props) {
-      memory *mem = new memory(this,
-                               bytes,
-                               props);
+      //create allocation
+      buffer *buf = new cuda::buffer(this, bytes, props);
 
-      mem->ptr = (char*) ptr;
-      mem->isUnified = props.get("unified", false);
+      buf->wrapMemory(ptr, bytes);
 
-      return mem;
+      return new cuda::memory(buf, bytes, 0);
     }
 
     udim_t device::memorySize() const {

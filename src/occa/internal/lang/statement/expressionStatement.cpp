@@ -7,7 +7,7 @@ namespace occa {
                                              exprNode &expr_,
                                              const bool hasSemicolon_) :
       statement_t(up_, expr_.startNode()->token),
-      expr(&expr_),
+      expr(expr_.clone()),
       hasSemicolon(hasSemicolon_) {}
 
     expressionStatement::expressionStatement(blockStatement *up_,

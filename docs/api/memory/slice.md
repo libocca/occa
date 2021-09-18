@@ -18,7 +18,7 @@
     <span class="token keyword">const</span> <span class="token keyword">dim&#95;t</span> count
 )</code>
       <div class="flex-spacing"></div>
-      <a href="https://github.com/libocca/occa/blob/6d155d0c/include/occa/core/memory.hpp#L320" target="_blank">Source</a>
+      <a href="https://github.com/libocca/occa/blob/7d02eac1/include/occa/core/memory.hpp#L303" target="_blank">Source</a>
     </div>
     
   </div>

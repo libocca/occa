@@ -109,17 +109,15 @@ void testRun() {
   int value = 1;
   occaMemory mem = occaMalloc(1 * sizeof(int), &value, occaDefault);
   value = 2;
-  int *uvaPtr = (int*) occaUMalloc(1 * sizeof(int), &value, occaDefault);
 
   int xy[2] = {13, 14};
   std::string str = "fifteen";
 
   // Good argument types
   occaKernelRunN(
-    argKernel, 15,
+    argKernel, 14,
     occaNull,
     mem,
-    occaPtr(uvaPtr),
     occaInt8(3),
     occaUInt8(4),
     occaInt16(5),
@@ -138,7 +136,6 @@ void testRun() {
   occaKernelClearArgs(argKernel);
   occaKernelPushArg(argKernel, occaNull);
   occaKernelPushArg(argKernel, mem);
-  occaKernelPushArg(argKernel, occaPtr(uvaPtr));
   occaKernelPushArg(argKernel, occaInt8(3));
   occaKernelPushArg(argKernel, occaUInt8(4));
   occaKernelPushArg(argKernel, occaInt16(5));
@@ -154,10 +151,9 @@ void testRun() {
   occaKernelRunFromArgs(argKernel);
 
   // Test array call
-  occaType args[15] = {
+  occaType args[14] = {
     occaNull,
     mem,
-    occaPtr(uvaPtr),
     occaInt8(3),
     occaUInt8(4),
     occaInt16(5),
@@ -172,7 +168,7 @@ void testRun() {
     occaString(str.c_str())
   };
 
-  occaKernelRunWithArgs(argKernel, 15, args);
+  occaKernelRunWithArgs(argKernel, 14, args);
 
   // Bad argument types
   ASSERT_THROW(
@@ -189,8 +185,5 @@ void testRun() {
   );
   ASSERT_THROW(
     occaKernelRunN(argKernel, 1, occaDefault);
-  );
-  ASSERT_THROW(
-    occaKernelRunN(argKernel, 1, uvaPtr);
   );
 }

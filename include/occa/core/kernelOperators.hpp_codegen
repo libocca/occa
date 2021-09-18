@@ -3,8 +3,6 @@
 //  EDIT: scripts/codegen/setup_kernel_operators.py
 // =========================================
 
-void operator () () const;
-
 void operator () (const kernelArg &arg1) const;
 
 void operator () (const kernelArg &arg1, const kernelArg &arg2) const;

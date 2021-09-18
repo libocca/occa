@@ -75,7 +75,7 @@ void printOccaType(const occaType *value, const bool verbose) {
   printf("\n");
   printf("      magicHeader:    %d\n", value->magicHeader);
   printf("      type:           %d\n", value->type);
-  printf("      bytes:          %ld\n", value->bytes);
+  printf("      bytes:          %ld\n", (long) value->bytes);
   printf("      needsFree:      %d (%s)\n", value->needsFree,
          value->needsFree ? "true" : "false");
   printf("      value (C `union`):\n");
@@ -84,17 +84,17 @@ void printOccaType(const occaType *value, const bool verbose) {
     printf("      value.uint8_:   %d\n", value->value.uint8_);
     printf("      value.uint16_:  %d\n", value->value.uint16_);
     printf("      value.uint32_:  %d\n", value->value.uint32_);
-    printf("      value.uint64_:  %ld\n", value->value.uint64_);
+    printf("      value.uint64_:  %ld\n", (long) value->value.uint64_);
     printf("      value.int8_:    %d\n", value->value.int8_);
     printf("      value.int16_:   %d\n", value->value.int16_);
     printf("      value.int32_:   %d\n", value->value.int32_);
-    printf("      value.int64_:   %ld\n", value->value.int64_);
+    printf("      value.int64_:   %ld\n", (long) value->value.int64_);
     printf("      value.float_:   %f\n", value->value.float_);
     printf("      value.double_:  %f\n", value->value.double_);
     printf("      value.ptr:      %p\n", (void*) value->value.ptr);
   } else {
     // In the Fortran module we store the data as int64
-    printf("      value.int64_:   %ld\n", value->value.int64_);
+    printf("      value.int64_:   %ld\n", (long) value->value.int64_);
     printf("      value.ptr:      %p\n", (void*) value->value.ptr);
   }
   printf("    ===============================================\n");

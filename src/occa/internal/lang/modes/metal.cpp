@@ -33,6 +33,7 @@ namespace occa {
       }
 
       void metalParser::afterKernelSplit() {
+        setupHeaders();
         addBarriers();
 
         if (!success) return;

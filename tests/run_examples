@@ -21,30 +21,29 @@ declare -a examples=()
 if [[ $CPP_EXAMPLES -eq 1 ]]; then
   examples+=(
     cpp/01_add_vectors
-    cpp/02_background_device
-    cpp/03_inline_okl
-    cpp/04_reduction
-    cpp/05_building_kernels
-    cpp/06_unified_memory
-    cpp/07_dtypes
-    cpp/08_arrays
-    cpp/09_streams
-    cpp/11_native_cpp_kernels
-    cpp/12_native_c_kernels
+    cpp/02_for_loops
+    cpp/03_arrays
+    cpp/04_generic_inline_kernel
+    cpp/05_custom_types
+    cpp/06_shared_memory
+    cpp/07_streams
+    cpp/09_native_cpp_kernels
+    cpp/10_native_c_kernels
+    cpp/11_native_cuda_kernels
+    cpp/12_native_opencl_kernels
     )
 fi
 if [[ $C_EXAMPLES -eq 1 ]]; then
   examples+=(
     c/01_add_vectors
     c/02_background_device
-    c/03_inline_okl
+    c/03_generic_inline_okl
     c/04_reduction
   )
 fi
 if [[ $FORTRAN_EXAMPLES -eq 1 ]]; then
   examples+=(
     fortran/01_add_vectors
-    fortran/02_background_device
     fortran/03_static_compilation
     fortran/04_reduction
     fortran/09_streams
@@ -59,6 +58,7 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
         CUDA)   device="{mode: 'CUDA', device_id: 0}";;
         OpenCL) device="{mode: 'OpenCL', platform_id: 0, device_id: 0}";;
         Metal)  device="{mode: 'Metal', device_id: 0}";;
+        dpcpp) device="{mode: 'dpcpp', platform_id: 0, device_id: 0}";;
     esac
 
     for example_dir in "${examples[@]}"; do
@@ -66,32 +66,55 @@ for mode in $("${OCCA_DIR}/bin/occa" modes); do
 
         # Filters
         case "${example_dir}" in
-            # OpenCL + Shared memory is finicky
-            # OpenCL throws CL_DEVICE_MAX_WORK_GROUP_SIZE
-            cpp/04_reduction)
+            
+            cpp/02_for_loops)
                 if [[ "${mode}" == OpenCL ]]; then
                     continue
                 fi;;
-            cpp/08_arrays)
+            cpp/03_arrays)
                 if [[ "${mode}" == OpenCL ]]; then
                     continue
                 fi;;
+            cpp/04_generic_inline_kernel)
+                if [[ "${mode}" == OpenCL ]]; then
+                    continue
+                fi;;
+            cpp/05_custom_types)
+                if [[ "${mode}" == OpenCL ]]; then
+                    continue
+                fi;;
+            cpp/06_shared_memory)
+                if [[ "${mode}" == OpenCL ]]; then
+                    continue
+                fi;;
+            cpp/09_native_cpp_kernels)
+                if [[ "${mode}" != Serial ]]; then
+                    continue
+                fi
+                flags=(--verbose)
+                ;;
+            cpp/10_native_c_kernels)
+                if [[ "${mode}" != Serial ]]; then
+                    continue
+                fi
+                flags=(--verbose)
+                ;;
+            cpp/11_native_cuda_kernels)
+                if [[ "${mode}" != CUDA ]]; then
+                    continue
+                fi
+                flags=(--verbose)
+                ;;
+            cpp/12_native_opencl_kernels)
+                if [[ "${mode}" != OpenCL ]]; then
+                    continue
+                fi
+                flags=(--verbose)
+                ;;
             c/04_reduction)
                 if [[ "${mode}" == OpenCL ]]; then
                     continue
                 fi;;
-            cpp/11_native_cpp_kernels)
-                if [[ "${mode}" != Serial ]]; then
-                    continue
-                fi
-                flags=(--verbose)
-                ;;
-            cpp/12_native_c_kernels)
-                if [[ "${mode}" != Serial ]]; then
-                    continue
-                fi
-                flags=(--verbose)
-                ;;
             fortran/09_streams)
                 if [[ "${mode}" != Serial ]]; then
                     continue
