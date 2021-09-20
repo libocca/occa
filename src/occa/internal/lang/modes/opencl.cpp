@@ -279,6 +279,24 @@ namespace occa {
 
                   migrateLocalDecls((functionDeclStatement&) *smnt);
                   if (!success) return;
+
+                  dim kernelInnerDims = innerDims((functionDeclStatement&) *smnt);
+                  std::cout << "here" << kernelInnerDims[0] << std::endl;
+                  if (!success) return;
+
+                  int kernelInnerDim = kernelInnerDims[0];
+                  for(int i=1; i < kernelInnerDims.dims; i++) kernelInnerDim *= kernelInnerDims[i];
+                  if(kernelInnerDim) {
+                    std::string s = "__attribute__((work_group_size_hint(";
+                    s += std::to_string(kernelInnerDims[0]);
+                    for(int i=1; i < 3; i++) {
+                      s += ", " + std::to_string(std::max((int)kernelInnerDims[i],1));
+                    }
+                    s += ")))";
+                    qualifier_t *boundQualifier = new qualifier_t(s, qualifierType::custom);
+                    function->returnType.add(0, *boundQualifier);
+                  }
+
                 } else {
                   function = &(((functionStatement*) smnt)->function());
                 }
@@ -299,6 +317,7 @@ namespace occa {
       }
 
       void openclParser::setKernelQualifiers(function_t &function) {
+
         function.returnType.add(0, kernel);
 
         const int argCount = (int) function.args.size();

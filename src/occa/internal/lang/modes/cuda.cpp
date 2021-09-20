@@ -147,10 +147,21 @@ namespace occa {
         root.children
           .forEachKernelStatement([&](functionDeclStatement &kernelSmnt) {
             // Set kernel qualifiers
-            vartype_t &vartype = kernelSmnt.function().returnType;
-            vartype.qualifiers.addFirst(vartype.origin(),
+           vartype_t &vartype = kernelSmnt.function().returnType;
+
+           dim kernelInnerDims = innerDims(kernelSmnt);
+           if (!success) return;
+           int kernelInnerDim = kernelInnerDims[0];
+           for(int i=1; i < kernelInnerDims.dims; i++) kernelInnerDim *= kernelInnerDims[i];
+           if(kernelInnerDim) {
+             const std::string s = "__launch_bounds__(" + std::to_string(kernelInnerDim) + ")";
+             qualifier_t *boundQualifier = new qualifier_t(s, qualifierType::custom);
+             vartype.qualifiers.addFirst(vartype.origin(), 
+                                          *boundQualifier);
+           }
+           vartype.qualifiers.addFirst(vartype.origin(),
                                         global);
-            vartype.qualifiers.addFirst(vartype.origin(),
+           vartype.qualifiers.addFirst(vartype.origin(),
                                         externC);
           });
       }

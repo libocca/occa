@@ -46,6 +46,8 @@ namespace occa {
 
         bool isInsideLoop(forStatement &forSmnt);
 
+        dim innerDims(functionDeclStatement &kernelSmnt);
+
         void setKernelLaunch(functionDeclStatement &kernelSmnt,
                              forStatement &forSmnt,
                              const int kernelIndex);
