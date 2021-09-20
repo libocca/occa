@@ -169,6 +169,7 @@ namespace occa {
             airCommand.c_str(),
             commandOutput
           );
+          io::sync(tempFilename);
 
           if (commandExitCode) {
             OCCA_FORCE_ERROR(

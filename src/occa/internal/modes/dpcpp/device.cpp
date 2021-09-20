@@ -214,6 +214,7 @@ namespace occa
       }
 
       const int compileError = system(sCommand.c_str());
+      io::sync(binaryFilename);
 
       if (compileError)
       {

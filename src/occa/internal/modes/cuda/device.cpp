@@ -311,6 +311,7 @@ namespace occa {
 #else
       ignoreResult( system(("\"" +  ptxCommand + "\"").c_str()) );
 #endif
+      io::sync(ptxBinaryFilename);
       //================================
 
       //---[ Compiling Command ]--------
@@ -338,6 +339,7 @@ namespace occa {
         sCommand.c_str(),
         commandOutput
       );
+      io::sync(binaryFilename);
 
       if (commandExitCode) {
         OCCA_FORCE_ERROR(
