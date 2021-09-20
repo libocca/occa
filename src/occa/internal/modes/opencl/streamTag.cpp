@@ -7,24 +7,40 @@ namespace occa {
                          cl_event clEvent_) :
       modeStreamTag_t(modeDevice_),
       clEvent(clEvent_),
-      time(-1) {}
+      start_time(-1),
+      end_time(-1) {}
 
     streamTag::~streamTag() {
       OCCA_OPENCL_ERROR("streamTag: Freeing cl_event",
                         clReleaseEvent(clEvent));
     }
 
-    double streamTag::getTime() {
-      if (time < 0) {
+    double streamTag::startTime() {
+      if (start_time < 0) {
+        cl_ulong clTime;
+        OCCA_OPENCL_ERROR("streamTag: Getting event profiling info",
+                          clGetEventProfilingInfo(clEvent,
+                                                  CL_PROFILING_COMMAND_START,
+                                                  sizeof(cl_ulong),
+                                                  &clTime, NULL));
+        constexpr double nanoseconds{1.0e-9};
+        start_time = nanoseconds * static_cast<double>(clTime);
+      }
+      return start_time;
+    }
+
+    double streamTag::endTime() {
+      if (end_time < 0) {
         cl_ulong clTime;
         OCCA_OPENCL_ERROR("streamTag: Getting event profiling info",
                           clGetEventProfilingInfo(clEvent,
                                                   CL_PROFILING_COMMAND_END,
                                                   sizeof(cl_ulong),
                                                   &clTime, NULL));
-        time = 1.0e-9 * clTime;
+        constexpr double nanoseconds{1.0e-9};
+        end_time = nanoseconds * static_cast<double>(clTime);
       }
-      return time;
+      return end_time;
     }
   }
 }

@@ -91,6 +91,7 @@ namespace occa {
   static cl_mem_flags CL_MEM_ALLOC_HOST_PTR = 2;
 
   static cl_profiling_info CL_PROFILING_COMMAND_END = 0;
+  static cl_profiling_info CL_PROFILING_COMMAND_START = 1;
 
   static cl_program_build_info CL_PROGRAM_BUILD_LOG = 0;
 
@@ -204,6 +205,18 @@ namespace occa {
   }
 
   inline cl_int clEnqueueMarkerWithWaitList(cl_command_queue  command_queue ,
+                                            cl_uint  num_events_in_wait_list ,
+                                            const cl_event  *event_wait_list ,
+                                            cl_event  *event) {
+    return OCCA_OPENCL_IS_NOT_ENABLED;
+  }
+
+  inline cl_int clEnqueueBarrier(cl_command_queue command_queue,
+                                cl_event *event) {
+    return OCCA_OPENCL_IS_NOT_ENABLED;
+  }
+
+  inline cl_int clEnqueueBarrierWithWaitList(cl_command_queue  command_queue ,
                                             cl_uint  num_events_in_wait_list ,
                                             const cl_event  *event_wait_list ,
                                             cl_event  *event) {
