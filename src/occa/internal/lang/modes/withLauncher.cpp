@@ -51,10 +51,10 @@ namespace occa {
         splitKernels();
 
         if (!success) return;
-        setupKernels();
+        afterKernelSplit();
 
         if (!success) return;
-        afterKernelSplit();
+        setupKernels();
       }
 
       void withLauncher::beforeKernelSplit() {}
@@ -166,6 +166,43 @@ namespace occa {
           }
         }
         return false;
+      }
+
+      dim withLauncher::innerDims(functionDeclStatement &smnt) {
+        dim dims;
+        functionDeclStatement &kernelSmnt = (functionDeclStatement&) smnt.clone();
+
+        statementArray::from(kernelSmnt)
+          .flatFilterByAttribute("outer")
+          .filterByStatementType(statementType::for_)
+          .forEach([&](statement_t *forSmnt) {
+
+             forStatement *innerSmnt = getInnerMostInnerLoop((forStatement&) *forSmnt);
+             statementArray path = oklForStatement::getOklLoopPath(*innerSmnt);
+
+             dims[0] = 0;
+             dims[1] = 0;
+             dims[2] = 0;
+             int innerCount = 0;
+             const int pathCount = (int) path.length();
+             for (int i = 0; i < pathCount; ++i) {
+               forStatement &pathSmnt = *((forStatement*) path[i]);
+               oklForStatement oklForSmnt(pathSmnt);
+
+               if(pathSmnt.hasAttribute("inner")) {
+                 innerCount++;
+                 std::string s = oklForSmnt.getIterationCount()->toString();
+                 if(oklForSmnt.getIterationCount()->canEvaluate()) {
+                   dims[i-1] = (int) oklForSmnt.getIterationCount()->evaluate();
+                 } else { // loop bounds are unknown at compile time or there is tiled loop
+                   if(s.find("_occa_tiled_") != std::string::npos)
+                     dims[i-1] = std::stoi(s.substr(s.find_first_of("0123456789")));
+                 }
+               }
+             }
+             dims.dims = innerCount;
+          });
+        return dims; 
       }
 
       void withLauncher::setKernelLaunch(functionDeclStatement &kernelSmnt,
