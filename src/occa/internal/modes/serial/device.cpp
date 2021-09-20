@@ -405,9 +405,10 @@ namespace occa {
     }
 
     modeKernel_t* device::buildKernelFromBinary(const std::string &filename,
-                                                const std::string &kernelName,
+                                                const std::string &kernelName_,
                                                 const occa::json &kernelProps,
                                                 lang::kernelMetadata_t &metadata) {
+      std::string kernelName = kernelName_ + kernelProps.get<std::string>("kernelNameSuffix", "");
       kernel &k = *(new kernel(this,
                                kernelName,
                                filename,

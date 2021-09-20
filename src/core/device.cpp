@@ -283,9 +283,11 @@ namespace occa {
     assertInitialized();
 
     kernelProps = kernelProperties(props);
+    auto suffix = kernelProps.get<std::string>("kernelNameSuffix", "");
 
     kernelHash = (
       hash()
+      ^ occa::hash(suffix.c_str())
       ^ modeDevice->kernelHash(kernelProps)
       ^ kernelHeaderHash(kernelProps)
       ^ sourceHash

@@ -415,7 +415,9 @@ namespace occa {
         function_t &oldFunction = kernelSmnt.function();
         function_t &newFunction = (function_t&) oldFunction.clone();
         std::stringstream ss;
-        ss << +"_occa_" << newFunction.name() << "_" << kernelIndex;
+        ss << +"_occa_" << newFunction.name()
+           << settings.get<std::string>("kernelNameSuffix", "")
+           << "_" << kernelIndex;
         newFunction.source->value = ss.str();
 
         functionDeclStatement &newKernelSmnt = *(

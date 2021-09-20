@@ -263,7 +263,7 @@ namespace occa {
 
       // Find device kernels
       orderedKernelMetadata launchedKernelsMetadata = getLaunchedKernelsMetadata(
-        kernelName,
+        kernelName + kernelProps.get<std::string>("kernelNameSuffix", ""),
         deviceMetadata
       );
 

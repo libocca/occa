@@ -27,6 +27,15 @@ namespace occa {
         if (!success) return;
         setupKernels();
 
+        // add kernel name suffix
+        root.children
+          .forEachKernelStatement([&](functionDeclStatement &kernelSmnt) {
+            function_t &func = kernelSmnt.function();
+            std::stringstream ss;
+            ss << func.name() << settings.get<std::string>("kernelNameSuffix", "");
+            func.source->value = ss.str();
+          });
+
         if (!success) return;
         setupExclusives();
       }
@@ -70,6 +79,7 @@ namespace occa {
       void serialParser::setupKernel(functionDeclStatement &kernelSmnt) {
         // @kernel -> extern "C"
         function_t &func = kernelSmnt.function();
+
         attributeToken_t &kernelAttr = kernelSmnt.attributes["kernel"];
         qualifiers_t &qualifiers = func.returnType.qualifiers;
 
