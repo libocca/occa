@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <fcntl.h>
 
 #include <occa/defines.hpp>
 
@@ -429,6 +430,20 @@ namespace occa {
       return contents;
     }
 
+    void sync(const std::string &filename)
+    {
+      const std::string filedir(dirname(filename));
+      int fd;
+
+      fd = open(filename.c_str(), O_RDONLY);
+      fsync(fd);
+      close(fd);
+
+      fd = open(filedir.c_str(), O_RDONLY);
+      fsync(fd);
+      close(fd);
+    }
+
     void write(const std::string &filename,
                const std::string &content) {
       std::string expFilename = io::expandFilename(filename);
@@ -439,9 +454,8 @@ namespace occa {
                  fp != 0);
 
       fputs(content.c_str(), fp);
-
-      fsync(fileno(fp));
       fclose(fp);
+      io::sync(expFilename);
     }
 
     void stageFile(

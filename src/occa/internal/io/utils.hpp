@@ -81,6 +81,8 @@ namespace occa {
     std::string read(const std::string &filename,
                      const enums::FileType fileType = enums::FILE_TYPE_TEXT);
 
+    void sync(const std::string &filename);
+
     void write(const std::string &filename,
                const std::string &content);
 

@@ -363,6 +363,7 @@ namespace occa {
             commandOutput
           );
 #endif
+          io::sync(binaryFilename);
 
           if (commandExitCode) {
             OCCA_FORCE_ERROR(

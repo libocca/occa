@@ -312,6 +312,7 @@ namespace occa {
         sCommand.c_str(),
         commandOutput
       );
+      io::sync(binaryFilename);
 
       if (commandExitCode) {
         OCCA_FORCE_ERROR(
