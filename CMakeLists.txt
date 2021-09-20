@@ -255,6 +255,7 @@ if(ENABLE_METAL AND APPLE)
 
   if(METAL_LIBRARY AND CORE_SERVICES AND APP_KIT)
     set(OCCA_METAL_ENABLED 1)
+    target_link_libraries(libocca PRIVATE ${METAL_LIBRARY} ${CORE_SERVICES} ${APP_KIT})
   else()
     set(OCCA_METAL_ENABLED 0)
   endif()
