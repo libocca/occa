@@ -184,6 +184,7 @@ namespace occa {
              dims[1] = 0;
              dims[2] = 0;
              int innerCount = 0;
+             int innerIndex;
              const int pathCount = (int) path.length();
              for (int i = 0; i < pathCount; ++i) {
                forStatement &pathSmnt = *((forStatement*) path[i]);
@@ -191,12 +192,16 @@ namespace occa {
 
                if(pathSmnt.hasAttribute("inner")) {
                  innerCount++;
+                 innerIndex = oklForSmnt.oklLoopIndex();
                  std::string s = oklForSmnt.getIterationCount()->toString();
                  if(oklForSmnt.getIterationCount()->canEvaluate()) {
-                   dims[i-1] = (int) oklForSmnt.getIterationCount()->evaluate();
+                   dims[innerIndex] = (int) oklForSmnt.getIterationCount()->evaluate();
                  } else { // loop bounds are unknown at compile time or there is tiled loop
-                   if(s.find("_occa_tiled_") != std::string::npos)
-                     dims[i-1] = std::stoi(s.substr(s.find_first_of("0123456789")));
+                    if(s.find("_occa_tiled_") != std::string::npos) {
+                      size_t tile_size = s.find_first_of("0123456789");
+                      OCCA_ERROR("@tile size is undefined!",tile_size != std::string::npos);
+                      dims[innerIndex] = std::stoi(s.substr(tile_size));
+                    }
                  }
                }
              }
