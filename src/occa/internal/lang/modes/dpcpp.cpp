@@ -246,7 +246,6 @@ namespace occa
                      {
                        functionDeclStatement &funcDeclSmnt = (functionDeclStatement &)*smnt;
 
-                       // Only add __device__ to non-kernel functions
                        if (funcDeclSmnt.hasAttribute("kernel"))
                        {
                          return;
