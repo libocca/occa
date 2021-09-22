@@ -281,7 +281,6 @@ namespace occa {
                   if (!success) return;
 
                   dim kernelInnerDims = innerDims((functionDeclStatement&) *smnt);
-                  std::cout << "here" << kernelInnerDims[0] << std::endl;
                   if (!success) return;
 
                   int kernelInnerDim = kernelInnerDims[0];
