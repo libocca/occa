@@ -168,48 +168,6 @@ namespace occa {
         return false;
       }
 
-      dim withLauncher::innerDims(functionDeclStatement &smnt) {
-        dim dims;
-        functionDeclStatement &kernelSmnt = (functionDeclStatement&) smnt.clone();
-
-        statementArray::from(kernelSmnt)
-          .flatFilterByAttribute("outer")
-          .filterByStatementType(statementType::for_)
-          .forEach([&](statement_t *forSmnt) {
-
-             forStatement *innerSmnt = getInnerMostInnerLoop((forStatement&) *forSmnt);
-             statementArray path = oklForStatement::getOklLoopPath(*innerSmnt);
-
-             dims[0] = 0;
-             dims[1] = 0;
-             dims[2] = 0;
-             int innerCount = 0;
-             int innerIndex;
-             const int pathCount = (int) path.length();
-             for (int i = 0; i < pathCount; ++i) {
-               forStatement &pathSmnt = *((forStatement*) path[i]);
-               oklForStatement oklForSmnt(pathSmnt);
-
-               if(pathSmnt.hasAttribute("inner")) {
-                 innerCount++;
-                 innerIndex = oklForSmnt.oklLoopIndex();
-                 std::string s = oklForSmnt.getIterationCount()->toString();
-                 if(oklForSmnt.getIterationCount()->canEvaluate()) {
-                   dims[innerIndex] = (uint_t) oklForSmnt.getIterationCount()->evaluate();
-                 } else { // loop bounds are unknown at compile time or there is tiled loop
-                    if(s.find("_occa_tiled_") != std::string::npos) {
-                      size_t tile_size = s.find_first_of("0123456789");
-                      OCCA_ERROR("@tile size is undefined!",tile_size != std::string::npos);
-                      dims[innerIndex] = std::stoi(s.substr(tile_size));
-                    }
-                 }
-               }
-             }
-             dims.dims = innerCount;
-          });
-        return dims; 
-      }
-
       void withLauncher::setKernelLaunch(functionDeclStatement &kernelSmnt,
                                          forStatement &forSmnt,
                                          const int kernelIndex) {
@@ -470,22 +428,54 @@ namespace occa {
         forStatement &newForSmnt = (forStatement&) forSmnt.clone();
         newKernelSmnt.set(newForSmnt);
 
+        bool addLaunchBoundsAttribute{true};
+        int kernelInnerDims[3] = {1,1,1};
         if (newForSmnt.hasAttribute("max_inner_dims")) {
-                attributeToken_t& attr = newForSmnt.attributes["max_inner_dims"];
-                
-                int kernelInnerDims[3] = {1,1,1};
-                for(size_t i=0; i < attr.args.size(); ++i) {
+          attributeToken_t& attr = newForSmnt.attributes["max_inner_dims"];      
 
-                  exprNode* expr = attr.args[i].expr;
-                  primitive value = expr->evaluate();
-                  kernelInnerDims[i] = value; 
+          for(size_t i=0; i < attr.args.size(); ++i) {
+            exprNode* expr = attr.args[i].expr;
+            primitive value = expr->evaluate();
+            kernelInnerDims[i] = value; 
+          } 
+        } else {
+          //Programmer hasn't specified launch bounds.
+          //If they are known at compile time, set them.
+          forStatement *innerSmnt = getInnerMostInnerLoop(newForSmnt);
+          statementArray path = oklForStatement::getOklLoopPath(*innerSmnt);
+
+          int innerIndex;
+          const int pathCount = (int) path.length();
+          for (int i = 0; i < pathCount; ++i) {
+            forStatement &pathSmnt = *((forStatement*) path[i]);
+            oklForStatement oklForSmnt(pathSmnt);
+
+            if(pathSmnt.hasAttribute("inner")) {
+              innerIndex = oklForSmnt.oklLoopIndex();
+              if(oklForSmnt.getIterationCount()->canEvaluate()) {
+                kernelInnerDims[innerIndex] = (int) oklForSmnt.getIterationCount()->evaluate();
+              } else { 
+                std::string s = oklForSmnt.getIterationCount()->toString();
+                if(s.find("_occa_tiled_") != std::string::npos) {
+                  size_t tile_size = s.find_first_of("0123456789");
+                  OCCA_ERROR("@tile size is undefined!",tile_size != std::string::npos);
+                  kernelInnerDims[innerIndex] = std::stoi(s.substr(tile_size));
+                } else {
+                  //loop bounds are unknown at compile time
+                  addLaunchBoundsAttribute=false;
+                  break;
                 }
-                 
-                std::string lbAttr = launchBoundsAttribute(kernelInnerDims);
-                qualifier_t& boundQualifier = *(new qualifier_t(lbAttr,qualifierType::custom));
-                function_t& function = newKernelSmnt.function();
-                function.returnType.add(1, boundQualifier);
-              } 
+              }
+            }
+          }
+        }
+
+        if(addLaunchBoundsAttribute) {
+          std::string lbAttr = launchBoundsAttribute(kernelInnerDims);
+          qualifier_t& boundQualifier = *(new qualifier_t(lbAttr,qualifierType::custom));
+          function_t& function = newKernelSmnt.function();
+          function.returnType.add(1, boundQualifier);
+        }
 
         const int argc = (int) newFunction.args.size();
         for (int i = 0; i < argc; ++i) {
