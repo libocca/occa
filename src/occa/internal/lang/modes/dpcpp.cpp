@@ -80,7 +80,7 @@ namespace occa
       std::string dpcppParser::launchBoundsAttribute(const int innerDims[3])
       {
         std::stringstream ss; 
-        ss << "[[reqd_work_group_size("
+        ss << "[[sycl::reqd_work_group_size("
            << innerDims[2]
            << ","
            << innerDims[1]
