@@ -14,16 +14,10 @@ namespace occa {
         return name_;
       }
 
-      bool maxInnerDims::forFunction() const {
-        return true;
-      }
-
       bool maxInnerDims::forStatementType(const int sType) const {
-        return (sType 
-          & (statementType::function | statementType::functionDecl)
-          );
+        return (sType & statementType::for_);
       }
-
+      
       bool maxInnerDims::isValid(const attributeToken_t &attr) const {
         if (attr.kwargs.size()) {
           attr.printError("[@max_inner_dims] does not take kwargs");

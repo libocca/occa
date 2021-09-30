@@ -12,7 +12,6 @@ namespace occa {
 
         virtual const std::string& name() const;
 
-        virtual bool forFunction() const;
         virtual bool forStatementType(const int sType) const;
 
         virtual bool isValid(const attributeToken_t &attr) const;

@@ -51,10 +51,10 @@ namespace occa {
         splitKernels();
 
         if (!success) return;
-        afterKernelSplit();
+        setupKernels();
 
         if (!success) return;
-        setupKernels();
+        afterKernelSplit();
       }
 
       void withLauncher::beforeKernelSplit() {}
@@ -195,7 +195,7 @@ namespace occa {
                  innerIndex = oklForSmnt.oklLoopIndex();
                  std::string s = oklForSmnt.getIterationCount()->toString();
                  if(oklForSmnt.getIterationCount()->canEvaluate()) {
-                   dims[innerIndex] = (int) oklForSmnt.getIterationCount()->evaluate();
+                   dims[innerIndex] = (uint_t) oklForSmnt.getIterationCount()->evaluate();
                  } else { // loop bounds are unknown at compile time or there is tiled loop
                     if(s.find("_occa_tiled_") != std::string::npos) {
                       size_t tile_size = s.find_first_of("0123456789");
@@ -469,6 +469,23 @@ namespace occa {
         // Clone for-loop and replace argument variables
         forStatement &newForSmnt = (forStatement&) forSmnt.clone();
         newKernelSmnt.set(newForSmnt);
+
+        if (newForSmnt.hasAttribute("max_inner_dims")) {
+                attributeToken_t& attr = newForSmnt.attributes["max_inner_dims"];
+                
+                int kernelInnerDims[3] = {1,1,1};
+                for(size_t i=0; i < attr.args.size(); ++i) {
+
+                  exprNode* expr = attr.args[i].expr;
+                  primitive value = expr->evaluate();
+                  kernelInnerDims[i] = value; 
+                }
+                 
+                std::string lbAttr = launchBoundsAttribute(kernelInnerDims);
+                qualifier_t& boundQualifier = *(new qualifier_t(lbAttr,qualifierType::custom));
+                function_t& function = newKernelSmnt.function();
+                function.returnType.add(1, boundQualifier);
+              } 
 
         const int argc = (int) newFunction.args.size();
         for (int i = 0; i < argc; ++i) {

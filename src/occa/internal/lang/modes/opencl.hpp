@@ -27,6 +27,8 @@ namespace occa {
 
         virtual std::string getInnerIterator(const int loopIndex);
 
+        virtual std::string launchBoundsAttribute(const int innerDims[3]) override;
+
         void addExtensions();
 
         void updateConstToConstant();

@@ -74,6 +74,18 @@ namespace occa {
         return name;
       }
 
+      std::string openclParser::launchBoundsAttribute(const int innerDims[3]) {
+        std::stringstream ss; 
+        ss << "__attribute__((reqd_work_group_size("
+           << innerDims[0]
+           << ","
+           << innerDims[1]
+           << ","
+           << innerDims[2]
+           << ")))\n";
+        return ss.str();
+      }
+
       void openclParser::addExtensions() {
         if (!settings.has("extensions")) {
           return;
@@ -279,23 +291,6 @@ namespace occa {
 
                   migrateLocalDecls((functionDeclStatement&) *smnt);
                   if (!success) return;
-
-                  dim kernelInnerDims = innerDims((functionDeclStatement&) *smnt);
-                  if (!success) return;
-
-                  int kernelInnerDim = kernelInnerDims[0];
-                  for(int i=1; i < kernelInnerDims.dims; i++) kernelInnerDim *= kernelInnerDims[i];
-                  if(kernelInnerDim) {
-                    std::string s = "__attribute__((work_group_size_hint(";
-                    s += std::to_string(kernelInnerDims[0]);
-                    for(int i=1; i < 3; i++) {
-                      s += ", " + std::to_string(std::max((int)kernelInnerDims[i],1));
-                    }
-                    s += ")))";
-                    qualifier_t *boundQualifier = new qualifier_t(s, qualifierType::custom);
-                    function->returnType.add(0, *boundQualifier);
-                  }
-
                 } else {
                   function = &(((functionStatement*) smnt)->function());
                 }

@@ -54,6 +54,10 @@ namespace occa {
         return name;
       }
 
+      std::string metalParser::launchBoundsAttribute(const int innerDims[3]) {
+        return "Not implemented yet!!";
+      }
+
       void metalParser::setSharedQualifiers() {
         statementArray::from(root)
             .nestedForEachDeclaration([&](variableDeclaration &decl) {
