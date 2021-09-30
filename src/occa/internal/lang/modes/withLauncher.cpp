@@ -457,7 +457,7 @@ namespace occa {
               } else { 
                 std::string s = oklForSmnt.getIterationCount()->toString();
                 if(s.find("_occa_tiled_") != std::string::npos) {
-                  size_t tile_size = s.find_first_of("0123456789");
+                  size_t tile_size = s.find_first_of("123456789");
                   OCCA_ERROR("@tile size is undefined!",tile_size != std::string::npos);
                   kernelInnerDims[innerIndex] = std::stoi(s.substr(tile_size));
                 } else {
