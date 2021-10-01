@@ -56,16 +56,19 @@ void testSlice() {
     {"mode", "Serial"}
   });
   ASSERT_SAME_SIZE(device.memoryAllocated(), 0);
+  ASSERT_SAME_SIZE(device.maxMemoryAllocated(), 0);
 
   {
     occa::memory mem = device.malloc<float>(10, data);
     ASSERT_SAME_SIZE(device.memoryAllocated(), 10 * sizeof(float));
+    ASSERT_SAME_SIZE(device.maxMemoryAllocated(), 10 * sizeof(float));
     {
       occa::memory half1 = mem.slice(0, 5);
       occa::memory half2 = mem.slice(5);
     }
 
     ASSERT_SAME_SIZE(device.memoryAllocated(), 10 * sizeof(float));
+    ASSERT_SAME_SIZE(device.maxMemoryAllocated(), 10 * sizeof(float));
     {
       occa::memory half1 = mem.slice(0, 5);
       occa::memory half2 = mem.slice(5);
@@ -82,6 +85,7 @@ void testSlice() {
     }
 
     ASSERT_SAME_SIZE(device.memoryAllocated(), 10 * sizeof(float));
+    ASSERT_SAME_SIZE(device.maxMemoryAllocated(), 10 * sizeof(float));
     {
       occa::memory half1 = mem + 0;
       occa::memory tmp   = half1 + 2;
@@ -99,8 +103,10 @@ void testSlice() {
     }
 
     ASSERT_SAME_SIZE(device.memoryAllocated(), 10 * sizeof(float));
+    ASSERT_SAME_SIZE(device.maxMemoryAllocated(), 10 * sizeof(float));
   }
   ASSERT_SAME_SIZE(device.memoryAllocated(), 0);
+  ASSERT_SAME_SIZE(device.maxMemoryAllocated(), 10 * sizeof(float));
 
 
   {
@@ -111,8 +117,11 @@ void testSlice() {
       half1 = mem.slice(0, 5);
       half2 = mem.slice(5);
       ASSERT_SAME_SIZE(device.memoryAllocated(), 10 * sizeof(float));
+      ASSERT_SAME_SIZE(device.maxMemoryAllocated(), 10 * sizeof(float));
     }
     ASSERT_SAME_SIZE(device.memoryAllocated(), 10 * sizeof(float));
+    ASSERT_SAME_SIZE(device.maxMemoryAllocated(), 10 * sizeof(float));
   }
   ASSERT_SAME_SIZE(device.memoryAllocated(), 0);
+  ASSERT_SAME_SIZE(device.maxMemoryAllocated(), 10 * sizeof(float));
 }

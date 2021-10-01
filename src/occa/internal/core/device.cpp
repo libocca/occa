@@ -12,7 +12,8 @@ namespace occa {
     mode((std::string) properties_["mode"]),
     properties(properties_),
     needsLauncherKernel(false),
-    bytesAllocated(0) {}
+    bytesAllocated(0),
+    maxBytesAllocated(0) {}
 
   modeDevice_t::~modeDevice_t() {
     // Null all wrappers

@@ -331,6 +331,20 @@ namespace occa {
      */
     udim_t memoryAllocated() const;
 
+
+    /**
+     * @startDoc{maxMemoryAllocated}
+     *
+     * Description:
+     *   Find the max amount of memory that has been allocated by this specific device.
+     *
+     * Description:
+     *   Returns the max memory allocated in bytes.
+     *
+     * @endDoc
+     */
+    udim_t maxMemoryAllocated() const;
+
     /**
      * @startDoc{finish}
      *
