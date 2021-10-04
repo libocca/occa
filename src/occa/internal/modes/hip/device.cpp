@@ -128,6 +128,11 @@ namespace occa {
       return new stream(this, props, hipStream);
     }
 
+    modeStream_t* device::wrapStream(void* ptr, const occa::json &props) {
+      hipStream_t hipStream = *reinterpret_cast<hipStream_t*>(ptr);
+      return new stream(this, props, hipStream);
+    }
+
     occa::streamTag device::tagStream() {
       hipEvent_t hipEvent = NULL;
 

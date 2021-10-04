@@ -74,6 +74,11 @@ namespace occa {
       return new stream(this, props, metalCommandQueue);
     }
 
+    modeStream_t* device::wrapStream(void* ptr, const occa::json &props) {
+      api::metal::commandQueue_t q = *reinterpret_cast<api::metal::commandQueue_t*>(ptr);
+      return new stream(this, props, q, true);
+    }
+
     occa::streamTag device::tagStream() {
       metal::stream &stream = (
         *((metal::stream*) (currentStream.getModeStream()))

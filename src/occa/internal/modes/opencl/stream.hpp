@@ -10,9 +10,12 @@ namespace occa {
     public:
       cl_command_queue commandQueue;
 
+      bool isWrapped;
+
       stream(modeDevice_t *modeDevice_,
              const occa::json &properties_,
-             cl_command_queue commandQueue_);
+             cl_command_queue commandQueue_,
+             bool isWrapped_=false);
 
       virtual ~stream();
     };

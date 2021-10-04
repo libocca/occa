@@ -144,6 +144,11 @@ namespace occa {
       return new stream(this, props, cuStream);
     }
 
+    modeStream_t* device::wrapStream(void* ptr, const occa::json &props) {
+      CUstream cuStream = *reinterpret_cast<CUstream*>(ptr);
+      return new stream(this, props, cuStream, true);
+    }
+
     occa::streamTag device::tagStream() {
       CUevent cuEvent = NULL;
 

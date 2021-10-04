@@ -107,6 +107,11 @@ namespace occa {
       return new stream(this, props, commandQueue);
     }
 
+    modeStream_t* device::wrapStream(void* ptr, const occa::json &props) {
+      cl_command_queue commandQueue = *reinterpret_cast<cl_command_queue*>(ptr);
+      return new stream(this, props, commandQueue, true);
+    }
+
     occa::streamTag device::tagStream() {
       cl_event clEvent;
 

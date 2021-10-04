@@ -88,6 +88,11 @@ namespace occa
       return new occa::dpcpp::stream(this, props, q);
     }
 
+    modeStream_t* device::wrapStream(void* ptr, const occa::json &props) {
+      ::sycl::queue q = *reinterpret_cast<::sycl::queue*>(ptr);
+      return new stream(this, props, q);
+    }
+
     occa::streamTag device::tagStream()
     {
       //@note: This creates a host event which will return immediately.

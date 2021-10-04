@@ -391,6 +391,22 @@ namespace occa {
     stream createStream(const occa::json &props = occa::json());
 
     /**
+     * @startDoc{wrapStream}
+     *
+     * Description:
+     *   Wrap a native backend stream object inside a [[stream]] for the device.
+     *   The simplest example would be on a `CUDA` device, where a pointer to a cuStream_t, created via cudaStreamCreate, is passed in.
+     *
+     *   > Note that automatic garbage collection is not set for wrapped memory objects.
+     *
+     * Returns:
+     *   The wrapped [[stream]]
+     *
+     * @endDoc
+     */
+    stream wrapStream(void* ptr, const occa::json &props = occa::json());
+
+    /**
      * @startDoc{getStream}
      *
      * Description:
