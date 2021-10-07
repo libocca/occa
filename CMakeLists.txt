@@ -19,6 +19,7 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
 endif()
 
+# CMake will decay to a previous C++ standard if a compiler does not support C++17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -215,12 +216,8 @@ if(ENABLE_DPCPP)
     message(CHECK_PASS "found all components")
     set(OCCA_DPCPP_ENABLED 1)
     
-    set(SYCL_CXX_FLAGS "-fsycl")
-    message("-- SYCL CXX flags: ${SYCL_CXX_FLAGS}")
-  
     target_include_directories(libocca PRIVATE ${SYCL_INCLUDE_DIRS})
     target_link_libraries(libocca PRIVATE ${SYCL_LIBRARIES})
-    target_compile_options(libocca BEFORE PRIVATE "${SYCL_CXX_FLAGS}")
   endif()
 endif(ENABLE_DPCPP)
 #=======================================
@@ -300,10 +297,6 @@ file(
 if(OCCA_OPENMP_ENABLED)
   set_source_files_properties(${OCCA_SRC_cpp} PROPERTIES
     COMPILE_FLAGS ${OpenMP_CXX_FLAGS})
-endif()
-
-if(OCCA_DPCPP_ENABLED)
-  set_source_files_properties(${OCCA_SRC_cpp} PROPERTIES COMPILE_FLAGS ${SYCL_CXX_FLAGS})
 endif()
 
 if(ENABLE_FORTRAN)
