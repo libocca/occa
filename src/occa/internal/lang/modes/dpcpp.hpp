@@ -47,12 +47,6 @@ namespace occa
       static bool transformAtomicBasicExpressionStatement(expressionStatement &exprSmnt);
 
       private:
-        inline static const std::string sycl_header{"CL/sycl.hpp"};
-        inline static const std::string queue_name{"queue_"};
-        inline static const std::string ndrange_name{"range_"};
-        inline static const std::string group_handler_name{"handler_"};
-        inline static const std::string work_item_name{"item_"};
-
         inline int dpcppDimensionOrder(const int index) { return 2 - index; }
       };
     } // namespace okl

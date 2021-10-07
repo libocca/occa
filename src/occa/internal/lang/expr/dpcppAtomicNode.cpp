@@ -32,17 +32,13 @@ namespace occa
     void dpcppAtomicNode::print(printer &pout) const
     {
 
-      pout << sycl_atomic_ref;
-      pout << "<";
+      pout << "sycl::ONEAPI::atomic_ref<";
 
       // Currently CUDA only supports atomics on fundamental types:
       // assume that we can safefuly ignore the pointer types for now
       // and simply print the typename.
-      pout << atomic_type.name();
-      pout << ",";
-
-      pout << memory_order_relaxed;
-      pout << ",";
+      pout << atomic_type.name() << ",";
+      pout << "sycl::ONEAPI::memory_order::relaxed,";
 
       //  The SYCL standard states,
       // 
@@ -53,16 +49,15 @@ namespace occa
       //  Currently OCCA does not address system-wide atomics;
       //  therefore, assume for now that we can always safely
       //  use `memory_scope::device`.
-      pout << memory_scope_device;
-      pout << ",";
+      pout << "sycl::ONEAPI::memory_scope::device,";
 
       if(atomic_type.hasAttribute("shared"))
       {
-        pout << address_space_local_space;
+        pout << "sycl::access::address_space::global_space";
       }
       else
       {
-        pout << address_space_global_space;
+        pout << "sycl::access::address_space::local_space";
       }
 
       pout << ">(";
