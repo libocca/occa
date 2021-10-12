@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.12 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.17 FATAL_ERROR)
 
 #---[ CMake Config ]--------------------
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -194,12 +194,12 @@ if(ENABLE_DPCPP)
     list(APPEND missingDpcppComponents "SYCL_INCLUDE_DIRS")
     message(CHECK_FAIL "not found")
   endif()
-      
+
   message(CHECK_START "  Looking for libsycl")
   find_library(
-    SYCL_LIBRARIES 
-    NAMES 
-      sycl libsycl 
+    SYCL_LIBRARIES
+    NAMES
+      sycl libsycl
   )
   string(COMPARE NOTEQUAL "SYCL_LIBRARIES-NOTFOUND" "${SYCL_LIBRARIES}" foundSyclLibraries)
   if(foundSyclLibraries)
@@ -208,14 +208,14 @@ if(ENABLE_DPCPP)
     list(APPEND missingDpcppComponents "SYCL_LIBRARIES")
     message(CHECK_FAIL "not found")
   endif()
-  
+
   if(missingDpcppComponents)
     message(CHECK_FAIL "missing components: ${missingDpcppComponents}")
     set(OCCA_DPCPP_ENABLED 0)
   else()
     message(CHECK_PASS "found all components")
     set(OCCA_DPCPP_ENABLED 1)
-    
+
     target_include_directories(libocca PRIVATE ${SYCL_INCLUDE_DIRS})
     target_link_libraries(libocca PRIVATE ${SYCL_LIBRARIES})
   endif()
