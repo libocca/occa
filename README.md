@@ -4,208 +4,96 @@
   </a>
 </p>
 &nbsp;
-<p align="center">
-  <a href="https://github.com/libocca/occa/workflows/Build/badge.svg"><img alt="Build" src="https://github.com/libocca/occa/workflows/Build/badge.svg"></a>
-  <a href="https://codecov.io/github/libocca/occa"><img alt="codecov.io" src="https://codecov.io/github/libocca/occa/coverage.svg"></a>
-  <a href="https://join.slack.com/t/libocca/shared_invite/zt-4jcnu451-qPpPWUzhm7YQKY_HMhIsIw"><img alt="Slack" src="https://img.shields.io/badge/Chat-on%20Slack-%23522653?logo=slack"></a>
-</p>
+
+<div align="center"> 
+
+[![license](https://img.shields.io/github/license/libocca/occa)](LICENSE)
+[![slack](https://img.shields.io/badge/Chat-on%20Slack-%23522653)][OCCA_SLACK]
+![github-ci](https://github.com/libocca/occa/workflows/Build/badge.svg)
+![codecov](https://codecov.io/github/libocca/occa/coverage.svg)
+</div>
 
 &nbsp;
 
-### Table of Contents
+## Performance, Portability, Transparency
 
-- [What is OCCA?](#what-is-occa)
-- [Documentation](#documentation)
-- [How to build](#build)
-  - [Linux](#build-linux)
-  - [MacOS](#build-macos)
-- [Examples](#examples)
-  - [Hello World](#examples-hello-world)
-  - [Inline for-loops](#examples-for-loops)
-  - [Arrays + Functional Programming](#examples-arrays)
-- [CLI](#cli)
-  - [Bash Autocomplete](#cli-autocomplete)
-- [Similar Libraries](#similar-libraries)
+OCCA is an open source, portable, and vendor neutral framework for parallel programming on heterogeneous platforms. The OCCA API provides unified models for—such as a device, memory, or kernel—which are common to other programming models. The OCCA Kernel Language (OKL) enables the creation of portable device kernels using a directive-based extension to the C-language. 
 
-&nbsp;
+Mission critical computational science and engineering applications from the public and private sectors rely on OCCA. Notable users include the U.S. Department of Energy and Royal Dutch Shell.
 
-<h2 id="what-is-occa">What is OCCA?</h2>
+**Key Features**
 
-In a nutshell, OCCA (like *oca*-rina) is an open-source library which aims to
+- Muitiple backends&mdash; including CUDA, HIP, Data Parallel C++, OpenCL, OpenMP, and Metal
+- JIT compilation and caching of kernels
+- Language support for C, C++, and Fortran
+- Interoperability with backend API and kernels
+- Transparency **...**
 
-- Make it easy to program different types of devices (e.g. _CPU_, _GPU_, _FPGA_)
-- Provide a [unified API](https://libocca.org/#/guide/occa/introduction) for interacting with backend device APIs (e.g. _OpenMP_, _CUDA_, _HIP_, _OpenCL_, _Metal_)
-- JIT compile backend kernels and provide a [kernel language](https://libocca.org/#/guide/okl/introduction) (a minor extension to C) to abstract programming for each backend
 
-The "Hello World" example of adding two vectors looks like:
+## Requirements
 
-```cpp
-@kernel void addVectors(const int entries,
-                        const float *a,
-                        const float *b,
-                        float *ab) {
-  for (int i = 0; i < entries; ++i; @tile(16, @outer, @inner)) {
-    ab[i] = a[i] + b[i];
-  }
-}
+- [CMake] v3.17 or newer
+- C++11 compliant compiler
+- ...
+
+Details for requirements specific to each backend can be found in the [installation guide](INSTALL.md)
+
+## Build, Test, Install
+
+OCCA uses the [CMake] build system. For a comprehensive overview of all build settings, checkout the [installation guide](INSTALL.md)
+
+### Linux 
+
+For conveinence, the shell script `configure.sh` has been provided drive the Cmake build. Compilers, flags, and other build parameters can be adjusted there. By default OCCA will be built and installed in `./build` and `./install`.
+
+The following sequence of commands demonstrates a typical sequence of shell commands to build, test, and install occa:
+```
+$> ./configure.sh
+$> cmake --build build --parallel <number-of-threads>
+$> ctest --test-dir build --output-on-failure
+$> cmake --install build --prefix install
 ```
 
-Or we can inline it using C++ lambdas
+### MacOS
 
-```cpp
-// Capture variables
-occa::scope scope({
-  {"a", a},
-  {"b", b},
-  {"ab", ab}
-});
+...
 
-occa::forLoop()
-  .tile({entries, 16})
-  .run(OCCA_FUNCTION(scope, [=](const int i) -> void {
-    ab[i] = a[i] + b[i];
-  }));
-```
+### Windows
 
-Or we can use a more functional way by using `occa::array`
+...
 
-```cpp
-// Capture variables
-occa::scope scope({
-  {"b", b}
-});
+## Use
 
-occa::array<float> ab = (
-  a.map(OCCA_FUNCTION(
-    scope,
-    [=](const float &value, const int index) -> float {
-      return value + b[index];
-    }
-  ))
-);
-```
+### Building an OCCA application
 
-&nbsp;
+OCCA provides CMake package files which are included during installation. To use OCCA in a downstream project
 
-<h2 id="documentation">Documentation</h2>
+### Environment
 
-We maintain our documentation on the [libocca.org](https://libocca.org) site
+...
 
-- [:notebook:	Guide](https://libocca.org/#/guide)
-- [:gear: API](https://libocca.org/#/api/)
-- [🌟 Who is using OCCA?](https://libocca.org/#/gallery)
-- [:lab_coat: Publications](https://libocca.org/#/publications)
+## Community
 
-&nbsp;
+### Support
 
-<h2 id="build">How to build</h2>
+Need help? Checkout the documentation at libocca.org or ask a question in the \#help channel on [Slack][OCCA_SLACK]
 
-```bash
-git clone --depth 1 https://github.com/libocca/occa.git
-cd occa
-make -j 4
-```
+### Feedback
 
-Setup environment variables inside the `occa` directory
+To provide feedback, start a conversation on [Slack][OCCA_SLACK] on the \#general or \#ideas channel.
 
-<h3 id="build-linux">Linux</h2>
+### Get Involved
+OCCA is a community driven project that relies on the support of people like you! For ways to get involved, see our [contributing guidelines](CONTRIBUTING.md).
 
-```bash
-export PATH+=":${PWD}/bin"
-export LD_LIBRARY_PATH+=":${PWD}/lib"
-```
+### Acknowledgements
 
-<h3 id="build-macos">MacOS</h2>
+> This work was supported by Argonne Leadership Computing Facility, which is a DOE Office of Science User Facility supported under Contract DE-AC02-06CH11357 and by the Exascale Computing Project (17-SC-20-SC), a joint project of the U.S. Department of Energy’s Office of Science and National Nuclear Security Administration, responsible for delivering a capable exascale ecosystem, including software, applications, and hardware technology, to support the nation’s exascale computing imperative.
 
-```bash
-export PATH+=":${PWD}/bin"
-export DYLD_LIBRARY_PATH+=":${PWD}/lib"
-```
+## License
 
-&nbsp;
+OCCA is available under a [MIT license](LICENSE.MD)
 
-<h2 id="examples">Examples</h2>
-
-<h3 id="examples-hello-world">Hello World</h3>
-
-The occa library is based on 3 different objects, all covered in the [01_add_vectors](/examples/cpp/01_add_vectors) example:
-- `occa::device`
-- `occa::memory`
-- `occa::kernel`
-
-```bash
-cd examples/cpp/01_add_vectors
-make
-./main
-```
-
-<h3 id="examples-for-loops">Inline for-loops</h3>
-
-Find how to inline `for` loops using `occa::forLoop` in example [02_for_loops](/examples/cpp/02_for_loops):
-
-```bash
-cd examples/cpp/02_for_loops
-make
-./main
-```
-
-&nbsp;
-
-<h3 id="examples-arrays">Arrays + Functional Programming</h3>
-
-Learn how to use `occa::array` in a functional way in example [03_arrays](/examples/cpp/03_arrays):
-
-```bash
-cd examples/cpp/03_arrays
-make
-./main
-```
-
-&nbsp;
-
-<h2 id="cli">CLI</h2>
-
-There is an executable `occa` provided inside `bin`
-
-```bash
-> occa
-
-Usage: occa [OPTIONS] COMMAND [COMMAND...]
-
-Helpful utilities related to OCCA workflows
-
-Commands:
-  autocomplete    Prints shell functions to autocomplete occa
-                  commands and arguments
-  clear           Clears cached files and cache locks
-  compile         Compile kernels
-  env             Print environment variables used in OCCA
-  info            Prints information about available backend modes
-  modes           Prints available backend modes
-  translate       Translate kernels
-  version         Prints OCCA version
-
-Arguments:
-  COMMAND    Command to run
-
-Options:
-  -h, --help    Print usage
-```
-
-&nbsp;
-
-<h3 id="cli-autocomplete">Bash Autocomplete</h3>
-
-```bash
-if which occa > /dev/null 2>&1; then
-    eval "$(occa autocomplete bash)"
-fi
-```
-
-<h2 id="similar-libraries">Similar Libraries</h2>
-
-OCCA is definitely not the only solution that aims to simplify programming on different hardware/accelerators.
-Here is a list of other libraries that have taken different approaches:
+## Similar Projects
 
 - [Alpaka](https://github.com/alpaka-group/alpaka)
 
@@ -218,3 +106,7 @@ Here is a list of other libraries that have taken different approaches:
 - [Kokkos](https://github.com/kokkos/kokkos)
 
    > Kokkos Core implements a programming model in C++ for writing performance portable applications targeting all major HPC platforms. For that purpose it provides abstractions for both parallel execution of code and data management.
+
+[OCCA_SLACK]: https://join.slack.com/t/libocca/shared_invite/zt-4jcnu451-qPpPWUzhm7YQKY_HMhIsIw
+
+[CMake]: https://cmake.org/

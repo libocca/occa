@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Medina"
+  given-names: "David"
+- family-names: "Warburton"
+  given-names: "Time"
+- family-names: "Wilcox"
+  given-names: "Lucas"
+- family-names: "Chalmers"
+  given-names: "Noel"
+- family-names: "Rowe"
+  given-names: "Kris"
+title: "OCCA"
+version: 2.1.0
+url: "https://github.com/libocca/occa"
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Medina"
+    given-names: "David"
+  - family-names: "St-Cyr"
+    given-names: "Amik"
+  - family-names: "Warburton"
+    given-names: "Tim"
+  journal: "arXiv preprint arXiv:1403.0968"
+  title: "OCCA: A unified approach to multi-threading languages"
+  year: 2014
