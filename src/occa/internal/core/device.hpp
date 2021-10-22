@@ -23,6 +23,7 @@ namespace occa {
     std::vector<modeStream_t*> streams;
 
     udim_t bytesAllocated;
+    udim_t maxBytesAllocated;
 
     cachedKernelMap cachedKernels;
 

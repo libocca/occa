@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.12 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.17 FATAL_ERROR)
 
 #---[ CMake Config ]--------------------
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -19,6 +19,7 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
 endif()
 
+# CMake will decay to a previous C++ standard if a compiler does not support C++17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -193,12 +194,12 @@ if(ENABLE_DPCPP)
     list(APPEND missingDpcppComponents "SYCL_INCLUDE_DIRS")
     message(CHECK_FAIL "not found")
   endif()
-      
+
   message(CHECK_START "  Looking for libsycl")
   find_library(
-    SYCL_LIBRARIES 
-    NAMES 
-      sycl libsycl 
+    SYCL_LIBRARIES
+    NAMES
+      sycl libsycl
   )
   string(COMPARE NOTEQUAL "SYCL_LIBRARIES-NOTFOUND" "${SYCL_LIBRARIES}" foundSyclLibraries)
   if(foundSyclLibraries)
@@ -207,20 +208,16 @@ if(ENABLE_DPCPP)
     list(APPEND missingDpcppComponents "SYCL_LIBRARIES")
     message(CHECK_FAIL "not found")
   endif()
-  
+
   if(missingDpcppComponents)
     message(CHECK_FAIL "missing components: ${missingDpcppComponents}")
     set(OCCA_DPCPP_ENABLED 0)
   else()
     message(CHECK_PASS "found all components")
     set(OCCA_DPCPP_ENABLED 1)
-    
-    set(SYCL_CXX_FLAGS "-fsycl")
-    message("-- SYCL CXX flags: ${SYCL_CXX_FLAGS}")
-  
+
     target_include_directories(libocca PRIVATE ${SYCL_INCLUDE_DIRS})
     target_link_libraries(libocca PRIVATE ${SYCL_LIBRARIES})
-    target_compile_options(libocca BEFORE PRIVATE "${SYCL_CXX_FLAGS}")
   endif()
 endif(ENABLE_DPCPP)
 #=======================================
@@ -255,6 +252,7 @@ if(ENABLE_METAL AND APPLE)
 
   if(METAL_LIBRARY AND CORE_SERVICES AND APP_KIT)
     set(OCCA_METAL_ENABLED 1)
+    target_link_libraries(libocca PRIVATE ${METAL_LIBRARY} ${CORE_SERVICES} ${APP_KIT})
   else()
     set(OCCA_METAL_ENABLED 0)
   endif()
@@ -299,10 +297,6 @@ file(
 if(OCCA_OPENMP_ENABLED)
   set_source_files_properties(${OCCA_SRC_cpp} PROPERTIES
     COMPILE_FLAGS ${OpenMP_CXX_FLAGS})
-endif()
-
-if(OCCA_DPCPP_ENABLED)
-  set_source_files_properties(${OCCA_SRC_cpp} PROPERTIES COMPILE_FLAGS ${SYCL_CXX_FLAGS})
 endif()
 
 if(ENABLE_FORTRAN)

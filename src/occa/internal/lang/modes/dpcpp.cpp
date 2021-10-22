@@ -68,12 +68,12 @@ namespace occa
 
       std::string dpcppParser::getOuterIterator(const int loopIndex)
       {
-        return work_item_name + ".get_group(" + occa::toString(dpcppDimensionOrder(loopIndex)) + ")";
+        return "item_.get_group(" + occa::toString(dpcppDimensionOrder(loopIndex)) + ")";
       }
 
       std::string dpcppParser::getInnerIterator(const int loopIndex)
       {
-        return work_item_name + ".get_local_id(" + occa::toString(dpcppDimensionOrder(loopIndex)) + ")";
+        return "item_.get_local_id(" + occa::toString(dpcppDimensionOrder(loopIndex)) + ")";
       }
 
       // @note: As of SYCL 2020 this will need to change from `CL/sycl.hpp` to `sycl.hpp`
@@ -82,7 +82,7 @@ namespace occa
         root.addFirst(
             *(new directiveStatement(
                 &root,
-                directiveToken(root.source->origin, "include <" + sycl_header + ">"))));
+                directiveToken(root.source->origin, "include <sycl.hpp>"))));
       }
 
       void dpcppParser::addExtensions()
@@ -131,7 +131,7 @@ namespace occa
                        statement_t &barrierSmnt = (*(new sourceCodeStatement(
                            emptySmnt.up,
                            emptySmnt.source,
-                           work_item_name + ".barrier(sycl::access::fence_space::local_space);")));
+                           "item_.barrier(sycl::access::fence_space::local_space);")));
 
                        emptySmnt.replaceWith(barrierSmnt);
 
@@ -158,16 +158,16 @@ namespace occa
                          if (!success)
                            return;
 
-                         variable_t sycl_nditem(syclNdItem, work_item_name);
+                         variable_t sycl_nditem(syclNdItem, "item_");
 
-                         variable_t sycl_handler(syclHandler, group_handler_name);
+                         variable_t sycl_handler(syclHandler, "handler_");
                          sycl_handler.vartype.setReferenceToken(
                              new operatorToken(sycl_handler.source->origin, op::address));
 
-                         variable_t sycl_ndrange(syclNdRange, ndrange_name);
+                         variable_t sycl_ndrange(syclNdRange, "range_");
                          sycl_ndrange += pointer_t();
 
-                         variable_t sycl_queue(syclQueue, queue_name);
+                         variable_t sycl_queue(syclQueue, "queue_");
                          sycl_queue += pointer_t();
 
                          function->addArgumentFirst(sycl_ndrange);
@@ -268,7 +268,7 @@ namespace occa
               {
                 auto *shared_value = new dpcppLocalMemoryNode(var.source->clone(),
                                                               var.vartype,
-                                                              work_item_name);
+                                                              "item_");
 
                 decl.setValue(shared_value);
                 var.vartype.setType(auto_);

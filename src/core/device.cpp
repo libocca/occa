@@ -232,6 +232,13 @@ namespace occa {
     return 0;
   }
 
+  udim_t device::maxMemoryAllocated() const {
+    if (modeDevice) {
+      return modeDevice->maxBytesAllocated;
+    }
+    return 0;
+  }
+
   void device::finish() {
     if (modeDevice) {
       modeDevice->finish();
@@ -432,6 +439,9 @@ namespace occa {
     mem.setDtype(dtype);
 
     modeDevice->bytesAllocated += bytes;
+    modeDevice->maxBytesAllocated = std::max(
+      modeDevice->maxBytesAllocated, modeDevice->bytesAllocated
+    );
 
     return mem;
   }

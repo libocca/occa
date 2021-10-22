@@ -96,7 +96,7 @@ if (ENABLE_FORTRAN)
 
   macro(compile_fortran_mpi_example_with_modes target file)
     add_executable(examples_fortran_${target} ${file})
-    target_link_libraries(examples_fortran_${target} libocca)
+    target_link_libraries(examples_fortran_${target} libocca MPI::MPI_Fortran)
     if (ENABLE_TESTS)
       add_mpi_test_with_modes(examples_fortran_${target})
     endif()
