@@ -11,6 +11,7 @@ cmake_policy(SET CMP0056 NEW)
 
 #---[ Build Config ]--------------------
 project(occa
+  VERSION 1.2.0
   DESCRIPTION  "JIT Compilation for Multiple Architectures: C++, OpenMP, CUDA, HIP, OpenCL, Metal"
   HOMEPAGE_URL "https://github.com/libocca/occa"
   LANGUAGES    C CXX)
@@ -95,12 +96,16 @@ target_link_libraries(libocca PRIVATE
 
 target_include_directories(libocca PUBLIC
   $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/include>
-  $<BUILD_INTERFACE:${OCCA_BUILD_DIR}/include>)
+  $<BUILD_INTERFACE:${OCCA_BUILD_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
 
 target_include_directories(libocca PRIVATE
   $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/src>)
 
 target_compile_definitions(libocca PRIVATE -DUSE_CMAKE)
+
+set_property(TARGET libocca PROPERTY VERSION "${CMAKE_PROJECT_VERSION}")
 #=======================================
 
 #---[ OpenMP ]--------------------------
@@ -331,7 +336,10 @@ set(OCCA_SRC
 
 target_sources(libocca PRIVATE ${OCCA_SRC})
 
-install(TARGETS libocca DESTINATION lib)
+install(TARGETS libocca 
+  EXPORT OCCATargets
+  LIBRARY DESTINATION lib
+)
 install(DIRECTORY include/ DESTINATION include)
 
 if(ENABLE_TESTS)
@@ -344,3 +352,37 @@ if(ENABLE_EXAMPLES)
 endif(ENABLE_EXAMPLES)
 
 add_subdirectory(bin)
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/occa/occaConfigVersion.cmake"
+  VERSION ${CMAKE_PROJECT_VERSION}
+  COMPATIBILITY AnyNewerVersion
+)
+
+export(EXPORT OCCATargets
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/occa/OCCATargets.cmake"
+  NAMESPACE occa::
+)
+
+configure_file(cmake/occaConfig.cmake
+  "${CMAKE_CURRENT_BINARY_DIR}/occa/occaConfig.cmake"
+  COPYONLY
+)
+
+install(EXPORT OCCATargets
+  FILE
+    OCCATargets.cmake
+  NAMESPACE
+    occa::
+  DESTINATION
+    cmake/occa
+)
+
+install(
+  FILES
+    cmake/occaConfig.cmake
+    "${CMAKE_CURRENT_BINARY_DIR}/occa/occaConfigVersion.cmake"
+  DESTINATION
+    cmake/occa
+)
