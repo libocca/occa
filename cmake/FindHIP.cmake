@@ -150,7 +150,7 @@ find_package_handle_standard_args(
     VERSION_VAR HIP_VERSION
     )
 
-if(HIP_FOUND and NOT TARGET OCCA::depends::HIP)
+if(HIP_FOUND AND NOT TARGET OCCA::depends::HIP)
   # Create our wrapper imported target
   # Put it in the OCCA namespace to make it clear that we created it.
   add_library(OCCA::depends::HIP INTERFACE IMPORTED)

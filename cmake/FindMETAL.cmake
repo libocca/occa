@@ -16,7 +16,7 @@ find_package_handle_standard_args(
     APP_KIT
     )
 
-if(METAL_FOUND and NOT TARGET OCCA::depends::METAL)
+if(METAL_FOUND AND NOT TARGET OCCA::depends::METAL)
   # Create our wrapper imported target
   # Put it in the OCCA namespace to make it clear that we created it.
   add_library(OCCA::depends::METAL INTERFACE IMPORTED)
