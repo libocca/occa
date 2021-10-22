@@ -142,26 +142,7 @@ endif(ENABLE_CUDA)
 
 #---[ OpenCL ]--------------------------
 if(ENABLE_OPENCL)
-  # Look in some default places for OpenCL and set OPENCL_ROOT
-
-  # Search in user specified path first
-  find_path(OPENCL_ROOT
-    NAMES include/CL/cl.h
-    PATHS
-    ENV   OPENCL_PATH
-    DOC   "OPENCL root location"
-    NO_DEFAULT_PATH)
-
-  # Now search in default path
-  find_path(OPENCL_ROOT
-    NAMES include/CL/cl.h
-    PATHS /usr/ /opt/rocm/opencl /usr/local/cuda
-    DOC   "OPENCL root location")
-
-  # Trick CMake's default OpenCL module to look in our directory
-  set(ENV{AMDAPPSDKROOT} ${OPENCL_ROOT})
-
-  find_package(OpenCL)
+  find_package(OpenCLWrapper)
 
   if(OpenCL_FOUND)
     set(OCCA_OPENCL_ENABLED 1)
@@ -179,46 +160,18 @@ endif(ENABLE_OPENCL)
 
 #---[ SYCL/DPCPP ]-----------------------
 if(ENABLE_DPCPP)
-  message(CHECK_START "Looking for DPC++")
-  unset(missingDpcppComponents)
+  find_package(DPCPP)
 
-  message(CHECK_START "  Looking for sycl.hpp")
-  find_path(
-    SYCL_INCLUDE_DIRS
-    NAMES
-      CL/sycl.hpp
-  )
-  string(COMPARE NOTEQUAL "SYCL_INCLUDE_DIRS-NOTFOUND" "${SYCL_INCLUDE_DIRS}" foundSyclInclude)
-  if(foundSyclInclude)
-    message(CHECK_PASS "found ${SYCL_INCLUDE_DIRS}")
-  else()
-    list(APPEND missingDpcppComponents "SYCL_INCLUDE_DIRS")
-    message(CHECK_FAIL "not found")
-  endif()
-
-  message(CHECK_START "  Looking for libsycl")
-  find_library(
-    SYCL_LIBRARIES
-    NAMES
-      sycl libsycl
-  )
-  string(COMPARE NOTEQUAL "SYCL_LIBRARIES-NOTFOUND" "${SYCL_LIBRARIES}" foundSyclLibraries)
-  if(foundSyclLibraries)
-    message(CHECK_PASS "found ${SYCL_LIBRARIES}")
-  else()
-    list(APPEND missingDpcppComponents "SYCL_LIBRARIES")
-    message(CHECK_FAIL "not found")
-  endif()
-
-  if(missingDpcppComponents)
-    message(CHECK_FAIL "missing components: ${missingDpcppComponents}")
-    set(OCCA_DPCPP_ENABLED 0)
-  else()
-    message(CHECK_PASS "found all components")
+  if(DPCPP_FOUND)
     set(OCCA_DPCPP_ENABLED 1)
+
+    message("-- DPCPP include dirs: ${SYCL_INCLUDE_DIRS}")
+    message("-- DPCPP libraries:    ${SYCL_LIBRARIES}")
 
     target_include_directories(libocca PRIVATE ${SYCL_INCLUDE_DIRS})
     target_link_libraries(libocca PRIVATE ${SYCL_LIBRARIES})
+  else()
+    set(OCCA_DPCPP_ENABLED 0)
   endif()
 endif(ENABLE_DPCPP)
 #=======================================
@@ -246,13 +199,15 @@ endif(ENABLE_HIP)
 
 #---[ Metal ]---------------------------
 if(ENABLE_METAL AND APPLE)
+  find_package(METAL)
 
-  find_library(METAL_LIBRARY Metal)
-  find_library(CORE_SERVICES CoreServices)
-  find_library(APP_KIT AppKit)
-
-  if(METAL_LIBRARY AND CORE_SERVICES AND APP_KIT)
+  if(METAL_FOUND)
     set(OCCA_METAL_ENABLED 1)
+
+    message("-- METAL libraries:     ${METAL_LIBRARY}")
+    message("-- METAL core services: ${CORE_SERVICES}")
+    message("-- METAL app kit:       ${APP_KIT}")
+
     target_link_libraries(libocca PRIVATE ${METAL_LIBRARY} ${CORE_SERVICES} ${APP_KIT})
   else()
     set(OCCA_METAL_ENABLED 0)
