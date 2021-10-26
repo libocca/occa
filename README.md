@@ -11,6 +11,7 @@
 [![slack](https://img.shields.io/badge/Chat-on%20Slack-%23522653)][OCCA_SLACK]
 ![github-ci](https://github.com/libocca/occa/workflows/Build/badge.svg)
 ![codecov](https://codecov.io/github/libocca/occa/coverage.svg)
+[![twitter](https://img.shields.io/twitter/url?label=Twitter&style=social&url=https%3A%2F%2Ftwitter.com%2Flibocca)](https://twitter.com/libocca)
 </div>
 
 &nbsp;
@@ -23,20 +24,34 @@ Mission critical computational science and engineering applications from the pub
 
 **Key Features**
 
-- Muitiple backends&mdash; including CUDA, HIP, Data Parallel C++, OpenCL, OpenMP, and Metal
-- JIT compilation and caching of kernels
-- Language support for C, C++, and Fortran
-- Interoperability with backend API and kernels
-- Transparency **...**
+- **Muitiple backends**&mdash; including CUDA, HIP, Data Parallel C++, OpenCL, OpenMP, and Metal
+- **JIT compilation** and caching of kernels
+- C, C++, and ***Fortran*** language support
+- **Interoperability** with backend API and kernels
+- **Transparency**&mdash;easy to understand how your code is mapped to each platform
 
 
 ## Requirements
 
-- [CMake] v3.17 or newer
-- C++11 compliant compiler
-- ...
+### Minimum
 
-Details for requirements specific to each backend can be found in the [installation guide](INSTALL.md)
+- [CMake] v3.17 or newer
+- C++11 compiler
+- C11 compiler
+
+### Optional
+
+ - Fortan 90 compiler
+ - MPI 2.0+
+ - CUDA vXXX
+ - HIP vXXX
+ - oneAPI Toolkit vXXX
+ - OpenCL ...
+ - OpenMP ...
+
+
+Detailed list of tested platforms can be found in the [installation guide](INSTALL.md)
+
 
 ## Build, Test, Install
 
