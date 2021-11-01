@@ -35,15 +35,6 @@ namespace occa
       virtual void print(printer &pout) const;
 
       virtual void debugPrint(const std::string &prefix) const;
-
-    private:
-      inline static const std::string sycl_atomic_ref{"sycl::ONEAPI::atomic_ref"};
-      inline static const std::string memory_order_relaxed{"sycl::ONEAPI::memory_order::relaxed"};
-
-      inline static const std::string memory_scope_device{"sycl::ONEAPI::memory_scope::device"};
-
-      inline static const std::string address_space_global_space{"sycl::access::address_space::global_space"};
-      inline static const std::string address_space_local_space{"sycl::access::address_space::local_space"};
     };
   }
 }
