@@ -145,7 +145,8 @@ namespace occa {
     }
 
     modeStream_t* device::wrapStream(void* ptr, const occa::json &props) {
-      CUstream cuStream = *reinterpret_cast<CUstream*>(ptr);
+      OCCA_ERROR("A nullptr was passed to cuda::device::wrapStream",nullptr != ptr);
+      CUstream cuStream = *static_cast<CUstream*>(ptr);
       return new stream(this, props, cuStream, true);
     }
 

@@ -89,7 +89,8 @@ namespace occa
     }
 
     modeStream_t* device::wrapStream(void* ptr, const occa::json &props) {
-      ::sycl::queue q = *reinterpret_cast<::sycl::queue*>(ptr);
+      OCCA_ERROR("A nullptr was passed to dpcpp::device::wrapStream",nullptr != ptr);
+      ::sycl::queue q = *static_cast<::sycl::queue*>(ptr);
       return new stream(this, props, q);
     }
 

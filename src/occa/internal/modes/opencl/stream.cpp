@@ -5,17 +5,13 @@ namespace occa {
   namespace opencl {
     stream::stream(modeDevice_t *modeDevice_,
                    const occa::json &properties_,
-                   cl_command_queue commandQueue_,
-                   bool isWrapped_) :
+                   cl_command_queue commandQueue_) :
       modeStream_t(modeDevice_, properties_),
-      commandQueue(commandQueue_),
-      isWrapped(isWrapped_) {}
+      commandQueue(commandQueue_) {}
 
     stream::~stream() {
-      if (!isWrapped) {
-        OCCA_OPENCL_ERROR("Device: Freeing cl_command_queue",
-                          clReleaseCommandQueue(commandQueue));
-      }
+      OCCA_OPENCL_ERROR("Device: Freeing cl_command_queue",
+                        clReleaseCommandQueue(commandQueue));
     }
   }
 }

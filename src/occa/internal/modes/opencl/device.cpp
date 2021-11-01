@@ -108,8 +108,12 @@ namespace occa {
     }
 
     modeStream_t* device::wrapStream(void* ptr, const occa::json &props) {
-      cl_command_queue commandQueue = *reinterpret_cast<cl_command_queue*>(ptr);
-      return new stream(this, props, commandQueue, true);
+      OCCA_ERROR("A nullptr was passed to opencl::device::wrapStream",nullptr != ptr);
+      cl_command_queue commandQueue = *static_cast<cl_command_queue*>(ptr);
+      OCCA_OPENCL_ERROR("Device: Retaining Command Queue",
+                        clRetainCommandQueue(commandQueue));
+
+      return new stream(this, props, commandQueue);
     }
 
     occa::streamTag device::tagStream() {

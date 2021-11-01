@@ -397,7 +397,7 @@ namespace occa {
      *   Wrap a native backend stream object inside a [[stream]] for the device.
      *   The simplest example would be on a `CUDA` device, where a pointer to a cuStream_t, created via cudaStreamCreate, is passed in.
      *
-     *   > Note that automatic garbage collection is not set for wrapped memory objects.
+     *   > Note that automatic garbage collection is not set for wrapped stream objects.
      *
      * Returns:
      *   The wrapped [[stream]]
