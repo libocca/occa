@@ -428,6 +428,10 @@ namespace occa {
     return NULL;
   }
 
+  inline cl_int clRetainCommandQueue(cl_command_queue command_queue) {
+    return OCCA_OPENCL_IS_NOT_ENABLED;
+  }
+
   inline cl_int clReleaseCommandQueue(cl_command_queue command_queue) {
     return OCCA_OPENCL_IS_NOT_ENABLED;
   }
