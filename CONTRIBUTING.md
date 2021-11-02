@@ -46,8 +46,8 @@
 
 ## Pull-requests
 
-- *Open these "early" (i.e. during development) as a draft. This will allow for feedback during development, facilitate collaboration, and reduce
-- Clearly document PR so we can include this info in the nodes for the next release
+- *Open these "early" (i.e. during development) as a draft. This will allow for feedback during development, facilitate collaboration, and reduce turnaround time for reviews.
+- Clearly document PR so we can include this info in the notes for the next release
 
 ### Better together
 
