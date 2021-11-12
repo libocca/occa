@@ -3,21 +3,22 @@
 # This Find module is also distributed alongside the occa package config file!
 ###############################################################################
 
-# Look in some default places for OpenCL and set OPENCL_ROOT
+# Look in some default places for OpenCL and set OPENCL_ROOT if not already set
+if(NOT OPENCL_ROOT)
+  # Search in user specified path first
+  find_path(OPENCL_ROOT
+    NAMES include/CL/cl.h
+    PATHS
+    ENV   OPENCL_PATH
+    DOC   "OPENCL root location"
+    NO_DEFAULT_PATH)
 
-# Search in user specified path first
-find_path(OPENCL_ROOT
-  NAMES include/CL/cl.h
-  PATHS
-  ENV   OPENCL_PATH
-  DOC   "OPENCL root location"
-  NO_DEFAULT_PATH)
-
-# Now search in default path
-find_path(OPENCL_ROOT
-  NAMES include/CL/cl.h
-  PATHS /usr/ /opt/rocm/opencl /usr/local/cuda
-  DOC   "OPENCL root location")
+  # Now search in default path
+  find_path(OPENCL_ROOT
+    NAMES include/CL/cl.h
+    PATHS /usr/ /opt/rocm/opencl /usr/local/cuda
+    DOC   "OPENCL root location")
+endif()
 
 # Trick CMake's default OpenCL module to look in our directory
 set(ENV{AMDAPPSDKROOT} ${OPENCL_ROOT})
