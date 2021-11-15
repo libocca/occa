@@ -147,6 +147,8 @@ OCCA is available under a [MIT license](LICENSE.MD)
 
 [OCCA_WEBSITE]: https://libocca.org
 
+[OCCA_WEBSITE]: https://libocca.org
+
 [OCCA_SLACK]: https://join.slack.com/t/libocca/shared_invite/zt-4jcnu451-qPpPWUzhm7YQKY_HMhIsIw
 
 [CMake]: https://cmake.org/
