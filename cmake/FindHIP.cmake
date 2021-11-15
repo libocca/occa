@@ -1,5 +1,6 @@
 ###############################################################################
 # FIND: HIP and associated helper binaries
+# This Find module is also distributed alongside the occa package config file!
 ###############################################################################
 # HIP is supported on Linux only
 if(UNIX AND NOT APPLE AND NOT CYGWIN)
@@ -148,3 +149,14 @@ find_package_handle_standard_args(
     HIP_COMPILER
     VERSION_VAR HIP_VERSION
     )
+
+if(HIP_FOUND AND NOT TARGET OCCA::depends::HIP)
+  # Create our wrapper imported target
+  # Put it in the OCCA namespace to make it clear that we created it.
+  add_library(OCCA::depends::HIP INTERFACE IMPORTED)
+  set_target_properties(OCCA::depends::HIP PROPERTIES
+    INTERFACE_COMPILE_DEFINITIONS "${HIP_RUNTIME_DEFINE}"
+    INTERFACE_INCLUDE_DIRECTORIES "${HIP_INCLUDE_DIRS}"
+    INTERFACE_LINK_LIBRARIES "${HIP_LIBRARIES}"
+  )
+endif()
