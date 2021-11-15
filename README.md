@@ -61,7 +61,7 @@ OCCA uses the [CMake] build system. For a comprehensive overview of all build se
 
 For conveinence, the shell script `configure.sh` has been provided drive the Cmake build. Compilers, flags, and other build parameters can be adjusted there. By default OCCA will be built and installed in `./build` and `./install`.
 
-The following sequence of commands demonstrates a typical sequence of shell commands to build, test, and install occa:
+The following demonstrates a typical sequence of shell commands to build, test, and install occa:
 ```
 $> ./configure.sh
 $> cmake --build build --parallel <number-of-threads>
@@ -91,7 +91,7 @@ OCCA provides CMake package files which are included during installation. To use
 
 ### Support
 
-Need help? Checkout the documentation at libocca.org or ask a question in the \#help channel on [Slack][OCCA_SLACK]
+Need help? Checkout the documentation at [libocca.org][OCCA_WEBSITE] or ask a question in the \#help channel on [Slack][OCCA_SLACK]
 
 ### Feedback
 
@@ -121,6 +121,8 @@ OCCA is available under a [MIT license](LICENSE.MD)
 - [Kokkos](https://github.com/kokkos/kokkos)
 
    > Kokkos Core implements a programming model in C++ for writing performance portable applications targeting all major HPC platforms. For that purpose it provides abstractions for both parallel execution of code and data management.
+
+[OCCA_WEBSITE]: https://libocca.org
 
 [OCCA_SLACK]: https://join.slack.com/t/libocca/shared_invite/zt-4jcnu451-qPpPWUzhm7YQKY_HMhIsIw
 
