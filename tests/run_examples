@@ -37,7 +37,7 @@ if [[ $C_EXAMPLES -eq 1 ]]; then
   examples+=(
     c/01_add_vectors
     c/02_background_device
-    c/03_generic_inline_okl
+    c/03_generic_inline_kernel
     c/04_reduction
   )
 fi
