@@ -2,7 +2,7 @@ name: Build
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main,ci-add-oneapi-compilers]
   pull_request:
     branches: [ main ]
 
@@ -44,6 +44,16 @@ jobs:
             CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
 
+          - name: "[Ubuntu] CMake + Intel/LLVM"
+            os: ubuntu-latest
+            CC: icx
+            CXX: icpx
+            FC: ifx
+            CXXFLAGS: -fsycl
+            OCCA_COVERAGE: 0
+            useCMake: true
+            useoneAPI: true
+
           - name: "[MacOS] gcc-9"
             os: macos-latest
             CC: gcc-9
@@ -59,34 +69,77 @@ jobs:
             CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
 
+
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.name }}
 
     env:
       CC: ${{ matrix.CC }}
       CXX: ${{ matrix.CXX }}
-      CXXFLAGS: -O3 -Wall -pedantic -Wshadow -Wsign-compare -Wuninitialized -Wtype-limits -Wignored-qualifiers -Wempty-body -Wextra -Wno-unused-parameter -Werror -Wno-strict-aliasing ${{ matrix.CXXFLAGS }}
       FC: ${{ matrix.FC }}
+      CXXFLAGS: -O3 -Wall -pedantic -Wshadow -Wsign-compare -Wuninitialized -Wtype-limits -Wignored-qualifiers -Wempty-body -Wextra -Wno-unused-parameter -Werror -Wno-strict-aliasing ${{ matrix.CXXFLAGS }}
+      OCCA_CC: ${{ matrix.CC }}
+      OCCA_CXX: ${{ matrix.CXX }}
+      OCCA_CXXFLAGS: -O3
       GCOV: ${{ matrix.GCOV }}
       OCCA_COVERAGE: ${{ matrix.OCCA_COVERAGE }}
       OCCA_FORTRAN_ENABLED: ${{ matrix.OCCA_FORTRAN_ENABLED }}
-      OCCA_CXXFLAGS: -O3
       FORTRAN_EXAMPLES: ${{ matrix.OCCA_FORTRAN_ENABLED }}
 
     steps:
     - uses: actions/checkout@v2
 
+    - name: add oneAPI to apt
+      if: ${{ matrix.useoneAPI }}
+      shell: bash
+      run: |
+        cd /tmp
+        wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+        sudo add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
+      
+    - name: install oneAPI dpcpp compiler
+      if: ${{ matrix.useoneAPI }}
+      shell: bash
+      run: |
+        sudo apt update
+        sudo apt install intel-oneapi-compiler-dpcpp-cpp 
+
     - name: Compiler info
       if: ${{ !matrix.useCMake }}
       run: make -j 16 info
 
-    - name: CMake build
-      if: ${{ matrix.useCMake }}
+    - name: CMake configure
+      if: ${{ matrix.useCMake && !matrix.useoneAPI}}
       run: |
-        mkdir -p ${{runner.workspace}}/occa/build
-        cd ${{runner.workspace}}/occa/build
-        cmake -DENABLE_TESTS=ON -DENABLE_EXAMPLES=ON ${{runner.workspace}}/occa
-        make -j 16
+        cmake -S . -B build \
+        -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
+        -DCMAKE_INSTALL_PREFIX=install \
+        -DENABLE_TESTS=ON \
+        -DENABLE_EXAMPLES=ON
+
+    - name: CMake configure
+      if: ${{ matrix.useCMake && matrix.useoneAPI}}
+      run: |
+        source /opt/intel/oneapi/setvars.sh
+        cmake -S . -B build \
+        -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
+        -DCMAKE_INSTALL_PREFIX=install \
+        -DENABLE_TESTS=ON \
+        -DENABLE_EXAMPLES=ON \
+        -DCMAKE_PREFIX_PATH="/opt/intel/oneapi/compiler/latest/linux:/opt/intel/oneapi/compiler/latest/include/sycl"
+    
+    - name: CMake build
+      if: ${{ matrix.useCMake && !matrix.useoneAPI}}
+      run: |
+        cmake --build build --parallel 16
+
+    - name: CMake build
+      if: ${{ matrix.useCMake && matrix.useoneAPI}}
+      run: |
+        source /opt/intel/oneapi/setvars.sh
+        cmake --build build --parallel 16
 
     - name: Compile library
       if: ${{ !matrix.useCMake }}
@@ -105,10 +158,16 @@ jobs:
       run: ./tests/run_examples
 
     - name: Run CTests
-      if: ${{ matrix.useCMake }}
+      if: ${{ matrix.useCMake && !matrix.useoneAPI }}
       run: |
-        cd ${{runner.workspace}}/occa/build
-        CTEST_OUTPUT_ON_FAILURE=1 make test
+        ctest --test-dir build --output-on-failure
+
+    - name: Run CTests
+      if: ${{ matrix.useCMake && matrix.useoneAPI }}
+      run: |
+        source /opt/intel/oneapi/setvars.sh
+        export SYCL_DEVICE_FILTER=opencl.cpu
+        ctest --test-dir build --output-on-failure
 
     - name: Upload code coverage
       if: ${{ matrix.OCCA_COVERAGE }}
