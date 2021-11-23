@@ -2,7 +2,7 @@ name: Build
 
 on:
   push:
-    branches: [ main,ci-add-oneapi-compilers]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
