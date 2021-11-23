@@ -49,7 +49,6 @@ jobs:
             CC: icx
             CXX: icpx
             FC: ifx
-            CXXFLAGS: -fsycl
             OCCA_COVERAGE: 0
             useCMake: true
             useoneAPI: true
@@ -128,7 +127,7 @@ jobs:
         -DCMAKE_INSTALL_PREFIX=install \
         -DENABLE_TESTS=ON \
         -DENABLE_EXAMPLES=ON \
-        -DCMAKE_PREFIX_PATH="/opt/intel/oneapi/compiler/latest/linux;/opt/intel/oneapi/compiler/latest/linux/include/sycl"
+        -DCMAKE_PREFIX_PATH="/opt/intel/oneapi/compiler/latest/linux;/opt/intel/oneapi/compiler/latest/linux/include/sycl;/opt/intel/oneapi/compiler/latest/linux/compiler"
     
     - name: CMake build
       if: ${{ matrix.useCMake && !matrix.useoneAPI}}
