@@ -160,14 +160,14 @@ jobs:
     - name: Run CTests
       if: ${{ matrix.useCMake && !matrix.useoneAPI }}
       run: |
-        ctest --test-dir build --output-on-failure
+        ctest --test-dir build --progress --output-on-failure
 
     - name: Run CTests
       if: ${{ matrix.useCMake && matrix.useoneAPI }}
       run: |
         source /opt/intel/oneapi/setvars.sh
         export SYCL_DEVICE_FILTER=opencl.cpu
-        ctest --verbose --test-dir build --output-on-failure
+        ctest --test-dir build --progress --output-on-failure
 
     - name: Upload code coverage
       if: ${{ matrix.OCCA_COVERAGE }}
