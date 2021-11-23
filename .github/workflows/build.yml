@@ -48,8 +48,10 @@ jobs:
             os: ubuntu-latest
             CC: icx
             CXX: icpx
+            CXXFLAGS: -Wno-uninitialized
             FC: ifx
-            OCCA_COVERAGE: 0
+            GCOV: gcov-9
+            OCCA_COVERAGE: 1
             useCMake: true
             useoneAPI: true
 
