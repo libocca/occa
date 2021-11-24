@@ -10,7 +10,7 @@ main
 opt
 
 # CMake
-/build/
+/build
 
 # Bin
 /bin/*
