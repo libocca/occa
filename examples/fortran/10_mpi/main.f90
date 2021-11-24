@@ -1,5 +1,5 @@
 program main
-  use mpi
+  use mpi_f08
   use occa
   use, intrinsic :: iso_fortran_env, only : stdout=>output_unit, &
                                             stderr=>error_unit
@@ -7,9 +7,10 @@ program main
   implicit none
 
   integer :: ierr, id
-  integer :: myid, npes, gcomm, tag ! MPI variables
-  integer, dimension(2) :: request
-  integer, dimension(MPI_STATUS_SIZE) :: status
+  integer :: myid, npes, tag ! MPI variables
+  type(MPI_Comm) :: gcomm
+  type(MPI_Request), dimension(2) :: request
+  type(MPI_Status) :: status
   integer :: otherID, offset
   integer(occaUDim_t) :: iu
   integer(occaUDim_t) :: entries = 8
@@ -97,7 +98,7 @@ program main
   request = MPI_REQUEST_NULL
   call MPI_IRecv(ab_ptr(otherID*offset+1), &
                  offset, &
-                 MPI_FLOAT, &
+                 MPI_REAL4, &
                  otherID, &
                  tag, &
                  gcomm, &
@@ -105,7 +106,7 @@ program main
                  ierr)
   call MPI_ISend(ab_ptr(myid*offset+1), &
                  offset, &
-                 MPI_FLOAT, &
+                 MPI_REAL4, &
                  otherID, &
                  tag, &
                  gcomm, &
@@ -121,7 +122,7 @@ program main
   call flush(stdout)
   ab_sum = myid
   ab_gather = sum(ab_ptr)
-  call MPI_Gather(ab_gather, 1, MPI_FLOAT, ab_sum, 1, MPI_FLOAT, 0, gcomm, ierr)
+  call MPI_Gather(ab_gather, 1, MPI_REAL4, ab_sum, 1, MPI_REAL4, 0, gcomm, ierr)
   if (myid == 0) then
     if (abs(ab_sum(myid) - ab_sum(otherID)) > 1.0e-8) stop "*** Wrong result ***"
   end if
