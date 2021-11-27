@@ -6,6 +6,7 @@
 #include <occa/internal/modes/serial/kernel.hpp>
 #include <occa/internal/modes/serial/buffer.hpp>
 #include <occa/internal/modes/serial/memory.hpp>
+#include <occa/internal/modes/serial/memoryPool.hpp>
 #include <occa/internal/modes/serial/stream.hpp>
 #include <occa/internal/modes/serial/streamTag.hpp>
 #include <occa/internal/lang/modes/serial.hpp>
@@ -455,6 +456,10 @@ namespace occa {
       buf->wrapMemory(ptr, bytes);
 
       return new serial::memory(buf, bytes, 0);
+    }
+
+    modeMemoryPool_t* device::createMemoryPool(const occa::json &props) {
+      return new serial::memoryPool(this, props);
     }
 
     udim_t device::memorySize() const {
