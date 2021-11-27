@@ -9,15 +9,25 @@ namespace occa {
       return (hipDeviceptr_t) (((char*) hipPtr) + offset);
     }
 
-    memory::memory(modeBuffer_t *modeBuffer_,
+    memory::memory(buffer *b,
                    udim_t size_, dim_t offset_) :
-      occa::modeMemory_t(modeBuffer_, size_, offset_) {
-      buffer *b = dynamic_cast<buffer*>(modeBuffer);
+      occa::modeMemory_t(b, size_, offset_) {
       useHostPtr = b->useHostPtr;
       if (useHostPtr) {
         ptr = b->ptr + offset;
       } else {
         hipPtr = addHipPtrOffset(b->hipPtr, offset);
+      }
+    }
+
+    memory::memory(memoryPool *memPool,
+                   udim_t size_, dim_t offset_) :
+      occa::modeMemory_t(memPool, size_, offset_) {
+      useHostPtr = memPool->useHostPtr;
+      if (useHostPtr) {
+        ptr = memPool->ptr + offset;
+      } else {
+        hipPtr = addHipPtrOffset(memPool->hipPtr, offset);
       }
     }
 

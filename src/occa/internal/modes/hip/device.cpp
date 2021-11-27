@@ -7,6 +7,7 @@
 #include <occa/internal/modes/hip/kernel.hpp>
 #include <occa/internal/modes/hip/buffer.hpp>
 #include <occa/internal/modes/hip/memory.hpp>
+#include <occa/internal/modes/hip/memoryPool.hpp>
 #include <occa/internal/modes/hip/stream.hpp>
 #include <occa/internal/modes/hip/streamTag.hpp>
 #include <occa/internal/modes/hip/utils.hpp>
@@ -415,6 +416,10 @@ namespace occa {
       buf->wrapMemory(ptr, bytes);
 
       return new hip::memory(buf, bytes, 0);
+    }
+
+    modeMemoryPool_t* device::createMemoryPool(const occa::json &props) {
+      return new hip::memoryPool(this, props);
     }
 
     udim_t device::memorySize() const {
