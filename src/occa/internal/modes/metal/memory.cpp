@@ -5,12 +5,19 @@
 
 namespace occa {
   namespace metal {
-    memory::memory(modeBuffer_t *modeBuffer_,
+    memory::memory(buffer *b,
                    udim_t size_, dim_t offset_) :
-      occa::modeMemory_t(modeBuffer_, size_, offset_),
+      occa::modeMemory_t(b, size_, offset_),
       bufferOffset(offset) {
-      buffer *b = dynamic_cast<buffer*>(modeBuffer);
       metalBuffer = b->metalBuffer;
+      ptr = (char*) metalBuffer.getPtr();
+    }
+
+    memory::memory(memoryPool *memPool,
+                   udim_t size_, dim_t offset_) :
+      occa::modeMemory_t(memPool, size_, offset_),
+      bufferOffset(offset) {
+      metalBuffer = memPool->metalBuffer;
       ptr = (char*) metalBuffer.getPtr();
     }
 
