@@ -6,6 +6,7 @@
 #include <occa/internal/modes/cuda/kernel.hpp>
 #include <occa/internal/modes/cuda/buffer.hpp>
 #include <occa/internal/modes/cuda/memory.hpp>
+#include <occa/internal/modes/cuda/memoryPool.hpp>
 #include <occa/internal/modes/cuda/stream.hpp>
 #include <occa/internal/modes/cuda/streamTag.hpp>
 #include <occa/internal/modes/cuda/utils.hpp>
@@ -465,6 +466,10 @@ namespace occa {
       buf->wrapMemory(ptr, bytes);
 
       return new cuda::memory(buf, bytes, 0);
+    }
+
+    modeMemoryPool_t* device::createMemoryPool(const occa::json &props) {
+      return new cuda::memoryPool(this, props);
     }
 
     udim_t device::memorySize() const {
