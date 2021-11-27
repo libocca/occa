@@ -26,18 +26,14 @@ namespace occa {
                  udim_t size_,
                  const occa::json &json_);
 
-    void dontUseRefs();
-    void addModeMemoryRef(modeMemory_t *mem);
-    void removeModeMemoryRef(modeMemory_t *mem);
-    bool needsFree() const;
 
     //---[ Virtual Methods ]------------
     virtual ~modeBuffer_t();
 
-    virtual void malloc(udim_t bytes) = 0;
-
-    virtual void wrapMemory(const void *ptr,
-                            const udim_t bytes) = 0;
+    virtual void dontUseRefs();
+    virtual bool needsFree() const;
+    virtual void addModeMemoryRef(modeMemory_t *mem);
+    virtual void removeModeMemoryRef(modeMemory_t *mem);
 
     virtual modeMemory_t* slice(const dim_t offset_,
                                 const udim_t bytes) = 0;

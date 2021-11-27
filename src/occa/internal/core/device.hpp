@@ -116,6 +116,8 @@ namespace occa {
                                      const udim_t bytes,
                                      const occa::json &props) = 0;
 
+    virtual modeMemoryPool_t* createMemoryPool(const occa::json &props)=0;
+
     virtual udim_t memorySize() const = 0;
     //  |===============================
     //==================================

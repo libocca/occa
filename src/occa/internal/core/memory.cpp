@@ -44,16 +44,22 @@ namespace occa {
   }
 
   void modeMemory_t::removeModeMemoryRef() {
-    if (!modeBuffer) {
-      return;
-    }
+    if (modeBuffer == NULL) return;
+
     modeBuffer->removeModeMemoryRef(this);
-    if (modeBuffer->modeBuffer_t::needsFree()) {
-      free();
+
+    if (modeBuffer == NULL) return;
+
+    if (modeBuffer->needsFree()) {
+      delete modeBuffer;
     }
   }
 
   void modeMemory_t::detach() {
+    if (modeBuffer == NULL) return;
+
+    modeBuffer->removeModeMemoryRef(this);
+
     if (modeBuffer == NULL) return;
 
     modeBuffer->detach();
@@ -66,6 +72,11 @@ namespace occa {
 
   void modeMemory_t::free() {
     if (modeBuffer == NULL) return;
+
+    modeBuffer->removeModeMemoryRef(this);
+
+    if (modeBuffer == NULL) return;
+
     delete modeBuffer;
   }
 
@@ -74,7 +85,9 @@ namespace occa {
   }
 
   modeDevice_t* modeMemory_t::getModeDevice() const {
-    return modeBuffer->modeDevice;
+    return (modeBuffer
+            ? modeBuffer->modeDevice
+            : nullptr);
   }
 
   const occa::json& modeMemory_t::properties() const {
