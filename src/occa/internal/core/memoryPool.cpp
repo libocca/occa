@@ -106,11 +106,10 @@ namespace occa {
 
     /*Look for a unreserved region which fits request*/
     dim_t offset=0;
-    dim_t hi = bytes;
     for (modeMemory_t* m : reservations) {
       const dim_t mlo = m->offset;
       const dim_t mhi = m->offset+m->size;
-      if (mlo>=offset+bytes) break; /*Found an suitable empty space*/
+      if (mlo>=static_cast<dim_t>(offset+bytes)) break; /*Found an suitable empty space*/
 
       offset = std::max(offset, mhi); /*Shift the potential region*/
     }
