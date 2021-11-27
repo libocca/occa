@@ -3,15 +3,14 @@
 
 #include <occa/internal/core/buffer.hpp>
 #include <occa/internal/core/memory.hpp>
-#include <occa/internal/modes/opencl/memory.hpp>
 #include <occa/internal/modes/opencl/polyfill.hpp>
 
 namespace occa {
   namespace opencl {
     class buffer : public occa::modeBuffer_t {
-      friend class opencl::memory;
+      // friend class opencl::memory;
 
-    private:
+    public:
       cl_mem clMem;
       bool useHostPtr;
 
