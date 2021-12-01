@@ -25,6 +25,8 @@ namespace occa {
     modeMemoryPool_t(modeDevice_t *modeDevice_,
                      const occa::json &json_);
 
+    bool deleteOnFree() {return false;}
+
     modeMemory_t* reserve(const udim_t bytes);
 
     void dontUseRefs() override;

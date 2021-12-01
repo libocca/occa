@@ -67,17 +67,20 @@ namespace occa {
     //deleting the modeBuffer deletes all
     // the modeMemory_t slicing it, and NULLs
     // their wrappers
-    delete modeBuffer;
+    if (modeBuffer->deleteOnFree()) {
+      delete modeBuffer;
+    } else {
+      modeBuffer->removeModeMemoryRef(this);
+    }
   }
 
   void modeMemory_t::free() {
     if (modeBuffer == NULL) return;
-
-    modeBuffer->removeModeMemoryRef(this);
-
-    if (modeBuffer == NULL) return;
-
-    delete modeBuffer;
+    if (modeBuffer->deleteOnFree()) {
+      delete modeBuffer;
+    } else {
+      modeBuffer->removeModeMemoryRef(this);
+    }
   }
 
   bool modeMemory_t::needsFree() const {
