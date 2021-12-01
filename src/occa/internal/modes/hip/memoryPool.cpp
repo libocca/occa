@@ -74,7 +74,8 @@ namespace occa {
         OCCA_HIP_ERROR("Device: hostFree()",
                          hipHostFree(ptr_));
       } else if (hipPtr_) {
-        hipFree((void*) hipPtr_);
+        OCCA_HIP_ERROR("Device: free()",
+                       hipFree((void*) hipPtr_));
       }
       ptr_=nullptr;
       hipPtr_=0;
