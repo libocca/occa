@@ -10,9 +10,12 @@ namespace occa {
     public:
       api::metal::commandQueue_t metalCommandQueue;
 
+      bool isWrapped;
+
       stream(modeDevice_t *modeDevice_,
              const occa::json &properties_,
-             api::metal::commandQueue_t metalCommandQueue_);
+             api::metal::commandQueue_t metalCommandQueue_,
+             bool isWrapped_=false);
 
       virtual ~stream();
     };

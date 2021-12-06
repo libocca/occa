@@ -133,6 +133,12 @@ namespace occa {
       return new stream(this, props, hipStream);
     }
 
+    modeStream_t* device::wrapStream(void* ptr, const occa::json &props) {
+      OCCA_ERROR("A nullptr was passed to hip::device::wrapStream",nullptr != ptr);
+      hipStream_t hipStream = *static_cast<hipStream_t*>(ptr);
+      return new stream(this, props, hipStream);
+    }
+
     occa::streamTag device::tagStream() {
       hipEvent_t hipEvent = NULL;
 

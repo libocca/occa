@@ -10,9 +10,12 @@ namespace occa {
     public:
       hipStream_t hipStream;
 
+      bool isWrapped;
+
       stream(modeDevice_t *modeDevice_,
              const occa::json &properties_,
-             hipStream_t hipStream_);
+             hipStream_t hipStream_,
+             bool isWrapped_=false);
 
       virtual ~stream();
     };

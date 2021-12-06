@@ -5,15 +5,18 @@ namespace occa {
   namespace cuda {
     stream::stream(modeDevice_t *modeDevice_,
                    const occa::json &properties_,
-                   CUstream cuStream_) :
+                   CUstream cuStream_, bool isWrapped_) :
       modeStream_t(modeDevice_, properties_),
-      cuStream(cuStream_) {}
+      cuStream(cuStream_),
+      isWrapped(isWrapped_) {}
 
     stream::~stream() {
-      OCCA_CUDA_DESTRUCTOR_ERROR(
-        "Device: freeStream",
-        cuStreamDestroy(cuStream)
-      );
+      if (!isWrapped) {
+        OCCA_CUDA_DESTRUCTOR_ERROR(
+          "Device: freeStream",
+          cuStreamDestroy(cuStream)
+        );
+      }
     }
   }
 }
