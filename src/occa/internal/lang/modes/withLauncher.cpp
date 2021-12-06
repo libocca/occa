@@ -513,8 +513,9 @@ namespace occa {
 
               //Only apply barriers when needed in the last inner-loop
               if (isOuterMostInnerLoop(innerSmnt)
-                  && (!isLastInnerLoop(innerSmnt) || isInsideLoop(innerSmnt)))
-                addBarriersAfterInnerLoop(innerSmnt);
+                  && (!isLastInnerLoop(innerSmnt) || isInsideLoop(innerSmnt))
+                  && !(innerSmnt.hasAttribute("nobarrier"))
+                 ) addBarriersAfterInnerLoop(innerSmnt);
             });
         }
 
