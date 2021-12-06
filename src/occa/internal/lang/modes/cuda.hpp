@@ -15,17 +15,19 @@ namespace occa {
 
         cudaParser(const occa::json &settings_ = occa::json());
 
-        virtual void onClear();
+        virtual void onClear() override;
 
-        virtual void beforePreprocessing();
+        virtual void beforePreprocessing() override;
 
-        virtual void beforeKernelSplit();
+        virtual void beforeKernelSplit() override;
 
-        virtual void afterKernelSplit();
+        virtual void afterKernelSplit() override;
 
-        virtual std::string getOuterIterator(const int loopIndex);
+        virtual std::string getOuterIterator(const int loopIndex) override;
 
-        virtual std::string getInnerIterator(const int loopIndex);
+        virtual std::string getInnerIterator(const int loopIndex) override;
+
+        virtual std::string launchBoundsAttribute(const int innerDims[3]) override;
 
         void updateConstToConstant();
 

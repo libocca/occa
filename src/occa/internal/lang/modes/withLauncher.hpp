@@ -84,6 +84,7 @@ namespace occa {
 
         virtual std::string getOuterIterator(const int loopIndex) = 0;
         virtual std::string getInnerIterator(const int loopIndex) = 0;
+        virtual std::string launchBoundsAttribute(const int innerDims[3]) = 0;
       };
     }
   }

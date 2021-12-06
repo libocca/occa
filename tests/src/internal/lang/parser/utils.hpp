@@ -7,4 +7,5 @@ void setupParser() {
   parser.addAttribute<attributes::inner>();
   parser.addAttribute<attributes::shared>();
   parser.addAttribute<attributes::exclusive>();
+  parser.addAttribute<attributes::maxInnerDims>();
 }
