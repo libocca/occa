@@ -79,9 +79,6 @@ jobs:
       CXX: ${{ matrix.CXX }}
       FC: ${{ matrix.FC }}
       CXXFLAGS: -O3 -Wall -pedantic -Wshadow -Wsign-compare -Wuninitialized -Wtype-limits -Wignored-qualifiers -Wempty-body -Wextra -Wno-unused-parameter -Werror -Wno-strict-aliasing ${{ matrix.CXXFLAGS }}
-      OCCA_CC: ${{ matrix.CC }}
-      OCCA_CXX: ${{ matrix.CXX }}
-      OCCA_CXXFLAGS: -O3
       GCOV: ${{ matrix.GCOV }}
       OCCA_COVERAGE: ${{ matrix.OCCA_COVERAGE }}
       OCCA_FORTRAN_ENABLED: ${{ matrix.OCCA_FORTRAN_ENABLED }}
@@ -122,6 +119,10 @@ jobs:
 
     - name: CMake configure
       if: ${{ matrix.useCMake && matrix.useoneAPI}}
+      env:
+        OCCA_CC: ${{ matrix.CC }}
+        OCCA_CXX: ${{ matrix.CXX }}
+        OCCA_CXXFLAGS: -O3
       run: |
         source /opt/intel/oneapi/setvars.sh
         cmake -S . -B build \
@@ -138,6 +139,10 @@ jobs:
 
     - name: CMake build
       if: ${{ matrix.useCMake && matrix.useoneAPI}}
+      env:
+        OCCA_CC: ${{ matrix.CC }}
+        OCCA_CXX: ${{ matrix.CXX }}
+        OCCA_CXXFLAGS: -O3
       run: |
         source /opt/intel/oneapi/setvars.sh
         cmake --build build --parallel 16
@@ -165,6 +170,10 @@ jobs:
 
     - name: Run CTests
       if: ${{ matrix.useCMake && matrix.useoneAPI }}
+      env:
+        OCCA_CC: ${{ matrix.CC }}
+        OCCA_CXX: ${{ matrix.CXX }}
+        OCCA_CXXFLAGS: -O3
       run: |
         source /opt/intel/oneapi/setvars.sh
         export SYCL_DEVICE_FILTER=opencl.cpu
