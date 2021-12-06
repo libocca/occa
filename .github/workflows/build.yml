@@ -79,6 +79,7 @@ jobs:
       CXX: ${{ matrix.CXX }}
       FC: ${{ matrix.FC }}
       CXXFLAGS: -O3 -Wall -pedantic -Wshadow -Wsign-compare -Wuninitialized -Wtype-limits -Wignored-qualifiers -Wempty-body -Wextra -Wno-unused-parameter -Werror -Wno-strict-aliasing ${{ matrix.CXXFLAGS }}
+      OCCA_CXXFLAGS: -O3
       GCOV: ${{ matrix.GCOV }}
       OCCA_COVERAGE: ${{ matrix.OCCA_COVERAGE }}
       OCCA_FORTRAN_ENABLED: ${{ matrix.OCCA_FORTRAN_ENABLED }}
@@ -122,7 +123,6 @@ jobs:
       env:
         OCCA_CC: ${{ matrix.CC }}
         OCCA_CXX: ${{ matrix.CXX }}
-        OCCA_CXXFLAGS: -O3
       run: |
         source /opt/intel/oneapi/setvars.sh
         cmake -S . -B build \
@@ -142,7 +142,6 @@ jobs:
       env:
         OCCA_CC: ${{ matrix.CC }}
         OCCA_CXX: ${{ matrix.CXX }}
-        OCCA_CXXFLAGS: -O3
       run: |
         source /opt/intel/oneapi/setvars.sh
         cmake --build build --parallel 16
@@ -173,7 +172,6 @@ jobs:
       env:
         OCCA_CC: ${{ matrix.CC }}
         OCCA_CXX: ${{ matrix.CXX }}
-        OCCA_CXXFLAGS: -O3
       run: |
         source /opt/intel/oneapi/setvars.sh
         export SYCL_DEVICE_FILTER=opencl.cpu
