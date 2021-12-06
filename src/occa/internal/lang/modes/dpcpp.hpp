@@ -31,6 +31,7 @@ namespace occa
 
         virtual std::string getOuterIterator(const int loopIndex) override;
         virtual std::string getInnerIterator(const int loopIndex) override;
+        virtual std::string launchBoundsAttribute(const int innerDims[3]) override;
 
         void addExtensions();
         void addBarriers();
@@ -41,10 +42,11 @@ namespace occa
         void setSharedQualifiers();
         void setKernelQualifiers(function_t &function);
         void migrateLocalDecls(functionDeclStatement &kernelSmnt);
+        void setLaunchBounds();
 
-      void setupAtomics();
-      static bool transformAtomicBlockStatement(blockStatement &blockSmnt);
-      static bool transformAtomicBasicExpressionStatement(expressionStatement &exprSmnt);
+        void setupAtomics();
+        static bool transformAtomicBlockStatement(blockStatement &blockSmnt);
+        static bool transformAtomicBasicExpressionStatement(expressionStatement &exprSmnt);
 
       private:
         inline int dpcppDimensionOrder(const int index) { return 2 - index; }
