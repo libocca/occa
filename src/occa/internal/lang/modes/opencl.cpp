@@ -74,6 +74,18 @@ namespace occa {
         return name;
       }
 
+      std::string openclParser::launchBoundsAttribute(const int innerDims[3]) {
+        std::stringstream ss; 
+        ss << "__attribute__((reqd_work_group_size("
+           << innerDims[0]
+           << ","
+           << innerDims[1]
+           << ","
+           << innerDims[2]
+           << ")))\n";
+        return ss.str();
+      }
+
       void openclParser::addExtensions() {
         if (!settings.has("extensions")) {
           return;
@@ -299,6 +311,7 @@ namespace occa {
       }
 
       void openclParser::setKernelQualifiers(function_t &function) {
+
         function.returnType.add(0, kernel);
 
         const int argCount = (int) function.args.size();

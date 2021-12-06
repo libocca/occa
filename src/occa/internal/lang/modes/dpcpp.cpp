@@ -5,6 +5,7 @@
 #include <occa/internal/lang/builtins/attributes.hpp>
 #include <occa/internal/lang/builtins/types.hpp>
 #include <occa/internal/lang/expr.hpp>
+// #include <stringstream>
 
 namespace occa
 {
@@ -74,6 +75,19 @@ namespace occa
       std::string dpcppParser::getInnerIterator(const int loopIndex)
       {
         return "item_.get_local_id(" + occa::toString(dpcppDimensionOrder(loopIndex)) + ")";
+      }
+
+      std::string dpcppParser::launchBoundsAttribute(const int innerDims[3])
+      {
+        std::stringstream ss; 
+        ss << "[[sycl::reqd_work_group_size("
+           << innerDims[2]
+           << ","
+           << innerDims[1]
+           << ","
+           << innerDims[0]
+           << ")]]\n";
+        return ss.str();
       }
 
       // @note: As of SYCL 2020 this will need to change from `CL/sycl.hpp` to `sycl.hpp`
@@ -246,7 +260,6 @@ namespace occa
                      {
                        functionDeclStatement &funcDeclSmnt = (functionDeclStatement &)*smnt;
 
-                       // Only add __device__ to non-kernel functions
                        if (funcDeclSmnt.hasAttribute("kernel"))
                        {
                          return;
