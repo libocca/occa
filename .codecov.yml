@@ -27,7 +27,9 @@ ignore:
   # Modes that can't be tested with CI
   - src/occa/internal/modes/cuda
   - src/occa/internal/modes/hip
+  - src/occa/internal/modes/opencl
   - src/occa/internal/modes/metal
+  - src/occa/internal/modes/dpcpp
 
 comment:
   layout: 'reach, diff, files'
