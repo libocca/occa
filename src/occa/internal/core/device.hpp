@@ -71,6 +71,7 @@ namespace occa {
 
     //  |---[ Stream ]------------------
     virtual modeStream_t* createStream(const occa::json &props) = 0;
+    virtual modeStream_t* wrapStream(void *ptr, const occa::json &props) = 0;
 
     virtual streamTag tagStream() = 0;
     virtual void waitFor(streamTag tag) = 0;

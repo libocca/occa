@@ -88,6 +88,12 @@ namespace occa
       return new occa::dpcpp::stream(this, props, q);
     }
 
+    modeStream_t* device::wrapStream(void* ptr, const occa::json &props) {
+      OCCA_ERROR("A nullptr was passed to dpcpp::device::wrapStream",nullptr != ptr);
+      ::sycl::queue q = *static_cast<::sycl::queue*>(ptr);
+      return new stream(this, props, q);
+    }
+
     occa::streamTag device::tagStream()
     {
       //@note: This creates a host event which will return immediately.
