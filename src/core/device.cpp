@@ -256,6 +256,14 @@ namespace occa {
     return modeDevice->createStream(streamProperties(props));
   }
 
+  stream device::wrapStream(void* ptr, const occa::json &props) {
+    assertInitialized();
+
+    occa::json streamProps = streamProperties(props);
+
+    return modeDevice->wrapStream(ptr, streamProps);
+  }
+
   stream device::getStream() {
     assertInitialized();
     return modeDevice->currentStream;

@@ -138,10 +138,21 @@ namespace occa {
 
       setCudaContext();
 
-      OCCA_CUDA_ERROR("Device: createStream",
-                      cuStreamCreate(&cuStream, CU_STREAM_DEFAULT));
+      if (props.get<bool>("nonblocking", false)) {
+        OCCA_CUDA_ERROR("Device: createStream - NonBlocking",
+                        cuStreamCreate(&cuStream, CU_STREAM_NON_BLOCKING));
+      } else {
+        OCCA_CUDA_ERROR("Device: createStream",
+                        cuStreamCreate(&cuStream, CU_STREAM_DEFAULT));
+      }
 
       return new stream(this, props, cuStream);
+    }
+
+    modeStream_t* device::wrapStream(void* ptr, const occa::json &props) {
+      OCCA_ERROR("A nullptr was passed to cuda::device::wrapStream",nullptr != ptr);
+      CUstream cuStream = *static_cast<CUstream*>(ptr);
+      return new stream(this, props, cuStream, true);
     }
 
     occa::streamTag device::tagStream() {

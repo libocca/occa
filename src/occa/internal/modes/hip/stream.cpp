@@ -5,13 +5,17 @@ namespace occa {
   namespace hip {
     stream::stream(modeDevice_t *modeDevice_,
                    const occa::json &properties_,
-                   hipStream_t hipStream_) :
+                   hipStream_t hipStream_,
+                   bool isWrapped_) :
       modeStream_t(modeDevice_, properties_),
-      hipStream(hipStream_) {}
+      hipStream(hipStream_),
+      isWrapped(isWrapped_) {}
 
     stream::~stream() {
-      OCCA_HIP_ERROR("Device: freeStream",
-                      hipStreamDestroy(hipStream));
+      if (!isWrapped) {
+        OCCA_HIP_ERROR("Device: freeStream",
+                        hipStreamDestroy(hipStream));
+      }
     }
   }
 }
