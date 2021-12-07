@@ -7,12 +7,20 @@ void testInit();
 void testLoad();
 void testBadParsing();
 void testToString();
+void testSizeOf();
+void testNot();
+void testPositive();
+void testNegative();
 
 int main(const int argc, const char **argv) {
   testInit();
   testLoad();
   testBadParsing();
   testToString();
+  testSizeOf();
+  testNot();
+  testPositive();
+  testNegative();
 
   return 0;
 }
@@ -52,6 +60,10 @@ void testLoad() {
             (int) occa::primitive("15"));
   ASSERT_EQ(-15,
             (int) occa::primitive("-15"));
+
+  std::string fifteen{"15"};
+  ASSERT_EQ(15, (int) occa::primitive(fifteen));
+  ASSERT_EQ((int) -15, (int) occa::primitive::load("-15",true));
 
   ASSERT_EQ(15,
             (int) occa::primitive("0xF"));
@@ -110,7 +122,27 @@ void testLoad() {
             (double) occa::primitive("150.1E-1"));
   ASSERT_EQ(-15.01,
             (double) occa::primitive("-150.1E-1"));
+  
+  ASSERT_EQ(15.01,(double) occa::primitive("15.01"));
+  ASSERT_EQ(-15.01,(double) occa::primitive("-15.01"));
 
+  ASSERT_EQ( (float) 1e-16  ,(float) occa::primitive("1e-16F"));
+  ASSERT_EQ( (float) 1.e-16 ,(float) occa::primitive("1.e-16F"));
+  ASSERT_EQ( (float) 15.01  ,(float) occa::primitive("1.501e1F"));
+  ASSERT_EQ( (float) -15.01 ,(float) occa::primitive("-1.501e1F"));
+  ASSERT_EQ( (float) 15.01  ,(float) occa::primitive("1.501E1F"));
+  ASSERT_EQ( (float) -15.01 ,(float) occa::primitive("-1.501E1F"));
+  ASSERT_EQ( (float) 1e-15  ,(float) occa::primitive("1e-15F"));
+  ASSERT_EQ( (float) 1.e-15 ,(float) occa::primitive("1.e-15F"));
+  ASSERT_EQ( (float) 15.01  ,(float) occa::primitive("1.501e+1F"));
+  ASSERT_EQ( (float) -15.01 ,(float) occa::primitive("-1.501e+1F"));
+  ASSERT_EQ( (float) 15.01  ,(float) occa::primitive("1.501E+1F"));
+  ASSERT_EQ( (float) -15.01 ,(float) occa::primitive("-1.501E+1F"));
+  ASSERT_EQ( (float) 15.01  ,(float) occa::primitive("150.1e-1F"));
+  ASSERT_EQ( (float) -15.01 ,(float) occa::primitive("-150.1e-1F"));
+  ASSERT_EQ( (float) 15.01  ,(float) occa::primitive("150.1E-1F"));
+  ASSERT_EQ( (float) -15.01 ,(float) occa::primitive("-150.1E-1F"));
+  
   ASSERT_TRUE(!!(occa::primitive("0x7f800000U").type & occa::primitiveType::isUnsigned));
 
   ASSERT_TRUE(!!(occa::primitive("0x7f800000L").type & occa::primitiveType::int64_));
@@ -167,4 +199,82 @@ void testToString() {
 
   ASSERT_EQ("NaN",
             occa::primitive("").toString());
+}
+
+void testSizeOf() {
+  ASSERT_EQ(sizeof(bool),     occa::primitive(true)         .sizeof_()); 
+  ASSERT_EQ(sizeof(uint8_t),  occa::primitive((uint8_t) 1)  .sizeof_());
+  ASSERT_EQ(sizeof(uint16_t), occa::primitive((uint16_t) 1) .sizeof_());
+  ASSERT_EQ(sizeof(uint32_t), occa::primitive((uint32_t) 1) .sizeof_());
+  ASSERT_EQ(sizeof(uint64_t), occa::primitive((uint64_t) 1) .sizeof_());
+  ASSERT_EQ(sizeof(int8_t),   occa::primitive((int8_t) 1)   .sizeof_());
+  ASSERT_EQ(sizeof(int16_t),  occa::primitive((int16_t) 1)  .sizeof_());
+  ASSERT_EQ(sizeof(int32_t),  occa::primitive((int32_t) 1)  .sizeof_());
+  ASSERT_EQ(sizeof(int64_t),  occa::primitive((int64_t) 1)  .sizeof_());
+  ASSERT_EQ(sizeof(float),    occa::primitive((float) 1)    .sizeof_());
+  ASSERT_EQ(sizeof(double),   occa::primitive((double) 1)   .sizeof_());
+}
+
+void testNot() {
+  ASSERT_EQ(false        , (bool)     occa::primitive::not_(true)         );
+  ASSERT_EQ((uint8_t)   0, (uint8_t)  occa::primitive::not_((uint8_t)   1));
+  ASSERT_EQ((uint16_t)  0, (uint16_t) occa::primitive::not_((uint16_t)  1));
+  ASSERT_EQ((uint32_t)  0, (uint32_t) occa::primitive::not_((uint32_t)  1));
+  ASSERT_EQ((uint64_t)  0, (uint64_t) occa::primitive::not_((uint64_t)  1));
+  ASSERT_EQ((int8_t)    0, (int8_t)   occa::primitive::not_((int8_t)    1));
+  ASSERT_EQ((int16_t)   0, (int16_t)  occa::primitive::not_((int16_t)   1));
+  ASSERT_EQ((int32_t)   0, (int32_t)  occa::primitive::not_((int32_t)   1));
+  ASSERT_EQ((int64_t)   0, (int64_t)  occa::primitive::not_((int64_t)   1));
+}
+
+void testPositive() {
+  ASSERT_EQ(true         , (bool)     occa::primitive::positive(true)         );
+  ASSERT_EQ((uint8_t)   1, (uint8_t)  occa::primitive::positive((uint8_t)   1));
+  ASSERT_EQ((uint16_t)  1, (uint16_t) occa::primitive::positive((uint16_t)  1));
+  ASSERT_EQ((uint32_t)  1, (uint32_t) occa::primitive::positive((uint32_t)  1));
+  ASSERT_EQ((uint64_t)  1, (uint64_t) occa::primitive::positive((uint64_t)  1));
+  ASSERT_EQ((int8_t)    1, (int8_t)   occa::primitive::positive((int8_t)    1));
+  ASSERT_EQ((int16_t)   1, (int16_t)  occa::primitive::positive((int16_t)   1));
+  ASSERT_EQ((int32_t)   1, (int32_t)  occa::primitive::positive((int32_t)   1));
+  ASSERT_EQ((int64_t)   1, (int64_t)  occa::primitive::positive((int64_t)   1));
+  ASSERT_EQ((float)     1, (float)    occa::primitive::positive((float)     1));
+  ASSERT_EQ((double)    1, (double)   occa::primitive::positive((double)    1));
+
+  ASSERT_EQ(false         , (bool)     occa::primitive::positive(false)        );
+  ASSERT_EQ((uint8_t)   -1, (uint8_t)  occa::primitive::positive((uint8_t)  -1));
+  ASSERT_EQ((uint16_t)  -1, (uint16_t) occa::primitive::positive((uint16_t) -1));
+  ASSERT_EQ((uint32_t)  -1, (uint32_t) occa::primitive::positive((uint32_t) -1));
+  ASSERT_EQ((uint64_t)  -1, (uint64_t) occa::primitive::positive((uint64_t) -1));
+  ASSERT_EQ((int8_t)    -1, (int8_t)   occa::primitive::positive((int8_t)   -1));
+  ASSERT_EQ((int16_t)   -1, (int16_t)  occa::primitive::positive((int16_t)  -1));
+  ASSERT_EQ((int32_t)   -1, (int32_t)  occa::primitive::positive((int32_t)  -1));
+  ASSERT_EQ((int64_t)   -1, (int64_t)  occa::primitive::positive((int64_t)  -1));
+  ASSERT_EQ((float)     -1, (float)    occa::primitive::positive((float)    -1));
+  ASSERT_EQ((double)    -1, (double)   occa::primitive::positive((double)   -1));
+}
+
+void testNegative() {
+  ASSERT_EQ(true          , (bool)     occa::primitive::negative(true)         );
+  ASSERT_EQ((uint8_t)   -1, (uint8_t)  occa::primitive::negative((uint8_t)   1));
+  ASSERT_EQ((uint16_t)  -1, (uint16_t) occa::primitive::negative((uint16_t)  1));
+  ASSERT_EQ((uint32_t)  -1, (uint32_t) occa::primitive::negative((uint32_t)  1));
+  ASSERT_EQ((uint64_t)  -1, (uint64_t) occa::primitive::negative((uint64_t)  1));
+  ASSERT_EQ((int8_t)    -1, (int8_t)   occa::primitive::negative((int8_t)    1));
+  ASSERT_EQ((int16_t)   -1, (int16_t)  occa::primitive::negative((int16_t)   1));
+  ASSERT_EQ((int32_t)   -1, (int32_t)  occa::primitive::negative((int32_t)   1));
+  ASSERT_EQ((int64_t)   -1, (int64_t)  occa::primitive::negative((int64_t)   1));
+  ASSERT_EQ((float)     -1, (float)    occa::primitive::negative((float)     1));
+  ASSERT_EQ((double)    -1, (double)   occa::primitive::negative((double)    1));
+
+  ASSERT_EQ(false        , (bool)     occa::primitive::negative(false)        );
+  ASSERT_EQ((uint8_t)   1, (uint8_t)  occa::primitive::negative((uint8_t)  -1));
+  ASSERT_EQ((uint16_t)  1, (uint16_t) occa::primitive::negative((uint16_t) -1));
+  ASSERT_EQ((uint32_t)  1, (uint32_t) occa::primitive::negative((uint32_t) -1));
+  ASSERT_EQ((uint64_t)  1, (uint64_t) occa::primitive::negative((uint64_t) -1));
+  ASSERT_EQ((int8_t)    1, (int8_t)   occa::primitive::negative((int8_t)   -1));
+  ASSERT_EQ((int16_t)   1, (int16_t)  occa::primitive::negative((int16_t)  -1));
+  ASSERT_EQ((int32_t)   1, (int32_t)  occa::primitive::negative((int32_t)  -1));
+  ASSERT_EQ((int64_t)   1, (int64_t)  occa::primitive::negative((int64_t)  -1));
+  ASSERT_EQ((float)     1, (float)    occa::primitive::negative((float)    -1));
+  ASSERT_EQ((double)    1, (double)   occa::primitive::negative((double)   -1));
 }
