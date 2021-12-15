@@ -59,7 +59,7 @@ OCCA uses the [CMake] build system. For a comprehensive overview of all build se
 
 ### Linux 
 
-For conveinence, the shell script `configure.sh` has been provided drive the Cmake build. Compilers, flags, and other build parameters can be adjusted there. By default OCCA will be built and installed in `./build` and `./install`.
+For convenience, the shell script `configure.sh` has been provided drive the Cmake build. Compilers, flags, and other build parameters can be adjusted there. By default OCCA will be built and installed in `./build` and `./install`.
 
 The following demonstrates a typical sequence of shell commands to build, test, and install occa:
 ```
