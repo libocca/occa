@@ -124,7 +124,7 @@ namespace occa {
                      hipSetDevice(deviceID));
       if (props.get<bool>("nonblocking", false)) {
         OCCA_HIP_ERROR("Device: createStream - NonBlocking",
-                       hipStreamCreateWithFlag(&hipStream, hipStreamNonBlocking));
+                       hipStreamCreateWithFlags(&hipStream, hipStreamNonBlocking));
       } else {
         OCCA_HIP_ERROR("Device: createStream",
                        hipStreamCreate(&hipStream));
