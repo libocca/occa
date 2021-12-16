@@ -19,7 +19,7 @@ namespace occa {
 
     int getDeviceCount() {
       int deviceCount = 0;
-      hipGetDeviceCount(&deviceCount);
+      static_cast<void>(hipGetDeviceCount(&deviceCount));
       return deviceCount;
     }
 
