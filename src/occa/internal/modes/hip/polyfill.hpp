@@ -275,7 +275,7 @@ namespace occa {
     return OCCA_HIP_IS_NOT_ENABLED;
   }
 
-  inline hipError_t hipStreamCreateWithFlag(hipStream_t *phStream, unsigned int flags) {
+  inline hipError_t hipStreamCreateWithFlags(hipStream_t *phStream, unsigned int flags) {
     return OCCA_HIP_IS_NOT_ENABLED;
   }
 
