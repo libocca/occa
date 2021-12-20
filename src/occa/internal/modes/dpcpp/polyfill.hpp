@@ -165,6 +165,14 @@ namespace sycl
     }
   }
 
+  namespace property {
+    namespace queue {
+      class in_order
+      {
+      };
+    }
+  }
+
   class property_list {
     public:
     template <typename... propertyTN> property_list(propertyTN... props)
