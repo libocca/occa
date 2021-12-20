@@ -84,7 +84,11 @@ namespace occa
     //---[ Stream ]---------------------
     modeStream_t *device::createStream(const occa::json &props)
     {
-      ::sycl::queue q(dpcppContext, dpcppDevice, ::sycl::property::queue::enable_profiling{});
+      ::sycl::queue q(dpcppContext, 
+                      dpcppDevice, 
+                      {::sycl::property::queue::enable_profiling{},
+                      ::sycl::property::queue::in_order{}
+                      });
       return new occa::dpcpp::stream(this, props, q);
     }
 
