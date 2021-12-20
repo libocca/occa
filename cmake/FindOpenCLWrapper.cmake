@@ -7,7 +7,7 @@
 if(NOT OPENCL_ROOT)
   # Search in user specified path first
   find_path(OPENCL_ROOT
-    NAMES include/CL/cl.h
+    NAMES CL/cl.h
     PATHS
     ENV   OPENCL_PATH
     DOC   "OPENCL root location"
@@ -15,8 +15,13 @@ if(NOT OPENCL_ROOT)
 
   # Now search in default path
   find_path(OPENCL_ROOT
-    NAMES include/CL/cl.h
-    PATHS /usr/ /opt/rocm/opencl /usr/local/cuda
+    NAMES CL/cl.h
+    PATHS 
+      /usr 
+      /opt/rocm/opencl 
+      /usr/local/cuda 
+      /opt/intel/oneapi/compiler/latest/linux
+    PATH_SUFFIXES sycl
     DOC   "OPENCL root location")
 endif()
 
