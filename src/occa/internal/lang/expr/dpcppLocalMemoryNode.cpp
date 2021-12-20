@@ -25,7 +25,7 @@ namespace occa
 
     void dpcppLocalMemoryNode::print(printer &pout) const
     {
-      pout << "*(sycl::group_local_memory_for_overwrite<";
+      pout << "*(sycl::ext::oneapi::group_local_memory_for_overwrite<";
       pout << shared_type;
       pout << ">(";
       pout << handler_name;
