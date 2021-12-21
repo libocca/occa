@@ -13,6 +13,10 @@ void testNot();
 void testPositive();
 void testNegative();
 void testTilde();
+void testLeftIncrement();
+void testRightIncrement();
+void testLeftDecrement();
+void testRightDecrement();
 
 int main(const int argc, const char **argv) {
   testInit();
@@ -24,6 +28,10 @@ int main(const int argc, const char **argv) {
   testPositive();
   testNegative();
   testTilde();
+  testLeftIncrement();
+  testRightIncrement();
+  testLeftDecrement();
+  testRightDecrement();
 
   return 0;
 }
@@ -326,4 +334,164 @@ void testTilde() {
   //Cannot apply tilde to floating point types.
   ASSERT_THROW(occa::primitive::tilde(1.2345f));
   ASSERT_THROW(occa::primitive::tilde(1.2345));
+}
+
+void testLeftIncrement() {
+  occa::primitive p(true);
+  ASSERT_THROW(occa::primitive::leftIncrement(p));
+  
+  p = occa::primitive((uint8_t) 7);
+  ASSERT_EQ(uint8_t(8),(uint8_t) occa::primitive::leftIncrement(p));
+
+  p = occa::primitive((uint16_t) 7);
+  ASSERT_EQ(uint16_t(8),(uint16_t) occa::primitive::leftIncrement(p));
+
+  p = occa::primitive((uint32_t) 7);
+  ASSERT_EQ(uint32_t(8),(uint32_t) occa::primitive::leftIncrement(p));
+
+  p = occa::primitive((uint64_t) 7);
+  ASSERT_EQ(uint64_t(8),(uint64_t) occa::primitive::leftIncrement(p));
+
+  p = occa::primitive((int8_t) 7);
+  ASSERT_EQ(int8_t(8),(int8_t) occa::primitive::leftIncrement(p));
+
+  p = occa::primitive((int16_t) 7);
+  ASSERT_EQ(int16_t(8),(int16_t) occa::primitive::leftIncrement(p));
+
+  p = occa::primitive((int32_t) 7);
+  ASSERT_EQ(int32_t(8),(int32_t) occa::primitive::leftIncrement(p));
+
+  p = occa::primitive((int64_t) 7);
+  ASSERT_EQ(int64_t(8),(int64_t) occa::primitive::leftIncrement(p));  
+
+  p = occa::primitive((float) 7);
+  ASSERT_EQ((float) 8,(float) occa::primitive::leftIncrement(p));
+
+  p = occa::primitive((double) 7);
+  ASSERT_EQ((double) 8,(double) occa::primitive::leftIncrement(p));
+}
+
+void testRightIncrement() {
+  occa::primitive p(true);
+  ASSERT_THROW(occa::primitive::rightIncrement(p));
+  
+  p = occa::primitive((uint8_t) 7);
+  occa::primitive::rightIncrement(p);
+  ASSERT_EQ(uint8_t(8),(uint8_t) p);
+
+  p = occa::primitive((uint16_t) 7);
+  occa::primitive::rightIncrement(p);
+  ASSERT_EQ(uint16_t(8),(uint16_t) p);
+
+  p = occa::primitive((uint32_t) 7);
+  occa::primitive::rightIncrement(p);
+  ASSERT_EQ(uint32_t(8),(uint32_t) p);
+
+  p = occa::primitive((uint64_t) 7);
+  occa::primitive::rightIncrement(p);
+  ASSERT_EQ(uint64_t(8),(uint64_t) p);
+
+  p = occa::primitive((int8_t) 7);
+  occa::primitive::rightIncrement(p);
+  ASSERT_EQ(int8_t(8),(int8_t) p);
+
+  p = occa::primitive((int16_t) 7);
+  occa::primitive::rightIncrement(p);
+  ASSERT_EQ(int16_t(8),(int16_t) p);
+
+  p = occa::primitive((int32_t) 7);
+  occa::primitive::rightIncrement(p);
+  ASSERT_EQ(int32_t(8),(int32_t) p);
+
+  p = occa::primitive((int64_t) 7);
+  occa::primitive::rightIncrement(p);
+  ASSERT_EQ(int64_t(8),(int64_t) p);  
+
+  p = occa::primitive(0.2345f);
+  occa::primitive::rightIncrement(p);
+  ASSERT_EQ(1.2345f,(float) p);
+
+  p = occa::primitive(0.2345);
+  occa::primitive::rightIncrement(p);
+  ASSERT_EQ(1.2345,(double) p);
+}
+
+void testLeftDecrement() {
+  occa::primitive p(true);
+  ASSERT_THROW(occa::primitive::leftDecrement(p));
+  
+  p = occa::primitive((uint8_t) 7);
+  ASSERT_EQ(uint8_t(6),(uint8_t) occa::primitive::leftDecrement(p));
+
+  p = occa::primitive((uint16_t) 7);
+  ASSERT_EQ(uint16_t(6),(uint16_t) occa::primitive::leftDecrement(p));
+
+  p = occa::primitive((uint32_t) 7);
+  ASSERT_EQ(uint32_t(6),(uint32_t) occa::primitive::leftDecrement(p));
+
+  p = occa::primitive((uint64_t) 7);
+  ASSERT_EQ(uint64_t(6),(uint64_t) occa::primitive::leftDecrement(p));
+
+  p = occa::primitive((int8_t) 7);
+  ASSERT_EQ(int8_t(6),(int8_t) occa::primitive::leftDecrement(p));
+
+  p = occa::primitive((int16_t) 7);
+  ASSERT_EQ(int16_t(6),(int16_t) occa::primitive::leftDecrement(p));
+
+  p = occa::primitive((int32_t) 7);
+  ASSERT_EQ(int32_t(6),(int32_t) occa::primitive::leftDecrement(p));
+
+  p = occa::primitive((int64_t) 7);
+  ASSERT_EQ(int64_t(6),(int64_t) occa::primitive::leftDecrement(p));  
+
+  p = occa::primitive((float) 7);
+  ASSERT_EQ((float) 6,(float) occa::primitive::leftDecrement(p));
+
+  p = occa::primitive((double) 7);
+  ASSERT_EQ((double) 6,(double) occa::primitive::leftDecrement(p));
+}
+
+void testRightDecrement() {
+  occa::primitive p(true);
+  ASSERT_THROW(occa::primitive::rightDecrement(p));
+  
+  p = occa::primitive((uint8_t) 7);
+  occa::primitive::rightDecrement(p);
+  ASSERT_EQ(uint8_t(6),(uint8_t) p);
+
+  p = occa::primitive((uint16_t) 7);
+  occa::primitive::rightDecrement(p);
+  ASSERT_EQ(uint16_t(6),(uint16_t) p);
+
+  p = occa::primitive((uint32_t) 7);
+  occa::primitive::rightDecrement(p);
+  ASSERT_EQ(uint32_t(6),(uint32_t) p);
+
+  p = occa::primitive((uint64_t) 7);
+  occa::primitive::rightDecrement(p);
+  ASSERT_EQ(uint64_t(6),(uint64_t) p);
+
+  p = occa::primitive((int8_t) 7);
+  occa::primitive::rightDecrement(p);
+  ASSERT_EQ(int8_t(6),(int8_t) p);
+
+  p = occa::primitive((int16_t) 7);
+  occa::primitive::rightDecrement(p);
+  ASSERT_EQ(int16_t(6),(int16_t) p);
+
+  p = occa::primitive((int32_t) 7);
+  occa::primitive::rightDecrement(p);
+  ASSERT_EQ(int32_t(6),(int32_t) p);
+
+  p = occa::primitive((int64_t) 7);
+  occa::primitive::rightDecrement(p);
+  ASSERT_EQ(int64_t(6),(int64_t) p);  
+
+  p = occa::primitive((float) 7);
+  occa::primitive::rightDecrement(p);
+  ASSERT_EQ((float) 6,(float) p);
+
+  p = occa::primitive((double) 7);
+  occa::primitive::rightDecrement(p);
+  ASSERT_EQ((double) 6 ,(double) p);
 }
