@@ -2,6 +2,7 @@
 #include <occa/types/primitive.hpp>
 #include <occa/internal/utils/sys.hpp>
 #include <occa/internal/utils/testing.hpp>
+#include <limits>
 
 void testInit();
 void testLoad();
@@ -11,6 +12,7 @@ void testSizeOf();
 void testNot();
 void testPositive();
 void testNegative();
+void testTilde();
 
 int main(const int argc, const char **argv) {
   testInit();
@@ -21,6 +23,7 @@ int main(const int argc, const char **argv) {
   testNot();
   testPositive();
   testNegative();
+  testTilde();
 
   return 0;
 }
@@ -74,14 +77,37 @@ void testLoad() {
   ASSERT_EQ(-15,
             (int) occa::primitive("-0XF"));
 
-  ASSERT_EQ(15,
-            (int) occa::primitive("0b1111"));
-  ASSERT_EQ(15,
-            (int) occa::primitive("0B1111"));
-  ASSERT_EQ(-15,
-            (int) occa::primitive("-0b1111"));
-  ASSERT_EQ(-15,
-            (int) occa::primitive("-0B1111"));
+  ASSERT_EQ((uint8_t) 15,(uint8_t) occa::primitive("0b1111"));
+  ASSERT_EQ((uint8_t) 15,(uint8_t) occa::primitive("0B1111"));
+  ASSERT_EQ((int8_t) -15,(int8_t) occa::primitive("-0b1111"));
+  ASSERT_EQ((int8_t) -15,(int8_t) occa::primitive("-0B1111"));
+
+  ASSERT_EQ((uint16_t) 15,
+    (uint16_t) occa::primitive("0b00001111"));
+  ASSERT_EQ((uint16_t) 15,
+    (uint16_t) occa::primitive("0B00001111"));
+  ASSERT_EQ((int16_t) -15,
+    (int16_t) occa::primitive("-0b00001111"));
+  ASSERT_EQ((int16_t) -15,
+    (int16_t) occa::primitive("-0B00001111"));
+
+  ASSERT_EQ((uint32_t) 15,
+    (uint32_t) occa::primitive("0b0000000000001111"));
+  ASSERT_EQ((uint32_t) 15,
+    (uint32_t) occa::primitive("0B0000000000001111"));
+  ASSERT_EQ((int32_t) -15,
+    (int32_t) occa::primitive("-0b0000000000001111"));
+  ASSERT_EQ((int32_t) -15,
+    (int32_t) occa::primitive("-0B0000000000001111"));
+
+  ASSERT_EQ((uint64_t) 15,
+    (uint64_t) occa::primitive("0b00000000000000000000000000001111"));
+  ASSERT_EQ((uint64_t) 15,
+    (uint64_t) occa::primitive("0B00000000000000000000000000001111"));
+  ASSERT_EQ((int64_t) -15,
+    (int64_t) occa::primitive("-0b00000000000000000000000000001111"));
+  ASSERT_EQ((int64_t) -15,
+    (int64_t) occa::primitive("-0B00000000000000000000000000001111"));
 
   ASSERT_EQ(15.01,
             (double) occa::primitive("15.01"));
@@ -197,8 +223,10 @@ void testToString() {
   ASSERT_EQ("0x7f800000LL",
             occa::primitive("0x7f800000LL").toString());
 
-  ASSERT_EQ("NaN",
-            occa::primitive("").toString());
+  ASSERT_EQ("1.2345f",
+            occa::primitive("1.2345f").toString());
+
+  ASSERT_EQ("",occa::primitive().toString());
 }
 
 void testSizeOf() {
@@ -277,4 +305,25 @@ void testNegative() {
   ASSERT_EQ((int64_t)   1, (int64_t)  occa::primitive::negative((int64_t)  -1));
   ASSERT_EQ((float)     1, (float)    occa::primitive::negative((float)    -1));
   ASSERT_EQ((double)    1, (double)   occa::primitive::negative((double)   -1));
+}
+
+void testTilde() {
+  ASSERT_EQ(false, (bool) occa::primitive::tilde(true));
+  ASSERT_EQ(true , (bool) occa::primitive::tilde(false));
+  
+  ASSERT_EQ(uint8_t(1), (uint8_t) occa::primitive::tilde(~(uint8_t(1))));
+  ASSERT_EQ(int8_t(1), (int8_t)  occa::primitive::tilde(~(int8_t(1))));
+
+  ASSERT_EQ(uint16_t(1), (uint16_t) occa::primitive::tilde(~(uint16_t(1))));
+  ASSERT_EQ(int16_t(1), (int16_t)  occa::primitive::tilde(~(int16_t(1))));
+  
+  ASSERT_EQ(uint32_t(1), (uint32_t) occa::primitive::tilde(~(uint32_t(1))));
+  ASSERT_EQ(int32_t(1), (int32_t)  occa::primitive::tilde(~(int32_t(1))));
+  
+  ASSERT_EQ(uint64_t(1), (uint64_t) occa::primitive::tilde(~(uint64_t(1))));
+  ASSERT_EQ(int64_t(1), (int64_t)  occa::primitive::tilde(~(int64_t(1))));
+
+  //Cannot apply tilde to floating point types.
+  ASSERT_THROW(occa::primitive::tilde(1.2345f));
+  ASSERT_THROW(occa::primitive::tilde(1.2345));
 }
