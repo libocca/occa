@@ -8,6 +8,10 @@
 
 #include <occa/utils/gc.hpp>
 
+#if OCCA_THREAD_SHARABLE_ENABLED
+#include <occa/utils/mutex.hpp>
+#endif
+
 namespace occa {
   namespace gc {
     class withRefs {
@@ -27,6 +31,11 @@ namespace occa {
 
     template <class entry_t>
     class ring_t {
+  #if OCCA_THREAD_SHARABLE_ENABLED
+    private:
+      static mutex_t mutex;
+  #endif
+
     public:
       bool useRefs;
       ringEntry_t *head;
@@ -37,7 +46,11 @@ namespace occa {
       void clear();
 
       void addRef(entry_t *entry);
+    #if OCCA_THREAD_SHARABLE_ENABLED
+      void removeRef(entry_t *entry, const bool threadLock = true);
+    #else
       void removeRef(entry_t *entry);
+    #endif
 
       bool needsFree() const;
 
