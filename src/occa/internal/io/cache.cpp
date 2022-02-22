@@ -88,7 +88,6 @@ namespace occa {
     bool cachedFileIsComplete(const std::string &hashDir,
                               const std::string &filename) {
       std::string successFile = hashDir;
-      successFile += ".success/";
       successFile += filename;
 
       return io::exists(successFile);
