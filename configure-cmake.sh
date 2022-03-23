@@ -1,0 +1,52 @@
+# !/bin/bash
+
+# A semicolon separated list of non-default paths to dependencies
+PREFIX_PATHS=""
+
+# Default build parameters
+: ${BUILD_DIR:=`pwd`/build}
+: ${INSTALL_PATH:=`pwd`/install}
+: ${BUILD_TYPE:="RelWithDebInfo"}
+
+: ${CC:="gcc"}
+: ${CXX:="g++"}
+: ${FC:="gfortran"}
+
+: ${MPICC:="mpicc"}
+: ${MPICXX:="mpicxx"}
+: ${MPIFC:="mpif77"}
+
+: ${ENABLE_DPCPP:="ON"}
+: ${ENABLE_OPENCL:="ON"}
+: ${ENABLE_CUDA:="ON"}
+: ${ENABLE_HIP="ON"}
+: ${ENABLE_OPENMP="ON"}
+: ${ENABLE_METAL="ON"}
+: ${ENABLE_MPI="OFF"}
+: ${ENABLE_FORTRAN="OFF"}
+: ${ENABLE_TESTS="ON"}
+: ${ENABLE_EXAMPLES="ON"}
+
+cmake -S . -B ${BUILD_DIR} \
+  -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+  -DCMAKE_INSTALL_PREFIX=${INSTALL_PATH} \
+  -DCMAKE_PREFIX_PATH=${PREFIX_PATHS} \
+  -DCMAKE_C_COMPILER=${CC} \
+  -DCMAKE_CXX_COMPILER=${CXX} \
+  -DCMAKE_Fortran_COMPILER=${FC} \
+  -DCMAKE_CXX_FLAGS="${CXXFLAGS}" \
+  -DCMAKE_C_FLAGS="${CFLAGS}" \
+  -DCMAKE_Fortran_FLAGS="${FFLAGS}" \
+  -DMPI_C_COMPILER=${MPICC} \
+  -DMPI_CXX_COMPILER=${MPICXX} \
+  -DMPI_Fortran_COMPILER=${MPIFC} \
+  -DENABLE_OPENMP=${ENABLE_OPENMP} \
+  -DENABLE_OPENCL=${ENABLE_OPENCL} \
+  -DENABLE_DPCPP=${ENABLE_DPCPP} \
+  -DENABLE_CUDA=${ENABLE_CUDA} \
+  -DENABLE_HIP=${ENABLE_HIP} \
+  -DENABLE_METAL=${ENABLE_METAL} \
+  -DENABLE_MPI=${ENABLE_MPI} \
+  -DENABLE_FORTRAN=${ENABLE_FORTRAN} \
+  -DENABLE_TESTS=${ENABLE_TESTS} \
+  -DENABLE_EXAMPLES=${ENABLE_EXAMPLES}
