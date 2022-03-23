@@ -70,6 +70,11 @@ If dependencies are installed in a non-standard location, set the corresponding 
 
 ## Use
 
+### Building an OCCA application
+
+OCCA provides CMake package files which are included during installation. 
+To use OCCA in a downstream project (...)
+
 ### Environment
 
 During installation, the [Env Modules](Env_Modules) file `<install-prefix>/modulefiles/occa` is generated. When this module is loaded, paths to the installed `bin`, `lib`, and `include` directories are appended to environment variables such as `PATH` and `LD_LIBRARY_PATH`.
@@ -145,7 +150,6 @@ This work was supported in part by
 
 OCCA is available under a [MIT license](LICENSE.MD)
 
-[OCCA_WEBSITE]: https://libocca.org
 
 [OCCA_WEBSITE]: https://libocca.org
 
