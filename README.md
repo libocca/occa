@@ -8,6 +8,7 @@
 <div align="center"> 
 
 [![license](https://img.shields.io/github/license/libocca/occa)](LICENSE)
+![discussions](https://img.shields.io/github/discussions/libocca/occa)
 [![slack](https://img.shields.io/badge/Chat-on%20Slack-%23522653)][OCCA_SLACK]
 ![github-ci](https://github.com/libocca/occa/workflows/Build/badge.svg)
 ![codecov](https://codecov.io/github/libocca/occa/coverage.svg)
@@ -50,12 +51,12 @@ Mission critical computational science and engineering applications from the pub
  - OpenMP ...
 
 
-Detailed list of tested platforms can be found in the [installation guide](INSTALL.md)
+A detailed list of tested platforms can be found in the [installation guide](INSTALL.md).
 
 
 ## Build, Test, Install
 
-OCCA uses the [CMake] build system. For a comprehensive overview of all build settings, checkout the [installation guide](INSTALL.md)
+OCCA uses the [CMake] build system. Checkout the [installation guide](INSTALL.md) for a comprehensive overview of all build settings.
 
 ### Linux 
 
@@ -81,7 +82,8 @@ $> cmake --install build --prefix install
 
 ### Building an OCCA application
 
-OCCA provides CMake package files which are included during installation. To use OCCA in a downstream project
+OCCA provides CMake package files which are included during installation. 
+To use OCCA in a downstream project (...)
 
 ### Environment
 
@@ -91,11 +93,11 @@ OCCA provides CMake package files which are included during installation. To use
 
 ### Support
 
-Need help? Checkout the documentation at [libocca.org][OCCA_WEBSITE] or ask a question in the \#help channel on [Slack][OCCA_SLACK]
+Need help? Checkout the [repository wiki](https://github.com/libocca/occa/wiki) or ask a question in the [Q&A discussions category](https://github.com/libocca/occa/discussions/categories/q-a).
 
 ### Feedback
 
-To provide feedback, start a conversation on [Slack][OCCA_SLACK] on the \#general or \#ideas channel.
+To provide feedback, start a conversation in the [general](https://github.com/libocca/occa/discussions/categories/general) or [ideas](https://github.com/libocca/occa/discussions/categories/ideas) discussion categories.
 
 ### Get Involved
 OCCA is a community driven project that relies on the support of people like you! For ways to get involved, see our [contributing guidelines](CONTRIBUTING.md).
@@ -108,19 +110,6 @@ OCCA is a community driven project that relies on the support of people like you
 
 OCCA is available under a [MIT license](LICENSE.MD)
 
-## Similar Projects
-
-- [Alpaka](https://github.com/alpaka-group/alpaka)
-
-  > The alpaka library is a header-only C++14 abstraction library for accelerator development. Its aim is to provide performance portability across accelerators through the abstraction (not hiding!) of the underlying levels of parallelism.
-
-- [RAJA](https://github.com/LLNL/RAJA)
-
-   > RAJA is a library of C++ software abstractions, primarily developed at Lawrence Livermore National Laboratory (LLNL), that enables architecture and programming model portability for HPC applications
-
-- [Kokkos](https://github.com/kokkos/kokkos)
-
-   > Kokkos Core implements a programming model in C++ for writing performance portable applications targeting all major HPC platforms. For that purpose it provides abstractions for both parallel execution of code and data management.
 
 [OCCA_WEBSITE]: https://libocca.org
 
