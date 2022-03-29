@@ -299,7 +299,6 @@ namespace occa {
 
       command << compiler
               << ' ' << compilerFlags
-              << " -Xptxas -v,-dlcm=cg"
 #if (OCCA_OS == OCCA_WINDOWS_OS)
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
 #endif
