@@ -48,7 +48,7 @@ jobs:
             os: ubuntu-latest
             CC: icx
             CXX: icpx
-            CXXFLAGS: -Wno-uninitialized -pthread
+            CXXFLAGS: -Wno-uninitialized
             FC: ifx
             GCOV: gcov-9
             OCCA_COVERAGE: 1
