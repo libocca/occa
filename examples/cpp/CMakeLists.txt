@@ -16,6 +16,8 @@ add_subdirectory(14_cuda_interop)
 add_subdirectory(18_nonblocking_streams)
 add_subdirectory(20_native_dpcpp_kernel)
 
+add_subdirectory(XX_async_build_kernels)
+
 # Don't force-compile OpenGL examples
 # add_subdirectory(16_finite_difference)
 # add_subdirectory(17_mandelbulb)

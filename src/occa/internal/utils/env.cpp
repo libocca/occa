@@ -1,19 +1,18 @@
 #include <cstdlib>
+#include <functional>
 
 #include <occa/core/base.hpp>
 #include <occa/internal/io.hpp>
 #include <occa/internal/utils/env.hpp>
 #include <occa/internal/utils/sys.hpp>
-#include <occa/internal/utils/tls.hpp>
 
 namespace occa {
   json& settings() {
-    static tls<json> settings_;
-    json& props = settings_.value();
+    thread_local  json props;
     if (!props.size()) {
       props = env::baseSettings();
     }
-    return props;
+    return std::ref(props);
   }
 
   namespace env {
