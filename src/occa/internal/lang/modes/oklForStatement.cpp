@@ -44,6 +44,19 @@ namespace occa {
           && hasValidCheck()
           && hasValidUpdate()
         );
+
+        if(valid) {
+          exprNode* loop_range_node = getIterationCount();
+          if (loop_range_node->canEvaluate()) {
+            int loop_range = loop_range_node->evaluate();
+            if (!(0 < loop_range)) {
+              valid = false;
+              if(printErrors_)
+                forSmnt_.printError("OKL for loop is empty or infinite!");
+            }
+          }
+          delete loop_range_node;
+        }
       }
 
       bool oklForStatement::isValid() {
@@ -263,14 +276,17 @@ namespace occa {
         if (!valid) {
           return NULL;
         }
-
         exprNode *initInParen = initValue->wrapInParentheses();
-        exprNode *count = (
-          new binaryOpNode(iterator->source,
-                           positiveUpdate ? op::sub : op::add,
-                           *checkValue,
-                           *initInParen)
-        );
+        
+        //If incrementing, assume loop bound is large than initial value
+        //If decrementing: assume initial value is larger than loop bound
+        exprNode *smaller = (positiveUpdate) ? initInParen : checkValue;
+        exprNode *larger  = (positiveUpdate) ? checkValue : initInParen;
+        exprNode *count = (new binaryOpNode(iterator->source,
+                           op::sub,
+                           *larger,
+                           *smaller)
+        );  
         delete initInParen;
 
         if (checkIsInclusive) {
@@ -278,29 +294,34 @@ namespace occa {
 
           exprNode *countWithInc = (
             new binaryOpNode(iterator->source,
-                             positiveUpdate ? op::sub : op::add,
-                             *count,
-                             inc)
+                             op::add,
+                             inc,
+                             *count)
           );
           delete count;
           count = countWithInc;
         }
 
         if (updateValue) {
+          // ceil(n/m) = floor((n+m-1)/m)
           exprNode *updateInParen = updateValue->wrapInParentheses();
+          binaryOpNode countPlusUpdate(
+            iterator->source,
+            op::add,
+            *count,
+            *updateInParen
+          );
 
           primitiveNode one(iterator->source, 1);
-          binaryOpNode boundCheck(iterator->source,
-                                  positiveUpdate ? op::add : op::sub,
-                                  *count,
-                                  *updateInParen);
-          binaryOpNode boundCheck2(iterator->source,
-                                   positiveUpdate ? op::sub : op::add,
-                                   boundCheck,
-                                   one);
-          exprNode *boundCheckInParen = boundCheck2.wrapInParentheses();
+          binaryOpNode countPlusUpdateMinusOne(
+            iterator->source,
+            op::sub,
+            countPlusUpdate,
+            one
+          );
+          exprNode *boundCheckInParen = countPlusUpdateMinusOne.wrapInParentheses();
 
-          exprNode *countWithUpdate = (
+          exprNode *ceilingQuotient = (
             new binaryOpNode(iterator->source,
                              op::div,
                              *boundCheckInParen,
@@ -309,7 +330,7 @@ namespace occa {
           delete count;
           delete updateInParen;
           delete boundCheckInParen;
-          count = countWithUpdate;
+          count = ceilingQuotient;
         }
 
         return count;
