@@ -41,7 +41,7 @@ namespace occa {
             error = !value.isInteger();
             if(!error) {
               int intValue = value;
-              error = (intValue < 0);
+              error = !(0 < intValue);
             }
           }
           if(error) {
