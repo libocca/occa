@@ -250,7 +250,7 @@ namespace occa {
       case primitiveType::float_  : str = occa::toString(value.float_);  break;
       case primitiveType::double_ : str = occa::toString(value.double_); break;
       case primitiveType::none :
-      default: return ""; break;
+      default: return "";
     }
 
     if (type & (primitiveType::uint64_ |
