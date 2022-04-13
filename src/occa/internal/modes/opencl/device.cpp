@@ -48,6 +48,12 @@ namespace occa {
         compilerFlags = (std::string) kernelProps["compiler_flags"];
       }
 
+      std::string ocl_c_ver = "2.0";
+      if (env::var("OCCA_OPENCL_C_VERSION").size()) {
+        ocl_c_ver = env::var("OCCA_OPENCL_C_VERSION");
+      }
+      compilerFlags += " -cl-std=CL" + ocl_c_ver;
+
       kernelProps["compiler_flags"] = compilerFlags;
     }
 
