@@ -9,13 +9,13 @@
 namespace occa {
   namespace lang {
     namespace okl {
-      qualifier_t openclParser::global("__global", qualifierType::custom);
 
       openclParser::openclParser(const occa::json &settings_) :
         withLauncher(settings_),
         constant("__constant", qualifierType::custom),
         kernel("__kernel", qualifierType::custom),
-        local("__local", qualifierType::custom) {
+        local("__local", qualifierType::custom), 
+        global("__global",qualifierType::custom) {
 
         okl::addOklAttributes(*this);
 
@@ -130,87 +130,19 @@ namespace occa {
             .nestedForEachDeclaration([&](variableDeclaration &decl) {
                 variable_t &var = decl.variable();
                 if (var.hasAttribute("shared")) {
-                  var.add(0, local);
+                  var.add(0,local);
                 }
               });
       }
 
-      bool openclParser::sharedVariableMatcher(exprNode &expr) {
-        return expr.hasAttribute("shared");
-      }
-
       void openclParser::setGlobalQualifiers() {
-        root.children
-            .flatFilterByStatementType(
-              statementType::declaration
-              | statementType::functionDecl
-              | statementType::function
-            )
-            .forEach(updateGlobalVariables);
-      }
-
-      void openclParser::updateGlobalVariables(statement_t *smnt) {
-        if (smnt->type() & statementType::function) {
-          addGlobalToFunctionArgs(
-            smnt->to<functionStatement>().function()
-          );
-        }
-        else if (smnt->type() & statementType::functionDecl) {
-          addGlobalToFunctionArgs(
-            smnt->to<functionDeclStatement>().function()
-          );
-        }
-        else {
-          declarationStatement &declSmnt = smnt->to<declarationStatement>();
-          const int declCount = declSmnt.declarations.size();
-          for (int i = 0; i < declCount; ++i) {
-            addGlobalToVariable(
-              declSmnt.declarations[i].variable()
-            );
-          }
-        }
-      }
-
-      void openclParser::addGlobalToFunctionArgs(function_t &func) {
-        const int argc = (int) func.args.size();
-        for (int i = 0; i < argc; ++i) {
-          variable_t *arg = func.args[i];
-          if (arg) {
-            addGlobalToVariable(*arg);
-          }
-        }
-      }
-
-      void openclParser::addGlobalToVariable(variable_t &var) {
-        if (var.hasAttribute("globalPtr")) {
-          var.add(0, global);
-        }
-      }
-
-      void openclParser::updateScopeStructVariables(statement_t *smnt) {
-        if (smnt->type() & statementType::function) {
-          addStructToFunctionArgs(
-            smnt->to<functionStatement>().function()
-          );
-          return;
-        }
-
-        scope_t &scope = smnt->to<blockStatement>().scope;
-
-        keywordMap::iterator it = scope.keywords.begin();
-        while (it != scope.keywords.end()) {
-          keyword_t &keyword = *(it->second);
-
-          if (keyword.type() & keywordType::variable) {
-            addStructToVariable(keyword.to<variableKeyword>().variable);
-          } else if (keyword.type() & keywordType::function) {
-            addStructToFunctionArgs(
-              keyword.to<functionKeyword>().function
-            );
-          }
-
-          ++it;
-        }
+        statementArray::from(root)
+            .nestedForEachDeclaration([&](variableDeclaration &decl) {
+                variable_t &var = decl.variable();
+                if (var.hasAttribute("globalPtr")) {
+                  var.add(0,global);
+                }
+              });
       }
 
       void openclParser::addStructToVariable(variable_t &var) {
@@ -274,7 +206,30 @@ namespace occa {
               statementType::blockStatements
               | statementType::function
             )
-            .forEach(updateScopeStructVariables);
+            .forEach([&](statement_t *smnt) {
+               if (smnt->type() & statementType::function) {
+                addStructToFunctionArgs(
+                smnt->to<functionStatement>().function());
+                return;
+              }
+
+              scope_t &scope = smnt->to<blockStatement>().scope;
+
+              keywordMap::iterator it = scope.keywords.begin();
+              while (it != scope.keywords.end()) {
+                keyword_t &keyword = *(it->second);
+
+                if (keyword.type() & keywordType::variable) {
+                  addStructToVariable(keyword.to<variableKeyword>().variable);
+                } else if (keyword.type() & keywordType::function) {
+                  addStructToFunctionArgs(
+                    keyword.to<functionKeyword>().function
+                  );
+                }
+
+                ++it;
+              }
+            });
       }
 
       void openclParser::setupKernels() {
@@ -311,18 +266,16 @@ namespace occa {
       }
 
       void openclParser::setKernelQualifiers(function_t &function) {
-
         function.returnType.add(0, kernel);
 
-        const int argCount = (int) function.args.size();
-        for (int ai = 0; ai < argCount; ++ai) {
-          variable_t &arg = *(function.args[ai]);
-          arg.vartype = arg.vartype.flatten();
-          if (arg.vartype.isPointerType()) {
-            arg.add(0, global);
-          }
+        for (auto arg : function.args) {
+          vartype_t &type = arg->vartype;
+          type = type.flatten();
+          if (type.isPointerType())
+            arg->add(0,global);
         }
       }
+
     }
   }
 }
