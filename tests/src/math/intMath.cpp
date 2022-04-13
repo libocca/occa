@@ -28,12 +28,12 @@ std::string kernel_back_half =
 ;
 
 void testUnaryFunctions(const occa::device& d) {
-  for (auto fp_type : arg_types) {
+  for (auto int_type : arg_types) {
     std::string arg_decl = 
-      "        " + fp_type + " " + unary_args + ";\n";
+      "        " + int_type + " " + unary_args + ";\n";
     for(auto func : unary_functions) {
       std::string function_call = 
-        "        " + func + "(" + unary_args + ");\n";
+        "        " + int_type + " w = " + func + "(" + unary_args + ");\n";
       std::string kernel_src = 
         kernel_front_half + arg_decl + function_call +kernel_back_half;
 
@@ -43,12 +43,12 @@ void testUnaryFunctions(const occa::device& d) {
 }
 
 void testBinaryFunctions(const occa::device& d) {
-  for (auto fp_type : arg_types) {
+  for (auto int_type : arg_types) {
     std::string arg_decl = 
-      "        " + fp_type + " " + binary_args + ";\n";
+      "        " + int_type + " " + binary_args + ";\n";
     for(auto func : binary_functions) {
       std::string function_call = 
-        "        " + func + "(" + binary_args + ");\n";
+        "        " + int_type + " w = " + func + "(" + binary_args + ");\n";
       std::string kernel_src = 
         kernel_front_half + arg_decl + function_call +kernel_back_half;
 

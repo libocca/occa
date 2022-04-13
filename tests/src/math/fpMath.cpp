@@ -26,11 +26,7 @@ std::vector<std::string> unary_functions = {
   "asinh",
   "atanh",
   "exp",
-  "exp2",
-  "exp10",
-  "log",
-  "log2",
-  "log10"
+  "log"
 };
 
 std::vector<std::string> binary_functions = {
@@ -63,7 +59,7 @@ void testUnaryFunctions(const occa::device& d) {
       "        " + fp_type + " " + unary_args + ";\n";
     for(auto func : unary_functions) {
       std::string function_call = 
-        "        " + func + "(" + unary_args + ");\n";
+        "        " + fp_type + " w = " + func + "(" + unary_args + ");\n";
       std::string kernel_src = 
         kernel_front_half + arg_decl + function_call +kernel_back_half;
 
@@ -78,7 +74,7 @@ void testBinaryFunctions(const occa::device& d) {
       "        " + fp_type + " " + binary_args + ";\n";
     for(auto func : binary_functions) {
       std::string function_call = 
-        "        " + func + "(" + binary_args + ");\n";
+        "        " + fp_type + " w = " + func + "(" + binary_args + ");\n";
       std::string kernel_src = 
         kernel_front_half + arg_decl + function_call +kernel_back_half;
 
@@ -93,7 +89,7 @@ void testTernaryFunctions(const occa::device& d) {
       "        " + fp_type + " " + ternary_args + ";\n";
     for(auto func : ternary_functions) {
       std::string function_call = 
-        "        " + func + "(" + ternary_args + ");\n";
+        "        " + fp_type + " w = " + func + "(" + ternary_args + ");\n";
       std::string kernel_src = 
         kernel_front_half + arg_decl + function_call +kernel_back_half;
 
