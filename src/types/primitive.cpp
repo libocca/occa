@@ -249,13 +249,8 @@ namespace occa {
       case primitiveType::int64_  : str = occa::toString((int64_t)  value.int64_);  break;
       case primitiveType::float_  : str = occa::toString(value.float_);  break;
       case primitiveType::double_ : str = occa::toString(value.double_); break;
-      default:
-        return "NaN";
-    }
-
-    if ((str.find("inf") != std::string::npos) ||
-        (str.find("INF") != std::string::npos)) {
-      return str;
+      case primitiveType::none :
+      default: return "";
     }
 
     if (type & (primitiveType::uint64_ |

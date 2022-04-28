@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-
+#include <float.h>
 #include <occa.h>
 
 //---[ Internal Tools ]-----------------
@@ -58,7 +58,7 @@ int main(int argc, const char **argv) {
 
   occaKernelRun(addVectors,
                 occaInt(entries), o_a, o_b, o_ab);
-
+  
   // Copy result to the host
   occaCopyMemToPtr(ab, o_ab, occaAllBytes, 0, occaDefault);
 
@@ -66,7 +66,7 @@ int main(int argc, const char **argv) {
     printf("%d = %f\n", i, ab[i]);
   }
   for (i = 0; i < entries; ++i) {
-    if (fabs(ab[i] - (a[i] + b[i])) > 1.0e-8) {
+    if (fabsf(ab[i] - (a[i] + b[i])) > (2.0f*FLT_EPSILON)) {
       exit(1);
     }
   }

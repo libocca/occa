@@ -75,6 +75,12 @@ namespace occa {
       return new stream(this, props, metalCommandQueue);
     }
 
+    modeStream_t* device::wrapStream(void* ptr, const occa::json &props) {
+      OCCA_ERROR("A nullptr was passed to metal::device::wrapStream",nullptr != ptr);
+      api::metal::commandQueue_t q = *static_cast<api::metal::commandQueue_t*>(ptr);
+      return new stream(this, props, q, true);
+    }
+
     occa::streamTag device::tagStream() {
       metal::stream &stream = (
         *((metal::stream*) (currentStream.getModeStream()))

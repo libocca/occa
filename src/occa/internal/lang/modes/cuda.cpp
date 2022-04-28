@@ -60,6 +60,12 @@ namespace occa {
         return name;
       }
 
+      std::string cudaParser::launchBoundsAttribute(const int innerDims[3]) {
+        const int innerTotal{innerDims[0]*innerDims[1]*innerDims[2]};
+        const std::string lbAttr = "__launch_bounds__(" + std::to_string(innerTotal) + ")";
+        return lbAttr;
+      }
+
       void cudaParser::updateConstToConstant() {
         root.children
           .forEachDeclaration([&](variableDeclaration &decl) {
@@ -147,10 +153,11 @@ namespace occa {
         root.children
           .forEachKernelStatement([&](functionDeclStatement &kernelSmnt) {
             // Set kernel qualifiers
-            vartype_t &vartype = kernelSmnt.function().returnType;
-            vartype.qualifiers.addFirst(vartype.origin(),
+           vartype_t &vartype = kernelSmnt.function().returnType;
+
+           vartype.qualifiers.addFirst(vartype.origin(),
                                         global);
-            vartype.qualifiers.addFirst(vartype.origin(),
+           vartype.qualifiers.addFirst(vartype.origin(),
                                         externC);
           });
       }

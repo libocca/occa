@@ -69,11 +69,11 @@ namespace occa {
             success = false;
           } else if (qualifier == union_) {
             // TODO: type = loadUnion();
-            token->printError("Enums are not supported yet");
+            token->printError("Unions are not supported yet");
             success = false;
           } else if (qualifier == class_) {
             // TODO: type = loadClass();
-            token->printError("Enums are not supported yet");
+            token->printError("Classes are not supported yet");
             success = false;
           }
           if (!success) {

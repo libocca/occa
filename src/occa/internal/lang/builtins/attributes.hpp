@@ -9,6 +9,8 @@
 #include <occa/internal/lang/builtins/attributes/implicitArg.hpp>
 #include <occa/internal/lang/builtins/attributes/inner.hpp>
 #include <occa/internal/lang/builtins/attributes/kernel.hpp>
+#include <occa/internal/lang/builtins/attributes/maxInnerDims.hpp>
+#include <occa/internal/lang/builtins/attributes/noBarrier.hpp>
 #include <occa/internal/lang/builtins/attributes/outer.hpp>
 #include <occa/internal/lang/builtins/attributes/restrict.hpp>
 #include <occa/internal/lang/builtins/attributes/shared.hpp>

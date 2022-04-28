@@ -23,7 +23,7 @@ int main(int argc, const char **argv) {
 
   for (int i = 0; i < entries; ++i) {
     a[i]  = i;
-    b[i]  = i;
+    b[i]  = 1-i;
     ab[i] = 0;
   }
 
@@ -56,6 +56,7 @@ int main(int argc, const char **argv) {
   // Launch device kernel
   addVectors(entries, o_a, o_b, o_ab);
   // Copy result to the host
+  device.finish();
   o_ab.copyTo(ab);
 
   // Assert values

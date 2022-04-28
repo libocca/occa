@@ -85,8 +85,18 @@ namespace occa
     //---[ Stream ]---------------------
     modeStream_t *device::createStream(const occa::json &props)
     {
-      ::sycl::queue q(dpcppContext, dpcppDevice, ::sycl::property::queue::enable_profiling{});
+      ::sycl::queue q(dpcppContext, 
+                      dpcppDevice, 
+                      {::sycl::property::queue::enable_profiling{},
+                      ::sycl::property::queue::in_order{}
+                      });
       return new occa::dpcpp::stream(this, props, q);
+    }
+
+    modeStream_t* device::wrapStream(void* ptr, const occa::json &props) {
+      OCCA_ERROR("A nullptr was passed to dpcpp::device::wrapStream",nullptr != ptr);
+      ::sycl::queue q = *static_cast<::sycl::queue*>(ptr);
+      return new stream(this, props, q);
     }
 
     occa::streamTag device::tagStream()

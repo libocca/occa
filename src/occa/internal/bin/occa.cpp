@@ -1,6 +1,6 @@
 #include <fstream>
 
-#include <occa.hpp>
+#include <occa/core.hpp>
 
 #include <occa/internal/bin/occa.hpp>
 #include <occa/internal/utils/env.hpp>
@@ -282,7 +282,7 @@ namespace occa {
     }
 
     bool runInfo(const json &args) {
-      printModeInfo();
+      occa::printModeInfo();
       return true;
     }
 

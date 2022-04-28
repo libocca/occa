@@ -48,6 +48,10 @@ namespace occa {
       return new stream(this, props);
     }
 
+    modeStream_t* device::wrapStream(void* ptr, const occa::json &props) {
+      return new stream(this, props);
+    }
+
     occa::streamTag device::tagStream() {
       return new occa::serial::streamTag(this, sys::currentTime());
     }

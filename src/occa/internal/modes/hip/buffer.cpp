@@ -19,7 +19,7 @@ namespace occa {
                            hipHostFree(ptr));
         } else if (hipPtr) {
           OCCA_HIP_ERROR("Device: free()",
-                         hipFree((void*) hipPtr));
+                           hipFree((void*) hipPtr));
         }
       }
       ptr = nullptr;

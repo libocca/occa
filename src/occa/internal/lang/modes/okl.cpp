@@ -390,6 +390,8 @@ namespace occa {
         parser.addAttribute<attributes::kernel>();
         parser.addAttribute<attributes::outer>();
         parser.addAttribute<attributes::shared>();
+        parser.addAttribute<attributes::maxInnerDims>();
+        parser.addAttribute<attributes::noBarrier>();
       }
 
       void setOklLoopIndices(functionDeclStatement &kernelSmnt) {

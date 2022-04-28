@@ -271,12 +271,29 @@ namespace occa {
         );
 
         const binaryOperator_t &checkOp = (const binaryOperator_t&) checkExpr.op;
-        expr check = (
-          oklForSmnt.checkValueOnRight
-          ? expr::binaryOpExpr(checkOp, iterator, bounds)
-          : expr::binaryOpExpr(checkOp, bounds, iterator)
-        );
+        opType_t checkOpType = checkOp.opType;
 
+        expr check;
+        if(checkOpType & (operatorType::lessThanEq
+                       | operatorType::greaterThanEq)) {
+          const binaryOperator_t &innerOp = (
+            (checkOpType & operatorType::lessThanEq) 
+            ? op::lessThan 
+            : op::greaterThan
+          );
+          check = (
+            oklForSmnt.checkValueOnRight
+            ? expr::binaryOpExpr(innerOp, iterator, bounds)
+            : expr::binaryOpExpr(innerOp, bounds, iterator)
+          );
+        } else {
+          check = (
+            oklForSmnt.checkValueOnRight
+            ? expr::binaryOpExpr(checkOp, iterator, bounds)
+            : expr::binaryOpExpr(checkOp, bounds, iterator)
+          );
+        }
+        
         innerForSmnt.check = check.createStatement(&innerForSmnt);
       }
 

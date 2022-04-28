@@ -1,4 +1,5 @@
 #include <occa/internal/core/kernel.hpp>
+#include <occa/internal/utils/env.hpp>
 #include <occa/internal/io/output.hpp>
 #include <occa/internal/lang/modes/openmp.hpp>
 #include <occa/internal/modes/serial/device.hpp>
@@ -60,10 +61,50 @@ namespace occa {
 
       occa::json allKernelProps = properties + kernelProps;
 
-      std::string compiler = allKernelProps["compiler"];
+      std::string compilerLanguage;
+      compilerLanguage = "cpp";
+      if (env::var("OCCA_COMPILER_LANGUAGE").size()) {
+        compilerLanguage = env::var("OCCA_COMPILER_LANGUAGE");
+      } else if (kernelProps.get<std::string>("compiler_language").size()) {
+        compilerLanguage = (std::string) kernelProps["compiler_language"];
+      }
+
+      const bool compilingOkl = kernelProps.get("okl/enabled", true);
+      const bool compilingCpp = compilingOkl || (lowercase(compilerLanguage) != "c");
+      const int compilerLanguageFlag = (
+        compilingCpp
+        ? sys::language::CPP
+        : sys::language::C
+      );
+
+      std::string compiler;
+      if (compilerLanguageFlag == sys::language::CPP && env::var("OCCA_CXX").size()) {
+        compiler = env::var("OCCA_CXX");
+      } else if (compilerLanguageFlag == sys::language::C && env::var("OCCA_CC").size()) {
+        compiler = env::var("OCCA_CC");
+      } else if (kernelProps.get<std::string>("compiler").size()) {
+        compiler = (std::string) kernelProps["compiler"];
+      } else if (compilerLanguageFlag == sys::language::CPP && env::var("CXX").size()) {
+        compiler = env::var("CXX");
+      } else if (compilerLanguageFlag == sys::language::C && env::var("CC").size()) {
+        compiler = env::var("CC");
+      } else if (compilerLanguageFlag == sys::language::CPP) {
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+        compiler = "g++";
+#else
+        compiler = "cl.exe";
+#endif
+      } else {
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+        compiler = "gcc";
+#else
+        compiler = "cl.exe";
+#endif
+      }
+
       int vendor = allKernelProps["vendor"];
       // Check if we need to re-compute the vendor
-      if (kernelProps.has("compiler")) {
+      if (compiler.size()) {
         vendor = sys::compilerVendor(compiler);
       }
 

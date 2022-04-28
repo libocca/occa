@@ -23,6 +23,7 @@ int main(const int argc, const char **argv) {
   parser.addAttribute<attributes::inner>();
   parser.addAttribute<attributes::shared>();
   parser.addAttribute<attributes::exclusive>();
+  parser.addAttribute<attributes::maxInnerDims>();
 
   testKernel();
   testLoops();
@@ -41,12 +42,18 @@ void testOKLLoopExists();
 void testProperOKLLoops();
 void testInnerInsideOuter();
 void testSameInnerLoopCount();
+void testEmptyLoops();
+void testInfiniteLoops();
+void testMaxInnerDims();
 
 void testLoops() {
   testOKLLoopExists();
   testProperOKLLoops();
   testInnerInsideOuter();
   testSameInnerLoopCount();
+  testEmptyLoops();
+  testInfiniteLoops();
+  testMaxInnerDims();
 }
 
 void testOKLLoopExists() {
@@ -158,6 +165,66 @@ void testSameInnerLoopCount() {
     "    for (int i = 0; i < 2; ++i; @inner) {\n"
     "      for (int i2 = 0; i2 < 2; ++i2; @inner) {\n"
     "      }\n"
+    "    }\n"
+    "  }\n"
+    "}\n"
+  );
+}
+
+void testEmptyLoops() {
+
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
+    "  for (int o = 0; o < 2; ++o; @outer) {\n"
+    "    for (int i = 10; i < 2; i+=3; @inner) {\n"
+    "        int k = i + j;\n"
+    "    }\n"
+    "  }\n"
+    "}\n"
+  );
+
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
+    "  for (int o = 0; o < 2; ++o; @outer) {\n"
+    "    for (int i = 10; i > 11; i-=3; @inner) {\n"
+    "        int k = i + j;\n"
+    "    }\n"
+    "  }\n"
+    "}\n"
+  );
+}
+
+void testInfiniteLoops() {
+
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
+    "  for (int o = 0; o < 2; ++o; @outer) {\n"
+    "    for (int i = 0; i < 2; i-=5; @inner) {\n"
+    "        int k = i + j;\n"
+    "    }\n"
+    "  }\n"
+    "}\n"
+  );
+
+  parseBadOKLSource(
+    "@kernel void foo() {\n"
+    "  for (int o = 0; o < 2; ++o; @outer) {\n"
+    "    for (int i = 2; i > 2=0; i+=5; @inner) {\n"
+    "        int k = i + j;\n"
+    "    }\n"
+    "  }\n"
+    "}\n"
+  );
+
+}
+
+void testMaxInnerDims() {
+  parseBadOKLSource(
+    "@kernel void foo(const int& N) {\n"
+    "  @max_inner_dims(0)\n"
+    "  for (int o = 0; o < 2; ++o; @outer) {\n"
+    "    for (int i = 0; i < N; ++i; @inner) {\n"
+    "        int k = i + j;\n"
     "    }\n"
     "  }\n"
     "}\n"
