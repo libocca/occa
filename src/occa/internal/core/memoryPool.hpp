@@ -6,6 +6,8 @@
 #include <set>
 
 namespace occa {
+  using experimental::memoryPool;
+
   class modeMemoryPool_t : public modeBuffer_t {
    public:
     struct compare {

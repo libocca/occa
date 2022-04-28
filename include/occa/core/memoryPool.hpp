@@ -7,7 +7,9 @@ namespace occa {
   class modeBuffer_t; class buffer;
   class modeMemory_t; class memory;
   class modeDevice_t; class device;
-  class modeMemoryPool_t; class memoryPool;
+  class modeMemoryPool_t;
+
+  namespace experimental {
 
   class memoryPool : public gc::ringEntry_t {
     friend class occa::modeMemoryPool_t;
@@ -119,7 +121,7 @@ namespace occa {
      *
      * @endDoc
      */
-    bool operator == (const occa::memoryPool &other) const;
+    bool operator == (const occa::experimental::memoryPool &other) const;
 
     /**
      * @startDoc{operator_equals[1]}
@@ -132,7 +134,7 @@ namespace occa {
      *
      * @endDoc
      */
-    bool operator != (const occa::memoryPool &other) const;
+    bool operator != (const occa::experimental::memoryPool &other) const;
 
     /**
      * @startDoc{resize}
@@ -204,6 +206,8 @@ namespace occa {
     occa::memory reserve(const dim_t entries,
                          const dtype_t &dtype);
   };
+
+  }
 }
 
 #include "memoryPool.tpp"

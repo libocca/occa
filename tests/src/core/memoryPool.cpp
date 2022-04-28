@@ -23,7 +23,7 @@ void testReserve() {
     {"mode", "Serial"}
   });
 
-  occa::memoryPool memPool = device.createMemoryPool();
+  occa::experimental::memoryPool memPool = device.createMemoryPool();
 
   /*Set a size for the memoryPool*/
   memPool.resize(10 * sizeof(float));
