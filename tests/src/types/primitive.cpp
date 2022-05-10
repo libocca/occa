@@ -17,6 +17,12 @@ void testLeftIncrement();
 void testRightIncrement();
 void testLeftDecrement();
 void testRightDecrement();
+void testBitAnd();
+void testBitOr();
+void testBitXor();
+void testBitAndEq();
+void testBitOrEq();
+void testBitXorEq();
 
 int main(const int argc, const char **argv) {
   testInit();
@@ -32,6 +38,12 @@ int main(const int argc, const char **argv) {
   testRightIncrement();
   testLeftDecrement();
   testRightDecrement();
+  void testBitAnd();
+  void testBitOr();
+  void testBitXor();
+  void testBitAndEq();
+  void testBitOrEq();
+  void testBitXorEq();
 
   return 0;
 }
@@ -494,4 +506,340 @@ void testRightDecrement() {
   p = occa::primitive((double) 7);
   occa::primitive::rightDecrement(p);
   ASSERT_EQ((double) 6 ,(double) p);
+}
+
+void testBitAnd() {
+  occa::primitive p,q,r;
+  
+  p = occa::primitive(true);
+  q = occa::primitive(false); 
+  ASSERT_THROW(occa::primitive::bitAnd(p,q));
+  
+  p = occa::primitive((uint8_t) 7);
+  q = occa::primitive((uint8_t) 0b00000111);
+  r = occa::primitive::bitAnd(p,q);
+  ASSERT_EQ(uint8_t(7),(uint8_t) r);
+
+  p = occa::primitive((uint16_t) 7);
+  q = occa::primitive((uint16_t) 0b0000000000000111);
+  r = occa::primitive::bitAnd(p,q);
+  ASSERT_EQ(uint16_t(7),(uint16_t) r);
+
+  p = occa::primitive((uint32_t) 7);
+  q = occa::primitive((uint32_t) 0b00000000000000000000000000000111);
+  r = occa::primitive::bitAnd(p,q);
+  ASSERT_EQ(uint32_t(7),(uint32_t) r);
+
+  p = occa::primitive((uint64_t) 7);
+  q = occa::primitive((uint64_t) 0b0000000000000000000000000000000000000000000000000000000000000111);
+  r = occa::primitive::bitAnd(p,q);
+  ASSERT_EQ(uint64_t(7),(uint64_t) r);
+
+  p = occa::primitive((int8_t) 7);
+  q = occa::primitive((int8_t) 0b00000111);
+  r = occa::primitive::bitAnd(p,q);
+  ASSERT_EQ(int8_t(7),(int8_t) r);
+
+  p = occa::primitive((int16_t) 7);
+  q = occa::primitive((int16_t) 0b0000000000000111);
+  r = occa::primitive::bitAnd(p,q);
+  ASSERT_EQ(int16_t(7),(int16_t) r);
+
+  p = occa::primitive((int32_t) 7);
+  q = occa::primitive((int32_t) 0b00000000000000000000000000000111);
+  r = occa::primitive::bitAnd(p,q);
+  ASSERT_EQ(int32_t(7),(int32_t) r);
+
+  p = occa::primitive((int64_t) 7);
+  q = occa::primitive((int64_t) 0b0000000000000000000000000000000000000000000000000000000000000111);
+  r = occa::primitive::bitAnd(p,q);
+  ASSERT_EQ(int64_t(7),(int64_t) r);
+
+  p = occa::primitive((float) 7);
+  q = occa::primitive((float) 1);
+  ASSERT_THROW(occa::primitive::bitAnd(p,q));
+
+  p = occa::primitive((double) 7);
+  q = occa::primitive((double) 1);
+  ASSERT_THROW(occa::primitive::bitAnd(p,q));
+}
+
+void testBitOr() {
+  occa::primitive p,q,r;
+
+  p = occa::primitive(true);
+  q = occa::primitive(false); 
+  ASSERT_THROW(occa::primitive::bitOr(p,q));
+  
+  p = occa::primitive((uint8_t) 7);
+  q = occa::primitive((uint8_t) 0b00001111);
+  r = occa::primitive::bitOr(p,q);
+  ASSERT_EQ(uint8_t(15),(uint8_t) r);
+
+  p = occa::primitive((uint16_t) 7);
+  q = occa::primitive((uint16_t) 0b0000000000001111);
+  r = occa::primitive::bitOr(p,q);
+  ASSERT_EQ(uint16_t(15),(uint16_t) r);
+
+  p = occa::primitive((uint32_t) 7);
+  q = occa::primitive((uint32_t) 0b00000000000000000000000000001111);
+  r = occa::primitive::bitOr(p,q);
+  ASSERT_EQ(uint32_t(15),(uint32_t) r);
+
+  p = occa::primitive((uint64_t) 7);
+  q = occa::primitive((uint64_t) 0b0000000000000000000000000000000000000000000000000000000000001111);
+  r = occa::primitive::bitOr(p,q);
+  ASSERT_EQ(uint64_t(15),(uint64_t) r);
+
+  p = occa::primitive((int8_t) 7);
+  q = occa::primitive((int8_t) 0b00001111);
+  r = occa::primitive::bitOr(p,q);
+  ASSERT_EQ(int8_t(15),(int8_t) r);
+
+  p = occa::primitive((int16_t) 7);
+  q = occa::primitive((int16_t) 0b0000000000001111);
+  r = occa::primitive::bitOr(p,q);
+  ASSERT_EQ(int16_t(15),(int16_t) r);
+
+  p = occa::primitive((int32_t) 7);
+  q = occa::primitive((int32_t) 0b00000000000000000000000000001111);
+  r = occa::primitive::bitOr(p,q);
+  ASSERT_EQ(int32_t(15),(int32_t) r);
+
+  p = occa::primitive((int64_t) 7);
+  q = occa::primitive((int64_t) 0b0000000000000000000000000000000000000000000000000000000000001111);
+  r = occa::primitive::bitOr(p,q);
+  ASSERT_EQ(int64_t(15),(int64_t) r);
+
+  p = occa::primitive((float) 7);
+  q = occa::primitive((float) 1);
+  ASSERT_THROW(occa::primitive::bitOr(p,q));
+
+  p = occa::primitive((double) 7);
+  q = occa::primitive((double) 1);
+  ASSERT_THROW(occa::primitive::bitOr(p,q));
+}
+
+void testBitXor() {
+  occa::primitive p,q,r;
+  
+  p = occa::primitive(true);
+  q = occa::primitive(false); 
+  ASSERT_THROW(occa::primitive::xor_(p,q));
+  
+  p = occa::primitive((uint8_t) 7);
+  q = occa::primitive((uint8_t) 0b00000111);
+  r = occa::primitive::xor_(p,q);
+  ASSERT_EQ(uint8_t(0),(uint8_t) r);
+
+  p = occa::primitive((uint16_t) 7);
+  q = occa::primitive((uint16_t) 0b0000000000000111);
+  r = occa::primitive::xor_(p,q);
+  ASSERT_EQ(uint16_t(0),(uint16_t) r);
+
+  p = occa::primitive((uint32_t) 7);
+  q = occa::primitive((uint32_t) 0b00000000000000000000000000000111);
+  r = occa::primitive::xor_(p,q);
+  ASSERT_EQ(uint32_t(0),(uint32_t) r);
+
+  p = occa::primitive((uint64_t) 7);
+  q = occa::primitive((uint64_t) 0b0000000000000000000000000000000000000000000000000000000000000111);
+  r = occa::primitive::xor_(p,q);
+  ASSERT_EQ(uint64_t(0),(uint64_t) r);
+
+  p = occa::primitive((int8_t) 7);
+  q = occa::primitive((int8_t) 0b00000111);
+  r = occa::primitive::xor_(p,q);
+  ASSERT_EQ(int8_t(0),(int8_t) r);
+
+  p = occa::primitive((int16_t) 7);
+  q = occa::primitive((int16_t) 0b0000000000000111);
+  r = occa::primitive::xor_(p,q);
+  ASSERT_EQ(int16_t(0),(int16_t) r);
+
+  p = occa::primitive((int32_t) 7);
+  q = occa::primitive((int32_t) 0b00000000000000000000000000000111);
+  r = occa::primitive::xor_(p,q);
+  ASSERT_EQ(int32_t(0),(int32_t) r);
+
+  p = occa::primitive((int64_t) 7);
+  q = occa::primitive((int64_t) 0b0000000000000000000000000000000000000000000000000000000000000111);
+  r = occa::primitive::xor_(p,q);
+  ASSERT_EQ(int64_t(0),(int64_t) r);
+
+  p = occa::primitive((float) 7);
+  q = occa::primitive((float) 1);
+  ASSERT_THROW(occa::primitive::xor_(p,q));
+
+  p = occa::primitive((double) 7);
+  q = occa::primitive((double) 1);
+  ASSERT_THROW(occa::primitive::xor_(p,q));
+}
+
+void testBitAndEq() {
+  occa::primitive p,q;
+  
+  p = occa::primitive(true);
+  q = occa::primitive(false); 
+  ASSERT_THROW(occa::primitive::bitAndEq(p,q));
+  
+  p = occa::primitive((uint8_t) 7);
+  q = occa::primitive((uint8_t) 0b00000111);
+  p = occa::primitive::bitAndEq(p,q);
+  ASSERT_EQ(uint8_t(7),(uint8_t) p);
+
+  p = occa::primitive((uint16_t) 7);
+  q = occa::primitive((uint16_t) 0b0000000000000111);
+  p = occa::primitive::bitAndEq(p,q);
+  ASSERT_EQ(uint16_t(7),(uint16_t) p);
+
+  p = occa::primitive((uint32_t) 7);
+  q = occa::primitive((uint32_t) 0b00000000000000000000000000000111);
+  p = occa::primitive::bitAndEq(p,q);
+  ASSERT_EQ(uint32_t(7),(uint32_t) p);
+
+  p = occa::primitive((uint64_t) 7);
+  q = occa::primitive((uint64_t) 0b0000000000000000000000000000000000000000000000000000000000000111);
+  p = occa::primitive::bitAndEq(p,q);
+  ASSERT_EQ(uint64_t(7),(uint64_t) p);
+
+  p = occa::primitive((int8_t) 7);
+  q = occa::primitive((int8_t) 0b00000111);
+  p = occa::primitive::bitAndEq(p,q);
+  ASSERT_EQ(int8_t(7),(int8_t) p);
+
+  p = occa::primitive((int16_t) 7);
+  q = occa::primitive((int16_t) 0b0000000000000111);
+  p = occa::primitive::bitAndEq(p,q);
+  ASSERT_EQ(int16_t(7),(int16_t) p);
+
+  p = occa::primitive((int32_t) 7);
+  q = occa::primitive((int32_t) 0b00000000000000000000000000000111);
+  p = occa::primitive::bitAndEq(p,q);
+  ASSERT_EQ(int32_t(7),(int32_t) p);
+
+  p = occa::primitive((int64_t) 7);
+  q = occa::primitive((int64_t) 0b0000000000000000000000000000000000000000000000000000000000000111);
+  p = occa::primitive::bitAndEq(p,q);
+  ASSERT_EQ(int64_t(7),(int64_t) p);
+
+  p = occa::primitive((float) 7);
+  q = occa::primitive((float) 1);
+  ASSERT_THROW(occa::primitive::bitAndEq(p,q));
+
+  p = occa::primitive((double) 7);
+  q = occa::primitive((double) 1);
+  ASSERT_THROW(occa::primitive::bitAndEq(p,q));
+}
+
+void testBitOrEq() {
+  occa::primitive p,q;
+
+  p = occa::primitive(true);
+  q = occa::primitive(false); 
+  ASSERT_THROW(occa::primitive::bitOrEq(p,q));
+  
+  p = occa::primitive((uint8_t) 7);
+  q = occa::primitive((uint8_t) 0b00001111);
+  p = occa::primitive::bitOrEq(p,q);
+  ASSERT_EQ(uint8_t(15),(uint8_t) p);
+
+  p = occa::primitive((uint16_t) 7);
+  q = occa::primitive((uint16_t) 0b0000000000001111);
+  p = occa::primitive::bitOrEq(p,q);
+  ASSERT_EQ(uint16_t(15),(uint16_t) p);
+
+  p = occa::primitive((uint32_t) 7);
+  q = occa::primitive((uint32_t) 0b00000000000000000000000000001111);
+  p = occa::primitive::bitOrEq(p,q);
+  ASSERT_EQ(uint32_t(15),(uint32_t) p);
+
+  p = occa::primitive((uint64_t) 7);
+  q = occa::primitive((uint64_t) 0b0000000000000000000000000000000000000000000000000000000000001111);
+  p = occa::primitive::bitOrEq(p,q);
+  ASSERT_EQ(uint64_t(15),(uint64_t) p);
+
+  p = occa::primitive((int8_t) 7);
+  q = occa::primitive((int8_t) 0b00001111);
+  p = occa::primitive::bitOrEq(p,q);
+  ASSERT_EQ(int8_t(15),(int8_t) p);
+
+  p = occa::primitive((int16_t) 7);
+  q = occa::primitive((int16_t) 0b0000000000001111);
+  p = occa::primitive::bitOrEq(p,q);
+  ASSERT_EQ(int16_t(15),(int16_t) p);
+
+  p = occa::primitive((int32_t) 7);
+  q = occa::primitive((int32_t) 0b00000000000000000000000000001111);
+  p = occa::primitive::bitOrEq(p,q);
+  ASSERT_EQ(int32_t(15),(int32_t) p);
+
+  p = occa::primitive((int64_t) 7);
+  q = occa::primitive((int64_t) 0b0000000000000000000000000000000000000000000000000000000000001111);
+  p = occa::primitive::bitOrEq(p,q);
+  ASSERT_EQ(int64_t(15),(int64_t) p);
+
+  p = occa::primitive((float) 7);
+  q = occa::primitive((float) 1);
+  ASSERT_THROW(occa::primitive::bitOrEq(p,q));
+
+  p = occa::primitive((double) 7);
+  q = occa::primitive((double) 1);
+  ASSERT_THROW(occa::primitive::bitOrEq(p,q));
+}
+
+void testBitXorEq() {
+  occa::primitive p,q;
+  
+  p = occa::primitive(true);
+  q = occa::primitive(false); 
+  ASSERT_THROW(occa::primitive::xorEq(p,q));
+  
+  p = occa::primitive((uint8_t) 7);
+  q = occa::primitive((uint8_t) 0b00000111);
+  p = occa::primitive::xorEq(p,q);
+  ASSERT_EQ(uint8_t(0),(uint8_t) p);
+
+  p = occa::primitive((uint16_t) 7);
+  q = occa::primitive((uint16_t) 0b0000000000000111);
+  p = occa::primitive::xorEq(p,q);
+  ASSERT_EQ(uint16_t(0),(uint16_t) p);
+
+  p = occa::primitive((uint32_t) 7);
+  q = occa::primitive((uint32_t) 0b00000000000000000000000000000111);
+  p = occa::primitive::xorEq(p,q);
+  ASSERT_EQ(uint32_t(0),(uint32_t) p);
+
+  p = occa::primitive((uint64_t) 7);
+  q = occa::primitive((uint64_t) 0b0000000000000000000000000000000000000000000000000000000000000111);
+  p = occa::primitive::xorEq(p,q);
+  ASSERT_EQ(uint64_t(0),(uint64_t) p);
+
+  p = occa::primitive((int8_t) 7);
+  q = occa::primitive((int8_t) 0b00000111);
+  p = occa::primitive::xorEq(p,q);
+  ASSERT_EQ(int8_t(0),(int8_t) p);
+
+  p = occa::primitive((int16_t) 7);
+  q = occa::primitive((int16_t) 0b0000000000000111);
+  p = occa::primitive::xorEq(p,q);
+  ASSERT_EQ(int16_t(0),(int16_t) p);
+
+  p = occa::primitive((int32_t) 7);
+  q = occa::primitive((int32_t) 0b00000000000000000000000000000111);
+  p = occa::primitive::xorEq(p,q);
+  ASSERT_EQ(int32_t(0),(int32_t) p);
+
+  p = occa::primitive((int64_t) 7);
+  q = occa::primitive((int64_t) 0b0000000000000000000000000000000000000000000000000000000000000111);
+  p = occa::primitive::xorEq(p,q);
+  ASSERT_EQ(int64_t(0),(int64_t) p);
+
+  p = occa::primitive((float) 7);
+  q = occa::primitive((float) 1);
+  ASSERT_THROW(occa::primitive::xorEq(p,q));
+
+  p = occa::primitive((double) 7);
+  q = occa::primitive((double) 1);
+  ASSERT_THROW(occa::primitive::xorEq(p,q));
 }
