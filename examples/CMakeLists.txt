@@ -1,6 +1,9 @@
 macro(add_test_with_mode_and_nranks exe mode device nranks)
   if (${nranks} GREATER 1)
-    add_test(NAME ${exe}-${mode} COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${nranks} ./${exe} --verbose --device "${device}")
+    # Passing the --verbose flag to our executable has a bad interaction with the mpiexec command provided by (at least)
+    # Intel(R) MPI Library for Linux* OS, Version 2021.2 Build 20210302: it causes a segmentation fault in MPI_Init.
+    # None of our MPI tests actually use the flag, so don't pass it.
+    add_test(NAME ${exe}-${mode} COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${nranks} ./${exe} --device "${device}")
   else()
     add_test(NAME ${exe}-${mode} COMMAND ./${exe} --verbose --device "${device}")
   endif()
