@@ -54,6 +54,7 @@ namespace sycl
       platform,
       name,
       vendor,
+      version,
       max_work_item_sizes,
       max_work_group_size
     };
@@ -116,6 +117,13 @@ namespace sycl
 
     template <>
     class param_traits<device, device::vendor>
+    {
+    public:
+      using return_type = std::string;
+    };
+
+    template <>
+    class param_traits<device, device::version>
     {
     public:
       using return_type = std::string;
@@ -253,6 +261,14 @@ namespace sycl
   template <>
   inline info::param_traits<info::device, info::device::vendor>::return_type
   device::get_info<info::device::vendor>() const
+  {
+    throw sycl::exception();
+    return "Error--DPC++ not enabled!";
+  }
+
+  template <>
+  inline info::param_traits<info::device, info::device::version>::return_type
+  device::get_info<info::device::version>() const
   {
     throw sycl::exception();
     return "Error--DPC++ not enabled!";
