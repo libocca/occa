@@ -358,7 +358,7 @@ namespace occa {
     }
 
     udim_t device::memorySize() const {
-      return opencl::getDeviceMemorySize(clDevice);
+      return opencl::deviceGlobalMemSize(clDevice);
     }
     //==================================
   }

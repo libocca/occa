@@ -21,50 +21,38 @@ namespace occa {
     };
 
     namespace info {
-      static const int CPU     = (1 << 0);
-      static const int GPU     = (1 << 1);
-      static const int FPGA    = (1 << 3);
-      static const int XeonPhi = (1 << 2);
-      static const int anyType = (CPU | GPU | FPGA | XeonPhi);
-
-      static const int Intel     = (1 << 4);
-      static const int AMD       = (1 << 5);
-      static const int Altera    = (1 << 6);
-      static const int NVIDIA    = (1 << 7);
-      static const int anyVendor = (Intel | AMD | Altera | NVIDIA);
-
-      static const int any = (anyType | anyVendor);
-
-      std::string deviceType(int type);
-      std::string vendor(int type);
+      enum class device_type {
+        cpu, gpu, accelerator, all = cpu | gpu | accelerator
+      };
     }
 
     bool isEnabled();
 
-    cl_device_type deviceType(int type);
-
     int getPlatformCount();
-
     cl_platform_id platformID(int pID);
 
-    int getDeviceCount(int type = info::any);
-    int getDeviceCountInPlatform(int pID, int type = info::any);
+    std::string platformStrInfo(cl_platform_id clPID, cl_platform_info clInfo);
+    std::string platformName(int pID);
+    std::string platformVendor(int pID);
+    std::string platformVersion(int pID);
 
-    cl_device_id deviceID(int pID, int dID, int type = info::any);
+    int getDeviceCount(info::device_type deviceType = info::device_type::all);
+    int getDeviceCountInPlatform(int pID, info::device_type type = info::device_type::all);
 
-    std::string deviceStrInfo(cl_device_id clDID,
-                              cl_device_info clInfo);
+    cl_device_id deviceID(int pID, int dID, info::device_type deviceType = info::device_type::all);
 
+    std::string deviceStrInfo(cl_device_id clDID, cl_device_info clInfo);
     std::string deviceName(int pID, int dID);
+    std::string deviceVendor(int pID, int dID);
+    std::string deviceVersion(int pID, int dID);
 
-    int deviceType(int pID, int dID);
-
-    int deviceVendor(int pID, int dID);
+    cl_device_type deviceType(info::device_type type);
+    info::device_type deviceType(int pID, int dID);
 
     int deviceCoreCount(int pID, int dID);
 
-    udim_t getDeviceMemorySize(cl_device_id dID);
-    udim_t getDeviceMemorySize(int pID, int dID);
+    udim_t deviceGlobalMemSize(cl_device_id dID);
+    udim_t deviceGlobalMemSize(int pID, int dID);
 
     void buildProgramFromSource(info_t &info,
                                 const std::string &source,
