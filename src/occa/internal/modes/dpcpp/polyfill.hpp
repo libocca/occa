@@ -10,6 +10,9 @@
 #include <vector>
 namespace sycl
 {
+  class device;
+  class platform;
+
   template <std::size_t N>
   struct id
   {
@@ -157,6 +160,20 @@ namespace sycl
       using return_type = std::string;
     };
 
+    template <>
+    class param_traits<platform, platform::vendor>
+    {
+    public:
+      using return_type = std::string;
+    };
+
+    template <>
+    class param_traits<platform, platform::version>
+    {
+    public:
+      using return_type = std::string;
+    };
+
     template <event_profiling I>
     class param_traits<event_profiling, I>
     {
@@ -224,6 +241,8 @@ namespace sycl
       throw sycl::exception();
       return false;  
     }
+
+    sycl::platform get_platform() const;
   };
 
   template <>
@@ -329,6 +348,28 @@ namespace sycl
   {
     throw sycl::exception();
     return "Error--DPC++ not enabled!";
+  }
+
+  template <>
+  inline info::param_traits<info::platform, info::platform::vendor>::return_type
+  platform::get_info<info::platform::vendor>() const
+  {
+    throw sycl::exception();
+    return "Error--DPC++ not enabled!";
+  }
+
+  template <>
+  inline info::param_traits<info::platform, info::platform::version>::return_type
+  platform::get_info<info::platform::version>() const
+  {
+    throw sycl::exception();
+    return "Error--DPC++ not enabled!";
+  }
+
+  inline platform device::get_platform() const
+  {
+      throw sycl::exception();
+      return platform();
   }
 
   class context
