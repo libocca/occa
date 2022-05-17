@@ -34,6 +34,7 @@ namespace occa {
 
   typedef int cl_buffer_create_type;
   typedef int cl_command_queue_properties;
+  typedef int cl_platform_info;
   typedef int cl_device_info;
   typedef int cl_device_type;
   typedef int cl_kernel_work_group_info;
@@ -69,17 +70,23 @@ namespace occa {
 
   static cl_command_queue_properties CL_QUEUE_PROFILING_ENABLE = 0;
 
+  static cl_platform_info CL_PLATFORM_NAME = 0;
+  static cl_platform_info CL_PLATFORM_VENDOR = 1;
+  static cl_platform_info CL_PLATFORM_VERSION = 2;
+
   static cl_device_info CL_DEVICE_GLOBAL_MEM_SIZE = 0;
   static cl_device_info CL_DEVICE_MAX_COMPUTE_UNITS = 1;
   static cl_device_info CL_DEVICE_NAME = 2;
   static cl_device_info CL_DEVICE_TYPE = 3;
   static cl_device_info CL_DEVICE_VENDOR = 4;
-  static cl_device_info CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS = 5;
-  static cl_device_info CL_DEVICE_MAX_WORK_ITEM_SIZES = 6;
+  static cl_device_info CL_DEVICE_VERSION = 5;
+  static cl_device_info CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS = 6;
+  static cl_device_info CL_DEVICE_MAX_WORK_ITEM_SIZES = 7;
 
   static cl_device_type CL_DEVICE_TYPE_ACCELERATOR = 0;
   static cl_device_type CL_DEVICE_TYPE_CPU = 1;
   static cl_device_type CL_DEVICE_TYPE_GPU = 2;
+  static cl_device_type CL_DEVICE_TYPE_ALL = 3;
 
   static cl_kernel_work_group_info CL_KERNEL_WORK_GROUP_SIZE = 0;
 
@@ -191,10 +198,22 @@ namespace occa {
                                 size_t *param_value_size_ret) {
     return OCCA_OPENCL_IS_NOT_ENABLED;
   }
+  
+  //   ---[ Platform ]--------------------
 
   inline cl_int clGetPlatformIDs(cl_uint num_entries,
                                  cl_platform_id *platforms,
                                  cl_uint *num_platforms) {
+    return OCCA_OPENCL_IS_NOT_ENABLED;
+  }
+
+  inline cl_int clGetPlatformInfo(
+    cl_platform_id platform,
+    cl_platform_info param_name,
+    size_t param_value_size,
+    void* param_value,
+    size_t* param_value_size_ret) {
+      
     return OCCA_OPENCL_IS_NOT_ENABLED;
   }
 
