@@ -123,16 +123,22 @@ namespace occa {
     }
 
     cl_device_type deviceType(info::device_type type) {
+      cl_device_type dtype;
       switch (type) {
         case info::device_type::cpu:
-          return CL_DEVICE_TYPE_CPU;
+          dtype = CL_DEVICE_TYPE_CPU;
+          break;
         case info::device_type::gpu:
-          return CL_DEVICE_TYPE_GPU;
+          dtype = CL_DEVICE_TYPE_GPU;
+          break;
         case info::device_type::accelerator:
-          return CL_DEVICE_TYPE_ACCELERATOR;
+          dtype = CL_DEVICE_TYPE_ACCELERATOR;
+          break;
         case info::device_type::all:
-          return CL_DEVICE_TYPE_ALL;
+          dtype = CL_DEVICE_TYPE_ALL;
+          break;
       }
+      return dtype;
     }
 
     int getDeviceCount(info::device_type type) {
