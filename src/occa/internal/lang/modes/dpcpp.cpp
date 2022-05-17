@@ -96,7 +96,7 @@ namespace occa
         root.addFirst(
             *(new directiveStatement(
                 &root,
-                directiveToken(root.source->origin, "include <CL/sycl.hpp>"))));
+                directiveToken(root.source->origin, "include <CL/sycl.hpp>\n using namespace sycl;\n"))));
       }
 
       void dpcppParser::addExtensions()
