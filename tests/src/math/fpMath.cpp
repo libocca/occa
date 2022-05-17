@@ -39,18 +39,18 @@ std::vector<std::string> binary_functions = {
 std::vector<std::string> ternary_functions = {"fma"};
 
 std::string kernel_front_half =
-"@kernel\n"
-"void f() {\n"
-"  @outer\n"
-"  for (int b=0; b<1; ++b) {\n"
-"    @inner\n"
-"    for (int t=0; t<1; ++t) {\n"
+"@kernel \n"
+"void f(const int dummy_arg) { \n"
+"  @outer \n"
+"  for (int b=0; b<1; ++b) { \n"
+"    @inner \n"
+"    for (int t=0; t<1; ++t) { \n"
 ;
 
 std::string kernel_back_half =
-"    }\n"
-"  }\n"
-"}\n"
+"    } \n"
+"  } \n"
+"} \n"
 ;
 
 void testUnaryFunctions(const occa::device& d) {
