@@ -37,18 +37,17 @@ Mission critical computational science and engineering applications from the pub
 ### Minimum
 
 - [CMake] v3.17 or newer
-- C++11 compiler
+- C++17 compiler
 - C11 compiler
 
 ### Optional
 
  - Fortan 90 compiler
- - MPI 2.0+
- - CUDA vXXX
- - HIP vXXX
- - oneAPI Toolkit vXXX
- - OpenCL ...
- - OpenMP ...
+ - CUDA 9 or later
+ - HIP 3.5 or later
+ - SYCL 2020 or later
+ - OpenCL 2.0 or later
+ - OpenMP XXX
 
 
 A detailed list of tested platforms can be found in the [installation guide](INSTALL.md).
@@ -60,7 +59,7 @@ OCCA uses the [CMake] build system. Checkout the [installation guide](INSTALL.md
 
 ### Linux 
 
-For convenience, the shell script `configure.sh` has been provided drive the Cmake build. Compilers, flags, and other build parameters can be adjusted there. By default OCCA will be built and installed in `./build` and `./install`.
+For convenience, the shell script `configure-cmake.sh` has been provided to drive the Cmake build. Compilers, flags, and other build parameters can be adjusted there. By default, this script uses `./build` and `./install` for the build and install directories.
 
 The following demonstrates a typical sequence of shell commands to build, test, and install occa:
 ```
@@ -75,19 +74,34 @@ $> cmake --install build --prefix install
 ...
 
 ### Windows
+...   
 
-...
+
+> **Tip**   
+> If third-party dependencies on your system are installed in a non-standard location, use the `CMAKE_PREFIX_PATH` variable to specify their location as a semicolon separated list of directories. 
+
 
 ## Use
 
 ### Building an OCCA application
 
-OCCA provides CMake package files which are included during installation. 
-To use OCCA in a downstream project (...)
+For convenience, OCCA provides CMake package files which are configured during installation. These package files define an imported target, `OCCA::libocca`, and look for all required dependencies.
+
+For example, the CMakeLists.txt of downstream projects using OCCA would include
+```cmake
+find_package(occa REQUIRED)
+
+add_executable(downstream-app ...)
+target_link_libraries(<downstream-app> PRIVATE OCCA::libocca)
+
+add_library(downstream-lib ...)
+target_link_libraries(<downstream-lib> PUBLIC OCCA::libocca)
+```
+In the case of a downstream library, linking OCCA using the  `PUBLIC` specifier ensures that CMake will forward OCCA's dependencies and compiler flags automatically.
 
 ### Environment
 
-...
+During installation, the [Env Modules](Env_Modules) file `<install-prefix>/modulefiles/occa` is generated. When this module is loaded, paths to the installed `bin`, `lib`, and `include` directories are appended to environment variables such as `LD_LIBRARY_PATH`.
 
 ## Community
 
@@ -116,3 +130,5 @@ OCCA is available under a [MIT license](LICENSE.MD)
 [OCCA_SLACK]: https://join.slack.com/t/libocca/shared_invite/zt-4jcnu451-qPpPWUzhm7YQKY_HMhIsIw
 
 [CMake]: https://cmake.org/
+
+[Env_Modules]: https://modules.readthedocs.io/en/latest/index.html
