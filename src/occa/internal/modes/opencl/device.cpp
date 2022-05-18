@@ -77,8 +77,12 @@ namespace occa {
     hash_t device::hash() const {
       if (!hash_.initialized) {
         std::stringstream ss;
-        ss << "platform: " << platformID << ' '
-           << "device: " << deviceID;
+        ss << "platform name: " << opencl::platformName(platformID)
+          << " platform vendor: " << opencl::platformVendor(platformID)
+          << " platform version: " << opencl::platformVersion(platformID)
+          << " device name: " << opencl::deviceName(platformID,deviceID)
+          << " device vendor: " << opencl::deviceVendor(platformID,deviceID)
+          << " device version: " << opencl::deviceVersion(platformID,deviceID);
         hash_ = occa::hash(ss.str());
       }
       return hash_;
@@ -358,7 +362,7 @@ namespace occa {
     }
 
     udim_t device::memorySize() const {
-      return opencl::getDeviceMemorySize(clDevice);
+      return opencl::deviceGlobalMemSize(clDevice);
     }
     //==================================
   }

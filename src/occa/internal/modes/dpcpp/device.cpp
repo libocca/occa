@@ -44,8 +44,6 @@ namespace occa
 
         dpcppDevice = devices[deviceID];
         dpcppContext = ::sycl::context(devices[deviceID]);
-
-        std::cout << "Target Device is: " << dpcppDevice.get_info<::sycl::info::device::name>() << "\n";
       }
 
       occa::json &kernelProps = properties["kernel"];
@@ -57,14 +55,18 @@ namespace occa
       getDpcppStream(currentStream).finish();
     }
 
-    //@todo: update kernel hashing
     hash_t device::hash() const
     {
       if (!hash_.initialized)
       {
         std::stringstream ss;
-        ss << "platform: " << platformID << ' '
-           << "device: " << deviceID;
+        auto p = dpcppDevice.get_platform();
+        ss << "platform name: " << p.get_info<::sycl::info::platform::name>() 
+          << " platform vendor: " << p.get_info<::sycl::info::platform::vendor>()
+          << " platform version: " << p.get_info<::sycl::info::platform::version>()
+          << " device name: " << dpcppDevice.get_info<::sycl::info::device::name>()
+          << " device vendor: " << dpcppDevice.get_info<::sycl::info::device::vendor>()
+          << " device version: " << dpcppDevice.get_info<::sycl::info::device::version>();
         hash_ = occa::hash(ss.str());
       }
       return hash_;
@@ -73,7 +75,7 @@ namespace occa
     hash_t device::kernelHash(const occa::json &props) const
     {
       return (
-          occa::hash(props["compiler_flags"]) ^ props["compiler_flags"]);
+          occa::hash(props["compiler"]) ^ props["compiler_flags"]);
     }
 
     lang::okl::withLauncher *device::createParser(const occa::json &props) const
