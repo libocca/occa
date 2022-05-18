@@ -55,26 +55,19 @@ A detailed list of tested platforms can be found in the [installation guide](INS
 
 ## Build, Test, Install
 
-OCCA uses the [CMake] build system. Checkout the [installation guide](INSTALL.md) for a comprehensive overview of all build settings.
+OCCA uses the [CMake] build system. Checkout the [installation guide](INSTALL.md) for a comprehensive overview of all build settings and instructions for building on Windows or Mac OS. 
 
 ### Linux 
 
-For convenience, the shell script `configure-cmake.sh` has been provided to drive the Cmake build. Compilers, flags, and other build parameters can be adjusted there. By default, this script uses `./build` and `./install` for the build and install directories.
+For convenience, the shell script `configure-cmake.sh` has been provided to drive the CMake build. Compilers, flags, and other build parameters can be adjusted there. By default, this script uses `./build` and `./install` for the build and install directories.
 
 The following demonstrates a typical sequence of shell commands to build, test, and install occa:
+```shell
+$ ./configure.sh
+$ cmake --build build --parallel <number-of-threads>
+$ ctest --test-dir build --output-on-failure
+$ cmake --install build --prefix install
 ```
-$> ./configure.sh
-$> cmake --build build --parallel <number-of-threads>
-$> ctest --test-dir build --output-on-failure
-$> cmake --install build --prefix install
-```
-
-### MacOS
-
-...
-
-### Windows
-...   
 
 
 > **Tip**   
