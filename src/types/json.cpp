@@ -10,6 +10,7 @@ namespace occa {
 
   json::json(const std::string &name,
              const primitive &value) {
+    type = object_;
     (*this)[name] = value;
   }
 
