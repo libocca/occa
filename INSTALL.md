@@ -15,7 +15,7 @@
  - HIP 3.5 or later
  - SYCL 2020 or later
  - OpenCL 2.0 or later
- - OpenMP XXX
+ - OpenMP 4.0 or later
 
 ## Linux
 
@@ -32,8 +32,7 @@ $ CC=clang CXX=clang++ ENABLE_OPENMP="OFF" ./configure-cmake.sh
 | --------- | ----------- | ------- |
 | BUILD_DIR | Directory used by CMake to build OCCA | `./build` |
 | INSTALL_DIR | Directory where OCCA should be installed | `./install` |
-| BUILD_TYPE | `Debug`, `RelWithDebInfo`, `Release` | `RelWithDebInfo` |
-| PREFIX_PATHS | Semicolon separated list of paths to 3rd-party dependencies | *empty*
+| BUILD_TYPE | Optimization and debug level | `RelWithDebInfo` |
 | CXX | C++11 compiler | `g++` |
 | CXXFLAGS | C++ compiler flags | *empty* | 
 | CC | C11 compiler| `gcc` |
@@ -50,6 +49,17 @@ $ CC=clang CXX=clang++ ENABLE_OPENMP="OFF" ./configure-cmake.sh
 | FC | Fortran 90 compiler | `gfortran` |
 | FFLAGS | Fortran compiler flags | *empty* |
 
+#### Dependency Paths
+
+The following environment variables can be used to specify the path to third-party dependencies needed by different OCCA backends. The value assigned should be an absolute path to the parent directory, which typically contains subdirectories `bin`, `include`, and `lib`.
+
+| Backend | Environment Variable | Description |
+| --- | --- | --- |
+| CUDA | CUDATookit_ROOT | Path to the CUDA the NVIDIA CUDA Toolkit |
+| HIP | HIP_ROOT | Path to the AMD HIP toolkit |
+| OpenCL | OpenCL_ROOT | Path to the OpenCL headers and library |
+| DPC++ | SYCL_ROOT | Path to the SYCL headers and library |
+
 ### Building
 
 After CMake configuration is complete, OCCA can be built with the command
@@ -57,9 +67,7 @@ After CMake configuration is complete, OCCA can be built with the command
 $ cmake --build build --parallel <number-of-threads>
 ```
 
-<!---
-Add information related to cross compiling (e.g., login vs. compute nodes). Targeted hardware doesn't need to be available during compilation, but all dependencies need to be.
---->
+When cross compiling for a different platform, the targeted hardware doesn't need to be available; however all dependencies&mdash;e.g., headers, libraries&mdash;must be present. Commonly this is the case for large HPC systems, where code is compiled on login nodes and run on compute nodes.  
 
 ### Testing
 
@@ -68,9 +76,9 @@ CTest is used for the OCCA test harness and can be run using the command
 $ ctest --test-dir BUILD_DIR --output-on-failure
 ```
 
-Before running CTest, it is important to set the environment variables `OCCA_CXX` and `OCCA_CC` since OCCA will default to using gcc/g++; otherwise, tests for some backends may return a false negative.
+Before running CTest, it may be necessary to set the environment variables `OCCA_CXX` and `OCCA_CC` since OCCA defaults to using gcc and g++. Tests for some backends may return a false negative otherwise.
 
-For testing, `BUILD_DIR/occa` is used for kernel caching. It may be necessary to clear this directory when rerunning tests after rebuilding with an existing configuration.
+During testing, `BUILD_DIR/occa` is used for kernel caching. This directory may need to be cleared when rerunning tests after recompiling with an existing build directory.
 
 ### Installation
 
@@ -89,10 +97,12 @@ $ module load occa
 ```
 
 ## Mac OS
-...
+
+> Do you use OCCA on Mac OS? Help other Mac OS users by contributing to the documentation here!
 
 ## Windows
-...
+
+> Do you use OCCA on Windows? Help other Windows users by contributing to the documentation here!
 
 [CMake]: https://cmake.org/
 [Env_Modules]: https://modules.readthedocs.io/en/latest/index.html

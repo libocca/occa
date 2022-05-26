@@ -47,7 +47,7 @@ Mission critical computational science and engineering applications from the pub
  - HIP 3.5 or later
  - SYCL 2020 or later
  - OpenCL 2.0 or later
- - OpenMP XXX
+ - OpenMP 4.0 or later
 
 
 A detailed list of tested platforms can be found in the [installation guide](INSTALL.md).
@@ -55,7 +55,7 @@ A detailed list of tested platforms can be found in the [installation guide](INS
 
 ## Build, Test, Install
 
-OCCA uses the [CMake] build system. Checkout the [installation guide](INSTALL.md) for a comprehensive overview of all build settings and instructions for building on Windows or Mac OS. 
+OCCA uses the [CMake] build system. Checkout the [installation guide](INSTALL.md) for a comprehensive overview of all build settings and instructions for building on [Windows](INSTALL.md#windows) or [Mac OS](INSTALL.md#mac-os). 
 
 ### Linux 
 
@@ -69,9 +69,7 @@ $ ctest --test-dir build --output-on-failure
 $ cmake --install build --prefix install
 ```
 
-
-> **Tip**   
-> If third-party dependencies on your system are installed in a non-standard location, use the `CMAKE_PREFIX_PATH` variable to specify their location as a semicolon separated list of directories. 
+If dependencies are installed in a non-standard location, set the corresponding [environment variable](INSTALL.md#dependency-paths) to this path. 
 
 
 ## Use
@@ -111,7 +109,15 @@ OCCA is a community driven project that relies on the support of people like you
 
 ### Acknowledgements
 
-> This work was supported by Argonne Leadership Computing Facility, which is a DOE Office of Science User Facility supported under Contract DE-AC02-06CH11357 and by the Exascale Computing Project (17-SC-20-SC), a joint project of the U.S. Department of Energy’s Office of Science and National Nuclear Security Administration, responsible for delivering a capable exascale ecosystem, including software, applications, and hardware technology, to support the nation’s exascale computing imperative.
+This work was supported in part by 
+- Argonne Leadership Computing Facility, which is a DOE Office of Science User Facility supported under Contract DE-AC02-06CH11357
+- The Exascale Computing Project (17-SC-20-SC), a joint project of the U.S. Department of Energy’s Office of Science and National Nuclear Security Administration, responsible for delivering a capable exascale ecosystem, including software, applications, and hardware technology, to support the nation’s exascale computing imperative
+- The Center for Efficient Exascale Discretizations (CEED), a co-design center within the U.S. Department of Energy Exascale Computing Project.
+- Intel
+- AMD
+- Shell
+
+
 
 ## License
 
