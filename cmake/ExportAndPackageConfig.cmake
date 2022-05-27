@@ -4,7 +4,7 @@
 #   occaConfigVersion.cmake, the version file associated with occaConfig.cmake
 
 # Install in subdirectory lib/cmake/PACKAGENAME, which is where cmake expects package config files
-set(PackageConfigInstallLocation lib/cmake/occa)
+set(PackageConfigInstallLocation lib/cmake/OCCA)
 set(ExportNamespace "OCCA::")
 
 # Set the exportPackageDependencies variable, for use in configuring occaConfig.cmake.in
@@ -44,8 +44,8 @@ string(APPEND exportTargets "# ${ExportNamespace}occa The occa executable, e.g. 
 include(CMakePackageConfigHelpers)
 # Create the PackageConfig file, based on the template
 configure_package_config_file(
-  "${CMAKE_CURRENT_LIST_DIR}/occaConfig.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/occaConfig.cmake"
+  "${CMAKE_CURRENT_LIST_DIR}/OCCAConfig.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/OCCAConfig.cmake"
   INSTALL_DESTINATION ${PackageConfigInstallLocation} # Only used as relative reference during in this function, does not determine actual install location
   NO_CHECK_REQUIRED_COMPONENTS_MACRO # As long as components are not used, don't need it
   )
@@ -57,7 +57,7 @@ file(READ "${OCCA_SOURCE_DIR}/include/occa/defines/occa.hpp" occadefs)
 string(REGEX MATCH "#define OCCA_VERSION_STR +\"([.0-9]*)\"" _ ${occadefs})
 set(OCCA_VERSION_STR ${CMAKE_MATCH_1})
 write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/occaConfigVersion.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/OCCAConfigVersion.cmake"
   VERSION "${OCCA_VERSION_STR}"
   COMPATIBILITY AnyNewerVersion
 )
@@ -67,7 +67,7 @@ write_basic_package_version_file(
 install(
   EXPORT occaExport
   NAMESPACE ${ExportNamespace}
-  FILE occaTargets.cmake
+  FILE OCCATargets.cmake
   DESTINATION ${PackageConfigInstallLocation}
 )
 
@@ -76,8 +76,8 @@ install(
 #   find_package(occa) will only match occaConfig.cmake, NOT OccaConfig.cmake
 install(
   FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/occaConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/occaConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/OCCAConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/OCCAConfigVersion.cmake"
     "${CMAKE_CURRENT_LIST_DIR}/FindDPCPP.cmake"
     "${CMAKE_CURRENT_LIST_DIR}/FindHIP.cmake"
     "${CMAKE_CURRENT_LIST_DIR}/FindMETAL.cmake"

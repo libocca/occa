@@ -1,7 +1,8 @@
 # !/bin/bash
-
-# A semicolon separated list of non-default paths to dependencies
-PREFIX_PATHS=""
+# Override default values here
+#CC=
+#CXX=
+#FC=
 
 # Default build parameters
 : ${BUILD_DIR:=`pwd`/build}
