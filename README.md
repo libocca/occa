@@ -19,9 +19,9 @@
 
 ## Performance, Portability, Transparency
 
-OCCA is an open source, portable, and vendor neutral framework for parallel programming on heterogeneous platforms. The OCCA API provides unified models for concepts—such as a device, memory, or kernel—which are common to other programming models. The OCCA Kernel Language (OKL) enables the creation of portable device kernels using a directive-based extension to the C-language. 
+OCCA is an open source, portable, and vendor neutral framework for parallel programming on heterogeneous platforms. The OCCA API provides unified models for heterogeneous programming concepts&mdash;such as a device, memory, or kernel&mdash;while the OCCA Kernel Language (OKL) enables the creation of portable device kernels using a directive-based extension to the C-language. 
 
-Mission critical computational science and engineering applications from the public and private sectors rely on OCCA. Notable users include the U.S. Department of Energy and Royal Dutch Shell.
+Mission critical computational science and engineering applications from the public and private sectors rely on OCCA. Notable users include the U.S. Department of Energy and Shell.
 
 **Key Features**
 
@@ -49,10 +49,6 @@ Mission critical computational science and engineering applications from the pub
  - OpenCL 2.0 or later
  - OpenMP 4.0 or later
 
-
-A detailed list of tested platforms can be found in the [installation guide](INSTALL.md).
-
-
 ## Build, Test, Install
 
 OCCA uses the [CMake] build system. Checkout the [installation guide](INSTALL.md) for a comprehensive overview of all build settings and instructions for building on [Windows](INSTALL.md#windows) or [Mac OS](INSTALL.md#mac-os). 
@@ -74,25 +70,24 @@ If dependencies are installed in a non-standard location, set the corresponding 
 
 ## Use
 
+### Environment
+
+During installation, the [Env Modules](Env_Modules) file `<install-prefix>/modulefiles/occa` is generated. When this module is loaded, paths to the installed `bin`, `lib`, and `include` directories are appended to environment variables such as `PATH` and `LD_LIBRARY_PATH`.
+
 ### Building an OCCA application
 
 For convenience, OCCA provides CMake package files which are configured during installation. These package files define an imported target, `OCCA::libocca`, and look for all required dependencies.
 
 For example, the CMakeLists.txt of downstream projects using OCCA would include
 ```cmake
-find_package(occa REQUIRED)
+find_package(OCCA REQUIRED)
 
 add_executable(downstream-app ...)
-target_link_libraries(<downstream-app> PRIVATE OCCA::libocca)
+target_link_libraries(downstream-app PRIVATE OCCA::libocca)
 
 add_library(downstream-lib ...)
-target_link_libraries(<downstream-lib> PUBLIC OCCA::libocca)
+target_link_libraries(downstream-lib PUBLIC OCCA::libocca)
 ```
-In the case of a downstream library, linking OCCA using the  `PUBLIC` specifier ensures that CMake will forward OCCA's dependencies and compiler flags automatically.
-
-### Environment
-
-During installation, the [Env Modules](Env_Modules) file `<install-prefix>/modulefiles/occa` is generated. When this module is loaded, paths to the installed `bin`, `lib`, and `include` directories are appended to environment variables such as `LD_LIBRARY_PATH`.
 
 ## Community
 

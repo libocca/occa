@@ -86,7 +86,7 @@ Commandline installation of OCCA can be accomplished with the following:
 ```shell
 $ cmake --install BUILD_DIR --prefix INSTALL_DIR
 ```
-During installation, the [Env Modules](Env_Modules) file `INSTALL_DIR/modulefiles/occa` is generated. When this module is loaded, paths to the installed `bin`, `lib`, and `include` directories are appended to environment variables such as `LD_LIBRARY_PATH`. 
+During installation, the [Env Modules](Env_Modules) file `INSTALL_DIR/modulefiles/occa` is generated. When this module is loaded, paths to the installed `bin`, `lib`, and `include` directories are appended to environment variables such as `PATH` and `LD_LIBRARY_PATH`. 
 To make use of this module, add the following to your `.modulerc` file
 ```
 module use -a INSTALL_DIR/modulfiles
@@ -95,6 +95,22 @@ module use -a INSTALL_DIR/modulfiles
 ```shell
 $ module load occa
 ```
+
+### Building an OCCA application
+
+For convenience, OCCA provides CMake package files which are configured during installation. These package files define an imported target, `OCCA::libocca`, and look for all required dependencies.
+
+For example, the CMakeLists.txt of downstream projects using OCCA would include
+```cmake
+find_package(OCCA REQUIRED)
+
+add_executable(downstream-app ...)
+target_link_libraries(downstream-app PRIVATE OCCA::libocca)
+
+add_library(downstream-lib ...)
+target_link_libraries(downstream-lib PUBLIC OCCA::libocca)
+```
+In the case of a downstream library, linking OCCA using the  `PUBLIC` specifier ensures that CMake will automatically forward OCCA's dependencies to applications which use the library.
 
 ## Mac OS
 
