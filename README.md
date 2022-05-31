@@ -25,7 +25,7 @@ Mission critical computational science and engineering applications from the pub
 
 **Key Features**
 
-- **Muitiple backends**&mdash; including CUDA, HIP, Data Parallel C++, OpenCL, OpenMP, and Metal
+- **Multiple backends**&mdash;including CUDA, HIP, Data Parallel C++, OpenCL, OpenMP (CPU), and Metal
 - **JIT compilation** and caching of kernels
 - C, C++, and ***Fortran*** language support
 - **Interoperability** with backend API and kernels
@@ -99,7 +99,7 @@ Need help? Checkout the [repository wiki](https://github.com/libocca/occa/wiki) 
 
 To provide feedback, start a conversation in the [general](https://github.com/libocca/occa/discussions/categories/general) or [ideas](https://github.com/libocca/occa/discussions/categories/ideas) discussion categories.
 
-### Acknowledgements
+## Acknowledgements
 
 This work was supported in part by 
 - Argonne Leadership Computing Facility, which is a DOE Office of Science User Facility supported under Contract DE-AC02-06CH11357
