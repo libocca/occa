@@ -690,7 +690,7 @@ namespace occa {
   primitive primitive::bitAnd(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-      case primitiveType::bool_   : return primitive(a.to<bool>()     & b.to<bool>());
+      case primitiveType::bool_   : return primitive(a.to<bool>()    && b.to<bool>());
       case primitiveType::int8_   : return primitive(a.to<int8_t>()   & b.to<int8_t>());
       case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  & b.to<uint8_t>());
       case primitiveType::int16_  : return primitive(a.to<int16_t>()  & b.to<int16_t>());
@@ -709,7 +709,7 @@ namespace occa {
   primitive primitive::bitOr(const primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-      case primitiveType::bool_   : return primitive(a.to<bool>()     | b.to<bool>());
+      case primitiveType::bool_   : return primitive(a.to<bool>()    || b.to<bool>());
       case primitiveType::int8_   : return primitive(a.to<int8_t>()   | b.to<int8_t>());
       case primitiveType::uint8_  : return primitive(a.to<uint8_t>()  | b.to<uint8_t>());
       case primitiveType::int16_  : return primitive(a.to<int16_t>()  | b.to<int16_t>());
@@ -888,7 +888,7 @@ namespace occa {
   primitive& primitive::bitAndEq(primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-      case primitiveType::bool_   : a = (a.to<bool>()     & b.to<bool>());     break;
+      case primitiveType::bool_   : a = (a.to<bool>()    && b.to<bool>());     break;
       case primitiveType::int8_   : a = (a.to<int8_t>()   & b.to<int8_t>());   break;
       case primitiveType::uint8_  : a = (a.to<uint8_t>()  & b.to<uint8_t>());  break;
       case primitiveType::int16_  : a = (a.to<int16_t>()  & b.to<int16_t>());  break;
@@ -907,7 +907,7 @@ namespace occa {
   primitive& primitive::bitOrEq(primitive &a, const primitive &b) {
     const int retType = (a.type > b.type) ? a.type : b.type;
     switch(retType) {
-      case primitiveType::bool_   : a = (a.to<bool>()     | b.to<bool>());     break;
+      case primitiveType::bool_   : a = (a.to<bool>()    || b.to<bool>());     break;
       case primitiveType::int8_   : a = (a.to<int8_t>()   | b.to<int8_t>());   break;
       case primitiveType::uint8_  : a = (a.to<uint8_t>()  | b.to<uint8_t>());  break;
       case primitiveType::int16_  : a = (a.to<int16_t>()  | b.to<int16_t>());  break;
