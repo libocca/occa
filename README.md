@@ -89,6 +89,38 @@ add_library(downstream-lib ...)
 target_link_libraries(downstream-lib PUBLIC OCCA::libocca)
 ```
 
+### Command-line Interface
+
+The OCCA command-line interface can be found in `<install-prefix>/bin/occa`. This tool can be used to query information about hardware and the configuration of OCCA on a given platform.
+
+For example, calling `occa info` will available OCCA backends and related hardware specs, while `occa env` display the values of OCCA related environment variables. To see the list of all available options, call `occa --help`.
+
+```shell
+$ occa info
+========+======================+=================================
+ CPU(s) | Processor Name       | AMD EPYC 7532 32-Core Processor 
+        | Memory               | 251.6 GB                        
+        | Clock Frequency      | 2.4 MHz                         
+        | SIMD Instruction Set | SSE2                            
+        | SIMD Width           | 128 bits                        
+        | L1d Cache Size       |   1 MB                          
+        | L1i Cache Size       |   1 MB                          
+        | L2 Cache Size        |  16 MB                          
+        | L3 Cache Size        | 256 MB                          
+========+======================+=================================
+ OpenCL | Platform 0           | NVIDIA CUDA                     
+        |----------------------+---------------------------------
+        | Device 0             | NVIDIA A100-PCIE-40GB           
+        | Device Type          | gpu                             
+        | Compute Cores        | 108                             
+        | Global Memory        | 39.40 GB                        
+========+======================+=================================
+ CUDA   | Device Name          | NVIDIA A100-PCIE-40GB           
+        | Device ID            | 0                               
+        | Memory               | 39.40 GB                        
+========+======================+=================================
+```
+
 ## Community
 
 ### Support
