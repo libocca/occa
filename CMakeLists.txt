@@ -32,7 +32,7 @@ option(ENABLE_OPENCL "Build with OpenCL if available" ON)
 option(ENABLE_HIP    "Build with HIP if available" ON)
 option(ENABLE_METAL  "Build with Metal if available" ON)
 option(ENABLE_DPCPP "Build with SYCL/DPCPP if available" ON)
-option(ENABLE_MPI    "Build with MPI if available" ON)
+option(ENABLE_MPI    "Build with MPI if available" OFF)
 
 option(ENABLE_TESTS    "Build tests"               OFF)
 option(ENABLE_EXAMPLES "Build simple examples"     OFF)
