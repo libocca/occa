@@ -1,8 +1,7 @@
 - **User Guide**
   - [Introduction](user-guide/introduction.md)
-  - [Python Setup](user-guide/python-setup.md)
   - [Command-Line Interface](user-guide/command-line-interface.md)
-  - [Need Help?](user-guide/need-help.md)
+  - [Community](user-guide/community.md)
 
 - **OCCA**
   - [Introduction](occa/introduction.md)
