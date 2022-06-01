@@ -1,21 +1,21 @@
 - **User Guide**
-  - [Introduction](/guide/user-guide/introduction)
-  - [Python Setup](/guide/user-guide/python-setup)
-  - [Command-Line Interface](/guide/user-guide/command-line-interface)
-  - [Need Help?](/guide/user-guide/need-help)
+  - [Introduction](user-guide/introduction.md)
+  - [Python Setup](user-guide/python-setup.md)
+  - [Command-Line Interface](user-guide/command-line-interface.md)
+  - [Need Help?](user-guide/need-help.md)
 
 - **OCCA**
-  - [Introduction](/guide/occa/introduction)
-  - [Device Streams](/guide/occa/device-streams)
-  - [Background Device](/guide/occa/background-device)
+  - [Introduction](occa/introduction.md)
+  - [Device Streams](occa/device-streams.md)
+  - [Background Device](occa/background-device.md)
 
 - **OKL**
-  - [Introduction](/guide/okl/introduction)
-  - [Attributes](/guide/okl/attributes)
-  - [Loops in Depth](/guide/okl/loops-in-depth)
-  - [Atomics](/guide/okl/atomics)
+  - [Introduction](okl/introduction.md)
+  - [Attributes](okl/attributes.md)
+  - [Loops in Depth](okl/loops-in-depth.md)
+  - [Atomics](okl/atomics.md)
 
 - **Developer Zone**
-  - [C++](/guide/developer-zone/cpp)
-  - [Python](/guide/developer-zone/python)
-  - [Docs](/guide/developer-zone/docs)
+  - [C++](developer-zone/cpp.md)
+  - [Python](developer-zone/python.md)
+  - [Docs](developer-zone/docs.md)
