@@ -24,8 +24,9 @@ namespace occa {
         auto platform_list = ::sycl::platform::get_platforms();
         for (auto p : platform_list)
         {
+          std::string platform_name_str = p.get_info<::sycl::info::platform::name>();
           section
-            .add("Platform " + toString(platform_id), p.get_info<::sycl::info::platform::name>())
+            .add("Platform " + toString(platform_id), platform_name_str)
             .addDivider();
 
           int device_id{0};

@@ -48,6 +48,12 @@ namespace occa {
         compilerFlags = (std::string) kernelProps["compiler_flags"];
       }
 
+      std::string ocl_c_ver = "2.0";
+      if (env::var("OCCA_OPENCL_C_VERSION").size()) {
+        ocl_c_ver = env::var("OCCA_OPENCL_C_VERSION");
+      }
+      compilerFlags += " -cl-std=CL" + ocl_c_ver;
+
       kernelProps["compiler_flags"] = compilerFlags;
     }
 
@@ -71,8 +77,12 @@ namespace occa {
     hash_t device::hash() const {
       if (!hash_.initialized) {
         std::stringstream ss;
-        ss << "platform: " << platformID << ' '
-           << "device: " << deviceID;
+        ss << "platform name: " << opencl::platformName(platformID)
+          << " platform vendor: " << opencl::platformVendor(platformID)
+          << " platform version: " << opencl::platformVersion(platformID)
+          << " device name: " << opencl::deviceName(platformID,deviceID)
+          << " device vendor: " << opencl::deviceVendor(platformID,deviceID)
+          << " device version: " << opencl::deviceVersion(platformID,deviceID);
         hash_ = occa::hash(ss.str());
       }
       return hash_;
@@ -352,7 +362,7 @@ namespace occa {
     }
 
     udim_t device::memorySize() const {
-      return opencl::getDeviceMemorySize(clDevice);
+      return opencl::deviceGlobalMemSize(clDevice);
     }
     //==================================
   }

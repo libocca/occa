@@ -151,8 +151,9 @@ namespace occa {
       bool withLauncher::isLastInnerLoop(forStatement &forSmnt) {
         blockStatement &parent = *(forSmnt.up);
         for(int smntIndex = forSmnt.childIndex()+1; smntIndex<parent.size(); smntIndex++) {
-          if ((parent[smntIndex]->type() & statementType::for_)
-              && parent[smntIndex]->hasAttribute("inner")) {
+          if (statementArray::from(*parent[smntIndex])
+                .flatFilterByAttribute("inner")
+                .length()) {
             return false;
           }
         }

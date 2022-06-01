@@ -13,6 +13,7 @@ find_path(
   PATHS
     /opt/intel/oneapi/compiler/latest/linux
     ENV SYCL_ROOT
+    ${SYCL_ROOT}
   PATH_SUFFIXES
     include/sycl
 )
@@ -24,6 +25,9 @@ find_path(
   PATHS
     /opt/intel/oneapi/compiler/latest/linux
     ENV SYCL_ROOT
+    ${SYCL_ROOT}
+  PATH_SUFFIXES
+    include
 )
 
 find_library(
@@ -33,6 +37,9 @@ find_library(
   PATHS
     /opt/intel/oneapi/compiler/latest/linux
     ENV SYCL_ROOT
+    ${SYCL_ROOT}
+  PATH_SUFFIXES
+    lib
 )
 
 include(FindPackageHandleStandardArgs)

@@ -10,7 +10,6 @@
 #include <occa/internal/utils/string.hpp>
 #include <occa/internal/utils/styling.hpp>
 #include <occa/internal/utils/sys.hpp>
-#include <occa/internal/utils/tls.hpp>
 #include <occa/internal/utils/vector.hpp>
 
 #endif

@@ -10,7 +10,7 @@ cmake_policy(SET CMP0056 NEW)
 #=======================================
 
 #---[ Build Config ]--------------------
-project(occa
+project(OCCA
   DESCRIPTION  "JIT Compilation for Multiple Architectures: C++, OpenMP, CUDA, HIP, OpenCL, Metal"
   HOMEPAGE_URL "https://github.com/libocca/occa"
   LANGUAGES    C CXX)
@@ -32,7 +32,7 @@ option(ENABLE_OPENCL "Build with OpenCL if available" ON)
 option(ENABLE_HIP    "Build with HIP if available" ON)
 option(ENABLE_METAL  "Build with Metal if available" ON)
 option(ENABLE_DPCPP "Build with SYCL/DPCPP if available" ON)
-option(ENABLE_MPI    "Build with MPI if available" ON)
+option(ENABLE_MPI    "Build with MPI if available" OFF)
 
 option(ENABLE_TESTS    "Build tests"               OFF)
 option(ENABLE_EXAMPLES "Build simple examples"     OFF)
@@ -312,3 +312,11 @@ add_subdirectory(bin)
 
 # Create a package config and associated files.
 include(ExportAndPackageConfig)
+
+install(CODE
+  "configure_file(
+    ${CMAKE_SOURCE_DIR}/modulefiles/occa
+    ${CMAKE_INSTALL_PREFIX}/modulefiles/occa
+    @ONLY
+  )"
+)
