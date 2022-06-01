@@ -273,8 +273,8 @@ namespace occa {
       }
 
       qualifiers.push_back(qualifiers[count - 1]);
-      for (int i = 0; i < (count - 1); ++i) {
-        qualifiers[i + 1] = qualifiers[i];
+      for (int i = (count - 1); i > 0; --i) {
+        qualifiers[i] = qualifiers[i - 1];
       }
       qualifiers[0] = qualifier;
       return *this;
