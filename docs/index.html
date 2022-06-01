@@ -17,7 +17,7 @@
 
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons">
     <link rel="stylesheet" href="//unpkg.com/vue-material@beta/dist/vue-material.min.css">
-    <link rel="stylesheet" href="//unpkg.com/docsify@4.7.1/lib/themes/vue.css">
+    <link rel="stylesheet" href="//unpkg.com/docsify@4/lib/themes/vue.css">
     <link rel="stylesheet" href="//stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="./assets/occa.css">
   </head>
@@ -50,8 +50,17 @@
 
        alias: {
          '/.*/_navbar.md': '/_navbar.md',
-         '/guide/.*/_sidebar.md': '/guide/_sidebar.md',
+         '/guide/(.*)/_sidebar.md': '/guide/_sidebar.md',
          '/examples/.*/_sidebar.md': '/examples/_sidebar.md',
+         '/customization/(.*)': '/guide/customization/$1',
+         '/customization/(.*)': '/guide/customization/$1',
+         '/developer-zone/(.*)': '/guide/developer-zone/$1',
+         '/occa/(.*)': '/guide/occa/$1',
+         '/okl/(.*)': '/guide/okl/$1',
+         '/user-guide/(.*)': '/guide/user-guide/$1',
+         '/c/(.*)': '/examples/c/$1',
+         '/cpp/(.*)': '/examples/cpp/$1',
+         '/py/(.*)': '/examples/py/$1'
        },
 
        auto2top: true,
@@ -106,8 +115,8 @@
 
      window.__VUE_DEVTOOLS_GLOBAL_HOOK__.Vue = vm.constructor;
     </script>
-    <script src="//unpkg.com/docsify@4.7.1/lib/docsify.min.js"></script>
-    <script src="//unpkg.com/docsify@4.7.1/lib/plugins/ga.min.js"></script>
+    <script src="//unpkg.com/docsify@4/lib/docsify.min.js"></script>
+    <script src="//unpkg.com/docsify@4/lib/plugins/ga.min.js"></script>
     <script src="//unpkg.com/prismjs@1.13.0/components/prism-bash.min.js"></script>
     <script src="//unpkg.com/prismjs@1.13.0/components/prism-c.min.js"></script>
     <script src="//unpkg.com/prismjs@1.13.0/components/prism-cpp.min.js"></script>
