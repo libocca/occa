@@ -259,19 +259,9 @@ file(
   GLOB_RECURSE OCCA_SRC_cpp
   RELATIVE ${OCCA_SOURCE_DIR} "src/*.cpp")
 
-if(OCCA_OPENMP_ENABLED)
-  set_source_files_properties(${OCCA_SRC_cpp} PROPERTIES
-    COMPILE_FLAGS ${OpenMP_CXX_FLAGS})
-endif()
-
 if(ENABLE_FORTRAN)
   file(GLOB_RECURSE OCCA_SRC_f90
     RELATIVE ${OCCA_SOURCE_DIR} "src/*.f90")
-
-  if(OCCA_OPENMP_ENABLED)
-    set_source_files_properties(${OCCA_SRC_f90} PROPERTIES
-      COMPILE_FLAGS ${OpenMP_Fortran_FLAGS})
-  endif()
 
   install(CODE
     "file(GLOB public-modules ${CMAKE_Fortran_MODULE_DIRECTORY}/*.mod)\n
