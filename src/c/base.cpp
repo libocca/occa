@@ -44,6 +44,12 @@ void occaFinish() {
   occa::finish();
 }
 
+void occaGetDeviceArchVersion(occaDevice device,
+                              int *archMajorVersion,
+                              int *archMinorVersion) {
+  (occa::c::device(device)).getDeviceArchVersion(archMajorVersion, archMinorVersion);
+}
+
 occaStream occaCreateStream(occaJson props) {
   occa::stream stream;
   if (occa::c::isDefault(props)) {

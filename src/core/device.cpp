@@ -175,6 +175,19 @@ namespace occa {
     return modeDevice->properties;
   }
 
+  void device::getDeviceArchVersion(int *archMajorVersion, int *archMinorVersion) {
+    assertInitialized();
+    *archMajorVersion = 0;
+    *archMinorVersion = 0;
+    if (modeDevice->mode == "CUDA" || modeDevice->mode == "HIP") {
+      *archMajorVersion = (((occa::cuda::device*)modeDevice)->archMajorVersion);
+      *archMinorVersion = (((occa::cuda::device*)modeDevice)->archMinorVersion);
+    } else {
+      std::cout << "getDeviceArchVersion called with device mode = " <<
+          modeDevice->mode << "!\nOnly CUDA/HIP device mode is supported currently.\n";
+    }
+  }
+
   const occa::json& device::kernelProperties() const {
     assertInitialized();
     return (const occa::json&) modeDevice->properties["kernel"];

@@ -281,6 +281,19 @@ namespace occa {
      */
     const occa::json& properties() const;
 
+    /**
+     * @startDoc{getDeviceArchVersion}
+     *
+     * Description:
+     *   Returns the architecture version of a CUDA or HIP device.
+     *
+     * Returns:
+     *   The architecture version of a CUDA or HIP device.
+     *
+     * @endDoc
+     */
+    void getDeviceArchVersion(int *archMajorVersion, int *archMinorVersion);
+
     const occa::json& kernelProperties() const;
     occa::json kernelProperties(const occa::json &additionalProps) const;
 
