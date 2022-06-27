@@ -1,16 +1,16 @@
+#include <functional>
+
 #include <occa/core/base.hpp>
 #include <occa/internal/core/device.hpp>
 #include <occa/internal/core/memory.hpp>
 #include <occa/internal/modes.hpp>
 #include <occa/internal/utils/env.hpp>
 #include <occa/internal/utils/sys.hpp>
-#include <occa/internal/utils/tls.hpp>
 
 namespace occa {
   //---[ Device Functions ]-------------
   device host() {
-    static tls<device> tdev;
-    device &dev = tdev.value();
+    thread_local device dev;
     if (!dev.isInitialized()) {
       dev = occa::device({
         {"mode", "Serial"}
@@ -21,12 +21,11 @@ namespace occa {
   }
 
   device& getDevice() {
-    static tls<device> tdev;
-    device &dev = tdev.value();
+    thread_local device dev;
     if (!dev.isInitialized()) {
       dev = host();
     }
-    return dev;
+    return std::ref(dev);
   }
 
   void setDevice(device d) {

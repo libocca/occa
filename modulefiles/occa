@@ -1,0 +1,15 @@
+#%Module
+module-whatis {}
+
+set OCCA_ROOT @CMAKE_INSTALL_PREFIX@
+
+prepend-path PATH $OCCA_ROOT/bin
+prepend-path LIBRARY_PATH $OCCA_ROOT/lib
+prepend-path LD_LIBRARY_PATH $OCCA_ROOT/lib
+prepend-path INCLUDE $OCCA_ROOT/include
+prepend-path C_INCLUDE_PATH $OCCA_ROOT/include
+prepend-path CPLUS_INCLUDE_PATH $OCCA_ROOT/include
+
+setenv OCCA_ROOT $OCCA_ROOT
+setenv OCCA_DIR $OCCA_ROOT
+setenv OCCA_INSTALL_DIR $OCCA_ROOT

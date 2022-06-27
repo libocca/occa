@@ -292,44 +292,11 @@ namespace occa {
         sys::addCompilerLibraryFlags(compilerFlags);
       }
 
-      //---[ PTX Check Command ]--------
-      std::stringstream command;
-      if (allProps.has("compiler_env_script")) {
-        command << allProps["compiler_env_script"] << " && ";
-      }
-
-      command << compiler
-              << ' ' << compilerFlags
-              << " -Xptxas -v,-dlcm=cg"
-#if (OCCA_OS == OCCA_WINDOWS_OS)
-              << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
-#endif
-              << " -I"        << env::OCCA_DIR << "include"
-              << " -I"        << env::OCCA_INSTALL_DIR << "include"
-              << " -L"        << env::OCCA_INSTALL_DIR << "lib -locca"
-              << " -x cu -c " << sourceFilename
-              << " -o "       << ptxBinaryFilename;
-
-      if (!verbose) {
-        command << " > /dev/null 2>&1";
-      }
-      const std::string &ptxCommand = command.str();
-      if (verbose) {
-        io::stdout << "Compiling [" << kernelName << "]\n" << ptxCommand << "\n";
-      }
-
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-      ignoreResult( system(ptxCommand.c_str()) );
-#else
-      ignoreResult( system(("\"" +  ptxCommand + "\"").c_str()) );
-#endif
-      //================================
-
       //---[ Compiling Command ]--------
-      command.str("");
+      std::stringstream command;
       command << allProps["compiler"]
               << ' ' << compilerFlags
-              << " -ptx"
+              << " -cubin"
 #if (OCCA_OS == OCCA_WINDOWS_OS)
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
 #endif

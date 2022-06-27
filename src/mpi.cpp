@@ -4,7 +4,6 @@
 
 #include <occa/core/base.hpp>
 #include <occa/experimental/mpi.hpp>
-#include <occa/internal/utils/tls.hpp>
 
 namespace occa {
   namespace mpi {
@@ -39,8 +38,8 @@ namespace occa {
     }
 
     char* getBuffer() {
-      static tls<buffer_t> buffer_;
-      return buffer_.value().ptr;
+      thread_local buffer_t buffer_;
+      return buffer_.ptr;
     }
 
     void barrier() {
