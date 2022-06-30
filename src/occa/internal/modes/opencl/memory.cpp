@@ -59,7 +59,6 @@ namespace occa {
     }
 
     memory::~memory() {
-      size = 0;
       useHostPtr = false;
     }
 

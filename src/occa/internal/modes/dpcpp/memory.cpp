@@ -25,7 +25,6 @@ namespace occa
     memory::~memory()
     {
       ptr = nullptr;
-      size = 0;
     }
 
     void *memory::getKernelArgPtr() const

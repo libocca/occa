@@ -24,7 +24,6 @@ namespace occa {
     memory::~memory() {
       metalBuffer = NULL;
       bufferOffset = 0;
-      size = 0;
     }
 
     void* memory::getKernelArgPtr() const {
