@@ -152,6 +152,17 @@ namespace occa {
     void resize(const udim_t bytes);
 
     /**
+     * @startDoc{shrinkToFit}
+     *
+     * Description:
+     *   Resize the underlying device memory buffer in the memoryPool to fit only
+     *   The currently active reservations.
+     *
+     * @endDoc
+     */
+    void shrinkToFit();
+
+    /**
      * @startDoc{free}
      *
      * Description:

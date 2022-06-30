@@ -129,6 +129,10 @@ namespace occa {
     modeMemoryPool->resize(bytes);
   }
 
+  void memoryPool::shrinkToFit() {
+    resize(reserved());
+  }
+
   void memoryPool::free() {
     if (modeMemoryPool == NULL) return;
     delete modeMemoryPool;
