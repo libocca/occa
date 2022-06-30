@@ -123,7 +123,7 @@ namespace occa {
     }
 
     cl_device_type deviceType(info::device_type type) {
-      cl_device_type dtype;
+      cl_device_type dtype = CL_DEVICE_TYPE_DEFAULT;
       switch (type) {
         case info::device_type::cpu:
           dtype = CL_DEVICE_TYPE_CPU;
