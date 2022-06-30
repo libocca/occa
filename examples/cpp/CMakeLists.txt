@@ -12,6 +12,7 @@ add_subdirectory(11_native_cuda_kernels)
 add_subdirectory(12_native_opencl_kernels)
 add_subdirectory(13_openmp_interop)
 add_subdirectory(14_cuda_interop)
+add_subdirectory(17_memory_pool)
 
 add_subdirectory(18_nonblocking_streams)
 add_subdirectory(20_native_dpcpp_kernel)
