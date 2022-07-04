@@ -110,6 +110,8 @@ namespace occa {
         ^ props["compiler_flags"]
         ^ props["compiler_env_script"]
         ^ props["hipcc_compiler_flags"]
+        ^ props["kernel/include_occa"]
+        ^ props["kernel/link_occa"]
       );
     }
 
@@ -287,14 +289,20 @@ namespace occa {
 #else
               << " -f=\\\"" << compilerFlags << "\\\""
 #endif
-              << ' ' << hipccCompilerFlags
+              << ' ' << hipccCompilerFlags;
 #if defined(__HIP_PLATFORM_NVCC___) || (HIP_VERSION >= 305)
-              << " -I"        << env::OCCA_DIR << "include"
-              << " -I"        << env::OCCA_INSTALL_DIR << "include"
+      const bool includeOcca = kernelProps.get("kernel/include_occa", true);
+      const bool linkOcca = kernelProps.get("kernel/link_occa", false);
+      if (includeOcca) {
+        command << " -I"        << env::OCCA_DIR << "include"
+                << " -I"        << env::OCCA_INSTALL_DIR << "include";
+      }
+      if (linkOcca) {
+            /* NC: hipcc doesn't seem to like linking a library in */
+              //<< " -L"        << env::OCCA_INSTALL_DIR << "lib -locca";
+      }
 #endif
-              /* NC: hipcc doesn't seem to like linking a library in */
-              //<< " -L"        << env::OCCA_INSTALL_DIR << "lib -locca"
-              << ' '    << sourceFilename
+      command << ' '    << sourceFilename
               << " -o " << binaryFilename
               << " 2>&1";
 

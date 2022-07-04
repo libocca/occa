@@ -111,6 +111,8 @@ namespace occa {
       return (
         occa::hash(props["compiler"])
         ^ props["compiler_flags"]
+        ^ props["kernel/include_occa"]
+        ^ props["kernel/link_occa"]
       );
     }
 
@@ -290,6 +292,9 @@ namespace occa {
         sys::addCompilerLibraryFlags(compilerFlags);
       }
 
+      const bool includeOcca = kernelProps.get("kernel/include_occa", true);
+      const bool linkOcca = kernelProps.get("kernel/link_occa", false);
+
       //---[ Compiling Command ]--------
       std::stringstream command;
       command << allProps["compiler"]
@@ -298,10 +303,15 @@ namespace occa {
 #if (OCCA_OS == OCCA_WINDOWS_OS)
               << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
 #endif
-              << " -I"        << env::OCCA_DIR << "include"
-              << " -I"        << env::OCCA_INSTALL_DIR << "include"
-              << " -L"        << env::OCCA_INSTALL_DIR << "lib -locca"
-              << " -x cu " << sourceFilename
+          ;
+      if (includeOcca) {
+        command << " -I"        << env::OCCA_DIR << "include"
+                << " -I"        << env::OCCA_INSTALL_DIR << "include";
+      }
+      if (linkOcca) {
+        command << " -L"        << env::OCCA_INSTALL_DIR << "lib -locca";
+      }
+      command << " -x cu " << sourceFilename
               << " -o "    << binaryFilename
               << " 2>&1";
 
