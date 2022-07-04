@@ -111,7 +111,6 @@ namespace occa {
       return (
         occa::hash(props["compiler"])
         ^ props["compiler_flags"]
-        ^ props["compiler_env_script"]
       );
     }
 

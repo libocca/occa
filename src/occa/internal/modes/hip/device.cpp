@@ -109,6 +109,7 @@ namespace occa {
         occa::hash(props["compiler"])
         ^ props["compiler_flags"]
         ^ props["compiler_env_script"]
+        ^ props["hipcc_compiler_flags"]
       );
     }
 
