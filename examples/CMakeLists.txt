@@ -1,6 +1,6 @@
 macro(add_test_with_mode_and_nranks exe mode device nranks)
   if (${nranks} GREATER 1)
-    add_test(NAME ${exe}-${mode} COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${nranks} ./${exe} --verbose --device "${device}")
+    add_test(NAME ${exe}-${mode} COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${nranks} ${MPIEXEC_PREFLAGS} ./${exe} ${MPIEXEC_POSTFLAGS} --verbose --device "${device}")
   else()
     add_test(NAME ${exe}-${mode} COMMAND ./${exe} --verbose --device "${device}")
   endif()
