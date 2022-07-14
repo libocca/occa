@@ -27,6 +27,7 @@ int main(int argc, const char **argv) {
   occa::json kernelProps({
     {"defines/block", block},
     {"defines/group", group},
+    {"serial/include_std", true},
   });
   occa::kernel powerOfPi = occa::buildKernel("powerOfPi.okl",
                                              "powerOfPi",

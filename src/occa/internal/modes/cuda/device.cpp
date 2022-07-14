@@ -292,7 +292,7 @@ namespace occa {
         sys::addCompilerLibraryFlags(compilerFlags);
       }
 
-      const bool includeOcca = kernelProps.get("kernel/include_occa", true);
+      const bool includeOcca = kernelProps.get("kernel/include_occa", false);
       const bool linkOcca = kernelProps.get("kernel/link_occa", false);
 
       //---[ Compiling Command ]--------

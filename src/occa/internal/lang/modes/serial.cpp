@@ -33,11 +33,11 @@ namespace occa {
 
       void serialParser::setupHeaders() {
         strVector headers;
-        const bool includeOcca = settings.get("kernel/include_occa", true);
+        const bool includeOcca = settings.get("kernel/include_occa", false);
         if (includeOcca) {
           headers.push_back("include <occa.hpp>\n");
         }
-        const bool includingStd = settings.get("serial/include_std", true);
+        const bool includingStd = settings.get("serial/include_std", false);
         if (includingStd) {
           headers.push_back("include <stdint.h>");
           headers.push_back("include <cstdlib>");
