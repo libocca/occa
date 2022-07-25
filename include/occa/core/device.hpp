@@ -349,12 +349,25 @@ namespace occa {
      * @startDoc{finish}
      *
      * Description:
-     *   Finishes any asynchronous operation queued up on the device, such as
-     *   [[async memory allocations|device.malloc]] or [[kernel calls|kernel.operator_parentheses]].
+     *   Waits for all asynchronous operations, such as
+     *   [[async memory allocations|device.malloc]] or [[kernel calls|kernel.operator_parentheses]],
+     *   submitted to the current stream on this device to complete.
      *
      * @endDoc
      */
     void finish();
+
+    /**
+     * @startDoc{finish}
+     *
+     * Description:
+     *   Waits for all asynchronous operations, such as
+     *   [[async memory allocations|device.malloc]] or [[kernel calls|kernel.operator_parentheses]],
+     *   submitted to all streams on this device to complete.
+     *
+     * @endDoc
+     */
+    void finishAll();
 
     /**
      * @startDoc{hasSeparateMemorySpace}

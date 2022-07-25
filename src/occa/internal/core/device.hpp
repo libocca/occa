@@ -58,6 +58,8 @@ namespace occa {
     void addStreamTagRef(modeStreamTag_t *streamTag);
     void removeStreamTagRef(modeStreamTag_t *streamTag);
 
+    void finishAll() const;
+
     //---[ Virtual Methods ]------------
     virtual ~modeDevice_t() = 0;
 
