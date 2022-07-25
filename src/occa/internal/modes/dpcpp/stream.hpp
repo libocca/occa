@@ -18,7 +18,7 @@ namespace occa {
 
       virtual ~stream()=default;
 
-      void finish();
+      void finish() override;
 
       occa::dpcpp::streamTag memcpy(void *dest, const void *src, occa::udim_t num_bytes);
     };

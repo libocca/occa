@@ -13,5 +13,10 @@ namespace occa {
       OCCA_OPENCL_ERROR("Device: Freeing cl_command_queue",
                         clReleaseCommandQueue(commandQueue));
     }
+
+    void stream::finish() {
+      OCCA_OPENCL_ERROR("Stream: finish",
+                        clFinish(getCommandQueue));
+    }
   }
 }
