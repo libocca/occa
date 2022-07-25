@@ -355,6 +355,7 @@ namespace occa {
      *
      * @endDoc
      */
+    [[deprecated("Use `getStream().finish()` instead.")]]
     void finish();
 
     /**

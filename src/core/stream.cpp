@@ -98,6 +98,10 @@ namespace occa {
     modeStream = NULL;
   }
 
+  void stream::finish() {
+    if(modeStream) modeStream->finish();
+  }
+
   std::ostream& operator << (std::ostream &out,
                              const occa::stream &stream) {
     out << stream.properties();
