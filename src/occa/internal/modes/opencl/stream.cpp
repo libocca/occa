@@ -16,7 +16,7 @@ namespace occa {
 
     void stream::finish() {
       OCCA_OPENCL_ERROR("Stream: finish",
-                        clFinish(getCommandQueue));
+                        clFinish(commandQueue));
     }
   }
 }

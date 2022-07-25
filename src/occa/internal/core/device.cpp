@@ -80,8 +80,12 @@ namespace occa {
     streamTagRing.removeRef(streamTag);
   }
 
+  void modeDevice_t::finish() const {
+    currentStream.getModeStream()->finish();
+  }
+
   void modeDevice_t::finishAll() const {
-    for(const auto* stream : streams) {
+    for(auto* stream : streams) {
       if(stream) stream->finish();
     }
   }
