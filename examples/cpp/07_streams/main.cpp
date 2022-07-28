@@ -25,34 +25,81 @@ int main(int argc, const char **argv) {
     ab[i] = 0;
   }
 
-  occa::kernel addVectors;
-  occa::memory o_a, o_b, o_ab;
+  // The default stream
+  occa::stream streamA = occa::getStream(); 
+  
+  // Another, new stream
+  occa::stream streamB = occa::createStream(); 
 
-  occa::stream streamA, streamB;
+  occa::memory o_a  = occa::malloc<float>(entries);
+  occa::memory o_b  = occa::malloc<float>(entries);
+  occa::memory o_ab = occa::malloc<float>(entries);
 
-  streamA = occa::getStream();
-  streamB = occa::createStream();
-
-  o_a  = occa::malloc<float>(entries);
-  o_b  = occa::malloc<float>(entries);
-  o_ab = occa::malloc<float>(entries);
-
-  addVectors = occa::buildKernel("addVectors.okl",
+  occa::kernel addVectors = occa::buildKernel("addVectors.okl",
                                  "addVectors");
 
+  // These copies will be submitted to the current
+  // stream, which is streamA--the default stream.
   o_a.copyFrom(a);
   o_b.copyFrom(b);
+  
+  // Waits the copies in streamA to complete
+  streamA.finish(); 
+  
+  // **IMPORTANT**
+  // Operating on overlaping memory regions simultaneously
+  // from different streams, without appropriate 
+  // synchronization, leads to undefined behavior. 
+  
+  // Create *non-overlapping* memory slices for use by 
+  // kernels launched in separate streams.
+  occa::memory o_a1 = o_a.slice(0); // First half of a
+  occa::memory o_a2 = o_a.slice(entries/2); // Second half of a
+
+  occa::memory o_b1 = o_b.slice(0);
+  occa::memory o_b2 = o_b.slice(entries/2);
+
+  occa::memory o_ab1 = o_ab.slice(0);
+  occa::memory o_ab2 = o_ab.slice(entries/2);
 
   occa::setStream(streamA);
-  addVectors(entries, o_a, o_b, o_ab);
+  // This kernel launch is submitted to streamA.
+  // It operates on the first half of each vector.
+  addVectors(entries, o_a1, o_b1, o_ab1);
 
   occa::setStream(streamB);
-  addVectors(entries, o_a, o_b, o_ab);
+  // This kernel launch is submitted to streamB.
+  // It operates on the second half of each vector.
+  addVectors(entries, o_a2, o_b2, o_ab2);
 
+  // The copy below will be submitted to streamB; 
+  // however, we need to wait for the kernel
+  // submitted to streamA to finish since the 
+  // entire vector is copied.
+  streamA.finish();
   o_ab.copyTo(ab);
 
-  for (int i = 0; i < entries; ++i)
+  // Wait for streamB to finish
+  streamB.finish();
+
+  // Verify the results
+  for (int i = 0; i < entries; ++i) {
     std::cout << i << ": " << ab[i] << '\n';
+  }
+  for (int i = 0; i < entries; ++i) {
+    if (!occa::areBitwiseEqual(ab[i], a[i] + b[i])) {
+      throw 1;
+    }
+  }
+
+  occa::free(o_a1);
+  occa::free(o_a2);
+
+  occa::free(o_b1);
+  occa::free(o_b2);
+
+  occa::free(o_ab1);
+  occa::free(o_ab2);
 
   delete [] a;
   delete [] b;
