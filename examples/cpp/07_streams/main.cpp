@@ -38,10 +38,13 @@ int main(int argc, const char **argv) {
   occa::kernel addVectors = occa::buildKernel("addVectors.okl",
                                  "addVectors");
 
+  // Pass this property to make copies non-blocking on the host.
+  occa::json async_copy({{"async", true}});
+
   // These copies will be submitted to the current
   // stream, which is streamA--the default stream.
-  o_a.copyFrom(a);
-  o_b.copyFrom(b);
+  o_a.copyFrom(a,async_copy);
+  o_b.copyFrom(b,async_copy);
   
   // Waits the copies in streamA to complete
   streamA.finish(); 
@@ -65,19 +68,19 @@ int main(int argc, const char **argv) {
   occa::setStream(streamA);
   // This kernel launch is submitted to streamA.
   // It operates on the first half of each vector.
-  addVectors(entries, o_a1, o_b1, o_ab1);
+  addVectors(entries/2, o_a1, o_b1, o_ab1);
 
   occa::setStream(streamB);
   // This kernel launch is submitted to streamB.
   // It operates on the second half of each vector.
-  addVectors(entries, o_a2, o_b2, o_ab2);
+  addVectors(entries/2, o_a2, o_b2, o_ab2);
 
   // The copy below will be submitted to streamB; 
   // however, we need to wait for the kernel
   // submitted to streamA to finish since the 
   // entire vector is copied.
   streamA.finish();
-  o_ab.copyTo(ab);
+  o_ab.copyTo(ab,async_copy);
 
   // Wait for streamB to finish
   streamB.finish();
@@ -91,15 +94,6 @@ int main(int argc, const char **argv) {
       throw 1;
     }
   }
-
-  occa::free(o_a1);
-  occa::free(o_a2);
-
-  occa::free(o_b1);
-  occa::free(o_b2);
-
-  occa::free(o_ab1);
-  occa::free(o_ab2);
 
   delete [] a;
   delete [] b;
