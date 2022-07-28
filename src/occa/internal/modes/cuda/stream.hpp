@@ -20,6 +20,7 @@ namespace occa {
              bool isWrapped_=false);
 
       virtual ~stream();
+      void finish() override;
     };
   }
 }

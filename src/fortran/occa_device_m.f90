@@ -93,6 +93,13 @@ module occa_device_m
       type(occaDevice), value :: device
     end subroutine
 
+    ! void occaDeviceFinishAll(occaDevice device);
+    subroutine occaDeviceFinishAll(device) bind(C, name="occaDeviceFinishAll")
+      import occaDevice
+      implicit none
+      type(occaDevice), value :: device
+    end subroutine
+
     ! bool occaDeviceHasSeparateMemorySpace(occaDevice device);
     logical(kind=C_bool) function occaDeviceHasSeparateMemorySpace(device) &
                                   bind(C, name="occaDeviceHasSeparateMemorySpace")

@@ -15,5 +15,9 @@ namespace occa {
         metalCommandQueue.free();
       }
     }
+
+    void stream::finish() {
+      metalCommandQueue.finish();
+    }
   }
 }
