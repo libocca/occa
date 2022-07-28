@@ -375,26 +375,6 @@ function compilerSupportsOpenMP {
         rm -f "${binary}"
     fi
 }
-
-function compilerSupportsMPI {
-    local compiler="$1"
-
-    local filename="${SCRIPTS_DIR}/compiler/compilerSupportsMPI.cpp"
-    local binary="${SCRIPTS_DIR}/compiler/compilerSupportsMPI"
-
-    rm -f "${binary}"
-
-    # Test compilation
-    "${compiler}" "${filename}" -o "${binary}" > /dev/null 2>&1
-
-    if [[ ! -a "${binary}" ]]; then
-        echo 0
-        return
-    fi
-
-    rm -f "${binary}"
-    echo 1
-}
 #=======================================
 
 
