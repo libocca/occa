@@ -27,6 +27,8 @@ occaUDim_t occaDeviceMemoryAllocated(occaDevice device);
 
 void occaDeviceFinish(occaDevice device);
 
+void occaDeviceFinishAll(occaDevice device);
+
 bool occaDeviceHasSeparateMemorySpace(occaDevice device);
 
 //---[ Stream ]-------------------------

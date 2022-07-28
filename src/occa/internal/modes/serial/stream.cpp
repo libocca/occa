@@ -7,5 +7,6 @@ namespace occa {
       modeStream_t(modeDevice_, properties_) {}
 
     stream::~stream() {}
+    void stream::finish() {}
   }
 }

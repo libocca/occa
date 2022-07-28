@@ -17,6 +17,7 @@ namespace occa {
              cl_command_queue commandQueue_);
 
       virtual ~stream();
+      void finish() override;
     };
   }
 }

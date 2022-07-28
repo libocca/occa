@@ -88,11 +88,6 @@ namespace occa {
       }
     }
 
-    void device::finish() const {
-      OCCA_CUDA_ERROR("Device: Finish",
-                      cuStreamSynchronize(getCuStream()));
-    }
-
     bool device::hasSeparateMemorySpace() const {
       return true;
     }

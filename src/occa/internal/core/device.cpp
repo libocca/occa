@@ -80,6 +80,16 @@ namespace occa {
     streamTagRing.removeRef(streamTag);
   }
 
+  void modeDevice_t::finish() const {
+    currentStream.getModeStream()->finish();
+  }
+
+  void modeDevice_t::finishAll() const {
+    for(auto* stream : streams) {
+      if(stream) stream->finish();
+    }
+  }
+
   hash_t modeDevice_t::versionedHash() const {
     return (occa::hash(settings()["version"])
             ^ hash());
