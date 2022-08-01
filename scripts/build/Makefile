@@ -496,7 +496,6 @@ else
 endif
 
 OCCA_FORTRAN_ENABLED := $(fortranEnabled)
-OCCA_MPI_ENABLED     := $(mpiEnabled)
 OCCA_OPENMP_ENABLED  := $(openmpEnabled)
 OCCA_CUDA_ENABLED    := $(cudaEnabled)
 OCCA_HIP_ENABLED     := $(hipEnabled)

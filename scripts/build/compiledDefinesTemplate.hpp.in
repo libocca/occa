@@ -21,7 +21,6 @@
 #cmakedefine01 OCCA_USING_VS
 #cmakedefine01 OCCA_UNSAFE
 
-#cmakedefine01 OCCA_MPI_ENABLED
 #cmakedefine01 OCCA_OPENMP_ENABLED
 #cmakedefine01 OCCA_OPENCL_ENABLED
 #cmakedefine01 OCCA_CUDA_ENABLED
