@@ -90,7 +90,6 @@ MAKE_COMPILED_DEFINES := $(shell cat "$(OCCA_DIR)/scripts/build/compiledDefinesT
                                  sed "s,@@OCCA_OS@@,$(OCCA_OS),g;\
                                       s,@@OCCA_USING_VS@@,$(OCCA_USING_VS),g;\
                                       s,@@OCCA_UNSAFE@@,$(OCCA_UNSAFE),g;\
-                                      s,@@OCCA_MPI_ENABLED@@,$(OCCA_MPI_ENABLED),g; \
                                       s,@@OCCA_OPENMP_ENABLED@@,$(OCCA_OPENMP_ENABLED),g;\
                                       s,@@OCCA_CUDA_ENABLED@@,$(OCCA_CUDA_ENABLED),g;\
                                       s,@@OCCA_HIP_ENABLED@@,$(OCCA_HIP_ENABLED),g;\
