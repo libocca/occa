@@ -32,7 +32,7 @@ Similar to outer loops, writing multiple inner loops is completely legal.
 for (...; @outer) {
   for (int i = 0; i < 10; ++i; @inner) {
   }
-  for (int i = 10; i < 20; ++i; @inner) {
+  for (int i = 10; i < 10; ++i; @inner) {
   }
 }
 ```
