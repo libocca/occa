@@ -96,15 +96,17 @@ namespace occa {
         variableDeclaration &decl = declSmnt.declarations[0];
         iterator  = &decl.variable();
         initValue = decl.value;
-        // Valid types: {char, short, int, long}
+        // Valid types: {char, short, int, long, ptrdiff_t, size_t}
         const type_t *type = iterator->vartype.flatten().type;
         if (!type ||
             ((*type != char_)  &&
              (*type != short_) &&
-             (*type != int_))) {
+             (*type != int_) &&
+             (*type != ptrdiff_t_) &&
+             (*type != size_t_))) {
           if (printErrors) {
             iterator->printError(sourceStr() + "Iterator variable needs to be of type"
-                                 " [char, short, int, long]");
+                                 " [char, short, int, long, ptrdiff_t, size_t]");
           }
           return false;
         }
