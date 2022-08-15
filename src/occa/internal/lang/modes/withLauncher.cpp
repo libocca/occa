@@ -24,7 +24,14 @@ namespace occa {
       }
 
       void withLauncher::writeLauncherSourceToFile(const std::string &filename) const {
-        launcherParser.writeToFile(filename);
+        io::stageFile(
+          filename,
+          true,
+          [&](const std::string &tempFilename) -> bool {
+            launcherParser.writeToFile(tempFilename);
+            return true;
+          }
+        );
       }
       //================================
 

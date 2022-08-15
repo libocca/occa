@@ -65,11 +65,6 @@ namespace occa {
       }
     }
 
-    void device::finish() const {
-      OCCA_OPENCL_ERROR("Device: Finish",
-                        clFinish(getCommandQueue()));
-    }
-
     bool device::hasSeparateMemorySpace() const {
       return true;
     }

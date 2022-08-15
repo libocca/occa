@@ -79,9 +79,15 @@ namespace occa {
         std::stringstream ss;
         ss << header << '\n'
            << io::read(expFilename);
-        io::write(sourceFile, ss.str());
+        io::stageFile(
+          sourceFile,
+          true,
+          [&](const std::string &tempFilename) -> bool {
+            io::write(tempFilename, ss.str());
+            return true;
+          }
+        );
       }
-
       return sourceFile;
     }
 

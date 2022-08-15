@@ -8,6 +8,7 @@ module occa
   use occa_memory_m
   use occa_kernel_m
   use occa_kernelBuilder_m
+  use occa_stream_m
   use occa_scope_m
   use occa_json_m
 

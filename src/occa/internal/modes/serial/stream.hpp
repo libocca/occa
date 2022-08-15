@@ -12,6 +12,7 @@ namespace occa {
              const occa::json &properties_);
 
       virtual ~stream();
+      void finish() override;
     };
   }
 }

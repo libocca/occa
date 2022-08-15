@@ -17,5 +17,10 @@ namespace occa {
                         hipStreamDestroy(hipStream));
       }
     }
+
+    void stream::finish() {
+      OCCA_HIP_ERROR("Stream: Finish",
+                     hipStreamSynchronize(hipStream));
+    }
   }
 }

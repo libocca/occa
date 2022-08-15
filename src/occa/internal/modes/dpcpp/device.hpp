@@ -25,8 +25,6 @@ namespace occa
       device(const occa::json &properties_);
       virtual ~device() = default;
 
-      virtual void finish() const override;
-
       virtual inline bool hasSeparateMemorySpace() const override { return true; }
 
       virtual hash_t hash() const override;

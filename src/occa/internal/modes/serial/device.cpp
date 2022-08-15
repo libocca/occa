@@ -17,8 +17,6 @@ namespace occa {
 
     device::~device() {}
 
-    void device::finish() const {}
-
     bool device::hasSeparateMemorySpace() const {
       return false;
     }

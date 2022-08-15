@@ -136,6 +136,17 @@ namespace occa {
      * @endDoc
      */
     void free();
+
+    /**
+     * @startDoc{finish}
+     *
+     * Description:
+     *   Waits for all asynchronous operations, such as memory allocations
+     *   or kernel calls, submitted to this device to complete.
+     *
+     * @endDoc
+     */
+    void finish();
   };
 
   std::ostream& operator << (std::ostream &out,

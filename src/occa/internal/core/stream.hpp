@@ -24,6 +24,7 @@ namespace occa {
 
     //---[ Virtual Methods ]------------
     virtual ~modeStream_t() = 0;
+    virtual void finish() = 0;
     //==================================
   };
 }
