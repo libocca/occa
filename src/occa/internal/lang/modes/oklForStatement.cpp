@@ -108,7 +108,7 @@ namespace occa {
         iterator  = &decl.variable();
         if(!(iterator->isNamed())) {
           if(printErrors)
-            iterator->printError(sourceStr() 
+            declSmnt.printError(sourceStr() 
               + "OKL for loop variable does not have a name.");
           return false;
         }
