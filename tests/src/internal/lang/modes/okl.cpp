@@ -97,6 +97,9 @@ void testProperOKLLoops() {
   parseBadOKLSource(oStart + "for (int o = 0; o < 2;; @outer) {" + oMid + "}" + oEnd);
   parseBadOKLSource(oStart + "for (int o = 0; o < 2; o *= 2; @outer) {" + oMid + "}" + oEnd);
   parseBadOKLSource(oStart + "for (int o = 0; o < 2; ++j; @outer) {" + oMid + "}" + oEnd);
+  parseBadOKLSource(oStart + "for (int o; o < 2; ++o; @outer) {" + oMid + "}" + oEnd);
+  parseBadOKLSource(oStart + "for (int; o < 2; ++o; @outer) {" + oMid + "}" + oEnd);
+  parseBadOKLSource(oStart + "for ( ; o < 2; ++o; @outer) {" + oMid + "}" + oEnd);
 
   parseBadOKLSource(iStart + "for (i = 0;;; @inner) {}" + iEnd);
   parseBadOKLSource(iStart + "for (float i = 0;;; @inner) {}" + iEnd);
@@ -107,6 +110,9 @@ void testProperOKLLoops() {
   parseBadOKLSource(iStart + "for (int i = 0; i < 2;; @inner) {}" + iEnd);
   parseBadOKLSource(iStart + "for (int i = 0; i < 2; i *= 2; @inner) {}" + iEnd);
   parseBadOKLSource(iStart + "for (int i = 0; i < 2; ++j; @inner) {}" + iEnd);
+  parseBadOKLSource(iStart + "for (int i; i < 2; ++i; @inner) {}" + iEnd);
+  parseBadOKLSource(iStart + "for (int; i < 2; ++i; @inner) {}" + iEnd);
+  parseBadOKLSource(iStart + "for ( ; i < 2; ++i; @inner) {}" + iEnd);
 
   // No double @outer + @inner
   parseBadOKLSource(
