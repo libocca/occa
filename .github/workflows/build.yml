@@ -106,7 +106,8 @@ jobs:
       shell: bash
       run: |
         sudo apt update
-        sudo apt install intel-oneapi-compiler-dpcpp-cpp 
+        sudo apt install intel-oneapi-compiler-dpcpp-cpp
+        sudo apt install intel-oneapi-compiler-fortran
 
     - name: Compiler info
       if: ${{ !matrix.useCMake }}
