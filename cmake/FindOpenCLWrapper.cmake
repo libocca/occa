@@ -15,8 +15,10 @@ if(NOT OpenCL_FOUND)
       ENV ROCM_PATH
       ENV NVHPC_ROOT
       ENV SYCL_ROOT
+      /usr/local/cuda
+      /opt/rocm/opencl
+      /opt/intel/oneapi/compiler/latest/linux
     PATH_SUFFIXES
-      opencl
       include
       include/sycl
   )
@@ -29,8 +31,10 @@ if(NOT OpenCL_FOUND)
       ENV ROCM_PATH
       ENV NVHPC_ROOT
       ENV SYCL_ROOT
+      /usr/local/cuda
+      /opt/rocm/opencl
+      /opt/intel/oneapi/compiler/latest/linux
     PATH_SUFFIXES
-      opencl
       lib
       lib64
   )
