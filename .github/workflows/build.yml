@@ -26,8 +26,10 @@ jobs:
             CC: gcc-9
             CXX: g++-9
             CXXFLAGS: -Wno-maybe-uninitialized -Wno-cpp
+            FC: gfortran-9
             GCOV: gcov-9
             OCCA_COVERAGE: 1
+            OCCA_FORTRAN_ENABLED: 1
             useCMake: true
 
           - name: "[Ubuntu] clang-11"
@@ -49,9 +51,10 @@ jobs:
             CC: icx
             CXX: icpx
             CXXFLAGS: -Wno-uninitialized
-            FC: ifx
+            FC: ifort
             GCOV: gcov-9
             OCCA_COVERAGE: 1
+            OCCA_FORTRAN_ENABLED: 1
             useCMake: true
             useoneAPI: true
 
@@ -60,8 +63,10 @@ jobs:
             CC: gcc-9
             CXX: g++-9
             CXXFLAGS: -Wno-maybe-uninitialized
+            FC: gfortran-9
             GCOV: gcov-9
             OCCA_COVERAGE: 1
+            OCCA_FORTRAN_ENABLED: 1
 
           - name: "[MacOS] clang"
             os: macos-latest
