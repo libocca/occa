@@ -63,10 +63,8 @@ jobs:
             CC: gcc-9
             CXX: g++-9
             CXXFLAGS: -Wno-maybe-uninitialized
-            FC: gfortran-9
             GCOV: gcov-9
             OCCA_COVERAGE: 1
-            OCCA_FORTRAN_ENABLED: 1
 
           - name: "[MacOS] clang"
             os: macos-latest
@@ -121,7 +119,8 @@ jobs:
         -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
         -DCMAKE_INSTALL_PREFIX=install \
         -DENABLE_TESTS=ON \
-        -DENABLE_EXAMPLES=ON
+        -DENABLE_EXAMPLES=ON \
+        -DENABLE_FORTRAN=ON
 
     - name: CMake configure
       if: ${{ matrix.useCMake && matrix.useoneAPI}}
@@ -135,6 +134,7 @@ jobs:
         -DCMAKE_INSTALL_PREFIX=install \
         -DENABLE_TESTS=ON \
         -DENABLE_EXAMPLES=ON \
+        -DENABLE_FORTRAN=ON \
         -DCMAKE_PREFIX_PATH="/opt/intel/oneapi/compiler/latest/linux;/opt/intel/oneapi/compiler/latest/linux/compiler"
     
     - name: CMake build
