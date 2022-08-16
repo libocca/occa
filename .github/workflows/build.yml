@@ -129,9 +129,8 @@ jobs:
         -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
         -DCMAKE_INSTALL_PREFIX=install \
         -DENABLE_TESTS=ON \
-        -DENABLE_EXAMPLES=ON \
-        -DCMAKE_PREFIX_PATH="/opt/intel/oneapi/compiler/latest/linux;/opt/intel/oneapi/compiler/latest/linux/compiler"
-    
+        -DENABLE_EXAMPLES=ON
+        
     - name: CMake build
       if: ${{ matrix.useCMake && !matrix.useoneAPI}}
       run: |
