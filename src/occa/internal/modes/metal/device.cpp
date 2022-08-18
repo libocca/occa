@@ -176,6 +176,8 @@ namespace occa {
               << "Output:\n\n"
               << commandOutput << "\n"
             );
+          } else if (verbose) {
+              io::stdout << "Output:\n\n" << commandOutput << "\n";
           }
 
           return true;
@@ -212,6 +214,8 @@ namespace occa {
           << "Output:\n\n"
           << commandOutput << "\n"
         );
+      } else if (verbose) {
+          io::stdout << "Output:\n\n" << commandOutput << "\n";
       }
       //================================
     }
