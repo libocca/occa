@@ -3,31 +3,42 @@
 # This Find module is also distributed alongside the occa package config file!
 ###############################################################################
 
-# Look in some default places for OpenCL and set OPENCL_ROOT if not already set
-if(NOT OPENCL_ROOT)
-  # Search in user specified path first
-  find_path(OPENCL_ROOT
-    NAMES CL/cl.h
+# Try finding OpenCL. The user should set OpenCL_ROOT if needed.
+find_package(OpenCL QUIET)
+if(NOT OpenCL_FOUND)
+  # Otherwise, look for the headers and library in standard locations
+  find_path(OpenCL_INCLUDE_DIR
+    NAMES CL/cl.h OpenCL/cl.h
     PATHS
-    ENV   OPENCL_PATH
-    DOC   "OPENCL root location"
-    NO_DEFAULT_PATH)
-
-  # Now search in default path
-  find_path(OPENCL_ROOT
-    NAMES CL/cl.h
-    PATHS 
-      /usr 
-      /opt/rocm/opencl 
-      /usr/local/cuda 
+      ENV CUDA_PATH
+      ENV CUDAToolkit_ROOT
+      ENV ROCM_PATH
+      ENV NVHPC_ROOT
+      ENV SYCL_ROOT
+      /usr/local/cuda
+      /opt/rocm/opencl
       /opt/intel/oneapi/compiler/latest/linux
-    PATH_SUFFIXES sycl
-    DOC   "OPENCL root location")
+    PATH_SUFFIXES
+      include
+      include/sycl
+  )
+
+  find_library(OpenCL_LIBRARY
+    NAMES OpenCL libOpenCL
+    PATHS
+      ENV CUDA_PATH
+      ENV CUDAToolkit_ROOT
+      ENV ROCM_PATH
+      ENV NVHPC_ROOT
+      ENV SYCL_ROOT
+      /usr/local/cuda
+      /opt/rocm/opencl
+      /opt/intel/oneapi/compiler/latest/linux
+    PATH_SUFFIXES
+      lib
+      lib64
+  )
 endif()
-
-# Trick CMake's default OpenCL module to look in our directory
-set(ENV{AMDAPPSDKROOT} ${OPENCL_ROOT})
-
 find_package(OpenCL)
 
 include(FindPackageHandleStandardArgs)
