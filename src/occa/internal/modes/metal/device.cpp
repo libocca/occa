@@ -160,7 +160,7 @@ namespace occa {
 
           const std::string airCommand = command.str();
           if (verbose) {
-            io::stdout << "Compiling [" << kernelName << "]\n" << airCommand << "\n";
+            io::stdout << "Compiling Air Binary [" << kernelName << "]\n" << airCommand << "\n";
           }
 
           std::string commandOutput;
@@ -198,7 +198,7 @@ namespace occa {
 
       const std::string metallibCommand = command.str();
       if (verbose) {
-        io::stdout << metallibCommand << '\n';
+        io::stdout << "Compiling Metallib [" << kernelName << "]\n" << metallibCommand << "\n";
       }
 
       std::string commandOutput;
