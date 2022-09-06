@@ -225,7 +225,7 @@ namespace occa
       if (compileError)
       {
         OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
-                          << " Command: ["<< sCommand << ']');
+                          << " Command: ["<< sCommand << "] exited with code " << compileError << "\n");
       }
     }
 

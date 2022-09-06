@@ -172,7 +172,7 @@ namespace occa {
           if (commandExitCode) {
             OCCA_FORCE_ERROR(
               "Error compiling [" << kernelName << "],"
-              " Command: [" << airCommand << ']'
+              " Command: [" << airCommand << "] exited with code " << commandExitCode << "\n\n"
               << "Output:\n\n"
               << commandOutput << "\n"
             );
@@ -210,7 +210,7 @@ namespace occa {
       if (commandExitCode) {
         OCCA_FORCE_ERROR(
           "Error compiling [" << kernelName << "],"
-          " Command: [" << metallibCommand << ']'
+          " Command: [" << metallibCommand << "] exited with code " << commandExitCode << "\n\n"
           << "Output:\n\n"
           << commandOutput << "\n"
         );
