@@ -179,9 +179,11 @@ namespace occa {
     int call(const std::string &cmdline) {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       FILE *fp = popen(cmdline.c_str(), "r");
+      if (!fp) return errno;
       return pclose(fp);
 #else
       FILE *fp = _popen(cmdline.c_str(), "r");
+      if (!fp) return errno;
       return _pclose(fp);
 #endif
     }
@@ -193,8 +195,13 @@ namespace occa {
       FILE *fp = _popen(cmdline.c_str(), "r");
 #endif
 
-      size_t lineBytes = 512;
-      char lineBuffer[512];
+      if (!fp) {
+          output = "Failed to launch process";
+          return errno;
+      }
+
+      const size_t lineBytes = 512;
+      char lineBuffer[lineBytes];
 
       output = "";
       while (fgets(lineBuffer, lineBytes, fp)) {

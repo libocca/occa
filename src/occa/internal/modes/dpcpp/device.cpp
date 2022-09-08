@@ -215,17 +215,25 @@ namespace occa
       }
 
       const std::string &sCommand = command.str();
-      if (verbose)
-      {
-        io::stdout << sCommand << '\n';
+      if (verbose) {
+        io::stdout << "Compiling [" << kernelName << "]\n" << sCommand << "\n";
       }
 
-      const int compileError = system(sCommand.c_str());
+      std::string commandOutput;
+      const int commandExitCode = sys::call(
+        sCommand.c_str(),
+        commandOutput
+      );
 
-      if (compileError)
-      {
-        OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
-                          << " Command: ["<< sCommand << ']');
+      if (commandExitCode) {
+        OCCA_FORCE_ERROR(
+          "Error compiling [" << kernelName << "],"
+          " Command: [" << sCommand << "] exited with code " << commandExitCode << "\n\n"
+          << "Output:\n\n"
+          << commandOutput << "\n"
+        );
+      } else if (verbose) {
+        io::stdout << "Output:\n\n" << commandOutput << "\n";
       }
     }
 

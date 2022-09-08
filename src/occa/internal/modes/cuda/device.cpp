@@ -315,7 +315,7 @@ namespace occa {
       if (commandExitCode) {
         OCCA_FORCE_ERROR(
           "Error compiling [" << kernelName << "],"
-          " Command: [" << sCommand << ']'
+          " Command: [" << sCommand << "] exited with code " << commandExitCode << "\n"
           << "Output:\n\n"
           << commandOutput << "\n"
         );
