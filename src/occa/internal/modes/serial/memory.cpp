@@ -15,7 +15,7 @@ namespace occa {
     memory::memory(memoryPool *memPool,
                    udim_t size_, dim_t offset_) :
       occa::modeMemory_t(memPool, size_, offset_) {
-      ptr = memPool->ptr + offset;
+      ptr = memPool->buffer->ptr + offset;
     }
 
     memory::~memory() {}

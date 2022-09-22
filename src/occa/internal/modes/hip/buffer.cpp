@@ -27,7 +27,7 @@ namespace occa {
       useHostPtr = false;
     }
 
-    void buffer::malloc(udim_t bytes) {
+    void buffer::malloc(const udim_t bytes) {
 
       if (properties.get("host", false)) {
 

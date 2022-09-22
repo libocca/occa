@@ -14,7 +14,7 @@ namespace occa {
              const occa::json &properties_ = occa::json());
       ~buffer();
 
-      void malloc(udim_t bytes);
+      void malloc(const udim_t bytes) override;
 
       void wrapMemory(const void *ptr,
                             const udim_t bytes);
@@ -22,7 +22,7 @@ namespace occa {
       modeMemory_t* slice(const dim_t offset,
                           const udim_t bytes);
 
-      void detach();
+      void detach() override;
     };
   }
 }

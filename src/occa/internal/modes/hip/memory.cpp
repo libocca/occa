@@ -23,11 +23,12 @@ namespace occa {
     memory::memory(memoryPool *memPool,
                    udim_t size_, dim_t offset_) :
       occa::modeMemory_t(memPool, size_, offset_) {
-      useHostPtr = memPool->useHostPtr;
+      hip::buffer* b = dynamic_cast<hip::buffer*>(memPool->buffer);
+      useHostPtr = b->useHostPtr;
       if (useHostPtr) {
-        ptr = memPool->ptr + offset;
+        ptr = b->ptr + offset;
       } else {
-        hipPtr = addHipPtrOffset(memPool->hipPtr, offset);
+        hipPtr = addHipPtrOffset(b->hipPtr, offset);
       }
     }
 

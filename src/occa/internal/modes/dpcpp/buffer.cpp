@@ -22,7 +22,7 @@ namespace occa {
       size = 0;
     }
 
-    void buffer::malloc(udim_t bytes) {
+    void buffer::malloc(const udim_t bytes) {
 
       dpcpp::device *device = reinterpret_cast<dpcpp::device*>(modeDevice);
 

@@ -11,21 +11,17 @@ namespace occa {
      public:
       memoryPool(modeDevice_t *modeDevice_,
                  const occa::json &properties_ = occa::json());
-      ~memoryPool();
-
-      modeMemory_t* slice(const dim_t offset,
-                          const udim_t bytes);
-
-      void resize(const udim_t bytes);
-
-      void detach();
 
      private:
-      void malloc(char* &ptr, const udim_t bytes);
+      modeBuffer_t* makeBuffer();
 
-      void memcpy(char* dst, const char* src, const udim_t bytes);
+      modeMemory_t* slice(const dim_t offset, const udim_t bytes);
 
-      void free(char* &ptr);
+      void setPtr(modeMemory_t* mem, modeBuffer_t* buf, const dim_t offset);
+
+      void memcpy(modeBuffer_t* dst, const dim_t dstOffset,
+                  modeBuffer_t* src, const dim_t srcOffset,
+                  const udim_t bytes);
     };
   }
 }

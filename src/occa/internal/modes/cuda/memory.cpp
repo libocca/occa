@@ -21,13 +21,14 @@ namespace occa {
     memory::memory(memoryPool *memPool,
                    udim_t size_, dim_t offset_) :
       occa::modeMemory_t(memPool, size_, offset_) {
-      isUnified = memPool->isUnified;
-      useHostPtr = memPool->useHostPtr;
+      cuda::buffer* b = dynamic_cast<cuda::buffer*>(memPool->buffer);
+      isUnified = b->isUnified;
+      useHostPtr = b->useHostPtr;
       if (isUnified || useHostPtr) {
-        ptr = memPool->ptr + offset;
+        ptr = b->ptr + offset;
       }
       if (isUnified || !useHostPtr) {
-        cuPtr = memPool->cuPtr + offset;
+        cuPtr = b->cuPtr + offset;
       }
     }
 

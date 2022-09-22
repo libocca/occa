@@ -11,30 +11,19 @@ namespace occa {
      public:
       memoryPool(modeDevice_t *modeDevice_,
                  const occa::json &properties_ = occa::json());
-      ~memoryPool();
-
-      modeMemory_t* slice(const dim_t offset,
-                          const udim_t bytes);
-
-      void resize(const udim_t bytes);
-
-      void detach();
 
      private:
       CUstream& getCuStream() const;
 
-      void malloc(CUdeviceptr &cuPtr_, char* &ptr_, const udim_t bytes);
+      modeBuffer_t* makeBuffer();
 
-      void memcpy(CUdeviceptr cuDst, char* dst,
-                  const CUdeviceptr cuSrc, const char* src,
+      modeMemory_t* slice(const dim_t offset, const udim_t bytes);
+
+      void setPtr(modeMemory_t* mem, modeBuffer_t* buf, const dim_t offset);
+
+      void memcpy(modeBuffer_t* dst, const dim_t dstOffset,
+                  modeBuffer_t* src, const dim_t srcOffset,
                   const udim_t bytes);
-
-      void free(CUdeviceptr &cuPtr_, char* &ptr_);
-
-     public:
-      CUdeviceptr cuPtr;
-      bool isUnified;
-      bool useHostPtr;
     };
   }
 }

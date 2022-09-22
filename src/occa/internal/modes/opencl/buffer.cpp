@@ -32,7 +32,7 @@ namespace occa {
       useHostPtr = false;
     }
 
-    void buffer::malloc(udim_t bytes) {
+    void buffer::malloc(const udim_t bytes) {
 
       cl_int error;
 

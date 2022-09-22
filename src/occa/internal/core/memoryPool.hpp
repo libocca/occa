@@ -24,12 +24,17 @@ namespace occa {
 
     udim_t reserved;
 
+    modeBuffer_t* buffer;
+
     modeMemoryPool_t(modeDevice_t *modeDevice_,
                      const occa::json &json_);
+    ~modeMemoryPool_t();
 
     bool deleteOnFree() override {return false;}
 
     modeMemory_t* reserve(const udim_t bytes);
+
+    void resize(const udim_t bytes);
 
     void dontUseRefs() override;
     bool needsFree() const override;
@@ -38,10 +43,13 @@ namespace occa {
     void addModeMemoryRef(modeMemory_t *mem) override;
     void removeModeMemoryRef(modeMemory_t *mem) override;
 
-    //---[ Virtual Methods ]------------
-    virtual ~modeMemoryPool_t();
-
-    virtual void resize(const udim_t bytes)=0;
+   private:
+    virtual modeBuffer_t* makeBuffer()=0;
+    virtual modeMemory_t* slice(const dim_t offset, const udim_t bytes) = 0;
+    virtual void setPtr(modeMemory_t* mem, modeBuffer_t* buf, const dim_t offset)=0;
+    virtual void memcpy(modeBuffer_t* dst, const dim_t dstOffset,
+                        modeBuffer_t* src, const dim_t srcOffset,
+                        const udim_t bytes) = 0;
   };
 }
 

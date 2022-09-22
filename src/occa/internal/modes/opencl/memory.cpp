@@ -36,17 +36,18 @@ namespace occa {
                    udim_t size_, dim_t offset_) :
       occa::modeMemory_t(memPool, size_, offset_),
       useHostPtr(false) {
-      useHostPtr = memPool->useHostPtr;
+      opencl::buffer* b = dynamic_cast<opencl::buffer*>(memPool->buffer);
+      useHostPtr = b->useHostPtr;
 
-      if (offset==0 && size==memPool->size){
-        clMem = memPool->clMem;
+      if (offset==0 && size==b->size){
+        clMem = b->clMem;
       } else {
         cl_buffer_region info;
         info.origin = offset;
         info.size   = size;
 
         cl_int error;
-        clMem = clCreateSubBuffer(memPool->clMem,
+        clMem = clCreateSubBuffer(b->clMem,
                                   CL_MEM_READ_WRITE,
                                   CL_BUFFER_CREATE_TYPE_REGION,
                                   &info,
@@ -54,7 +55,7 @@ namespace occa {
         OCCA_OPENCL_ERROR("Device: clCreateSubBuffer", error);
       }
       if (useHostPtr) {
-        ptr = memPool->ptr + offset;
+        ptr = b->ptr + offset;
       }
     }
 

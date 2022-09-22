@@ -17,7 +17,8 @@ namespace occa {
                    udim_t size_, dim_t offset_) :
       occa::modeMemory_t(memPool, size_, offset_),
       bufferOffset(offset) {
-      metalBuffer = memPool->metalBuffer;
+      metal::buffer* b = dynamic_cast<metal::buffer*>(memPool->buffer);
+      metalBuffer = b->metalBuffer;
       ptr = (char*) metalBuffer.getPtr();
     }
 
