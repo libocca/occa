@@ -53,7 +53,7 @@ namespace occa {
         ((metal::device*) getModeDevice())->metalCommandQueue
       );
       metalCommandQueue.memcpy(metalBuffer,
-                               offset_,
+                               bufferOffset+offset_,
                                src,
                                bytes,
                                async);
@@ -70,9 +70,9 @@ namespace occa {
         ((metal::device*) getModeDevice())->metalCommandQueue
       );
       metalCommandQueue.memcpy(metalBuffer,
-                               destOffset,
+                               bufferOffset+destOffset,
                                ((const metal::memory*) src)->metalBuffer,
-                               srcOffset,
+                               ((const metal::memory*) src)->bufferOffset + srcOffset,
                                bytes,
                                async);
     }
@@ -89,7 +89,7 @@ namespace occa {
       );
       metalCommandQueue.memcpy(dest,
                                metalBuffer,
-                               offset_,
+                               bufferOffset + offset_,
                                bytes,
                                async);
     }
