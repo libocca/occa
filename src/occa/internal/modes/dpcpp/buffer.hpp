@@ -20,7 +20,7 @@ namespace occa {
                       const udim_t bytes);
 
       modeMemory_t* slice(const dim_t offset,
-                          const udim_t bytes);
+                          const udim_t bytes) override;
 
       void detach() override;
     };

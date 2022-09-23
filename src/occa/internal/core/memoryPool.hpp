@@ -52,7 +52,6 @@ namespace occa {
 
    private:
     virtual modeBuffer_t* makeBuffer()=0;
-    virtual modeMemory_t* slice(const dim_t offset, const udim_t bytes) = 0;
     virtual void setPtr(modeMemory_t* mem, modeBuffer_t* buf, const dim_t offset)=0;
     virtual void memcpy(modeBuffer_t* dst, const dim_t dstOffset,
                         modeBuffer_t* src, const dim_t srcOffset,

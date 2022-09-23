@@ -15,7 +15,7 @@ namespace occa {
      private:
       modeBuffer_t* makeBuffer();
 
-      modeMemory_t* slice(const dim_t offset, const udim_t bytes);
+      modeMemory_t* slice(const dim_t offset, const udim_t bytes) override;
 
       void setPtr(modeMemory_t* mem, modeBuffer_t* buf, const dim_t offset);
 
