@@ -111,6 +111,26 @@ namespace occa {
     udim_t reserved() const;
 
     /**
+     * @startDoc{numReservations}
+     *
+     * Description:
+     *   Get the number of currently active reservations in the memoryPool
+     *
+     * @endDoc
+     */
+    udim_t numReservations() const;
+
+    /**
+     * @startDoc{alignment}
+     *
+     * Description:
+     *   Get the byte size of the memoryPool alignment
+     *
+     * @endDoc
+     */
+    udim_t alignment() const;
+
+    /**
      * @startDoc{operator_equals[0]}
      *
      * Description:
@@ -215,7 +235,22 @@ namespace occa {
      * @endDoc
      */
     occa::memory reserve(const dim_t entries,
-                         const dtype_t &dtype);
+                         const dtype_t &dtype);\
+
+    /**
+     * @startDoc{setAlignment}
+     *
+     * Description:
+     *   Set the buffer aligment of the memoryPool.
+     *   May trigger a re-allocation of the memory pool if there
+     *   are currently active reservations
+     *
+     * Arguments:
+     *   alignment:
+     *     The size of the alignment in bytes.
+     * @endDoc
+     */
+    void setAlignment(const udim_t alignment);
   };
 
   }

@@ -22,19 +22,26 @@ namespace occa {
 
     reservationSet reservations;
 
+    udim_t alignment;
     udim_t reserved;
 
     modeBuffer_t* buffer;
 
+    bool verbose;
+
     modeMemoryPool_t(modeDevice_t *modeDevice_,
                      const occa::json &json_);
     ~modeMemoryPool_t();
+
+    udim_t numReservations() const;
 
     bool deleteOnFree() override {return false;}
 
     modeMemory_t* reserve(const udim_t bytes);
 
     void resize(const udim_t bytes);
+
+    void setAlignment(const udim_t newAlignment);
 
     void dontUseRefs() override;
     bool needsFree() const override;

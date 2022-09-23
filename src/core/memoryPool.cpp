@@ -116,6 +116,20 @@ namespace occa {
     return modeMemoryPool->reserved;
   }
 
+  udim_t memoryPool::numReservations() const {
+    if (modeMemoryPool == NULL) {
+      return 0;
+    }
+    return modeMemoryPool->numReservations();
+  }
+
+  udim_t memoryPool::alignment() const {
+    if (modeMemoryPool == NULL) {
+      return 0;
+    }
+    return modeMemoryPool->alignment;
+  }
+
   bool memoryPool::operator == (const occa::memoryPool &other) const {
     return (modeMemoryPool == other.modeMemoryPool);
   }
@@ -159,5 +173,10 @@ namespace occa {
   template <>
   memory memoryPool::reserve<void>(const dim_t entries) {
     return reserve(entries, dtype::byte);
+  }
+
+  void memoryPool::setAlignment(const udim_t alignment) {
+    assertInitialized();
+    modeMemoryPool->setAlignment(alignment);
   }
 }
