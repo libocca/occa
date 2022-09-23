@@ -24,6 +24,7 @@ namespace occa {
       memPool->modeMemoryPool = NULL;
     }
     if (buffer) delete buffer;
+    size=0;
   }
 
   void modeMemoryPool_t::dontUseRefs() {
@@ -159,7 +160,6 @@ namespace occa {
       destroy the allocation and re-make it
       */
       if (buffer) delete buffer;
-      modeDevice->bytesAllocated -= size;
 
       buffer = makeBuffer();
       buffer->malloc(alignedBytes);
@@ -232,7 +232,6 @@ namespace occa {
 
       /*Clean up old buffer*/
       delete buffer;
-      modeDevice->bytesAllocated -= size;
 
       buffer = newBuffer;
       size = alignedBytes;
@@ -341,7 +340,6 @@ namespace occa {
 
       /*Clean up old buffer*/
       delete buffer;
-      modeDevice->bytesAllocated -= size;
 
       buffer = newBuffer;
       size = newReserved;

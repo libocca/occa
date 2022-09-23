@@ -25,6 +25,9 @@ void testReserve() {
 
   occa::experimental::memoryPool memPool = device.createMemoryPool();
 
+  /*Set aligment to 5*sizeof(float) bytes*/
+  memPool.setAlignment(5 * sizeof(float));
+
   /*Set a size for the memoryPool*/
   memPool.resize(10 * sizeof(float));
 
