@@ -18,181 +18,246 @@ int main(int argc, const char **argv) {
 
   float *a  = new float[entries];
   float *b  = new float[entries];
-  float *ab = new float[entries];
+  float *c  = new float[entries];
+  float *check  = new float[entries];
 
   for (int i = 0; i < entries; ++i) {
-    a[i]  = i;
-    b[i]  = 1 + i;
-    ab[i] = 0;
+    a[i]  = 1*(i+1);
+    b[i]  = 2*(i+1);
+    c[i]  = 3*(i+1);
   }
 
   //---[ Device Setup ]-------------------------------------
   occa::device device( (std::string) args["options/device"]);
 
-
-  // Allocate memory on the device
-  occa::memory o_a = device.malloc<float>(entries);
-  occa::memory o_b = device.malloc<float>(entries);
-
-  // Copy memory to the device
-  o_a.copyFrom(a);
-  o_b.copyFrom(b);
-
-  // Compile the kernel at run-time
-  occa::kernel addVectors = device.buildKernel("addVectors.okl","addVectors");
-
   //---[ Memory Pool Setup ]-------------------------------------
-  occa::experimental::memoryPool memPool = device.createMemoryPool();
+  occa::json properties;
+  properties["verbose"] = args["options/verbose"];
 
-  std::cout << "Creation           - Memory pool: Size = " << memPool.size()
-                   << ", Reserved = " << memPool.reserved() << std::endl;
+  occa::experimental::memoryPool memPool = device.createMemoryPool(properties);
 
+  int alignment = memPool.alignment();
+
+  std::cout << "Mempool Creation: alignment = " << alignment << std::endl;
+  if (entries > alignment/sizeof(float)) {
+    std::cerr << "Example assumes vector lengths are less than mempool alignment." << std::endl;
+    throw 1;
+  }
+
+  std::cout << "Memory pool: Size = " << memPool.size() << " bytes"
+            << ", Reserved = " << memPool.reserved() << " bytes"
+            << ", in " << memPool.numReservations() << " reservations" << std::endl;
+
+  std::cout << "First reservation: " << entries*sizeof(float) << " bytes" << std::endl;
   // Make a reservation from memory pool
   // Memory pool is a single allocation, and consists of just o_ab
   /*
-      |====o_ab====|
+      |====o_a====|
   */
-  occa::memory o_ab = memPool.reserve<float>(entries);
+  occa::memory o_a = memPool.reserve<float>(entries);
 
-  std::cout << "First reservation  - Memory pool: Size = " << memPool.size()
-                   << ", Reserved = " << memPool.reserved() << std::endl;
+  // Fill buffer
+  o_a.copyFrom(a);
 
-  // Launch device kernel
-  addVectors(entries, o_a, o_b, o_ab);
+  std::cout << "Memory pool: Size = " << memPool.size() << " bytes"
+            << ", Reserved = " << memPool.reserved() << " bytes"
+            << ", in " << memPool.numReservations() << " reservations" << std::endl;
 
-  // Copy result to the host
-  o_ab.copyTo(ab);
-
-  // Check values
-  for (int i = 0; i < entries; ++i) {
-    if (!occa::areBitwiseEqual(ab[i], a[i] + b[i])) {
-      throw 1;
-    }
-  }
 
   // Unallocated occa::memory
-  occa::memory mem;
+  occa::memory o_c;
 
   // New scope
   {
+    std::cout << "Slicing Memory (no resize)" << std::endl;
     /*Slicing o_ab will not trigger reallocation or
       increase memoryPool's reservation size*/
     /*
-      |====o_ab====|
-      |ab_h1||ab_h2|
+      |====o_a=====|
+      |a_h1=||a_h2=|
     */
-    occa::memory o_ab_half1 = o_ab.slice(0, entries/2);
-    occa::memory o_ab_half2 = o_ab.slice(entries/2);
+    occa::memory o_a_half1 = o_a.slice(0, entries/2);
+    occa::memory o_a_half2 = o_a.slice(entries/2);
 
-    std::cout << "Slice (no resize)  - Memory pool: Size = " << memPool.size()
-                   << ", Reserved = " << memPool.reserved() << std::endl;
+    std::cout << "Memory pool: Size = " << memPool.size() << " bytes"
+                   << ", Reserved = " << memPool.reserved() << " bytes"
+                   << ", in " << memPool.numReservations() << " reservations" << std::endl;
 
-    // Copy result to the host
-    o_ab_half1.copyTo(ab);
-    o_ab_half2.copyTo(ab+entries/2);
-
-    // Check values
-    for (int i = 0; i < entries; ++i) {
-      if (!occa::areBitwiseEqual(ab[i], a[i] + b[i])) {
+    // Check the contents are what we expect
+    o_a_half1.copyTo(check);
+    for (int i = 0; i < entries/2; ++i) {
+      if (!occa::areBitwiseEqual(check[i], a[i])) {
         throw 1;
       }
     }
 
+    o_a_half2.copyTo(check);
+    for (int i = 0; i < entries/2; ++i) {
+      if (!occa::areBitwiseEqual(check[i], a[i+entries/2])) {
+        throw 1;
+      }
+    }
 
+    std::cout << "Second reservation: " << entries*sizeof(float) << " bytes" << std::endl;
     // Trigger a resize by requesting a new reservation:
     /*
-      |====o_ab====||==tempMem===|
-      |ab_h1||ab_h2|
+      |====o_a=====||====o_b=====|
+      |a_h1=||a_h2=|
     */
-    occa::memory tempMem = memPool.reserve<float>(entries);
+    occa::memory o_b = memPool.reserve<float>(entries);
 
-    std::cout << "New reservation    - Memory pool: Size = " << memPool.size()
-                   << ", Reserved = " << memPool.reserved() << std::endl;
+    // Fill buffer
+    o_b.copyFrom(b);
 
-    // o_ab still has its data after resize
-    o_ab.copyTo(ab);
 
-    // Check values
+    // Check o_a still has its data after resize
+    o_a.copyTo(check);
     for (int i = 0; i < entries; ++i) {
-      if (!occa::areBitwiseEqual(ab[i], a[i] + b[i])) {
+      if (!occa::areBitwiseEqual(check[i], a[i])) {
         throw 1;
       }
     }
 
+    o_a_half1.copyTo(check);
+    for (int i = 0; i < entries/2; ++i) {
+      if (!occa::areBitwiseEqual(check[i], a[i])) {
+        throw 1;
+      }
+    }
 
+    o_a_half2.copyTo(check);
+    for (int i = 0; i < entries/2; ++i) {
+      if (!occa::areBitwiseEqual(check[i], a[i+entries/2])) {
+        throw 1;
+      }
+    }
+
+    //Destroy slices
+    std::cout << "Destroy slices" << std::endl;
+    o_a_half1.free();
+    o_a_half2.free();
+
+    std::cout << "Memory pool: Size = " << memPool.size() << " bytes"
+              << ", Reserved = " << memPool.reserved() << " bytes"
+              << ", in " << memPool.numReservations() << " reservations" << std::endl;
+
+    std::cout << "Third reservation: " << entries*sizeof(float) << " bytes" << std::endl;
     // Trigger another resize by reserving the outer-scope mem
     /*
-      |====o_ab====||==tempMem===||====mem=====|
-      |ab_h1||ab_h2|
+      |====o_a=====||====o_b=====||====o_c=====|
+      |a_h1=||a_h2=|
     */
-    mem = memPool.reserve<float>(entries);
+    o_c = memPool.reserve<float>(entries);
 
-    std::cout << "Second reservation - Memory pool: Size = " << memPool.size()
-                   << ", Reserved = " << memPool.reserved() << std::endl;
+    // Fill buffer
+    o_c.copyFrom(c);
+
+    std::cout << "Memory pool: Size = " << memPool.size() << " bytes"
+              << ", Reserved = " << memPool.reserved() << " bytes"
+              << ", in " << memPool.numReservations() << " reservations" << std::endl;
+
+    // Check o_a and o_b have data after resize
+    o_a.copyTo(check);
+    for (int i = 0; i < entries; ++i) {
+      if (!occa::areBitwiseEqual(check[i], a[i])) {
+        throw 1;
+      }
+    }
+
+    o_b.copyTo(check);
+    for (int i = 0; i < entries; ++i) {
+      if (!occa::areBitwiseEqual(check[i], b[i])) {
+        throw 1;
+      }
+    }
   }
 
-
-  // tempMem leaves scope and is destroyed. This leaves a 'hole' in the memory pool
+  std::cout << "Free second reservation" << std::endl;
+  // o_b leaves scope and is destroyed. This leaves a 'hole' in the memory pool
   /*
-    |====o_ab====||------------||====mem=====|
+    |====o_a=====||------------||====o_c=====|
   */
-  std::cout << "Release tempMem    - Memory pool: Size = " << memPool.size()
-                   << ", Reserved = " << memPool.reserved() << std::endl;
+  std::cout << "Memory pool: Size = " << memPool.size() << " bytes"
+            << ", Reserved = " << memPool.reserved() << " bytes"
+            << ", in " << memPool.numReservations() << " reservations" << std::endl;
 
+  std::cout << "Re-reserve " << entries*sizeof(float) << " bytes" << std::endl;
   // Request a new reservation, should fit in the hole and not trigger resize:
   /*
-    |====o_ab====||==tempMem===||====mem=====|
+    |====o_a=====||====o_b=====||====o_c=====|
   */
-  occa::memory tempMem = memPool.reserve<float>(entries);
+  occa::memory o_b = memPool.reserve<float>(entries);
 
-  std::cout << "Re-reserve         - Memory pool: Size = " << memPool.size()
-                   << ", Reserved = " << memPool.reserved() << std::endl;
+  std::cout << "Memory pool: Size = " << memPool.size() << " bytes"
+            << ", Reserved = " << memPool.reserved() << " bytes"
+            << ", in " << memPool.numReservations() << " reservations" << std::endl;
 
+  std::cout << "Free again" << std::endl;
   // Freeing doesnt change the mempool size, only the reserved size
   /*
-    |====o_ab====||------------||====mem=====|
+    |====o_a=====||------------||====o_c=====|
   */
-  tempMem.free();
+  o_b.free();
 
+  std::cout << "Reserve " << (entries + alignment/sizeof(float))*sizeof(float)
+            << " bytes" << std::endl;
   // Requesting a new reservation that *doesn't* fit in the hole triggers a resize.
   // The mempool is defragmented on resizing
   /*
-    |====o_ab====||====mem=====||========tempMem=========|
+    |====o_a====||====o_c=====||========o_b=========|
   */
-  tempMem = memPool.reserve<float>(2*entries);
+  o_b = memPool.reserve<float>(entries + alignment/sizeof(float));
 
-  // Note the mempool size increases by only entries*sizeof(float),
-  //  despite the new 2*entries float reservation!
-  std::cout << "Reserve and resize - Memory pool: Size = " << memPool.size()
-                   << ", Reserved = " << memPool.reserved() << std::endl;
+  std::cout << "Memory pool: Size = " << memPool.size() << " bytes"
+            << ", Reserved = " << memPool.reserved() << " bytes"
+            << ", in " << memPool.numReservations() << " reservations" << std::endl;
 
-  // o_ab still has its data after resize
-  o_ab.copyTo(ab);
-
-  // Check values
+  // Check o_a and o_c have data after resize
+  o_a.copyTo(check);
   for (int i = 0; i < entries; ++i) {
-    if (!occa::areBitwiseEqual(ab[i], a[i] + b[i])) {
+    if (!occa::areBitwiseEqual(check[i], a[i])) {
+      throw 1;
+    }
+  }
+  o_c.copyTo(check);
+  for (int i = 0; i < entries; ++i) {
+    if (!occa::areBitwiseEqual(check[i], c[i])) {
       throw 1;
     }
   }
 
-  // Finally, free a reserved memory then "re-size to fit"
+  std::cout << "Free third reservation" << std::endl;
+  // Free a reserved memory then "re-size to fit"
   /*
-    |====o_ab====||------------||========tempMem=========|
+    |====o_a=====||------------||========o_b=========|
   */
-  mem.free();
+  o_c.free();
+
+  std::cout << "Shrink to fit" << std::endl;
   /*
-    |====o_ab====||========tempMem=========|
+    |====o_a=====||========o_b=========|
   */
   memPool.shrinkToFit();
 
-  std::cout << "Resize to fit      - Memory pool: Size = " << memPool.size()
-                   << ", Reserved = " << memPool.reserved() << std::endl;
+  std::cout << "Memory pool: Size = " << memPool.size() << " bytes"
+            << ", Reserved = " << memPool.reserved() << " bytes"
+            << ", in " << memPool.numReservations() << " reservations" << std::endl;
+
+
+  std::cout << "Set aligment to " << 4*memPool.alignment()
+            << " bytes" << std::endl;
+  // Set the alignment of the memory pool (triggers a re-allcation)
+  memPool.setAlignment(4*memPool.alignment());
+
+  std::cout << "Memory pool: Size = " << memPool.size() << " bytes"
+            << ", Reserved = " << memPool.reserved() << " bytes"
+            << ", in " << memPool.numReservations() << " reservations" << std::endl;
 
   // Free host memory
   delete [] a;
   delete [] b;
-  delete [] ab;
+  delete [] c;
+  delete [] check;
 
   return 0;
 }
