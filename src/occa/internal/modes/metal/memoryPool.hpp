@@ -13,15 +13,15 @@ namespace occa {
                  const occa::json &properties_ = occa::json());
 
      private:
-      modeBuffer_t* makeBuffer();
+      modeBuffer_t* makeBuffer() override;
 
       modeMemory_t* slice(const dim_t offset, const udim_t bytes) override;
 
-      void setPtr(modeMemory_t* mem, modeBuffer_t* buf, const dim_t offset);
+      void setPtr(modeMemory_t* mem, modeBuffer_t* buf, const dim_t offset) override;
 
       void memcpy(modeBuffer_t* dst, const dim_t dstOffset,
                   modeBuffer_t* src, const dim_t srcOffset,
-                  const udim_t bytes);
+                  const udim_t bytes) override;
     };
   }
 }
