@@ -10,8 +10,8 @@ namespace occa {
   modeMemoryPool_t::modeMemoryPool_t(modeDevice_t *modeDevice_,
                                      const occa::json &properties_) :
     modeBuffer_t(modeDevice_, 0, properties_),
-    reserved(0),
     alignment(128),
+    reserved(0),
     buffer(nullptr) {
     verbose = properties_.get("verbose", false);
   }
