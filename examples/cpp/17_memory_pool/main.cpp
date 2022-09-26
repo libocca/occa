@@ -39,7 +39,7 @@ int main(int argc, const char **argv) {
   int alignment = memPool.alignment();
 
   std::cout << "Mempool Creation: alignment = " << alignment << std::endl;
-  if (entries > alignment/sizeof(float)) {
+  if (static_cast<size_t>(entries) > alignment/sizeof(float)) {
     std::cerr << "Example assumes vector lengths are less than mempool alignment." << std::endl;
     throw 1;
   }
