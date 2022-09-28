@@ -32,7 +32,6 @@ namespace occa {
 
   void modeMemory_t::dontUseRefs() {
     memoryRing.dontUseRefs();
-    if (modeBuffer) modeBuffer->dontUseRefs();
   }
 
   void modeMemory_t::addMemoryRef(memory *mem) {
@@ -48,39 +47,15 @@ namespace occa {
 
     modeBuffer->removeModeMemoryRef(this);
 
-    if (modeBuffer == NULL) return;
-
     if (modeBuffer->needsFree()) {
       delete modeBuffer;
     }
+    modeBuffer = NULL;
   }
 
   void modeMemory_t::detach() {
     if (modeBuffer == NULL) return;
-
-    modeBuffer->removeModeMemoryRef(this);
-
-    if (modeBuffer == NULL) return;
-
     modeBuffer->detach();
-
-    //deleting the modeBuffer deletes all
-    // the modeMemory_t slicing it, and NULLs
-    // their wrappers
-    if (modeBuffer->deleteOnFree()) {
-      delete modeBuffer;
-    } else {
-      modeBuffer->removeModeMemoryRef(this);
-    }
-  }
-
-  void modeMemory_t::free() {
-    if (modeBuffer == NULL) return;
-    if (modeBuffer->deleteOnFree()) {
-      delete modeBuffer;
-    } else {
-      modeBuffer->removeModeMemoryRef(this);
-    }
   }
 
   bool modeMemory_t::needsFree() const {

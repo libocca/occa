@@ -30,9 +30,6 @@ namespace occa {
     //---[ Virtual Methods ]------------
     virtual ~modeBuffer_t();
 
-    virtual bool deleteOnFree() {return true;}
-
-    virtual void dontUseRefs();
     virtual bool needsFree() const;
     virtual void addModeMemoryRef(modeMemory_t *mem);
     virtual void removeModeMemoryRef(modeMemory_t *mem);

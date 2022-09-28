@@ -37,10 +37,6 @@ namespace occa {
     isWrapped = false;
   }
 
-  void modeBuffer_t::dontUseRefs() {
-    modeMemoryRing.dontUseRefs();
-  }
-
   void modeBuffer_t::addModeMemoryRef(modeMemory_t *mem) {
     modeMemoryRing.addRef(mem);
   }

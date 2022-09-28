@@ -28,7 +28,6 @@ namespace occa {
   }
 
   void modeMemoryPool_t::dontUseRefs() {
-    modeMemoryRing.dontUseRefs();
     memoryPoolRing.dontUseRefs();
   }
 
@@ -93,9 +92,6 @@ namespace occa {
       if (lo == hi) break;
     }
     reserved -= hi-lo;
-
-    /*prevent mem from deleting this buffer*/
-    mem->modeBuffer = nullptr;
   }
 
   bool modeMemoryPool_t::needsFree() const {

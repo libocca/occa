@@ -35,15 +35,13 @@ namespace occa {
 
     udim_t numReservations() const;
 
-    bool deleteOnFree() override {return false;}
-
     modeMemory_t* reserve(const udim_t bytes);
 
     void resize(const udim_t bytes);
 
     void setAlignment(const udim_t newAlignment);
 
-    void dontUseRefs() override;
+    void dontUseRefs();
     bool needsFree() const override;
     void addMemoryPoolRef(memoryPool *memPool);
     void removeMemoryPoolRef(memoryPool *memPool);
