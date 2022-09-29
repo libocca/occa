@@ -43,10 +43,10 @@ namespace occa {
       std::string compilerFlags;
 
       // Use "-cl-opt-disable" for debug-mode
-      if (env::var("OCCA_OPENCL_COMPILER_FLAGS").size()) {
-        compilerFlags = env::var("OCCA_OPENCL_COMPILER_FLAGS");
-      } else if (kernelProps.has("compiler_flags")) {
+      if (kernelProps.has("compiler_flags")) {
         compilerFlags = (std::string) kernelProps["compiler_flags"];
+      } else if (env::var("OCCA_OPENCL_COMPILER_FLAGS").size()) {
+        compilerFlags = env::var("OCCA_OPENCL_COMPILER_FLAGS");
       }
 
       std::string ocl_c_ver = "2.0";

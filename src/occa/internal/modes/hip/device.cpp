@@ -53,10 +53,10 @@ namespace occa {
         compiler = "hipcc";
       }
 
-      if (env::var("OCCA_HIP_COMPILER_FLAGS").size()) {
-        compilerFlags = env::var("OCCA_HIP_COMPILER_FLAGS");
-      } else if (kernelProps.get<std::string>("compiler_flags").size()) {
+      if (kernelProps.get<std::string>("compiler_flags").size()) {
         compilerFlags = (std::string) kernelProps["compiler_flags"];
+      } else if (env::var("OCCA_HIP_COMPILER_FLAGS").size()) {
+        compilerFlags = env::var("OCCA_HIP_COMPILER_FLAGS");
       } else {
         compilerFlags = "-O3";
       }
@@ -307,10 +307,12 @@ namespace occa {
       if (commandExitCode) {
         OCCA_FORCE_ERROR(
           "Error compiling [" << kernelName << "],"
-          " Command: [" << sCommand << "]\n"
+          " Command: [" << sCommand << "] exited with code " << commandExitCode << "\n\n"
           << "Output:\n\n"
           << commandOutput << "\n"
         );
+      } else if (verbose) {
+          io::stdout << "Output:\n\n" << commandOutput << "\n";
       }
       //================================
     }
