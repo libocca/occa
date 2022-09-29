@@ -246,6 +246,12 @@ namespace occa {
     }
   }
 
+  void device::finishAll() {
+    if (modeDevice) {
+      modeDevice->finishAll();
+    }
+  }
+
   bool device::hasSeparateMemorySpace() {
     return (modeDevice &&
             modeDevice->hasSeparateMemorySpace());

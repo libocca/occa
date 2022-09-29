@@ -86,11 +86,6 @@ namespace occa {
 
     device::~device() { }
 
-    void device::finish() const {
-      OCCA_HIP_ERROR("Device: Finish",
-                     hipStreamSynchronize(getHipStream()));
-    }
-
     bool device::hasSeparateMemorySpace() const {
       return true;
     }

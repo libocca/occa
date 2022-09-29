@@ -51,11 +51,6 @@ namespace occa
       setCompilerLinkerOptions(kernelProps);
     }
 
-    void device::finish() const
-    {
-      getDpcppStream(currentStream).finish();
-    }
-
     hash_t device::hash() const
     {
       if (!hash_.initialized)

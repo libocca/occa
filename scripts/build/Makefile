@@ -181,7 +181,6 @@ compilerPthreadFlag  = $(shell . $(OCCA_DIR)/scripts/build/shellTools.sh; compil
 fCompilerModuleDirFlag = $(shell . $(OCCA_DIR)/scripts/build/shellTools.sh; fCompilerModuleDirFlag "$(fCompiler)")
 fCompilerCppFlag       = $(shell . $(OCCA_DIR)/scripts/build/shellTools.sh; fCompilerCppFlag       "$(fCompiler)")
 
-compilerSupportsMPI    = $(shell . $(OCCA_DIR)/scripts/build/shellTools.sh; compilerSupportsMPI    "$(compiler)")
 compilerSupportsOpenMP = $(shell . $(OCCA_DIR)/scripts/build/shellTools.sh; compilerSupportsOpenMP "$(compiler)")
 compilerOpenMPFlag     = $(shell . $(OCCA_DIR)/scripts/build/shellTools.sh; compilerOpenMPFlag     "$(compiler)")
 #=================================================
@@ -268,15 +267,6 @@ ifdef OCCA_FORTRAN_ENABLED
   fortranEnabled = $(OCCA_FORTRAN_ENABLED)
 endif
 include $(OCCA_DIR)/scripts/build/Make.fortran
-
-
-#---[ MPI ]-----------------------------
-ifdef OCCA_MPI_ENABLED
-  mpiEnabled = $(OCCA_MPI_ENABLED)
-else
-  mpiEnabled = $(call compilerSupportsMPI)
-endif
-
 
 #---[ OpenMP ]--------------------------
 ifdef OCCA_OPENMP_ENABLED
@@ -506,7 +496,6 @@ else
 endif
 
 OCCA_FORTRAN_ENABLED := $(fortranEnabled)
-OCCA_MPI_ENABLED     := $(mpiEnabled)
 OCCA_OPENMP_ENABLED  := $(openmpEnabled)
 OCCA_CUDA_ENABLED    := $(cudaEnabled)
 OCCA_HIP_ENABLED     := $(hipEnabled)

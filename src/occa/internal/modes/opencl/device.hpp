@@ -23,8 +23,6 @@ namespace occa {
       device(const occa::json &properties_);
       virtual ~device();
 
-      virtual void finish() const;
-
       virtual bool hasSeparateMemorySpace() const;
 
       virtual hash_t hash() const;

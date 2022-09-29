@@ -545,7 +545,7 @@ namespace occa {
       const float frequency = parseFloat(
         getSystemInfoField(systemInfo, "CPU max MHz")
       );
-      return (udim_t) (frequency * 1e3);
+      return (udim_t) (frequency * 1e6);
 
 #elif (OCCA_OS == OCCA_MACOS_OS)
       const float frequency = parseFloat(

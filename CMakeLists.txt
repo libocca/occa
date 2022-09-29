@@ -32,7 +32,6 @@ option(ENABLE_OPENCL "Build with OpenCL if available" ON)
 option(ENABLE_HIP    "Build with HIP if available" ON)
 option(ENABLE_METAL  "Build with Metal if available" ON)
 option(ENABLE_DPCPP "Build with SYCL/DPCPP if available" ON)
-option(ENABLE_MPI    "Build with MPI if available" OFF)
 
 option(ENABLE_TESTS    "Build tests"               OFF)
 option(ENABLE_EXAMPLES "Build simple examples"     OFF)
@@ -223,28 +222,6 @@ if(ENABLE_METAL AND APPLE)
 endif()
 #=======================================
 
-#---[ MPI ]-----------------------------
-if(ENABLE_MPI)
-  find_package(MPI)
-
-  if(MPI_FOUND)
-    set(OCCA_MPI_ENABLED 1)
-
-    message("-- MPI include dirs: ${MPI_CXX_INCLUDE_DIRS}")
-    message("-- MPI libraries:    ${MPI_CXX_LIBRARIES}")
-    message("-- MPI link flags:   ${MPI_CXX_LINK_FLAGS}")
-    message("-- MPI executable:   ${MPIEXEC_EXECUTABLE}")
-    message("-- MPI numproc flag: ${MPIEXEC_NUMPROC_FLAG}")
-
-    # Use the provided imported target MPI::MPI_CXX,
-    # (which wraps the _INCLUDE_DIRS and _LIBRARIES,) to make our package relocatable
-    target_link_libraries(libocca PUBLIC MPI::MPI_CXX)
-  else(MPI_FOUND)
-    set(OCCA_MPI_ENABLED 0)
-  endif(MPI_FOUND)
-endif(ENABLE_MPI)
-#=======================================
-
 # Generate CompiledDefines from libraries we found
 configure_file(
   scripts/build/compiledDefinesTemplate.hpp.in
@@ -259,19 +236,9 @@ file(
   GLOB_RECURSE OCCA_SRC_cpp
   RELATIVE ${OCCA_SOURCE_DIR} "src/*.cpp")
 
-if(OCCA_OPENMP_ENABLED)
-  set_source_files_properties(${OCCA_SRC_cpp} PROPERTIES
-    COMPILE_FLAGS ${OpenMP_CXX_FLAGS})
-endif()
-
 if(ENABLE_FORTRAN)
   file(GLOB_RECURSE OCCA_SRC_f90
     RELATIVE ${OCCA_SOURCE_DIR} "src/*.f90")
-
-  if(OCCA_OPENMP_ENABLED)
-    set_source_files_properties(${OCCA_SRC_f90} PROPERTIES
-      COMPILE_FLAGS ${OpenMP_Fortran_FLAGS})
-  endif()
 
   install(CODE
     "file(GLOB public-modules ${CMAKE_Fortran_MODULE_DIRECTORY}/*.mod)\n

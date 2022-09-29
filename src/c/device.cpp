@@ -70,6 +70,10 @@ void occaDeviceFinish(occaDevice device) {
   occa::c::device(device).finish();
 }
 
+void occaDeviceFinishAll(occaDevice device) {
+  occa::c::device(device).finishAll();
+}
+
 bool occaDeviceHasSeparateMemorySpace(occaDevice device) {
   return (int) occa::c::device(device).hasSeparateMemorySpace();
 }
