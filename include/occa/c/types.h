@@ -44,6 +44,7 @@ typedef occaType occaDevice;
 typedef occaType occaKernel;
 typedef occaType occaKernelBuilder;
 typedef occaType occaMemory;
+typedef occaType occaMemoryPool;
 typedef occaType occaStream;
 typedef occaType occaStreamTag;
 
@@ -77,6 +78,7 @@ extern const int OCCA_DEVICE;
 extern const int OCCA_KERNEL;
 extern const int OCCA_KERNELBUILDER;
 extern const int OCCA_MEMORY;
+extern const int OCCA_MEMORYPOOL;
 extern const int OCCA_STREAM;
 extern const int OCCA_STREAMTAG;
 

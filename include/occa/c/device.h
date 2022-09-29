@@ -89,6 +89,11 @@ occaMemory occaDeviceTypedWrapMemory(occaDevice device,
                                      occaJson props);
 //======================================
 
+//---[ MemoryPool ]---------------------
+occaMemoryPool occaDeviceCreateMemoryPool(occaDevice device,
+                                          occaJson props);
+//======================================
+
 OCCA_END_EXTERN_C
 
 #endif

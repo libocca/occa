@@ -195,4 +195,18 @@ occaMemory occaTypedWrapMemory(const void *ptr,
 }
 //======================================
 
+//---[ MemoryPool ]---------------------
+occaMemoryPool occaCreateMemoryPool(occaJson props) {
+  occa::experimental::memoryPool memPool;
+  if (occa::c::isDefault(props)) {
+    memPool = occa::createMemoryPool();
+  } else {
+    memPool = occa::createMemoryPool(occa::c::json(props));
+  }
+  memPool.dontUseRefs();
+
+  return occa::c::newOccaType(memPool);
+}
+//======================================
+
 OCCA_END_EXTERN_C

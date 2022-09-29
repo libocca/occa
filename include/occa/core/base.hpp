@@ -43,6 +43,8 @@ namespace occa {
   void setStream(stream s);
 
   streamTag tagStream();
+
+  experimental::memoryPool createMemoryPool(const occa::json &props = occa::json());
   //====================================
 
   //---[ Kernel Functions ]-------------
