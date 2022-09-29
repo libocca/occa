@@ -348,6 +348,7 @@ namespace occa {
       kernel &k = *(new kernel(this,
                                kernelName,
                                sourceFilename,
+                               cuModule,
                                kernelProps));
 
       k.launcherKernel = buildLauncherKernel(kernelHash,
@@ -377,7 +378,6 @@ namespace occa {
         kernel *cuKernel = new kernel(this,
                                       metadata.name,
                                       sourceFilename,
-                                      cuModule,
                                       cuFunction,
                                       kernelProps);
         cuKernel->metadata = metadata;

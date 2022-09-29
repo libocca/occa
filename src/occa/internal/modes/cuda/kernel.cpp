@@ -10,10 +10,20 @@ namespace occa {
     kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
+                   CUmodule cuModule_,
+                   const occa::json &properties_) :
+      occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
+      cuModule(cuModule_),
+      cuFunction(NULL) {}
+
+    kernel::kernel(modeDevice_t *modeDevice_,
+                   const std::string &name_,
+                   const std::string &sourceFilename_,
+                   CUfunction cuFunction_,
                    const occa::json &properties_) :
       occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       cuModule(NULL),
-      cuFunction(NULL) {}
+      cuFunction(cuFunction_) {}
 
     kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,

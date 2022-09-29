@@ -333,6 +333,7 @@ namespace occa {
       kernel &k = *(new kernel(this,
                                kernelName,
                                sourceFilename,
+                               hipModule,
                                kernelProps));
 
       k.launcherKernel = buildLauncherKernel(kernelHash,
@@ -360,7 +361,6 @@ namespace occa {
         kernel *hipKernel = new kernel(this,
                                        metadata.name,
                                        sourceFilename,
-                                       hipModule,
                                        hipFunction,
                                        kernelProps);
         hipKernel->metadata = metadata;
