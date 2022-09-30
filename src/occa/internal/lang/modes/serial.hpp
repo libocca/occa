@@ -26,7 +26,12 @@ namespace occa {
         void setupExclusiveDeclaration(declarationStatement &declSmnt);
         void setupExclusiveIndices();
 
-        void defineExclusiveVariableAsArray(variable_t &var);
+        int getInnerLoopLevel(forStatement &forSmnt);
+
+        forStatement* getInnerMostInnerLoop(forStatement &forSmnt);
+
+        void defineExclusiveVariableAsArray(declarationStatement &declSmnt,
+                                            variable_t &var);
 
         exprNode* addExclusiveVariableArrayAccessor(statement_t &smnt,
                                                     exprNode &expr,
