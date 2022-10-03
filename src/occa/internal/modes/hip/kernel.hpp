@@ -21,6 +21,13 @@ namespace occa {
       kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
+             hipModule_t   hipModule_,
+             const occa::json &properties_);
+
+      kernel(modeDevice_t *modeDevice_,
+             const std::string &name_,
+             const std::string &sourceFilename_,
+             hipFunction_t hipFunction_,
              const occa::json &properties_);
 
       kernel(modeDevice_t *modeDevice_,
