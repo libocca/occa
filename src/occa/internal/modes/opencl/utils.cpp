@@ -416,7 +416,7 @@ namespace occa {
       cl_int error = 1;
       cl_int binaryError = 1;
 
-      size_t binaryBytes;
+      size_t binaryBytes = 0;
       OCCA_OPENCL_ERROR(
         "saveProgramBinary: Getting Binary Sizes",
         clGetProgramInfo(info.clProgram,
