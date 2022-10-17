@@ -60,7 +60,7 @@ namespace occa {
     dim kernel::maxInnerDims() const {
       static dim maxInnerDims_(0);
       if (maxInnerDims_.x == 0) {
-        int maxSize;
+        int maxSize = 0;
         OCCA_CUDA_ERROR("Kernel: Getting Maximum Inner-Dim Size",
                         cuFuncGetAttribute(&maxSize,
                                            CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK,

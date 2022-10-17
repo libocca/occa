@@ -166,7 +166,7 @@ namespace occa {
 
       waitFor(endTag);
 
-      float msTimeTaken = 0;
+      float msTimeTaken = 0.0;
       OCCA_HIP_ERROR("Device: Timing Between Tags",
                      hipEventElapsedTime(&msTimeTaken,
                                          hipStartTag->hipEvent,
