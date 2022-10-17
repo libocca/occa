@@ -183,7 +183,7 @@ namespace occa {
 
       waitFor(endTag);
 
-      float msTimeTaken;
+      float msTimeTaken = 0.0;
       OCCA_CUDA_ERROR("Device: Timing Between Tags",
                       cuEventElapsedTime(&msTimeTaken,
                                          cuStartTag->cuEvent,
@@ -228,8 +228,8 @@ namespace occa {
       }
 
       // Regular CUDA Kernel
-      CUmodule cuModule;
-      CUfunction cuFunction;
+      CUmodule cuModule = NULL;
+      CUfunction cuFunction = NULL;
       CUresult error;
 
       setCudaContext();
@@ -333,7 +333,7 @@ namespace occa {
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
                                                    const occa::json &kernelProps) {
-      CUmodule cuModule;
+      CUmodule cuModule = NULL;
       CUresult error;
 
       setCudaContext();
@@ -366,7 +366,7 @@ namespace occa {
       for (int i = 0; i < launchedKernelsCount; ++i) {
         lang::kernelMetadata_t &metadata = launchedKernelsMetadata[i];
 
-        CUfunction cuFunction;
+        CUfunction cuFunction = NULL;
         error = cuModuleGetFunction(&cuFunction,
                                     cuModule,
                                     metadata.name.c_str());

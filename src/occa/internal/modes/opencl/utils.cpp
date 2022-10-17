@@ -32,7 +32,7 @@ namespace occa {
     }
 
     int getPlatformCount() {
-      cl_uint platformCount;
+      cl_uint platformCount = 0;
 
       OCCA_OPENCL_ERROR("OpenCL: Get Platform ID Count",
                         clGetPlatformIDs(0, NULL, &platformCount));
@@ -55,7 +55,7 @@ namespace occa {
 
     std::string platformStrInfo(cl_platform_id clPID,
                               cl_platform_info clInfo) {
-      size_t bytes;
+      size_t bytes = 0;
 
       OCCA_OPENCL_ERROR("OpenCL: Getting Platform String Info",
                         clGetPlatformInfo(clPID,
@@ -123,7 +123,7 @@ namespace occa {
     }
 
     cl_device_type deviceType(info::device_type type) {
-      cl_device_type dtype;
+      cl_device_type dtype = CL_DEVICE_TYPE_ALL;
       switch (type) {
         case info::device_type::cpu:
           dtype = CL_DEVICE_TYPE_CPU;
@@ -179,7 +179,7 @@ namespace occa {
 
     std::string deviceStrInfo(cl_device_id clDID,
                               cl_device_info clInfo) {
-      size_t bytes;
+      size_t bytes = 0;
 
       OCCA_OPENCL_ERROR("OpenCL: Getting Device String Info",
                         clGetDeviceInfo(clDID,
@@ -238,7 +238,7 @@ namespace occa {
 
     info::device_type deviceType(int pID, int dID) {
       cl_device_id clDID = deviceID(pID, dID);
-      cl_device_type clDeviceType;
+      cl_device_type clDeviceType = CL_DEVICE_TYPE_ALL;
 
       OCCA_OPENCL_ERROR(
         "OpenCL: Get Device Type",
@@ -267,7 +267,7 @@ namespace occa {
 
     int deviceCoreCount(int pID, int dID) {
       cl_device_id clDID = deviceID(pID, dID);
-      cl_uint ret;
+      cl_uint ret = 0;
 
       OCCA_OPENCL_ERROR("OpenCL: Get Device Core Count",
                         clGetDeviceInfo(clDID,
@@ -278,7 +278,7 @@ namespace occa {
     }
 
     udim_t deviceGlobalMemSize(cl_device_id dID) {
-      cl_ulong ret;
+      cl_ulong ret = 0;
 
       OCCA_OPENCL_ERROR("OpenCL: Get Device Available Memory",
                         clGetDeviceInfo(dID,
@@ -416,7 +416,7 @@ namespace occa {
       cl_int error = 1;
       cl_int binaryError = 1;
 
-      size_t binaryBytes;
+      size_t binaryBytes = 0;
       OCCA_OPENCL_ERROR(
         "saveProgramBinary: Getting Binary Sizes",
         clGetProgramInfo(info.clProgram,
