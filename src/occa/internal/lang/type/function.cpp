@@ -46,7 +46,7 @@ namespace occa {
     }
 
     dtype_t function_t::dtype() const {
-      return dtype::byte;
+      return dtype::byte_;
     }
 
     void function_t::addArgument(const variable_t &arg) {

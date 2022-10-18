@@ -8,7 +8,7 @@ namespace occa {
                              udim_t size_, dim_t offset_) :
     modeBuffer(modeBuffer_),
     ptr(NULL),
-    dtype_(&dtype::byte),
+    dtype_(&dtype::byte_),
     size(size_),
     offset(offset_) {
     modeBuffer->addModeMemoryRef(this);

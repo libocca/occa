@@ -482,27 +482,27 @@ namespace occa {
   memory device::malloc<void>(const dim_t entries,
                               const void *src,
                               const occa::json &props) {
-    return malloc(entries, dtype::byte, src, props);
+    return malloc(entries, dtype::byte_, src, props);
   }
 
   template <>
   memory device::malloc<void>(const dim_t entries,
                               const occa::memory src,
                               const occa::json &props) {
-    return malloc(entries, dtype::byte, src, props);
+    return malloc(entries, dtype::byte_, src, props);
   }
 
   template <>
   memory device::malloc<void>(const dim_t entries,
                               const occa::json &props) {
-    return malloc(entries, dtype::byte, NULL, props);
+    return malloc(entries, dtype::byte_, NULL, props);
   }
 
   template <>
   occa::memory device::wrapMemory<void>(const void *ptr,
                                         const dim_t entries,
                                         const occa::json &props) {
-    return wrapMemory(ptr, entries, dtype::byte, props);
+    return wrapMemory(ptr, entries, dtype::byte_, props);
   }
 
   occa::memory device::wrapMemory(const void *ptr,

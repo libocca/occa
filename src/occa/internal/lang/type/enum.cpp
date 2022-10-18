@@ -14,7 +14,7 @@ namespace occa {
     }
 
     dtype_t enum_t::dtype() const {
-      return dtype::byte;
+      return dtype::byte_;
     }
 
     void enum_t::printDeclaration(printer &pout) const {

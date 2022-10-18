@@ -248,8 +248,8 @@ namespace occa {
     const dtype_t &to   = other.self();
 
     // Anything can be casted from/to bytes
-    if ((&from == &dtype::byte) ||
-        (&to == &dtype::byte)) {
+    if ((&from == &dtype::byte_) ||
+        (&to == &dtype::byte_)) {
       return true;
     }
 
@@ -322,7 +322,7 @@ namespace occa {
       dtypeMap["none"] = &dtype::none;
 
       dtypeMap["void"] = &dtype::void_;
-      dtypeMap["byte"] = &dtype::byte;
+      dtypeMap["byte"] = &dtype::byte_;
 
       dtypeMap["bool"]   = &dtype::bool_;
       dtypeMap["char"]   = &dtype::char_;

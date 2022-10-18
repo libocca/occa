@@ -7,7 +7,7 @@ namespace occa {
     argMetadata_t::argMetadata_t() :
       isConst(false),
       isPtr(false),
-      dtype(dtype::byte) {}
+      dtype(dtype::byte_) {}
 
     argMetadata_t::argMetadata_t(const bool isConst_,
                                  const bool isPtr_,

@@ -15,7 +15,7 @@ namespace occa {
     extern const dtype_t none;
 
     extern const dtype_t void_;
-    extern const dtype_t byte;
+    extern const dtype_t byte_;
 
     extern const dtype_t bool_;
     extern const dtype_t char_;
@@ -105,6 +105,7 @@ namespace occa {
     // Primitive types
     template <> dtype_t get<void>();
     template <> dtype_t get<bool>();
+    template <> dtype_t get<std::byte>();
     template <> dtype_t get<char>();
     template <> dtype_t get<signed char>();
     template <> dtype_t get<unsigned char>();

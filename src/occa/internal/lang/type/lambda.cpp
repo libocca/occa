@@ -56,7 +56,7 @@ lambda_t::lambda_t(capture_t capture_,const blockStatement& body_)
 
     dtype_t lambda_t::dtype() const
     {
-      return dtype::byte;
+      return dtype::byte_;
     }
 
     bool lambda_t::equals(const type_t &other) const

@@ -102,16 +102,16 @@ void testCasting() {
   // double  <---> byte
   // double2 <---> byte
   ASSERT_TRUE(
-    occa::dtype::double_.canBeCastedTo(occa::dtype::byte)
+    occa::dtype::double_.canBeCastedTo(occa::dtype::byte_)
   );
   ASSERT_TRUE(
-    occa::dtype::byte.canBeCastedTo(occa::dtype::double_)
+    occa::dtype::byte_.canBeCastedTo(occa::dtype::double_)
   );
   ASSERT_TRUE(
-    occa::dtype::double2.canBeCastedTo(occa::dtype::byte)
+    occa::dtype::double2.canBeCastedTo(occa::dtype::byte_)
   );
   ASSERT_TRUE(
-    occa::dtype::byte.canBeCastedTo(occa::dtype::double2)
+    occa::dtype::byte_.canBeCastedTo(occa::dtype::double2)
   );
 }
 

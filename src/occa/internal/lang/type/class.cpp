@@ -14,7 +14,7 @@ namespace occa {
     }
 
     dtype_t class_t::dtype() const {
-      return dtype::byte;
+      return dtype::byte_;
     }
 
     void class_t::printDeclaration(printer &pout) const {

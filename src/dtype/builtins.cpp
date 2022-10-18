@@ -5,7 +5,7 @@ namespace occa {
     const dtype_t none("none", 0, true);
 
     const dtype_t void_("void", 0, true);
-    const dtype_t byte("byte", 1, true);
+    const dtype_t byte_("byte", sizeof(std::byte), true);
 
     const dtype_t bool_("bool", sizeof(bool), true);
     const dtype_t char_("char", sizeof(char), true);
@@ -76,6 +76,10 @@ namespace occa {
     // Primitive types
     template <> dtype_t get<bool>() {
       return bool_;
+    }
+
+    template <> dtype_t get<std::byte>() {
+      return byte_;
     }
 
     template <> dtype_t get<char>() {

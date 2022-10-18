@@ -50,7 +50,7 @@ namespace occa {
     }
 
     dtype_t functionPtr_t::dtype() const {
-      return dtype::byte;
+      return dtype::byte_;
     }
 
     bool functionPtr_t::equals(const type_t &other) const {

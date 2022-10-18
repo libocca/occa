@@ -82,7 +82,7 @@ occaJson occaDtypeToJson(occaDtype dtype) {
 const occaDtype occaDtypeNone = occa::c::newOccaType(occa::dtype::none);
 
 const occaDtype occaDtypeVoid = occa::c::newOccaType(occa::dtype::void_);
-const occaDtype occaDtypeByte = occa::c::newOccaType(occa::dtype::byte);
+const occaDtype occaDtypeByte = occa::c::newOccaType(occa::dtype::byte_);
 
 const occaDtype occaDtypeBool   = occa::c::newOccaType(occa::dtype::bool_);
 const occaDtype occaDtypeChar   = occa::c::newOccaType(occa::dtype::char_);

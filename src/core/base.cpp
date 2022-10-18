@@ -117,7 +117,7 @@ namespace occa {
   occa::memory malloc<void>(const dim_t entries,
                             const void *src,
                             const occa::json &props) {
-    return getDevice().malloc(entries, dtype::byte, src, props);
+    return getDevice().malloc(entries, dtype::byte_, src, props);
   }
 
   occa::memory wrapMemory(const void *ptr,
@@ -131,7 +131,7 @@ namespace occa {
   occa::memory wrapMemory<void>(const void *ptr,
                                 const dim_t entries,
                                 const occa::json &props) {
-    return getDevice().wrapMemory(ptr, entries, dtype::byte, props);
+    return getDevice().wrapMemory(ptr, entries, dtype::byte_, props);
   }
 
   void memcpy(memory dest, const void *src,

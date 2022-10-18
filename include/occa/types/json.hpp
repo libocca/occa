@@ -521,7 +521,7 @@ namespace occa {
     inline dtype_t dtype() const {
       switch (type) {
         case null_:
-          return dtype::byte;
+          return dtype::byte_;
         case number_:
           return value_.number.dtype();
         default:
