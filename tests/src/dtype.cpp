@@ -33,24 +33,48 @@ void testDtype() {
   ASSERT_NEQ(occa::dtype::double_,
              fakeDouble);
 
-  occa::dtype_t foo1("foo");
+  occa::dtype_t foo1("foo", occa::dtype::double_.bytes());
   foo1.addField("a", occa::dtype::double_);
 
-  occa::dtype_t foo2("foo");
+  occa::dtype_t foo2("foo", occa::dtype::double_.bytes());
   foo2.addField("a", occa::dtype::double_);
 
-  occa::dtype_t foo3("foo");
+  occa::dtype_t foo3("foo", 2 * occa::dtype::double_.bytes());
   foo3.addField("a", occa::dtype::double_)
     .addField("b", occa::dtype::double_);
 
-  occa::dtype_t foo4("foo");
+  occa::dtype_t foo4("foo", 2 * occa::dtype::double_.bytes());
   foo4.addField("b", occa::dtype::double_)
     .addField("a", occa::dtype::double_);
+
+  struct myStruct {
+    double a;
+    double b;
+  };
+
+  struct myStruct2 {
+    double a[2];
+  };
+
+  occa::dtype::registerType<myStruct>("myStruct",
+                                      {"a", "b"},
+                                      {occa::dtype::double_,
+                                       occa::dtype::double_});
+
+  occa::dtype_t foo5 = occa::dtype::get<myStruct>();
+
+  occa::dtype::registerType<myStruct2>("myStruct2",
+                                       occa::dtype::double_,
+                                       2);
+
+  occa::dtype_t foo6 = occa::dtype::get<myStruct2>();
 
   ASSERT_EQ(foo1, foo1);
   ASSERT_NEQ(foo1, foo2);
   ASSERT_NEQ(foo1, foo3);
   ASSERT_NEQ(foo1, foo4);
+  ASSERT_NEQ(foo1, foo5);
+  ASSERT_NEQ(foo1, foo6);
   ASSERT_NEQ(foo3, foo4);
 
   ASSERT_TRUE(foo1.matches(foo1));
@@ -58,21 +82,53 @@ void testDtype() {
   ASSERT_FALSE(foo1.matches(foo3));
   ASSERT_FALSE(foo1.matches(foo4));
   ASSERT_FALSE(foo3.matches(foo4));
+  ASSERT_FALSE(foo3.matches(foo5));
+  ASSERT_FALSE(foo5.matches(foo6));
+
+  occa::dtype::deRegisterType<myStruct>();
+  occa::dtype::deRegisterType<myStruct2>();
 }
 
 void testCasting() {
-  occa::dtype_t foo1("foo");
+  occa::dtype_t foo1("foo", 2 * occa::dtype::double_.bytes());
   foo1.addField("a", occa::dtype::double_)
     .addField("b", occa::dtype::double_);
 
-  occa::dtype_t foo2("foo");
+  occa::dtype_t foo2("foo", 2 * occa::dtype::double_.bytes());
   foo2.addField("b", occa::dtype::double_)
     .addField("a", occa::dtype::double_);
+
+  struct myStruct {
+    double a;
+    double b;
+  };
+
+  struct myStruct2 {
+    double a[2];
+  };
+
+  occa::dtype::registerType<myStruct>("myStruct",
+                                      {"a", "b"},
+                                      {occa::dtype::double_,
+                                       occa::dtype::double_});
+
+  occa::dtype_t foo5 = occa::dtype::get<myStruct>();
+
+  occa::dtype::registerType<myStruct2>("myStruct2",
+                                       occa::dtype::double_,
+                                       2);
+
+  occa::dtype_t foo6 = occa::dtype::get<myStruct2>();
 
   ASSERT_NEQ(foo1, foo2);
   ASSERT_FALSE(foo1.matches(foo2));
   ASSERT_TRUE(foo1.canBeCastedTo(foo2));
   ASSERT_TRUE(foo2.canBeCastedTo(foo1));
+  ASSERT_TRUE(foo2.canBeCastedTo(foo5));
+  ASSERT_TRUE(foo2.canBeCastedTo(foo6));
+
+  occa::dtype::deRegisterType<myStruct>();
+  occa::dtype::deRegisterType<myStruct2>();
 
   // double  <---> double2
   ASSERT_NEQ(occa::dtype::double_,
@@ -128,13 +184,26 @@ void testGet() {
             types[1]);
   ASSERT_EQ(occa::dtype::int_,
             types[2]);
+
+  struct myStruct {
+    double a;
+    double b;
+  };
+
+  occa::dtype_t foo = occa::dtype::get<myStruct>();
+  ASSERT_EQ(occa::dtype::byte_,
+            foo.baseDtype());
+  ASSERT_EQ(2 * occa::dtype::double_.bytes(),
+            foo.bytes());
+
+  occa::dtype::deRegisterType<myStruct>();
 }
 
 void testJsonMethods() {
   ASSERT_EQ(occa::dtype::toJson(occa::dtype::double_).toString(),
             occa::json::parse("{ type: 'builtin', name: 'double' }").toString());
 
-  occa::dtype_t foo("foo");
+  occa::dtype_t foo("foo", 2 * occa::dtype::double_.bytes());
   foo.addField("a", occa::dtype::double_)
     .addField("b", occa::dtype::double_);
 
