@@ -62,10 +62,10 @@ int main(int argc, const char **argv) {
   myFloatDtype.registerType();
 
   // Struct dtype
-  occa::dtype_t myFloat2Dtype;
-  myFloat2Dtype.registerType();
+  occa::dtype_t myFloat2Dtype("myFloat2", sizeof(myFloat2));
   myFloat2Dtype.addField("x", occa::dtype::float_);
   myFloat2Dtype.addField("y", occa::dtype::float_);
+  myFloat2Dtype.registerType();
 
   // Tuple dtype
   occa::dtype_t myFloat4Dtype = occa::dtype_t::tuple(occa::dtype::float_, 4);
@@ -107,6 +107,66 @@ int main(int argc, const char **argv) {
       throw 1;
     }
   }
+
+  o_a.free();
+  o_b.free();
+  o_ab.free();
+
+  // Templated dtypes
+  // - occa::memory dtypes can be created and assigned via templated methods
+  // - dtypes registered this way are tracked internally and destroyed when deregistered
+  // - Registered dtype_t objects are treated as singletons and assumed
+  //     to exist while the memory objects are still alive
+
+  // Automatic creation
+  // Using a type that has not been registered with OCCA will be
+  // automatically registered as a byte field (thus all type-checking is disabled)
+  o_a = occa::malloc<myFloat>(entries);
+
+  // Struct dtype
+  occa::dtype::registerType<myFloat2>("myFloat2",
+                                      {"x", "y"},
+                                      {occa::dtype::float_, occa::dtype::float_});
+
+  o_b = occa::malloc<myFloat2>(entries / 2);
+
+  // Tuple dtype
+  occa::dtype::registerType<myFloat4>("myFloat4", occa::dtype::float_, 4);
+
+  o_ab = occa::malloc<myFloat4>(entries / 4);
+
+  // Copy memory to the device
+  o_a.copyFrom(a);
+  o_b.copyFrom(b);
+
+  // Launch device kernel
+  addVectors(entries,
+             o_a.cast(occa::dtype::float_),
+             o_b,
+             o_ab);
+
+  // Copy result to the host
+  o_ab.copyTo(ab);
+
+  // Assert values
+  for (int i = 0; i < (entries / 4); ++i) {
+    for (int j = 0; j < 4; ++j) {
+      std::cout << '(' << i << ',' << j << ") : " << ab[i].values[j] << '\n';
+    }
+  }
+  for (int i = 0; i < entries; ++i) {
+    float a_i  = a[i].value;
+    float b_i  = (i % 2) ? b[i / 2].y : b[i / 2].x;
+    float ab_i = ab[i / 4].values[i % 4];
+    if (!occa::areBitwiseEqual(ab_i, a_i + b_i)) {
+      throw 1;
+    }
+  }
+
+  // Can deregister templated dtypes if they're no longer needed
+  occa::dtype::deRegisterType<myFloat>();
+  occa::dtype::deRegisterType<myFloat2>();
+  occa::dtype::deRegisterType<myFloat4>();
 
   // Free host memory
   delete [] a;
