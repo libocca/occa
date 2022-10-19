@@ -154,6 +154,17 @@ namespace occa {
     const strVector& structFieldNames() const;
 
     /**
+     * @startDoc{baseDtype}
+     *
+     * Description:
+     *   Return the base dtype of this type. For example
+     *   `int2` would return the 'int' dtype.
+     *
+     * @endDoc
+     */
+    const dtype_t& baseDtype() const;
+
+    /**
      * @startDoc{operator_bracket[0]}
      *
      * Description:

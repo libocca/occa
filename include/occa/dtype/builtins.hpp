@@ -5,11 +5,14 @@
 #include <occa/types/typedefs.hpp>
 #include <occa/types/typeinfo.hpp>
 #include <occa/types/tuples.hpp>
+#include <type_traits>
+#include <unordered_map>
 
 namespace occa {
   class memory;
 
   typedef std::vector<dtype_t> dtypeVector;
+  typedef std::unordered_map<size_t, dtype_t> dtypeMap;
 
   namespace dtype {
     extern const dtype_t none;
@@ -75,16 +78,42 @@ namespace occa {
     extern const dtype_t double3;
     extern const dtype_t double4;
 
+    extern const dtype_t ptr;
+
     // OCCA Types
     extern const dtype_t memory;
 
+    // User type registry
+    extern dtypeMap registry;
+
     // Templated types
-    template <class T>
+    template <class TT>
     dtype_t get() {
-      if (!typeMetadata<T>::isPointer) {
-        return none;
+      if (std::is_pointer<TT>::value) {
+        return dtype::ptr;
       }
-      return get<typename typeMetadata<T>::baseType>();
+
+      using T = typename std::decay<TT>::type;
+      if (!std::is_same<TT, T>::value) {
+        return dtype::get<T>();
+      }
+
+      auto it = registry.find(typeid(T).hash_code());
+      if (it != registry.end()) {
+        return it->second;
+      } else {
+        static_assert(std::is_trivial<T>::value
+                      || std::is_standard_layout<T>::value,
+                      "Cannot register types that are not POD structs");
+        auto entry = registry.emplace(
+                        std::piecewise_construct,
+                        std::forward_as_tuple(typeid(T).hash_code()),
+                        std::forward_as_tuple(typeid(T).name(),
+                                              dtype_t::tuple(byte_, sizeof(T)),
+                                              true)
+                      );
+        return entry.first->second;
+      }
     }
 
     template <class T = void, class ...Types>
@@ -105,7 +134,6 @@ namespace occa {
     // Primitive types
     template <> dtype_t get<void>();
     template <> dtype_t get<bool>();
-    template <> dtype_t get<std::byte>();
     template <> dtype_t get<char>();
     template <> dtype_t get<signed char>();
     template <> dtype_t get<unsigned char>();
@@ -139,6 +167,10 @@ namespace occa {
     template <> dtype_t get<occa::float4>();
     template <> dtype_t get<occa::double2>();
     template <> dtype_t get<occa::double4>();
+
+#if __cplusplus >= 201703L
+    template <> dtype_t get<std::byte>();
+#endif
 
     // OCCA Types
     template <> dtype_t get<occa::memory>();

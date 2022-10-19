@@ -136,6 +136,14 @@ namespace occa {
     return structPtr->fieldNames;
   }
 
+  const dtype_t& dtype_t::baseDtype() const {
+    if (self().tuple_) {
+      return self().tuple_->dtype.self();
+    } else {
+      return self();
+    }
+  }
+
   const dtype_t& dtype_t::operator [] (const int field) const {
     const dtypeStruct_t *structPtr = self().struct_;
     OCCA_ERROR("Cannot access fields from a non-struct dtype_t",
@@ -248,8 +256,11 @@ namespace occa {
     const dtype_t &to   = other.self();
 
     // Anything can be casted from/to bytes
-    if ((&from == &dtype::byte_) ||
-        (&to == &dtype::byte_)) {
+    const dtype_t &fromBase = from.baseDtype();
+    const dtype_t &toBase = to.baseDtype();
+
+    if ((&fromBase == &dtype::byte_) ||
+        (&toBase == &dtype::byte_)) {
       return true;
     }
 
