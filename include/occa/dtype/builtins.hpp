@@ -5,14 +5,11 @@
 #include <occa/types/typedefs.hpp>
 #include <occa/types/typeinfo.hpp>
 #include <occa/types/tuples.hpp>
-#include <type_traits>
-#include <unordered_map>
 
 namespace occa {
   class memory;
 
   typedef std::vector<dtype_t> dtypeVector;
-  typedef std::unordered_map<size_t, dtype_t> dtypeMap;
 
   namespace dtype {
     extern const dtype_t none;
@@ -82,9 +79,6 @@ namespace occa {
 
     // OCCA Types
     extern const dtype_t memory;
-
-    // User type registry
-    extern dtypeMap registry;
 
     // Templated types
     template <class TT>

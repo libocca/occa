@@ -6,6 +6,11 @@
 #include <occa/internal/utils/sys.hpp>
 
 namespace occa {
+  namespace dtype {
+    // User type registry
+    dtypeMap registry;
+  }
+
   //---[ Dtype_T ]------------------------
   dtype_t::dtype_t() :
     ref(NULL),
@@ -171,8 +176,6 @@ namespace occa {
     if (!struct_) {
       struct_ = new dtypeStruct_t();
     }
-
-    bytes_ += (dtype.bytes_ * tupleSize_);
 
     if (tupleSize_ == 1) {
       struct_->addField(field, dtype);

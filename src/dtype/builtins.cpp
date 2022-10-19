@@ -74,9 +74,6 @@ namespace occa {
     // OCCA Types
     const dtype_t memory("occa::memory", 0, true);
 
-    // User type registry
-    dtypeMap registry;
-
     // Templated types
     template <> dtype_t get<void>() {
       return void_;

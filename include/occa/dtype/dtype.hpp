@@ -4,7 +4,11 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <type_traits>
+#include <unordered_map>
 
+#include <occa/defines.hpp>
+#include <occa/utils/logging.hpp>
 #include <occa/types/typedefs.hpp>
 
 
@@ -48,7 +52,7 @@ namespace occa {
     dtype_t();
 
     dtype_t(const std::string &name__,
-            const int bytes__ = 0,
+            const int bytes__,
             const bool registered_ = false);
 
     dtype_t(const std::string &name__,
@@ -326,6 +330,91 @@ namespace occa {
     std::string toString(const std::string &varName = "") const;
   };
   //====================================
+
+  namespace dtype {
+
+    typedef std::unordered_map<size_t, dtype_t>   dtypeMap;
+
+    // User type registry
+    extern dtypeMap registry;
+
+    template <class TT>
+    dtype_t registerType(const std::string &name__,
+                         std::vector<std::string> fieldNames,
+                         std::vector<dtype_t> fieldTypes) {
+
+      static_assert(!std::is_pointer<TT>::value,
+                    "Cannot register pointer types");
+
+      OCCA_ERROR("Must have same number of field names and types",
+                 fieldNames.size() == fieldTypes.size());
+      OCCA_ERROR("Must have a positive integer number of fields",
+                 fieldNames.size() > 0);
+
+      using T = typename std::decay<TT>::type;
+
+      auto it = registry.find(typeid(T).hash_code());
+
+      OCCA_ERROR("Type " << name__ << "[ i.e. " << typeid(T).name()
+                 << " ] already registered.",
+                 it == registry.end());
+
+      static_assert(std::is_trivial<T>::value
+                    || std::is_standard_layout<T>::value,
+                    "Cannot register types that are not POD structs");
+      auto entry = registry.emplace(
+                      std::piecewise_construct,
+                      std::forward_as_tuple(typeid(T).hash_code()),
+                      std::forward_as_tuple(name__, sizeof(T), true)
+                    );
+      dtype_t& type = entry.first->second;
+
+      for (int i = 0; i < fieldNames.size(); ++i) {
+        type.addField(fieldNames[i], fieldTypes[i]);
+      }
+
+      return type;
+    }
+
+    template <class TT>
+    dtype_t registerType(const std::string &name__,
+                         const dtype_t &dtype,
+                         const int size=1) {
+
+      static_assert(!std::is_pointer<TT>::value,
+                    "Cannot register pointer types");
+
+      OCCA_ERROR("Tuple must have a positive integer size",
+                 size > 0);
+
+      using T = typename std::decay<TT>::type;
+
+      auto it = registry.find(typeid(T).hash_code());
+
+      OCCA_ERROR("Type " << name__ << "[ i.e. " << typeid(T).name()
+                 << " ] already registered.",
+                 it == registry.end());
+
+      static_assert(std::is_trivial<T>::value
+                    || std::is_standard_layout<T>::value,
+                    "Cannot register types that are not POD structs");
+      auto entry = registry.emplace(
+                      std::piecewise_construct,
+                      std::forward_as_tuple(typeid(T).hash_code()),
+                      std::forward_as_tuple(name__,
+                                            dtype_t::tuple(dtype, size),
+                                            true)
+                    );
+      return entry.first->second;
+    }
+
+    template <class TT>
+    void deRegisterType() {
+      using T = typename std::decay<TT>::type;
+      registry.erase(typeid(T).hash_code());
+    }
+
+  }
 }
 
 #endif
