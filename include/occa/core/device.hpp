@@ -6,6 +6,7 @@
 
 #include <occa/core/kernel.hpp>
 #include <occa/core/memory.hpp>
+#include <occa/core/memoryPool.hpp>
 #include <occa/core/stream.hpp>
 #include <occa/defines.hpp>
 #include <occa/dtype.hpp>
@@ -713,6 +714,21 @@ namespace occa {
                             const dim_t entries,
                             const dtype_t &dtype,
                             const occa::json &props = occa::json());
+
+    //  |---[ MemoryPool ]------------------
+    /**
+     * @startDoc{createMemoryPool}
+     *
+     * Description:
+     *   Creates and returns a new [[memoryPool]] to reserve [[memory]].
+     *
+     * Returns:
+     *   Newly created [[memoryPool]]
+     *
+     * @endDoc
+     */
+    experimental::memoryPool createMemoryPool(const occa::json &props = occa::json());
+
     //  |===============================
   };
 

@@ -37,12 +37,13 @@ namespace occa {
       static const int kernel        = 18;
       static const int kernelBuilder = 19;
       static const int memory        = 20;
-      static const int stream        = 21;
-      static const int streamTag     = 22;
+      static const int memoryPool    = 21;
+      static const int stream        = 22;
+      static const int streamTag     = 23;
 
-      static const int dtype         = 23;
-      static const int scope         = 24;
-      static const int json          = 25;
+      static const int dtype         = 24;
+      static const int scope         = 25;
+      static const int json          = 26;
     }
 
     occaType defaultOccaType();
@@ -97,6 +98,7 @@ namespace occa {
     occaType newOccaType(occa::device device);
     occaType newOccaType(occa::kernel kernel);
     occaType newOccaType(occa::memory memory);
+    occaType newOccaType(occa::experimental::memoryPool memoryPool);
     occaType newOccaType(occa::stream stream);
     occaType newOccaType(occa::streamTag streamTag);
 
@@ -116,6 +118,7 @@ namespace occa {
     occa::kernel kernel(occaType value);
     occa::kernelBuilder kernelBuilder(occaType value);
     occa::memory memory(occaType value);
+    occa::experimental::memoryPool memoryPool(occaType value);
     occa::stream stream(occaType value);
     occa::streamTag streamTag(occaType value);
 

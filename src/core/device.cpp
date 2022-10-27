@@ -3,6 +3,7 @@
 #include <occa/internal/core/device.hpp>
 #include <occa/internal/core/kernel.hpp>
 #include <occa/internal/core/memory.hpp>
+#include <occa/internal/core/memoryPool.hpp>
 #include <occa/internal/modes.hpp>
 #include <occa/internal/utils/sys.hpp>
 #include <occa/internal/utils/env.hpp>
@@ -521,6 +522,16 @@ namespace occa {
     mem.setDtype(dtype);
 
     return mem;
+  }
+
+  memoryPool device::createMemoryPool(const occa::json &props) {
+    assertInitialized();
+
+    occa::json memProps = memoryProperties(props);
+
+    memoryPool memPool(modeDevice->createMemoryPool(memProps));
+
+    return memPool;
   }
   //  |=================================
 

@@ -3,12 +3,16 @@
 
 #include <occa/defines.hpp>
 #include <occa/internal/core/memory.hpp>
+#include <occa/internal/modes/serial/buffer.hpp>
+#include <occa/internal/modes/serial/memoryPool.hpp>
 
 namespace occa {
   namespace serial {
     class memory : public occa::modeMemory_t {
     public:
-      memory(modeBuffer_t *modeBuffer_,
+      memory(buffer *b,
+             udim_t size_, dim_t offset_);
+      memory(memoryPool *memPool,
              udim_t size_, dim_t offset_);
       ~memory();
 

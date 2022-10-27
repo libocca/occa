@@ -6,11 +6,16 @@
 
 namespace occa {
   namespace serial {
-    memory::memory(modeBuffer_t *modeBuffer_,
+    memory::memory(buffer *b,
                    udim_t size_, dim_t offset_) :
-      occa::modeMemory_t(modeBuffer_, size_, offset_) {
-      buffer *b = dynamic_cast<buffer*>(modeBuffer);
+      occa::modeMemory_t(b, size_, offset_) {
       ptr = b->ptr + offset;
+    }
+
+    memory::memory(memoryPool *memPool,
+                   udim_t size_, dim_t offset_) :
+      occa::modeMemory_t(memPool, size_, offset_) {
+      ptr = memPool->buffer->ptr + offset;
     }
 
     memory::~memory() {}
