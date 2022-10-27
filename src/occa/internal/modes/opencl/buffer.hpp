@@ -7,12 +7,12 @@
 
 namespace occa {
   namespace opencl {
-    class buffer : public occa::modeBuffer_t {
-      // friend class opencl::memory;
+    class memory;
+    class memoryPool;
 
-    public:
-      cl_mem clMem;
-      bool useHostPtr;
+    class buffer : public occa::modeBuffer_t {
+      friend class opencl::memory;
+      friend class opencl::memoryPool;
 
     public:
       buffer(modeDevice_t *modeDevice_,
@@ -29,6 +29,10 @@ namespace occa {
                           const udim_t bytes) override;
 
       void detach() override;
+
+    private:
+      cl_mem clMem;
+      bool useHostPtr;
     };
   }
 }

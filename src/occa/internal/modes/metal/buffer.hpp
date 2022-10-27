@@ -4,15 +4,15 @@
 #include <occa/internal/core/buffer.hpp>
 #include <occa/internal/core/memory.hpp>
 #include <occa/internal/api/metal.hpp>
-// #include <occa/internal/modes/metal/memory.hpp>
 
 namespace occa {
   namespace metal {
-    class buffer : public occa::modeBuffer_t {
-    // friend class metal::memory;
+    class memory;
+    class memoryPool;
 
-    public:
-      api::metal::buffer_t metalBuffer;
+    class buffer : public occa::modeBuffer_t {
+      friend class metal::memory;
+      friend class metal::memoryPool;
 
     public:
       buffer(modeDevice_t *modeDevice_,
@@ -31,6 +31,9 @@ namespace occa {
       void* getPtr();
 
       void detach() override;
+
+    private:
+      api::metal::buffer_t metalBuffer;
     };
   }
 }

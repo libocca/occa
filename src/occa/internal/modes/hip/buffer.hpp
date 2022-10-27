@@ -9,7 +9,13 @@
 
 namespace occa {
   namespace hip {
+    class memory;
+    class memoryPool;
+
     class buffer : public occa::modeBuffer_t {
+      friend class hip::memory;
+      friend class hip::memoryPool;
+
     public:
       buffer(modeDevice_t *modeDevice_,
              udim_t size_,
@@ -26,7 +32,7 @@ namespace occa {
 
       void detach() override;
 
-    public:
+    private:
       hipDeviceptr_t hipPtr;
       bool useHostPtr;
     };
