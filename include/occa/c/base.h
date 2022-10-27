@@ -73,6 +73,10 @@ occaMemory occaTypedWrapMemory(const void *ptr,
                                occaJson props);
 //======================================
 
+//---[ MemoryPool ]---------------------
+occaMemoryPool occaCreateMemoryPool(occaJson props);
+//======================================
+
 OCCA_END_EXTERN_C
 
 #endif

@@ -254,4 +254,21 @@ occaMemory occaDeviceTypedWrapMemory(occaDevice device,
 }
 //======================================
 
+//---[ MemoryPool ]---------------------
+occaMemoryPool occaDeviceCreateMemoryPool(occaDevice device,
+                                          occaJson props) {
+  occa::device device_ = occa::c::device(device);
+
+  occa::experimental::memoryPool memoryPool;
+  if (occa::c::isDefault(props)) {
+    memoryPool = device_.createMemoryPool();
+  } else {
+    memoryPool = device_.createMemoryPool(occa::c::json(props));
+  }
+  memoryPool.dontUseRefs();
+
+  return occa::c::newOccaType(memoryPool);
+}
+//======================================
+
 OCCA_END_EXTERN_C

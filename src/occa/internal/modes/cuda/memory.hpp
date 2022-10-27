@@ -5,6 +5,8 @@
 
 #include <occa/internal/core/memory.hpp>
 #include <occa/internal/modes/cuda/polyfill.hpp>
+#include <occa/internal/modes/cuda/buffer.hpp>
+#include <occa/internal/modes/cuda/memoryPool.hpp>
 
 namespace occa {
   namespace cuda {
@@ -16,7 +18,9 @@ namespace occa {
       bool isUnified;
       bool useHostPtr;
 
-      memory(modeBuffer_t *modeBuffer_,
+      memory(buffer *b,
+             udim_t size_, dim_t offset_);
+      memory(memoryPool *memPool,
              udim_t size_, dim_t offset_);
       ~memory();
 

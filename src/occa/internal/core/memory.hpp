@@ -36,7 +36,6 @@ namespace occa {
     modeMemory_t* slice(const dim_t offset_,
                         const udim_t bytes);
 
-    void free();
     void detach();
 
     //---[ Virtual Methods ]------------

@@ -178,6 +178,7 @@ jobs:
       if: ${{ matrix.useCMake && !matrix.useoneAPI }}
       run: |
         ctest --test-dir build --progress --output-on-failure --parallel 8 --schedule-random -E "examples_cpp_arrays-opencl|examples_cpp_for_loops-opencl|examples_cpp_generic_inline_kernel-opencl|examples_cpp_shared_memory-opencl|examples_cpp_nonblocking_streams-opencl|examples_cpp_for_loops-dpcpp|examples_cpp_arrays-dpcpp|examples_cpp_nonblocking_streams-dpcpp"
+
         
 
     - name: Run CTests
