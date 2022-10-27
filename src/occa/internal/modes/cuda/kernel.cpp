@@ -10,10 +10,20 @@ namespace occa {
     kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
                    const std::string &sourceFilename_,
+                   CUmodule cuModule_,
+                   const occa::json &properties_) :
+      occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
+      cuModule(cuModule_),
+      cuFunction(NULL) {}
+
+    kernel::kernel(modeDevice_t *modeDevice_,
+                   const std::string &name_,
+                   const std::string &sourceFilename_,
+                   CUfunction cuFunction_,
                    const occa::json &properties_) :
       occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       cuModule(NULL),
-      cuFunction(NULL) {}
+      cuFunction(cuFunction_) {}
 
     kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
@@ -50,7 +60,7 @@ namespace occa {
     dim kernel::maxInnerDims() const {
       static dim maxInnerDims_(0);
       if (maxInnerDims_.x == 0) {
-        int maxSize;
+        int maxSize = 0;
         OCCA_CUDA_ERROR("Kernel: Getting Maximum Inner-Dim Size",
                         cuFuncGetAttribute(&maxSize,
                                            CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK,

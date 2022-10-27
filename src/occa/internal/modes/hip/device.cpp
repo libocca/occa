@@ -167,7 +167,7 @@ namespace occa {
 
       waitFor(endTag);
 
-      float msTimeTaken = 0;
+      float msTimeTaken = 0.0;
       OCCA_HIP_ERROR("Device: Timing Between Tags",
                      hipEventElapsedTime(&msTimeTaken,
                                          hipStartTag->hipEvent,
@@ -334,6 +334,7 @@ namespace occa {
       kernel &k = *(new kernel(this,
                                kernelName,
                                sourceFilename,
+                               hipModule,
                                kernelProps));
 
       k.launcherKernel = buildLauncherKernel(kernelHash,
@@ -361,7 +362,6 @@ namespace occa {
         kernel *hipKernel = new kernel(this,
                                        metadata.name,
                                        sourceFilename,
-                                       hipModule,
                                        hipFunction,
                                        kernelProps);
         hipKernel->metadata = metadata;

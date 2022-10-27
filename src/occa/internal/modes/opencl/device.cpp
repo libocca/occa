@@ -124,7 +124,7 @@ namespace occa {
     }
 
     occa::streamTag device::tagStream() {
-      cl_event clEvent;
+      cl_event clEvent = NULL;
 
 #ifdef CL_VERSION_1_2
       OCCA_OPENCL_ERROR("Device: Tagging Stream",

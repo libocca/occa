@@ -247,9 +247,12 @@ namespace occa
                                                    lang::sourceMetadata_t &deviceMetadata,
                                                    const occa::json &kernelProps)
     {
+      void *dl_handle = sys::dlopen(binaryFilename);
+
       dpcpp::kernel &k = *(new dpcpp::kernel(this,
                                              kernelName,
                                              sourceFilename,
+                                             dl_handle,
                                              kernelProps));
 
       k.launcherKernel = buildLauncherKernel(kernelHash,
@@ -260,8 +263,6 @@ namespace occa
       orderedKernelMetadata launchedKernelsMetadata = getLaunchedKernelsMetadata(
           kernelName,
           deviceMetadata);
-
-      void *dl_handle = sys::dlopen(binaryFilename);
 
       const int launchedKernelsCount = (int)launchedKernelsMetadata.size();
       for (int i = 0; i < launchedKernelsCount; ++i)
@@ -280,7 +281,6 @@ namespace occa
         kernel *dpcppKernel = new dpcpp::kernel(this,
                                metadata.name,
                                sourceFilename,
-                               dl_handle,
                                kernel_function,
                                kernelProps);
 
