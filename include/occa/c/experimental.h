@@ -2,6 +2,7 @@
 #define OCCA_C_EXPERIMENTAL_HEADER
 
 #include <occa/c/experimental/kernelBuilder.h>
+#include <occa/c/experimental/memoryPool.h>
 
 #ifdef OCCA_JIT
 #  undef OCCA_JIT

@@ -2,6 +2,7 @@
 
 #include <occa/internal/c/types.hpp>
 #include <occa/internal/core/memory.hpp>
+#include <occa/internal/core/memoryPool.hpp>
 
 namespace occa {
   namespace c {
@@ -246,6 +247,21 @@ namespace occa {
       return oType;
     }
 
+    occaType newOccaType(occa::experimental::memoryPool memoryPool) {
+      occa::modeMemoryPool_t *modeMemoryPool = memoryPool.getModeMemoryPool();
+      if (!modeMemoryPool) {
+        return occaUndefined;
+      }
+
+      occaType oType;
+      oType.magicHeader = OCCA_C_TYPE_MAGIC_HEADER;
+      oType.type  = typeType::memoryPool;
+      oType.bytes = sizeof(void*);
+      oType.value.ptr = (char*) modeMemoryPool;
+      oType.needsFree = false;
+      return oType;
+    }
+
     occaType newOccaType(occa::stream stream) {
       occa::modeStream_t *modeStream = stream.getModeStream();
       if (!modeStream) {
@@ -368,6 +384,15 @@ namespace occa {
       OCCA_ERROR("Input is not an occaMemory",
                  value.type == typeType::memory);
       return occa::memory((occa::modeMemory_t*) value.value.ptr);
+    }
+
+    occa::experimental::memoryPool memoryPool(occaType value) {
+      if (occaIsUndefined(value)) {
+        return occa::experimental::memoryPool();
+      }
+      OCCA_ERROR("Input is not an occaMemoryPool",
+                 value.type == typeType::memoryPool);
+      return occa::experimental::memoryPool((occa::modeMemoryPool_t*) value.value.ptr);
     }
 
     occa::stream stream(occaType value) {
@@ -619,6 +644,7 @@ const int OCCA_DEVICE        = occa::c::typeType::device;
 const int OCCA_KERNEL        = occa::c::typeType::kernel;
 const int OCCA_KERNELBUILDER = occa::c::typeType::kernelBuilder;
 const int OCCA_MEMORY        = occa::c::typeType::memory;
+const int OCCA_MEMORYPOOL    = occa::c::typeType::memoryPool;
 const int OCCA_STREAM        = occa::c::typeType::stream;
 const int OCCA_STREAMTAG     = occa::c::typeType::streamTag;
 
@@ -775,6 +801,10 @@ void occaFree(occaType *value) {
     }
     case occa::c::typeType::memory: {
       occa::c::memory(valueRef).free();
+      break;
+    }
+    case occa::c::typeType::memoryPool: {
+      occa::c::memoryPool(valueRef).free();
       break;
     }
     case occa::c::typeType::stream: {
@@ -941,6 +971,20 @@ void occaPrintTypeInfo(occaType value) {
           info["dtype"]  = mem.dtype().toJson();
           info["length"] = mem.length();
           info["size"]   = mem.size();
+        } else {
+          info["initialized"] = false;
+        }
+
+        break;
+      }
+      case occa::c::typeType::memoryPool: {
+        info["type"]  = "memoryPool";
+        info["value"] = (void*) value.value.ptr;
+
+        occa::experimental::memoryPool memPool = occa::c::memoryPool(value);
+        if (memPool.isInitialized()) {
+          info["mode"]   = memPool.mode();
+          info["props"]  = memPool.properties();
         } else {
           info["initialized"] = false;
         }

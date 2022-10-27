@@ -6,6 +6,7 @@
 #include <occa/internal/modes/dpcpp/kernel.hpp>
 #include <occa/internal/modes/dpcpp/buffer.hpp>
 #include <occa/internal/modes/dpcpp/memory.hpp>
+#include <occa/internal/modes/dpcpp/memoryPool.hpp>
 #include <occa/internal/modes/dpcpp/stream.hpp>
 #include <occa/internal/modes/dpcpp/streamTag.hpp>
 #include <occa/types/primitive.hpp>
@@ -363,6 +364,10 @@ namespace occa
       buf->wrapMemory(ptr, bytes);
 
       return new dpcpp::memory(buf, bytes, 0);
+    }
+
+    modeMemoryPool_t* device::createMemoryPool(const occa::json &props) {
+      return new dpcpp::memoryPool(this, props);
     }
 
     udim_t device::memorySize() const

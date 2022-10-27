@@ -5,6 +5,7 @@
 #include <occa/internal/modes/metal/kernel.hpp>
 #include <occa/internal/modes/metal/buffer.hpp>
 #include <occa/internal/modes/metal/memory.hpp>
+#include <occa/internal/modes/metal/memoryPool.hpp>
 #include <occa/internal/modes/metal/stream.hpp>
 #include <occa/internal/modes/metal/streamTag.hpp>
 #include <occa/internal/modes/serial/device.hpp>
@@ -301,6 +302,10 @@ namespace occa {
       buf->wrapMemory(ptr, bytes);
 
       return new metal::memory(buf, bytes, 0);
+    }
+
+    modeMemoryPool_t* device::createMemoryPool(const occa::json &props) {
+      return new metal::memoryPool(this, props);
     }
 
     udim_t device::memorySize() const {

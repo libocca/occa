@@ -5,10 +5,23 @@
 
 namespace occa {
   namespace cuda {
-    memory::memory(modeBuffer_t *modeBuffer_,
+    memory::memory(buffer *b,
                    udim_t size_, dim_t offset_) :
-      occa::modeMemory_t(modeBuffer_, size_, offset_) {
-      buffer *b = dynamic_cast<buffer*>(modeBuffer);
+      occa::modeMemory_t(b, size_, offset_) {
+      isUnified = b->isUnified;
+      useHostPtr = b->useHostPtr;
+      if (isUnified || useHostPtr) {
+        ptr = b->ptr + offset;
+      }
+      if (isUnified || !useHostPtr) {
+        cuPtr = b->cuPtr + offset;
+      }
+    }
+
+    memory::memory(memoryPool *memPool,
+                   udim_t size_, dim_t offset_) :
+      occa::modeMemory_t(memPool, size_, offset_) {
+      cuda::buffer* b = dynamic_cast<cuda::buffer*>(memPool->buffer);
       isUnified = b->isUnified;
       useHostPtr = b->useHostPtr;
       if (isUnified || useHostPtr) {

@@ -3,6 +3,8 @@
 
 #include <occa/internal/core/memory.hpp>
 #include <occa/internal/modes/opencl/polyfill.hpp>
+#include <occa/internal/modes/opencl/buffer.hpp>
+#include <occa/internal/modes/opencl/memoryPool.hpp>
 
 namespace occa {
   namespace opencl {
@@ -11,12 +13,14 @@ namespace occa {
     class memory : public occa::modeMemory_t {
       friend cl_mem getCLMemory(occa::memory memory);
 
-    private:
+    public:
       cl_mem clMem;
       bool useHostPtr;
 
     public:
-      memory(modeBuffer_t *modeBuffer_,
+      memory(buffer *b,
+             udim_t size_, dim_t offset_);
+      memory(memoryPool *memPool,
              udim_t size_, dim_t offset_);
       ~memory();
 

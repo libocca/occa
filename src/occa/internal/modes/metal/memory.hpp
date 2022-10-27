@@ -2,17 +2,21 @@
 #define OCCA_INTERNAL_MODES_METAL_MEMORY_HEADER
 
 #include <occa/internal/core/memory.hpp>
+#include <occa/internal/modes/metal/buffer.hpp>
+#include <occa/internal/modes/metal/memoryPool.hpp>
 #include <occa/internal/api/metal.hpp>
 
 namespace occa {
   namespace metal {
     class memory : public occa::modeMemory_t {
-    private:
+    public:
       api::metal::buffer_t metalBuffer;
       udim_t bufferOffset;
 
     public:
-      memory(modeBuffer_t *modeBuffer_,
+      memory(buffer *b,
+             udim_t size_, dim_t offset_);
+      memory(memoryPool *memPool,
              udim_t size_, dim_t offset_);
       ~memory();
 

@@ -87,6 +87,7 @@ namespace occa {
   static cl_device_type CL_DEVICE_TYPE_CPU = 1;
   static cl_device_type CL_DEVICE_TYPE_GPU = 2;
   static cl_device_type CL_DEVICE_TYPE_ALL = 3;
+  static cl_device_type CL_DEVICE_TYPE_DEFAULT = 4;
 
   static cl_kernel_work_group_info CL_KERNEL_WORK_GROUP_SIZE = 0;
 
