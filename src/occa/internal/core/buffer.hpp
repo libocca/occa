@@ -34,7 +34,7 @@ namespace occa {
     virtual void addModeMemoryRef(modeMemory_t *mem);
     virtual void removeModeMemoryRef(modeMemory_t *mem);
 
-    virtual void malloc(const udim_t bytes) {};
+    virtual void malloc(udim_t bytes) {};
 
     virtual modeMemory_t* slice(const dim_t offset_,
                                 const udim_t bytes) = 0;

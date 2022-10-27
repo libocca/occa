@@ -25,7 +25,7 @@ namespace occa {
       ptr = NULL;
     }
 
-    void buffer::malloc(const udim_t bytes) {
+    void buffer::malloc(udim_t bytes) {
       ptr = (char*) sys::malloc(bytes);
       size = bytes;
     }

@@ -16,7 +16,7 @@ namespace occa {
       }
     }
 
-    void buffer::malloc(const udim_t bytes) {
+    void buffer::malloc(udim_t bytes) {
       metalBuffer = dynamic_cast<metal::device*>(modeDevice)
                       ->metalDevice.malloc(bytes, NULL);
       size = bytes;
