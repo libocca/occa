@@ -320,7 +320,7 @@ namespace occa
 
     dim device::maxInnerDims() const
     {
-      ::sycl::id<3> max_wi_sizes = dpcppDevice.get_info<::sycl::info::device::max_work_item_sizes>();
+      ::sycl::id<3> max_wi_sizes = dpcppDevice.get_info<::sycl::info::device::max_work_item_sizes<3>>();
       return dim{max_wi_sizes[occa::dpcpp::x_index],
                  max_wi_sizes[occa::dpcpp::y_index],
                  max_wi_sizes[occa::dpcpp::z_index]};
