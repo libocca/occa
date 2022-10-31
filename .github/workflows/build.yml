@@ -186,6 +186,7 @@ jobs:
       env:
         OCCA_CC: ${{ matrix.CC }}
         OCCA_CXX: ${{ matrix.CXX }}
+        OCCA_DPCPP_COMPILER: icpx
       run: |
         source /opt/intel/oneapi/setvars.sh
         export SYCL_DEVICE_FILTER=opencl.cpu
