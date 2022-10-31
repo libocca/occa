@@ -172,7 +172,7 @@ namespace occa {
 
   template <>
   memory memoryPool::reserve<void>(const dim_t entries) {
-    return reserve(entries, dtype::byte);
+    return reserve(entries, dtype::byte_);
   }
 
   void memoryPool::setAlignment(const udim_t alignment) {
