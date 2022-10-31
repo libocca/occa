@@ -168,8 +168,8 @@ if(ENABLE_DPCPP)
   if(DPCPP_FOUND)
     set(OCCA_DPCPP_ENABLED 1)
 
+    message("-- DPCPP flags: ${SYCL_FLAGS}")
     message("-- DPCPP include dirs: ${SYCL_INCLUDE_DIRS}")
-    message("-- DPCPP extension dirs: ${SYCL_EXT_DIRS}")
     message("-- DPCPP libraries:    ${SYCL_LIBRARIES}")
 
     # Use our wrapper imported target OCCA::depends::DPCPP,
