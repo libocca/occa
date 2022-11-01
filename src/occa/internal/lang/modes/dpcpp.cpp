@@ -96,7 +96,7 @@ namespace occa
         root.addFirst(
             *(new directiveStatement(
                 &root,
-                directiveToken(root.source->origin, "include <CL/sycl.hpp>\n using namespace sycl;\n"))));
+                directiveToken(root.source->origin, "include <sycl.hpp>\n using namespace sycl;\n"))));
       }
 
       void dpcppParser::addExtensions()
@@ -143,7 +143,7 @@ namespace occa
                        statement_t &barrierSmnt = (*(new sourceCodeStatement(
                            emptySmnt.up,
                            emptySmnt.source,
-                           "group_barrier(item_.get_group());")));
+                           "item_.barrier(sycl::access::fence_space::local_space);")));
 
                        emptySmnt.replaceWith(barrierSmnt);
 
