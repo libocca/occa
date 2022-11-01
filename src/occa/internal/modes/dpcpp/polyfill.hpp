@@ -424,6 +424,11 @@ namespace sycl
       {
         return sycl::event();
       }
+
+      sycl::event ext_oneapi_submit_barrier() 
+      {
+        return sycl::event();
+      }
   };
 
 
