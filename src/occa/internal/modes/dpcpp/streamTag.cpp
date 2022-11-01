@@ -18,34 +18,33 @@ namespace occa
                            dpcppEvent.wait_and_throw())
     }
 
+    static constexpr double one_over_nano{1.0e-9}; 
+
     double streamTag::submitTime()
     {
-      // double submit_time;
-      // OCCA_DPCPP_ERROR(
-      //     "streamTag: startTime",
-      //     submit_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_submit>())
-      // return submit_time;
-      return 0.0;
+      double submit_time;
+      OCCA_DPCPP_ERROR(
+          "streamTag: startTime",
+          submit_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_submit>())
+      return submit_time * one_over_nano;
     }
 
     double streamTag::startTime()
     {
-      // double start_time;
-      // OCCA_DPCPP_ERROR(
-      //     "streamTag: startTime",
-      //     start_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_start>())
-      // return start_time;
-      return 0.0;
+      double start_time;
+      OCCA_DPCPP_ERROR(
+          "streamTag: startTime",
+          start_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_start>())
+      return start_time * one_over_nano;
     }
 
     double streamTag::endTime()
     {
-    //  double end_time;
-    //   OCCA_DPCPP_ERROR(
-    //       "streamTag: endTime",
-    //       end_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_end>())
-    //   return end_time;
-      return 0.0;
+     double end_time;
+      OCCA_DPCPP_ERROR(
+          "streamTag: endTime",
+          end_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_end>())
+      return end_time;
     }
   } // namespace dpcpp
 } // namespace occa
