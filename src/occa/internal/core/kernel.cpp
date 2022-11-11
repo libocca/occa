@@ -132,7 +132,7 @@ namespace occa {
 
   bool modeKernel_t::isNoop() const {
     return (
-      outerDims.isZero() && innerDims.isZero()
+      outerDims.isZero() || innerDims.isZero()
     );
   }
 }
