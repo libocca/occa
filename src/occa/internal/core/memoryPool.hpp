@@ -12,8 +12,9 @@ namespace occa {
    public:
     struct compare {
       bool operator()(const modeMemory_t* a, const modeMemory_t* b) const {
-        return (a->offset  < b->offset) ||
-               (a->offset == b->offset &&  a->size < b->size);
+        if (a->offset != b->offset) return (a->offset < b->offset);
+        if (a->size != b->size)     return (a->size < b->size);
+        return (a < b);
       };
     };
     typedef std::set<modeMemory_t*, compare> reservationSet;
