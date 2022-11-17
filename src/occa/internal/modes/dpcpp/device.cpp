@@ -96,12 +96,13 @@ namespace occa
       return new stream(this, props, q);
     }
 
+    // Uses a oneAPI extension to enqueue a barrier. 
+    // When ombined with in-order queues, this provides
+    // the execution required for `streamTag`s.
     occa::streamTag device::tagStream()
     {
-      //@note: This creates a host event which will return immediately.
-      // Unless we are using in-order queues, the current streamTag model is
-      // not terribly useful.
-      ::sycl::event dpcpp_event;
+      ::sycl::queue& dpcpp_queue = getDpcppStream(currentStream).commandQueue;
+      ::sycl::event dpcpp_event = dpcpp_queue.ext_oneapi_submit_barrier();
       return new occa::dpcpp::streamTag(this, dpcpp_event);
     }
 
@@ -119,7 +120,7 @@ namespace occa
       dpcppStartTag.waitFor();
       dpcppEndTag.waitFor();
 
-      return (dpcppEndTag.endTime() - dpcppStartTag.startTime());
+      return (dpcppEndTag.endTime() - dpcppStartTag.endTime());
     }
 
     
@@ -320,7 +321,7 @@ namespace occa
 
     dim device::maxInnerDims() const
     {
-      ::sycl::id<3> max_wi_sizes = dpcppDevice.get_info<::sycl::info::device::max_work_item_sizes>();
+      ::sycl::id<3> max_wi_sizes{dpcppDevice.get_info<::sycl::info::device::max_work_item_sizes>()};
       return dim{max_wi_sizes[occa::dpcpp::x_index],
                  max_wi_sizes[occa::dpcpp::y_index],
                  max_wi_sizes[occa::dpcpp::z_index]};

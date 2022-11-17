@@ -51,10 +51,9 @@ jobs:
             CC: icx
             CXX: icpx
             CXXFLAGS: -Wno-uninitialized
-            FC: ifort
+            FC: ifx
             GCOV: gcov-9
             OCCA_COVERAGE: 1
-            OCCA_FORTRAN_ENABLED: 1
             useCMake: true
             useoneAPI: true
 
@@ -138,10 +137,8 @@ jobs:
         -DCMAKE_INSTALL_PREFIX=install \
         -DCMAKE_C_COMPILER=${CC} \
         -DCMAKE_CXX_COMPILER=${CXX} \
-        -DCMAKE_Fortran_COMPILER=${FC} \
         -DENABLE_TESTS=ON \
         -DENABLE_EXAMPLES=ON \
-        -DENABLE_FORTRAN=ON \
         -DCMAKE_PREFIX_PATH="/opt/intel/oneapi/compiler/latest/linux;/opt/intel/oneapi/compiler/latest/linux/compiler"
     
     - name: CMake build
@@ -186,6 +183,7 @@ jobs:
       env:
         OCCA_CC: ${{ matrix.CC }}
         OCCA_CXX: ${{ matrix.CXX }}
+        OCCA_DPCPP_COMPILER: icpx
       run: |
         source /opt/intel/oneapi/setvars.sh
         export SYCL_DEVICE_FILTER=opencl.cpu
