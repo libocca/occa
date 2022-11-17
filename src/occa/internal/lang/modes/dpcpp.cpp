@@ -143,7 +143,7 @@ namespace occa
                        statement_t &barrierSmnt = (*(new sourceCodeStatement(
                            emptySmnt.up,
                            emptySmnt.source,
-                           "group_barrier(item_.get_group());")));
+                           "item_.barrier(sycl::access::fence_space::local_space);")));
 
                        emptySmnt.replaceWith(barrierSmnt);
 
