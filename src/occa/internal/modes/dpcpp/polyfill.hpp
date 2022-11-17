@@ -4,8 +4,7 @@
 #define OCCA_MODES_DPCPP_POLYFILL_HEADER
 
 #if OCCA_DPCPP_ENABLED
-// As of SYCL2020 this can change to SYCL/sycl.hpp
-#include <CL/sycl.hpp>
+#include <sycl.hpp>
 #else
 #include <vector>
 namespace sycl
@@ -422,6 +421,11 @@ namespace sycl
       }
 
       sycl::event memcpy(void* dest,const void* src,size_t num_bytes)
+      {
+        return sycl::event();
+      }
+
+      sycl::event ext_oneapi_submit_barrier() 
       {
         return sycl::event();
       }

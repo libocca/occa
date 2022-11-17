@@ -35,7 +35,7 @@ namespace occa
       }
       else
       {
-        compiler = "dpcpp";
+        compiler = "clang++";
       }
       dpcpp_properties["compiler"] = compiler;
     }
@@ -50,6 +50,10 @@ namespace occa
       else if (env::var("OCCA_DPCPP_COMPILER_FLAGS").size())
       {
         compiler_flags = env::var("OCCA_DPCPP_COMPILER_FLAGS");
+      }
+      else
+      {
+        compiler_flags = "-O3 -fsycl";
       }
       dpcpp_properties["compiler_flags"] = compiler_flags;
     }
