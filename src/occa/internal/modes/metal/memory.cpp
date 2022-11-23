@@ -93,5 +93,9 @@ namespace occa {
                                bytes,
                                async);
     }
+
+    void* memory::unwrap() {
+      return static_cast<void*>(&ptr);
+    }
   }
 }

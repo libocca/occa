@@ -155,5 +155,9 @@ namespace occa {
         }
       }
     }
+
+    void* memory::unwrap() {
+      return static_cast<void*>(&hipPtr);
+    }
   }
 }

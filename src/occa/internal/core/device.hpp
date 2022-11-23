@@ -122,6 +122,8 @@ namespace occa {
 
     virtual udim_t memorySize() const = 0;
     //  |===============================
+
+    virtual void* unwrap() = 0;
     //==================================
   };
 }

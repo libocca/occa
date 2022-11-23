@@ -15,5 +15,9 @@ namespace occa {
     double streamTag::getTime() {
       return metalEvent.getTime();
     }
+
+    void* streamTag::unwrap() {
+      return static_cast<void*>(&metalEvent);
+    }
   }
 }

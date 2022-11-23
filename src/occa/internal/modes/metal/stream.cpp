@@ -19,5 +19,9 @@ namespace occa {
     void stream::finish() {
       metalCommandQueue.finish();
     }
+
+    void* stream::unwrap() {
+      return static_cast<void*>(&metalCommandQueue);
+    }
   }
 }

@@ -61,6 +61,8 @@ namespace occa {
                           const udim_t destOffset = 0,
                           const udim_t srcOffset = 0,
                           const occa::json &props = occa::json()) = 0;
+
+    virtual void* unwrap() = 0;
     //==================================
 
     //---[ Friend Functions ]-----------

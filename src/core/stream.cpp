@@ -102,6 +102,14 @@ namespace occa {
     if(modeStream) modeStream->finish();
   }
 
+  void* stream::unwrap() {
+    OCCA_ERROR(
+      "stream::unwrap: stream is uninitialized or has been free'd",
+      nullptr != modeStream
+    );
+    return modeStream->unwrap();
+  }
+
   std::ostream& operator << (std::ostream &out,
                              const occa::stream &stream) {
     out << stream.properties();

@@ -434,5 +434,9 @@ namespace occa {
       return hip::getDeviceMemorySize(hipDevice);
     }
     //==================================
+
+    void* device::unwrap() {
+      return static_cast<void*>(&hipDevice);
+    }
   }
 }

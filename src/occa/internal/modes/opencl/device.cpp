@@ -365,5 +365,9 @@ namespace occa {
       return opencl::deviceGlobalMemSize(clDevice);
     }
     //==================================
+
+    void* device::unwrap() {
+      return static_cast<void*>(&clDevice);
+    }
   }
 }

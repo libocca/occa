@@ -730,6 +730,8 @@ namespace occa {
     experimental::memoryPool createMemoryPool(const occa::json &props = occa::json());
 
     //  |===============================
+
+    void* unwrap();
   };
 
   template <>

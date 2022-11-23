@@ -21,6 +21,8 @@ namespace occa {
 
     //---[ Virtual Methods ]------------
     virtual ~modeStreamTag_t();
+
+    virtual void* unwrap() = 0;
     //==================================
   };
 }

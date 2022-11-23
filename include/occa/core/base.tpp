@@ -12,4 +12,9 @@ namespace occa {
                           const occa::json &props) {
     return getDevice().wrapMemory(ptr, entries, occa::dtype::get<T>(), props);
   }
+
+  template<typename T>
+  void* unwrap(T& occaType) {
+    return occaType.unwrap();
+  }
 }

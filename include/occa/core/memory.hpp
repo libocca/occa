@@ -460,6 +460,8 @@ namespace occa {
     void free();
 
     void detach();
+
+    void* unwrap();
   };
 
   extern memory null;

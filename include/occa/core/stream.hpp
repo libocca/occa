@@ -147,6 +147,8 @@ namespace occa {
      * @endDoc
      */
     void finish();
+
+    void* unwrap();
   };
 
   std::ostream& operator << (std::ostream &out,

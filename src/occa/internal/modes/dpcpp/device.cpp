@@ -377,6 +377,9 @@ namespace occa
       return global_mem_size;
     }
 
+    void* device::unwrap() {
+      return static_cast<void*>(&dpcppDevice);
+    }
     //==================================
   } // namespace dpcpp
 } // namespace occa

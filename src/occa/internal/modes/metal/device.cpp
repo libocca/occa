@@ -312,5 +312,9 @@ namespace occa {
       return metalDevice.getMemorySize();
     }
     //==================================
+
+    void* device::unwrap() {
+      return static_cast<void*>(&metalDevice);
+    }
   }
 }

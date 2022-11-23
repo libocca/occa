@@ -14,6 +14,8 @@ namespace occa {
                 hipEvent_t hipEvent_);
 
       virtual ~streamTag();
+
+      void* unwrap() override;
     };
   }
 }

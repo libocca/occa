@@ -55,5 +55,10 @@ namespace occa {
 
       ::memcpy(destPtr, srcPtr, bytes);
     }
+
+    void* memory::unwrap() {
+      OCCA_FORCE_ERROR("memory::unwrap is not defined for serial mode");
+      return nullptr;
+    }
   }
 }

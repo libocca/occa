@@ -466,5 +466,10 @@ namespace occa {
       return sys::SystemInfo::load().memory.total;
     }
     //==================================
+
+    void* device::unwrap() {
+      OCCA_FORCE_ERROR("device::unwrap is not defined for serial mode");
+      return nullptr;
+    }
   }
 }

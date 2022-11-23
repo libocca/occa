@@ -122,6 +122,8 @@ namespace occa {
      * @endDoc
      */
     void free();
+
+    void* unwrap();
   };
 }
 
