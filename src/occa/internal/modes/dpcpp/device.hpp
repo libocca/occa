@@ -25,26 +25,26 @@ namespace occa
       device(const occa::json &properties_);
       virtual ~device() = default;
 
-      virtual inline bool hasSeparateMemorySpace() const override { return true; }
+      inline bool hasSeparateMemorySpace() const override { return true; }
 
-      virtual hash_t hash() const override;
+      hash_t hash() const override;
 
-      virtual hash_t kernelHash(const occa::json &props) const override;
+      hash_t kernelHash(const occa::json &props) const override;
 
-      virtual lang::okl::withLauncher *createParser(const occa::json &props) const override;
+      lang::okl::withLauncher *createParser(const occa::json &props) const override;
 
       //---[ Stream ]-------------------
-      virtual modeStream_t *createStream(const occa::json &props) override;
-      virtual modeStream_t* wrapStream(void* ptr, const occa::json &props) override;
+      modeStream_t *createStream(const occa::json &props) override;
+      modeStream_t* wrapStream(void* ptr, const occa::json &props) override;
 
-      virtual occa::streamTag tagStream() override;
-      virtual void waitFor(occa::streamTag tag) override;
-      virtual double timeBetween(const occa::streamTag &startTag,
+      occa::streamTag tagStream() override;
+      void waitFor(occa::streamTag tag) override;
+      double timeBetween(const occa::streamTag &startTag,
                                  const occa::streamTag &endTag) override;
       //================================
 
       //---[ Kernel ]-------------------
-      virtual modeKernel_t *buildKernelFromProcessedSource(const hash_t kernelHash,
+      modeKernel_t *buildKernelFromProcessedSource(const hash_t kernelHash,
                                                    const std::string &hashDir,
                                                    const std::string &kernelName,
                                                    const std::string &sourceFilename,
@@ -62,7 +62,7 @@ namespace occa
                          const std::string &binaryFilename,
                          const occa::json &kernelProps);
 
-      virtual modeKernel_t *buildOKLKernelFromBinary(const hash_t kernelHash,
+      modeKernel_t *buildOKLKernelFromBinary(const hash_t kernelHash,
                                              const std::string &hashDir,
                                              const std::string &kernelName,
                                              const std::string &sourceFilename,
@@ -71,7 +71,7 @@ namespace occa
                                              lang::sourceMetadata_t &deviceMetadata,
                                              const occa::json &kernelProps) override;
 
-      virtual modeKernel_t *buildKernelFromBinary(const std::string &filename,
+      modeKernel_t *buildKernelFromBinary(const std::string &filename,
                                                   const std::string &kernelName,
                                                   const occa::json &props) override;
 
@@ -82,17 +82,17 @@ namespace occa
       //================================
 
       //---[ Memory ]-------------------
-      virtual modeMemory_t *malloc(const udim_t bytes,
-                                   const void *src,
-                                   const occa::json &props) override;
+      modeMemory_t *malloc(const udim_t bytes,
+                           const void *src,
+                           const occa::json &props) override;
 
-      virtual modeMemory_t *wrapMemory(const void *ptr,
+      modeMemory_t *wrapMemory(const void *ptr,
                                const udim_t bytes,
                                const occa::json &props) override;
 
-      virtual modeMemoryPool_t* createMemoryPool(const occa::json &props) override;
+      modeMemoryPool_t* createMemoryPool(const occa::json &props) override;
 
-      virtual udim_t memorySize() const override;
+      udim_t memorySize() const override;
       //================================
     };
   } // namespace dpcpp

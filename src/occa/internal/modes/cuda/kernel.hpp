@@ -39,15 +39,15 @@ namespace occa {
              CUfunction cuFunction_,
              const occa::json &properties_);
 
-      ~kernel();
+      virtual ~kernel();
 
       CUstream& getCuStream() const;
 
-      int maxDims() const;
-      dim maxOuterDims() const;
-      dim maxInnerDims() const;
+      int maxDims() const override;
+      dim maxOuterDims() const override;
+      dim maxInnerDims() const override;
 
-      void deviceRun() const;
+      void deviceRun() const override;
     };
   }
 }

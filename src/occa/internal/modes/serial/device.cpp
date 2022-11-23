@@ -16,8 +16,6 @@ namespace occa {
     device::device(const occa::json &properties_) :
       occa::modeDevice_t(properties_) {}
 
-    device::~device() {}
-
     bool device::hasSeparateMemorySpace() const {
       return false;
     }

@@ -14,20 +14,21 @@ namespace occa {
 
     public:
       device(const occa::json &properties_);
+      virtual ~device() = default;
 
-      virtual hash_t hash() const;
+      hash_t hash() const override;
 
-      virtual hash_t kernelHash(const occa::json &props) const;
+      hash_t kernelHash(const occa::json &props) const override;
 
-      virtual bool parseFile(const std::string &filename,
-                             const std::string &outputFile,
-                             const occa::json &kernelProps,
-                             lang::sourceMetadata_t &metadata);
+      bool parseFile(const std::string &filename,
+                     const std::string &outputFile,
+                     const occa::json &kernelProps,
+                     lang::sourceMetadata_t &metadata) override;
 
-      virtual modeKernel_t* buildKernel(const std::string &filename,
-                                        const std::string &kernelName,
-                                        const hash_t kernelHash,
-                                        const occa::json &kernelProps);
+      modeKernel_t* buildKernel(const std::string &filename,
+                                const std::string &kernelName,
+                                const hash_t kernelHash,
+                                const occa::json &kernelProps) override;
     };
   }
 }

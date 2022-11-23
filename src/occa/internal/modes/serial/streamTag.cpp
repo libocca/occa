@@ -8,7 +8,5 @@ namespace occa {
                          double time_) :
       modeStreamTag_t(modeDevice_),
       time(time_) {}
-
-    streamTag::~streamTag() {}
   }
 }
