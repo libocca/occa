@@ -731,6 +731,21 @@ namespace occa {
 
     //  |===============================
 
+    /**
+     * @startDoc{unwrap}
+     * 
+     * Description:
+     *   Retreives the mode-specific object associated with this [[device]].
+     *   The lifetime of the returned object is the same as this device.
+     *   Destruction of the returned object during this device's lifetime results in undefined behavior.   
+     *  
+     *   > An OCCA application is responsible for correctly converting the returned `void*` pointer to the corresponding mode-specific device type.
+     *   
+     * Returns:
+     *   A pointer to the mode-specific object associated with this device.
+     * 
+     * @endDoc
+    */
     void* unwrap();
   };
 
