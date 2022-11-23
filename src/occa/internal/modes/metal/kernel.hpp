@@ -28,13 +28,13 @@ namespace occa {
              api::metal::function_t metalFunction_,
              const occa::json &properties_);
 
-      ~kernel();
+      virtual ~kernel();
 
-      int maxDims() const;
-      dim maxOuterDims() const;
-      dim maxInnerDims() const;
+      int maxDims() const override;
+      dim maxOuterDims() const override;
+      dim maxInnerDims() const override;
 
-      void deviceRun() const;
+      void deviceRun() const override;
     };
   }
 }

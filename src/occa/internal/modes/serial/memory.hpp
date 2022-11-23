@@ -14,25 +14,25 @@ namespace occa {
              udim_t size_, dim_t offset_);
       memory(memoryPool *memPool,
              udim_t size_, dim_t offset_);
-      ~memory();
+      virtual ~memory();
 
-      void* getKernelArgPtr() const;
+      void* getKernelArgPtr() const override;
 
       void copyTo(void *dest,
                   const udim_t bytes,
                   const udim_t destOffset,
-                  const occa::json &props) const;
+                  const occa::json &props) const override;
 
       void copyFrom(const void *src,
                     const udim_t bytes,
                     const udim_t offset,
-                    const occa::json &props);
+                    const occa::json &props) override;
 
       void copyFrom(const modeMemory_t *src,
                     const udim_t bytes,
                     const udim_t destOffset,
                     const udim_t srcOffset,
-                    const occa::json &props);
+                    const occa::json &props) override;
     };
   }
 }

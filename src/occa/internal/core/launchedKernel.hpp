@@ -19,11 +19,11 @@ namespace occa {
                          const std::string &sourceFilename_,
                          const occa::json &properties_);
 
-    ~launchedModeKernel_t();
+    virtual ~launchedModeKernel_t();
 
-    const lang::kernelMetadata_t& getMetadata() const;
+    const lang::kernelMetadata_t& getMetadata() const override;
 
-    void run() const;
+    void run() const override;
     void launcherRun() const;
 
     //---[ Virtual Methods ]------------
