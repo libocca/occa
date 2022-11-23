@@ -20,7 +20,7 @@ namespace occa {
       buffer(modeDevice_t *modeDevice_,
              udim_t size_,
              const occa::json &properties_ = occa::json());
-      ~buffer();
+      virtual ~buffer();
 
       void malloc(udim_t bytes) override;
 

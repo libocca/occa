@@ -14,7 +14,7 @@ namespace occa {
       streamTag(modeDevice_t *modeDevice_,
                 double time_);
 
-      virtual ~streamTag();
+      virtual ~streamTag() = default;
     };
   }
 }

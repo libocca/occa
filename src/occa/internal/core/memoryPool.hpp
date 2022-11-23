@@ -32,7 +32,7 @@ namespace occa {
 
     modeMemoryPool_t(modeDevice_t *modeDevice_,
                      const occa::json &json_);
-    ~modeMemoryPool_t();
+    virtual ~modeMemoryPool_t();
 
     udim_t numReservations() const;
 

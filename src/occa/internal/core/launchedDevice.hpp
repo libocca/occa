@@ -22,10 +22,10 @@ namespace occa {
                    lang::sourceMetadata_t &launcherMetadata,
                    lang::sourceMetadata_t &deviceMetadata);
 
-    virtual modeKernel_t* buildKernel(const std::string &filename,
-                                      const std::string &kernelName,
-                                      const hash_t kernelHash,
-                                      const occa::json &kernelProps);
+    modeKernel_t* buildKernel(const std::string &filename,
+                              const std::string &kernelName,
+                              const hash_t kernelHash,
+                              const occa::json &kernelProps) override;
 
     modeKernel_t* buildKernel(const std::string &filename,
                               const std::string &kernelName,
