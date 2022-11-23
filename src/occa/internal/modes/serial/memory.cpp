@@ -57,8 +57,7 @@ namespace occa {
     }
 
     void* memory::unwrap() {
-      OCCA_FORCE_ERROR("memory::unwrap is not defined for serial mode");
-      return nullptr;
+      return static_cast<void*>(&ptr);
     }
   }
 }
