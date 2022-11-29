@@ -15,6 +15,7 @@
 #  include <windows.h>
 #  include <string>
 #  include <algorithm> // std::replace
+#  include <io.h> // for _commit
 #endif
 
 #include <occa/utils/hash.hpp>
@@ -430,17 +431,24 @@ namespace occa {
       return contents;
     }
 
-    void sync(const std::string &filename)
-    {
+    void sync(const std::string &filename) {
       const std::string filedir(dirname(filename));
       int fd;
 
       fd = open(filename.c_str(), O_RDONLY);
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       fsync(fd);
+#else
+      _commit(fd);
+#endif
       close(fd);
 
       fd = open(filedir.c_str(), O_RDONLY);
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       fsync(fd);
+#else
+      _commit(fd);
+#endif
       close(fd);
     }
 
