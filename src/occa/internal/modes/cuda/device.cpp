@@ -312,7 +312,6 @@ namespace occa {
         sCommand.c_str(),
         commandOutput
       );
-      io::sync(binaryFilename);
 
       if (commandExitCode) {
         OCCA_FORCE_ERROR(
@@ -324,7 +323,8 @@ namespace occa {
       } else if (verbose) {
           io::stdout << "Output:\n\n" << commandOutput << "\n";
       }
-      //================================
+      
+      io::sync(binaryFilename);
     }
 
     modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
