@@ -451,6 +451,7 @@ namespace occa {
       FILE *fp = fopen(binaryFile.c_str(), "wb");
       fwrite(binary, 1, binaryBytes, fp);
       fclose(fp);
+      io::sync(binaryFile);
 
       delete [] binary;
 

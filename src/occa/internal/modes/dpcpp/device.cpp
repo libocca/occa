@@ -237,6 +237,8 @@ namespace occa
       } else if (verbose) {
         io::stdout << "Output:\n\n" << commandOutput << "\n";
       }
+      
+      io::sync(binaryFilename);
     }
 
     modeKernel_t *device::buildOKLKernelFromBinary(const hash_t kernelHash,
