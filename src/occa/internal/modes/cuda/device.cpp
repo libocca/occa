@@ -452,5 +452,9 @@ namespace occa {
       return cuda::getDeviceMemorySize(cuDevice);
     }
     //==================================
+
+    void* device::unwrap() {
+      return static_cast<void*>(&cuDevice);
+    }
   }
 }

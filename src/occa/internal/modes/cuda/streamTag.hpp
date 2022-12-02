@@ -16,6 +16,8 @@ namespace occa {
                 CUevent cuEvent_);
 
       virtual ~streamTag();
+
+      void* unwrap() override;
     };
   }
 }

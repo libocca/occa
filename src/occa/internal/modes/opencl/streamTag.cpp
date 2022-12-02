@@ -15,6 +15,10 @@ namespace occa {
                         clReleaseEvent(clEvent));
     }
 
+    void* streamTag::unwrap() {
+      return static_cast<void*>(&clEvent);
+    }
+
     double streamTag::startTime() {
       if (start_time < 0) {
         cl_ulong clTime = 0;

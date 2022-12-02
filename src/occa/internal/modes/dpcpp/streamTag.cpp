@@ -18,6 +18,10 @@ namespace occa
                            dpcppEvent.wait_and_throw())
     }
 
+    void* streamTag::unwrap() {
+      return static_cast<void*>(&dpcppEvent);
+    }
+
     static constexpr double one_over_nano{1.0e-9}; 
 
     double streamTag::submitTime()

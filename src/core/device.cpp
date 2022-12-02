@@ -535,6 +535,13 @@ namespace occa {
   }
   //  |=================================
 
+  void* device::unwrap() {
+    assertInitialized();
+    return modeDevice->unwrap();
+  }
+
+  //  |=================================
+
   template <>
   hash_t hash(const occa::device &device) {
     return device.hash();

@@ -75,5 +75,9 @@ namespace occa
       if(!async)
         e.waitFor();
     }
+
+    void* memory::unwrap() {
+      return static_cast<void*>(&ptr);
+    }
   } // namespace dpcpp
 } // namespace occa

@@ -8,5 +8,10 @@ namespace occa {
 
     stream::~stream() {}
     void stream::finish() {}
+
+    void* stream::unwrap() {
+      OCCA_FORCE_ERROR("stream::unwrap is not defined for serial mode");
+      return nullptr;
+    }
   }
 }
