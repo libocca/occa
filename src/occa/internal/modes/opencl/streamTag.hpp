@@ -17,6 +17,8 @@ namespace occa {
 
       virtual ~streamTag();
 
+      void* unwrap() override;
+
       double startTime();
       double endTime();
     };

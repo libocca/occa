@@ -133,6 +133,9 @@ namespace occa {
 
   void printModeInfo();
   //====================================
+
+  template<typename T>
+  void* unwrap(T& occaType);
 }
 
 #include "base.tpp"

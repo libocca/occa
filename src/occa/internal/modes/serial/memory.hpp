@@ -33,6 +33,8 @@ namespace occa {
                     const udim_t destOffset,
                     const udim_t srcOffset,
                     const occa::json &props) override;
+
+      void* unwrap() override;
     };
   }
 }

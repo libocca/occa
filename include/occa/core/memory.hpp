@@ -460,6 +460,23 @@ namespace occa {
     void free();
 
     void detach();
+
+    /**
+     * @startDoc{unwrap}
+     * 
+     * Description:
+     *   Retreives the mode-specific object associated with this [[stream]].
+     *   The lifetime of the returned object is the same as this stream.
+     *   Destruction of the returned object during this stream's lifetime results in undefined behavior.   
+     *  
+     *   > An OCCA application is responsible for correctly converting the returned `void*` pointer to the corresponding mode-specific stream type.
+     * 
+     * Returns:
+     *   A pointer to the mode-specific object associated with this stream.
+     * 
+     * @endDoc
+    */
+    void* unwrap();
   };
 
   extern memory null;

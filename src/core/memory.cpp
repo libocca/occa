@@ -338,6 +338,11 @@ namespace occa {
     modeMemory = nullptr;
   }
 
+  void* memory::unwrap() {
+    assertInitialized();
+    return modeMemory->unwrap();
+  }
+
   memory null;
 
   std::ostream& operator << (std::ostream &out,

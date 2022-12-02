@@ -19,6 +19,8 @@ namespace occa {
 
       virtual ~stream();
       void finish() override;
+
+      void* unwrap() override;
     };
   }
 }
