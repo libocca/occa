@@ -55,5 +55,9 @@ namespace occa {
 
       ::memcpy(destPtr, srcPtr, bytes);
     }
+
+    void* memory::unwrap() {
+      return static_cast<void*>(&ptr);
+    }
   }
 }

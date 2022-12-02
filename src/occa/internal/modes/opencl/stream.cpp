@@ -18,5 +18,9 @@ namespace occa {
       OCCA_OPENCL_ERROR("Stream: finish",
                         clFinish(commandQueue));
     }
+
+    void* stream::unwrap() {
+      return static_cast<void*>(&commandQueue);
+    }
   }
 }

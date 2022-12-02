@@ -12,5 +12,9 @@ namespace occa {
       OCCA_HIP_ERROR("streamTag: Freeing hipEvent_t",
                       hipEventDestroy(hipEvent));
     }
+
+    void* streamTag::unwrap() {
+      return static_cast<void*>(&hipEvent);
+    }
   }
 }

@@ -122,6 +122,23 @@ namespace occa {
      * @endDoc
      */
     void free();
+
+    /**
+     * @startDoc{unwrap}
+     * 
+     * Description:
+     *   Retreives the mode-specific object associated with this [[streamTag]].
+     *   The lifetime of the returned object is the same as this streamTag.
+     *   Destruction of the returned object during this streamTag's lifetime results in undefined behavior.   
+     *  
+     *   > An OCCA application is responsible for correctly converting the returned `void*` pointer to the corresponding mode-specific streamTag type.
+     * 
+     * Returns:
+     *   A pointer to the mode-specific object associated with this streamTag
+     * 
+     * @endDoc
+    */
+    void* unwrap();
   };
 }
 

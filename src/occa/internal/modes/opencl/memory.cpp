@@ -123,5 +123,9 @@ namespace occa {
                                             offset_, bytes, dest,
                                             0, NULL, NULL));
     }
+
+    void* memory::unwrap() {
+      return static_cast<void*>(&clMem);
+    }
   }
 }

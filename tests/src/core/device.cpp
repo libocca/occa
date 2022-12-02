@@ -3,10 +3,12 @@
 
 void testProperties();
 void testWrapMemory();
+void testUnwrap();
 
 int main(const int argc, const char **argv) {
   testProperties();
   testWrapMemory();
+  testUnwrap();
 
   return 0;
 }
@@ -121,4 +123,13 @@ void testWrapMemory() {
   ASSERT_EQ(mem.ptr<int>()[0], value);
   ASSERT_EQ(mem.ptr<int>(), hostPtr);
   ASSERT_EQ((int) mem.length<int>(), 1);
+}
+
+void testUnwrap() {
+  occa::device device({
+    {"mode","Serial"}
+  });
+
+  // Unwrapping a serial mode device is undefined
+  ASSERT_THROW(occa::unwrap(device););
 }

@@ -84,6 +84,8 @@ namespace occa {
 
       udim_t memorySize() const override;
       //================================
+
+      void* unwrap() override;
     };
   }
 }
