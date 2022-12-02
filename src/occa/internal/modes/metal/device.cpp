@@ -181,6 +181,7 @@ namespace occa {
               io::stdout << "Output:\n\n" << commandOutput << "\n";
           }
 
+          io::sync(tempFilename);
           return true;
         }
       );
