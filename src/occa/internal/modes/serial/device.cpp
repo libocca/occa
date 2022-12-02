@@ -373,6 +373,7 @@ namespace occa {
             );
           }
 
+          io::sync(binaryFilename);
           return true;
         }
       );
