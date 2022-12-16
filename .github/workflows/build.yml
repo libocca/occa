@@ -11,67 +11,53 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: "[Ubuntu] gcc-9"
-            os: ubuntu-latest
-            CC: gcc-9
-            CXX: g++-9
+          - name: "[Ubuntu] gcc-12"
+            os: ubuntu-22.04
+            CC: gcc-12
+            CXX: g++-12
             CXXFLAGS: -Wno-maybe-uninitialized
-            FC: gfortran-9
-            GCOV: gcov-9
+            FC: gfortran-12
+            GCOV: gcov-12
             OCCA_COVERAGE: 1
             OCCA_FORTRAN_ENABLED: 1
 
-          - name: "[Ubuntu] CMake + gcc-9"
-            os: ubuntu-latest
-            CC: gcc-9
-            CXX: g++-9
+          - name: "[Ubuntu] CMake + gcc-12"
+            os: ubuntu-22.04
+            CC: gcc-12
+            CXX: g++-12
             CXXFLAGS: -Wno-maybe-uninitialized -Wno-cpp
-            FC: gfortran-9
-            GCOV: gcov-9
-            OCCA_COVERAGE: 1
+            FC: gfortran-12
             OCCA_FORTRAN_ENABLED: 1
             useCMake: true
 
-          - name: "[Ubuntu] clang-11"
-            os: ubuntu-latest
-            CC: clang-11
-            CXX: clang++-11
+          - name: "[Ubuntu] clang-14"
+            os: ubuntu-22.04
+            CC: clang-14
+            CXX: clang++-14
             CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
 
-          - name: "[Ubuntu] clang-10"
-            os: ubuntu-latest
-            CC: clang-10
-            CXX: clang++-10
+          - name: "[Ubuntu] clang-12"
+            os: ubuntu-22.04
+            CC: clang-12
+            CXX: clang++-12
             CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
 
           - name: "[Ubuntu] CMake + Intel/LLVM"
-            os: ubuntu-latest
+            os: ubuntu-22.04
             CC: icx
             CXX: icpx
             CXXFLAGS: -Wno-uninitialized
-            FC: ifx
-            GCOV: gcov-9
-            OCCA_COVERAGE: 1
+            OCCA_COVERAGE: 0
             useCMake: true
             useoneAPI: true
 
-          - name: "[MacOS] gcc-9"
-            os: macos-latest
-            CC: gcc-9
-            CXX: g++-9
-            CXXFLAGS: -Wno-maybe-uninitialized
-            GCOV: gcov-9
-            OCCA_COVERAGE: 1
-
           - name: "[MacOS] clang"
-            os: macos-latest
+            os: macos-12
             CC: clang
             CXX: clang++
             CXXFLAGS: -Wno-uninitialized
-            OCCA_COVERAGE: 0
-
 
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.name }}
