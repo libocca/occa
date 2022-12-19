@@ -89,7 +89,7 @@ $ cmake --install BUILD_DIR --prefix INSTALL_DIR
 During installation, the [Env Modules](Env_Modules) file `INSTALL_DIR/modulefiles/occa` is generated. When this module is loaded, paths to the installed `bin`, `lib`, and `include` directories are appended to environment variables such as `PATH` and `LD_LIBRARY_PATH`. 
 To make use of this module, add the following to your `.modulerc` file
 ```
-module use -a INSTALL_DIR/modulfiles
+module use -a INSTALL_DIR/modulefiles
 ```
  then at the commandline call
 ```shell
