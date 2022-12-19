@@ -46,10 +46,6 @@ namespace occa {
             {
               device_type_str = "accelerator";
             }
-            else if(d.is_host())
-            {
-              device_type_str = "host";
-            }
             else
             {
               device_type_str = "TYPE UNKNOWN";
