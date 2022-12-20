@@ -1,10 +1,16 @@
 name: Build
 
-on:
+on: 
   push:
-    branches: [ main, development ]
+    paths-ignore:
+      - 'README.md'
+      - 'INSTALL.md'
+      - 'docs/**'
   pull_request:
-    branches: [ main, development ]
+    paths-ignore:
+      - 'README.md'
+      - 'INSTALL.md'
+      - 'docs/**'
 
 jobs:
   run:
