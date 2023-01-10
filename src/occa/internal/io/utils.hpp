@@ -10,14 +10,14 @@
 namespace occa {
   // Kernel Caching
   namespace kc {
-    extern const std::string cppRawSourceFile;
-    extern const std::string cRawSourceFile;
-    extern const std::string sourceFile;
     extern const std::string binaryFile;
     extern const std::string buildFile;
     extern const std::string launcherSourceFile;
     extern const std::string launcherBinaryFile;
     extern const std::string launcherBuildFile;
+
+    std::string cachedRawSourceFilename(std::string filename, bool compilingCpp=true);
+    std::string cachedSourceFilename(std::string filename);
   }
 
   namespace io {

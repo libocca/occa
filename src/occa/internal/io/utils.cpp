@@ -30,9 +30,6 @@
 namespace occa {
   // Kernel Caching
   namespace kc {
-    const std::string cppRawSourceFile   = "raw_source.cpp";
-    const std::string cRawSourceFile     = "raw_source.c";
-    const std::string sourceFile         = "source.cpp";
     const std::string launcherSourceFile = "launcher_source.cpp";
     const std::string buildFile          = "build.json";
     const std::string launcherBuildFile  = "launcher_build.json";
@@ -43,6 +40,16 @@ namespace occa {
     const std::string binaryFile         = "binary.dll";
     const std::string launcherBinaryFile = "launcher_binary.dll";
 #endif
+
+    std::string cachedRawSourceFilename(std::string filename, bool compilingCpp) {
+      const std::string basename = io::basename(filename, false);
+      const std::string extension = compilingCpp ? ".cpp" : ".c";
+      return basename + std::string(".raw_source") + extension;
+    }
+    std::string cachedSourceFilename(std::string filename) {
+      const std::string basename = io::basename(filename, false);
+      return basename + std::string(".source.cpp");
+    }
   }
 
   namespace io {

@@ -276,22 +276,16 @@ namespace occa {
       if (isLauncherKernel) {
         sourceFilename = filename;
       } else {
-        const std::string &rawSourceFile = (
-          compilingCpp
-          ? kc::cppRawSourceFile
-          : kc::cRawSourceFile
-        );
-
         // Cache raw origin
         sourceFilename = (
           io::cacheFile(filename,
-                        rawSourceFile,
+                        kc::cachedRawSourceFilename(filename, compilingCpp),
                         kernelHash,
                         assembleKernelHeader(kernelProps))
         );
 
         if (compilingOkl) {
-          const std::string outputFile = hashDir + kc::sourceFile;
+          const std::string outputFile = hashDir + kc::cachedSourceFilename(filename);
           bool valid = parseFile(sourceFilename,
                                  outputFile,
                                  kernelProps,
