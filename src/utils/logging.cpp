@@ -19,8 +19,9 @@ namespace occa {
                   line,
                   message);
 
+    io::stdout << exp;     // NBN: show error messages...
     if (exitInFailure) {
-      throw exp;
+      throw exp;           // NBN: ... when exp not caught()
     }
     io::stderr << exp;
   }
