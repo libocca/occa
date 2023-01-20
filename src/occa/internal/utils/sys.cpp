@@ -30,6 +30,9 @@
 #  endif
 #else // OCCA_WINDOWS_OS
 #  include <windows.h>
+#  include <direct.h>
+#  include <stacktrace>   // NBN: VC compiler: /std:c++latest
+uint64_t  getProcFreq();  // NBN: get max cpu frequency (see: occa/internal/io/utils_win.cpp)
 #endif
 
 #include <iomanip>
@@ -324,7 +327,11 @@ namespace occa {
         }
       }
 
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       return depth > 1 && foundOcca;
+#else
+      return ((depth > 2) && foundOcca);  // NBN: check this
+#endif
     }
 
     int mkdir(const std::string &dir) {
@@ -561,10 +568,8 @@ namespace occa {
       return (udim_t) frequency;
 
 #elif (OCCA_OS == OCCA_WINDOWS_OS)
-      LARGE_INTEGER performanceFrequency;
-      QueryPerformanceFrequency(&performanceFrequency);
-
-      return (udim_t) (((double) performanceFrequency.QuadPart) * 1e3);
+      udim_t freq_max = getProcFreq();
+      return freq_max;
 #endif
     }
 
@@ -650,8 +655,43 @@ namespace occa {
       return parseInt(
         (std::string) getSystemInfoField(systemInfo, fieldName)
       );
+
 #elif (OCCA_OS == OCCA_WINDOWS_OS)
-      return 0;
+      std::stringstream ss;
+      DWORD cacheSize = 0, returnLength = 0, sk = 0, byteOffset = 0;
+      PSYSTEM_LOGICAL_PROCESSOR_INFORMATION buffer = NULL, ptr = NULL;
+
+      GetLogicalProcessorInformation(buffer, (LPDWORD) &returnLength);
+      OCCA_ERROR("[GetLogicalProcessorInformation] Failed", (GetLastError() == ERROR_INSUFFICIENT_BUFFER));
+
+      buffer = (PSYSTEM_LOGICAL_PROCESSOR_INFORMATION) sys::malloc(returnLength);
+      bool passed = GetLogicalProcessorInformation(buffer, (LPDWORD) &returnLength);
+      OCCA_ERROR("[GetLogicalProcessorInformation] Failed", passed);
+      sk = sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION);
+
+      ptr = buffer;
+      byteOffset = 0;
+      while (byteOffset + sk <= returnLength) {
+        if (ptr->Relationship == RelationCache) {
+          CACHE_DESCRIPTOR info = ptr->Cache;
+          CacheLevel clinf = (CacheLevel)info.Level;
+
+          if (clinf == level) {
+            cacheSize = info.Size;
+            break;
+          }
+          else if ((clinf == CacheLevel(1)) && (level == CacheLevel(0)) && (info.Type == CacheData)) {
+            // level 1 data
+            cacheSize = info.Size;
+            break;
+          }
+        }
+        byteOffset += sk;
+        ptr++;
+      }
+
+      sys::free(buffer);
+      return cacheSize;
 #endif
     }
 
@@ -862,7 +902,11 @@ namespace occa {
       } else if (vendor_ & sys::vendor::HP) {
         return "+z -b";
       } else if (vendor_ & sys::vendor::VisualStudio) {
-        return "/TP /LD /MD"; // Note: Use /MDd for debug mode
+#ifdef NDEBUG
+        return "/TP /LD /MD /EHsc /wd4068 /wd4244 /wd4250 /wd4267 /wd4804 /wd4996 /DOCCA_OS=OCCA_WINDOWS_OS";
+#else
+        return "/TP /LD /MDd /EHsc /wd4068 /wd4244 /wd4250 /wd4267 /wd4804 /wd4996 /D_DEBUG /DOCCA_OS=OCCA_WINDOWS_OS";
+#endif
       }
       OCCA_FORCE_ERROR("Could not find compiler flags for creating a shared object");
       return "";
@@ -1018,6 +1062,14 @@ namespace occa {
       ::free(symbols);
 
       return ss.str();
+#else
+
+    // auto trace = std::stacktrace::current();
+    // std::stringstream ss;
+    // std::cout << std::to_string(trace) << '\n';
+    // return ss.str();
+
+    return std::string("    TODO: stacktrace\n");   // NBN: <stacktrace> C++ 2023
 #endif
     }
 
