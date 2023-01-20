@@ -179,7 +179,10 @@ namespace occa {
 
   primitive primitive::loadBinary(const char *&c, const bool isNegative) {
     const char *c0 = c;
-    uint64_t value_ = 0;
+    
+  //uint64_t value_ = 0;  // NBN: compiler, cannot negate unsigned
+    int64_t  value_ = 0;  // NBN: return signed?
+
     while (*c == '0' || *c == '1') {
       value_ = (value_ << 1) | (*c - '0');
       ++c;
@@ -188,7 +191,7 @@ namespace occa {
       return primitive();
     }
 
-    const int bits = c - c0 + isNegative;
+    const int bits = (int)(c - c0 + isNegative);
     if (bits < 8) {
       return isNegative ? primitive((int8_t) -value_) : primitive((uint8_t) value_);
     } else if (bits < 16) {
@@ -202,7 +205,10 @@ namespace occa {
 
   primitive primitive::loadHex(const char *&c, const bool isNegative) {
     const char *c0 = c;
-    uint64_t value_ = 0;
+    
+  //uint64_t value_ = 0;  // NBN: compiler, cannot negate unsigned
+    int64_t  value_ = 0;  // NBN: return signed?
+
     while (true) {
       const char C = uppercase(*c);
       if (('0' <= C) && (C <= '9')) {
@@ -219,7 +225,7 @@ namespace occa {
       return primitive();
     }
 
-    const int bits = 4*(c - c0) + isNegative;
+    const int bits = (int)(4*(c - c0) + isNegative);
     if (bits < 8) {
       return isNegative ? primitive((int8_t) -value_) : primitive((uint8_t) value_);
     } else if (bits < 16) {
@@ -319,6 +325,8 @@ namespace occa {
 
   primitive primitive::negative(const primitive &p) {
     switch(p.type) {
+
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       case primitiveType::bool_   : return primitive(-p.value.bool_);
       case primitiveType::int8_   : return primitive(-p.value.int8_);
       case primitiveType::uint8_  : return primitive(-p.value.uint8_);
@@ -330,6 +338,26 @@ namespace occa {
       case primitiveType::uint64_ : return primitive(-p.value.uint64_);
       case primitiveType::float_  : return primitive(-p.value.float_);
       case primitiveType::double_ : return primitive(-p.value.double_);
+#else
+      // NBN: VC++ error C4146: complains about negating unsigned types
+      case primitiveType::bool_   : return primitive(-p.value.bool_);
+      case primitiveType::int8_   : return primitive(-p.value.int8_);
+      case primitiveType::int16_  : return primitive(-p.value.int16_);
+      case primitiveType::int32_  : return primitive(-p.value.int32_);
+      case primitiveType::int64_  : return primitive(-p.value.int64_);
+      case primitiveType::float_  : return primitive(-p.value.float_);
+      case primitiveType::double_ : return primitive(-p.value.double_);
+
+    //case primitiveType::uint8_  : return primitive(-p.value.uint8_);
+      case primitiveType::uint8_  : OCCA_FORCE_ERROR("NBN: check: negating uint8_"); break;
+    //case primitiveType::uint16_ : return primitive(-p.value.uint16_);
+      case primitiveType::uint16_ : OCCA_FORCE_ERROR("NBN: check: negating uint16_"); break;
+    //case primitiveType::uint32_ : return primitive(-p.value.uint32_);
+      case primitiveType::uint32_ : OCCA_FORCE_ERROR("NBN: check: negating uint32_"); break;
+    //case primitiveType::uint64_ : return primitive(-p.value.uint64_);
+      case primitiveType::uint64_ : OCCA_FORCE_ERROR("NBN: check: negating uint64_"); break;
+#endif
+
       default: ;
     }
     return primitive();
