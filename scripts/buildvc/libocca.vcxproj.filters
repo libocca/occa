@@ -1,0 +1,1696 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Source Files\src">
+      <UniqueIdentifier>{41e1a450-2b8d-4038-877b-e3207a900a5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\core">
+      <UniqueIdentifier>{1d8e314e-9850-45a3-bd1a-c558143b3534}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\dtype">
+      <UniqueIdentifier>{886fd1da-c8fd-4a8d-aa5d-97857ba5f385}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\experimental">
+      <UniqueIdentifier>{8a6038d8-a8af-4ebe-a618-74d8028c7ba9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\functional">
+      <UniqueIdentifier>{dce7f23f-8d90-453c-91c5-cec137dadff2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\loops">
+      <UniqueIdentifier>{66d05912-2af4-4b15-acfa-71e19aed8f63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa">
+      <UniqueIdentifier>{ce45b918-d38c-4fd8-83cc-29483fea76fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\types">
+      <UniqueIdentifier>{9c17c26a-a7e8-4377-a826-c293d052937c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\utils">
+      <UniqueIdentifier>{f8bb39dd-2f1c-4b60-91a9-79ca8199c88b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal">
+      <UniqueIdentifier>{01b8f024-08f3-4945-b891-eb368bd6ac65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\api">
+      <UniqueIdentifier>{0b0bc983-065e-4e0b-9c35-5c00a653d766}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\bin">
+      <UniqueIdentifier>{af7bed23-f189-4f90-b5a6-1d3bc2a0b45b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\core">
+      <UniqueIdentifier>{40057dca-70d2-4656-921a-d686c99475f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\functional">
+      <UniqueIdentifier>{1898e662-b74f-4ba3-98d7-bae05fc6e8ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\io">
+      <UniqueIdentifier>{e98a0019-0102-4e1d-a2eb-c8df36cac07a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\lang">
+      <UniqueIdentifier>{63fc2f55-8f45-461f-9aad-2e471bdd2ec5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\modes">
+      <UniqueIdentifier>{a26fe1c6-bcfa-4b74-aee2-c45814a56aa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\utils">
+      <UniqueIdentifier>{26ab8cdf-0acf-48f3-8770-0f15d639a18d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\lang\builtins">
+      <UniqueIdentifier>{30d396a6-e3ee-467b-bf67-366cede9ee73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\lang\expr">
+      <UniqueIdentifier>{ef8d3018-0463-4a90-b86c-00594e6ab457}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\lang\loaders">
+      <UniqueIdentifier>{e7ec218e-588a-45a5-8eac-9b80a8e99d8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\lang\modes">
+      <UniqueIdentifier>{49dcfec3-52a4-4cf2-9f23-82242f39772d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\lang\statement">
+      <UniqueIdentifier>{54a13efb-7da1-4e04-a092-780410aaa8b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\lang\token">
+      <UniqueIdentifier>{f986a8a9-c1e8-429d-b362-86911bcafcf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\lang\type">
+      <UniqueIdentifier>{ca953529-50fb-4874-a940-374d1786c7ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\lang\utils">
+      <UniqueIdentifier>{b62eb426-c704-4b64-b2e4-fd98e52de39e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\lang\builtins\attributes">
+      <UniqueIdentifier>{d07a86cf-3c73-45bd-af5c-dbdfe7a1a8ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\modes\cuda">
+      <UniqueIdentifier>{0f68fb06-e58c-402c-9313-fb9cf783f067}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\modes\dpcpp">
+      <UniqueIdentifier>{28b12a12-1571-4220-9e0a-61b81520ceb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\modes\hip">
+      <UniqueIdentifier>{2fb6f37e-45ac-49ab-90f6-5375ffe7f2c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\modes\metal">
+      <UniqueIdentifier>{ed12418c-995c-41d9-8e48-685b03ddc6dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\modes\opencl">
+      <UniqueIdentifier>{272045a0-1dd9-4170-83a4-b95e1db76801}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\modes\openmp">
+      <UniqueIdentifier>{e367ff9e-6fba-4379-8778-f45cfb4b3a52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\occa\internal\modes\serial">
+      <UniqueIdentifier>{d96ec962-2e3a-4fa5-b22b-2167f6ee74fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include">
+      <UniqueIdentifier>{0b34b246-2805-4498-aa9f-8f887814415d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\occa">
+      <UniqueIdentifier>{c33635e7-53eb-4a6e-ad13-293ec42dece5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\occa\core">
+      <UniqueIdentifier>{0ba9bf73-eec0-4564-af4b-2258cc6d9e73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\occa\defines">
+      <UniqueIdentifier>{6d03dfdb-81dd-4098-8dc2-1cc6a5ef3dc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\occa\dtype">
+      <UniqueIdentifier>{fec33727-3e56-4bc9-a317-19095b338bfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\occa\experimental">
+      <UniqueIdentifier>{a91eab94-ae52-43bc-9404-d51bdb0b2191}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\occa\functional">
+      <UniqueIdentifier>{804c620e-82e6-4474-8e44-0113ebeae656}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\occa\loops">
+      <UniqueIdentifier>{04f1da64-73c3-40d5-836a-c375255eb7c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\occa\types">
+      <UniqueIdentifier>{9017a416-28b6-4197-9d61-1060bf4f07f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\include\occa\utils">
+      <UniqueIdentifier>{e5073c8c-acbd-4284-a516-9ef147c6e04a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\occa\internal\io.hpp">
+      <Filter>Source Files\src\occa\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes.hpp">
+      <Filter>Source Files\src\occa\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\utils.hpp">
+      <Filter>Source Files\src\occa\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\bin\occa.hpp">
+      <Filter>Source Files\src\occa\internal\bin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\core\buffer.hpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\core\device.hpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\core\kernel.hpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\core\launchedDevice.hpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\core\launchedKernel.hpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\core\memory.hpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\core\stream.hpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\core\streamTag.hpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\functional\functionStore.hpp">
+      <Filter>Source Files\src\occa\internal\functional</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\io\cache.hpp">
+      <Filter>Source Files\src\occa\internal\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\io\enums.hpp">
+      <Filter>Source Files\src\occa\internal\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\io\output.hpp">
+      <Filter>Source Files\src\occa\internal\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\io\utils.hpp">
+      <Filter>Source Files\src\occa\internal\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\utils\cli.hpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\utils\enums.hpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\utils\env.hpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\utils\gc.hpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\utils\lex.hpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\utils\misc.hpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\utils\store.hpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\utils\string.hpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\utils\styling.hpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\utils\sys.hpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\utils\testing.hpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\utils\trie.hpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\utils\vector.hpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\attribute.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\file.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\kernelMetadata.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\keyword.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\loaders.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\macro.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\operator.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\parser.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\preprocessor.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\printer.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\processingStages.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\qualifier.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\scope.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\specialMacros.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statementContext.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statementPeeker.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\stream.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\token.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\tokenContext.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\tokenizer.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\type.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\variable.hpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\builtins\attributes.hpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\builtins\types.hpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\builtins\attributes\atomic.hpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\builtins\attributes\barrier.hpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\builtins\attributes\dim.hpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\builtins\attributes\exclusive.hpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\builtins\attributes\globalPtr.hpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\builtins\attributes\implicitArg.hpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\builtins\attributes\inner.hpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\builtins\attributes\kernel.hpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\builtins\attributes\outer.hpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\builtins\attributes\restrict.hpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\builtins\attributes\shared.hpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\builtins\attributes\tile.hpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\binaryOpNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\callNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\charNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\constCastNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\cudaCallNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\deleteNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\dpcppAtomicNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\dpcppLocalMemoryNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\dynamicCastNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\emptyNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\expr.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\expressionParser.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\exprNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\exprNodeArray.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\exprNodes.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\exprOpNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\funcCastNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\functionNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\identifierNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\lambdaNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\leftUnaryOpNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\newNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\pairNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\parenCastNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\parenthesesNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\primitiveNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\reinterpretCastNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\rightUnaryOpNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\sizeofNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\staticCastNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\stringNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\subscriptNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\ternaryOpNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\throwNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\tupleNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\typeNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\variableNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\expr\vartypeNode.hpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\loaders\attributeLoader.hpp">
+      <Filter>Source Files\src\occa\internal\lang\loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\loaders\structLoader.hpp">
+      <Filter>Source Files\src\occa\internal\lang\loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\loaders\typeLoader.hpp">
+      <Filter>Source Files\src\occa\internal\lang\loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\loaders\variableLoader.hpp">
+      <Filter>Source Files\src\occa\internal\lang\loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\modes\cuda.hpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\modes\dpcpp.hpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\modes\hip.hpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\modes\metal.hpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\modes\okl.hpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\modes\oklForStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\modes\opencl.hpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\modes\openmp.hpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\modes\serial.hpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\modes\withLauncher.hpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\blockStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\breakStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\caseStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\classAccessStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\commentStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\continueStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\declarationStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\defaultStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\directiveStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\elifStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\elseStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\emptyStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\expressionStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\forStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\functionDeclStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\functionStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\gotoLabelStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\gotoStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\ifStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\namespaceStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\pragmaStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\returnStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\sourceCodeStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\statement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\statementArray.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\switchStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\statement\whileStatement.hpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\token\charToken.hpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\token\commentToken.hpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\token\directiveToken.hpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\token\functionToken.hpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\token\identifierToken.hpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\token\newlineToken.hpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\token\operatorToken.hpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\token\pragmaToken.hpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\token\primitiveToken.hpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\token\qualifierToken.hpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\token\stringToken.hpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\token\token.hpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\token\typeToken.hpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\token\unknownToken.hpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\token\variableToken.hpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\token\vartypeToken.hpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\type\array.hpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\type\class.hpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\type\enum.hpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\type\function.hpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\type\functionPtr.hpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\type\lambda.hpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\type\pointer.hpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\type\primitive.hpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\type\struct.hpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\type\structure.hpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\type\type.hpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\type\typedef.hpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\type\union.hpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\type\vartype.hpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\utils\array.hpp">
+      <Filter>Source Files\src\occa\internal\lang\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\cuda.hpp">
+      <Filter>Source Files\src\occa\internal\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\dpcpp.hpp">
+      <Filter>Source Files\src\occa\internal\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\hip.hpp">
+      <Filter>Source Files\src\occa\internal\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\metal.hpp">
+      <Filter>Source Files\src\occa\internal\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\opencl.hpp">
+      <Filter>Source Files\src\occa\internal\modes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\cuda\buffer.hpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\cuda\device.hpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\cuda\kernel.hpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\cuda\memory.hpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\cuda\polyfill.hpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\cuda\registration.hpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\cuda\stream.hpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\cuda\streamTag.hpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\cuda\utils.hpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\serial\buffer.hpp">
+      <Filter>Source Files\src\occa\internal\modes\serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\serial\device.hpp">
+      <Filter>Source Files\src\occa\internal\modes\serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\serial\kernel.hpp">
+      <Filter>Source Files\src\occa\internal\modes\serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\serial\memory.hpp">
+      <Filter>Source Files\src\occa\internal\modes\serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\serial\registration.hpp">
+      <Filter>Source Files\src\occa\internal\modes\serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\serial\stream.hpp">
+      <Filter>Source Files\src\occa\internal\modes\serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\serial\streamTag.hpp">
+      <Filter>Source Files\src\occa\internal\modes\serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\openmp\device.hpp">
+      <Filter>Source Files\src\occa\internal\modes\openmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\openmp\registration.hpp">
+      <Filter>Source Files\src\occa\internal\modes\openmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\openmp\utils.hpp">
+      <Filter>Source Files\src\occa\internal\modes\openmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\dpcpp\buffer.hpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\dpcpp\device.hpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\dpcpp\kernel.hpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\dpcpp\memory.hpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\dpcpp\polyfill.hpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\dpcpp\registration.hpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\dpcpp\stream.hpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\dpcpp\streamTag.hpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\dpcpp\utils.hpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa.hpp">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\core.hpp">
+      <Filter>Header Files\include\occa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\defines.hpp">
+      <Filter>Header Files\include\occa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\dtype.hpp">
+      <Filter>Header Files\include\occa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\experimental.hpp">
+      <Filter>Header Files\include\occa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\functional.hpp">
+      <Filter>Header Files\include\occa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\loops.hpp">
+      <Filter>Header Files\include\occa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\types.hpp">
+      <Filter>Header Files\include\occa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\utils.hpp">
+      <Filter>Header Files\include\occa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\core\base.hpp">
+      <Filter>Header Files\include\occa\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\core\device.hpp">
+      <Filter>Header Files\include\occa\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\core\kernel.hpp">
+      <Filter>Header Files\include\occa\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\core\kernelArg.hpp">
+      <Filter>Header Files\include\occa\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\core\memory.hpp">
+      <Filter>Header Files\include\occa\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\core\stream.hpp">
+      <Filter>Header Files\include\occa\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\core\streamTag.hpp">
+      <Filter>Header Files\include\occa\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\defines\arch.hpp">
+      <Filter>Header Files\include\occa\defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\defines\errors.hpp">
+      <Filter>Header Files\include\occa\defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\defines\macros.hpp">
+      <Filter>Header Files\include\occa\defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\defines\occa.hpp">
+      <Filter>Header Files\include\occa\defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\defines\okl.hpp">
+      <Filter>Header Files\include\occa\defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\defines\os.hpp">
+      <Filter>Header Files\include\occa\defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\defines\msvc.hpp">
+      <Filter>Header Files\include\occa\defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\dtype\builtins.hpp">
+      <Filter>Header Files\include\occa\dtype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\dtype\dtype.hpp">
+      <Filter>Header Files\include\occa\dtype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\dtype\utils.hpp">
+      <Filter>Header Files\include\occa\dtype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\experimental\kernelBuilder.hpp">
+      <Filter>Header Files\include\occa\experimental</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\functional\array.hpp">
+      <Filter>Header Files\include\occa\functional</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\functional\baseFunction.hpp">
+      <Filter>Header Files\include\occa\functional</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\functional\function.hpp">
+      <Filter>Header Files\include\occa\functional</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\functional\functionDefinition.hpp">
+      <Filter>Header Files\include\occa\functional</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\functional\range.hpp">
+      <Filter>Header Files\include\occa\functional</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\functional\scope.hpp">
+      <Filter>Header Files\include\occa\functional</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\functional\typelessArray.hpp">
+      <Filter>Header Files\include\occa\functional</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\functional\types.hpp">
+      <Filter>Header Files\include\occa\functional</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\functional\utils.hpp">
+      <Filter>Header Files\include\occa\functional</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\loops\forLoop.hpp">
+      <Filter>Header Files\include\occa\loops</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\loops\innerForLoop.hpp">
+      <Filter>Header Files\include\occa\loops</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\loops\iteration.hpp">
+      <Filter>Header Files\include\occa\loops</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\loops\outerForLoop.hpp">
+      <Filter>Header Files\include\occa\loops</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\loops\typelessForLoop.hpp">
+      <Filter>Header Files\include\occa\loops</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\types\bits.hpp">
+      <Filter>Header Files\include\occa\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\types\dim.hpp">
+      <Filter>Header Files\include\occa\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\types\generic.hpp">
+      <Filter>Header Files\include\occa\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\types\json.hpp">
+      <Filter>Header Files\include\occa\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\types\primitive.hpp">
+      <Filter>Header Files\include\occa\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\types\tuples.hpp">
+      <Filter>Header Files\include\occa\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\types\typedefs.hpp">
+      <Filter>Header Files\include\occa\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\types\typeinfo.hpp">
+      <Filter>Header Files\include\occa\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\utils\env.hpp">
+      <Filter>Header Files\include\occa\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\utils\exception.hpp">
+      <Filter>Header Files\include\occa\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\utils\gc.hpp">
+      <Filter>Header Files\include\occa\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\utils\hash.hpp">
+      <Filter>Header Files\include\occa\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\utils\io.hpp">
+      <Filter>Header Files\include\occa\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\utils\logging.hpp">
+      <Filter>Header Files\include\occa\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\utils\mutex.hpp">
+      <Filter>Header Files\include\occa\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\utils\store.hpp">
+      <Filter>Header Files\include\occa\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="libocca_pch.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\builtins\attributes\maxInnerDims.hpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\lang\builtins\attributes\noBarrier.hpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occa\core\memoryPool.hpp">
+      <Filter>Header Files\include\occa\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\core\memoryPool.hpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\serial\memoryPool.hpp">
+      <Filter>Source Files\src\occa\internal\modes\serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\dpcpp\memoryPool.hpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\occa\internal\modes\cuda\memoryPool.hpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="libocca_pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\base.cpp">
+      <Filter>Source Files\src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\device.cpp">
+      <Filter>Source Files\src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\kernel.cpp">
+      <Filter>Source Files\src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\kernelArg.cpp">
+      <Filter>Source Files\src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\memory.cpp">
+      <Filter>Source Files\src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\stream.cpp">
+      <Filter>Source Files\src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\streamTag.cpp">
+      <Filter>Source Files\src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\dtype\builtins.cpp">
+      <Filter>Source Files\src\dtype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\dtype\dtype.cpp">
+      <Filter>Source Files\src\dtype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\experimental\kernelBuilder.cpp">
+      <Filter>Source Files\src\experimental</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\functional\baseFunction.cpp">
+      <Filter>Source Files\src\functional</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\functional\functionDefinition.cpp">
+      <Filter>Source Files\src\functional</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\functional\range.cpp">
+      <Filter>Source Files\src\functional</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\functional\scope.cpp">
+      <Filter>Source Files\src\functional</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\functional\utils.cpp">
+      <Filter>Source Files\src\functional</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\loops\forLoop.cpp">
+      <Filter>Source Files\src\loops</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\loops\iteration.cpp">
+      <Filter>Source Files\src\loops</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\loops\typelessForLoop.cpp">
+      <Filter>Source Files\src\loops</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\utils\exception.cpp">
+      <Filter>Source Files\src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\utils\hash.cpp">
+      <Filter>Source Files\src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\utils\io.cpp">
+      <Filter>Source Files\src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\utils\logging.cpp">
+      <Filter>Source Files\src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\utils\mutex.cpp">
+      <Filter>Source Files\src\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\types\dim.cpp">
+      <Filter>Source Files\src\types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\types\json.cpp">
+      <Filter>Source Files\src\types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\types\primitive.cpp">
+      <Filter>Source Files\src\types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\types\typeinfo.cpp">
+      <Filter>Source Files\src\types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes.cpp">
+      <Filter>Source Files\src\occa\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\bin\occa.cpp">
+      <Filter>Source Files\src\occa\internal\bin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\core\buffer.cpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\core\device.cpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\core\kernel.cpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\core\launchedDevice.cpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\core\launchedKernel.cpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\core\memory.cpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\core\stream.cpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\core\streamTag.cpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\functional\functionStore.cpp">
+      <Filter>Source Files\src\occa\internal\functional</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\io\cache.cpp">
+      <Filter>Source Files\src\occa\internal\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\io\output.cpp">
+      <Filter>Source Files\src\occa\internal\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\io\utils.cpp">
+      <Filter>Source Files\src\occa\internal\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\utils\cli.cpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\utils\env.cpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\utils\gc.cpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\utils\lex.cpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\utils\misc.cpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\utils\string.cpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\utils\styling.cpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\utils\sys.cpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\utils\testing.cpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\utils\trie.cpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\utils\vector.cpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\attribute.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\file.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\kernelMetadata.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\keyword.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\macro.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\operator.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\parser.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\preprocessor.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\printer.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\processingStages.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\qualifier.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\scope.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\specialMacros.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statementContext.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statementPeeker.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\tokenContext.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\tokenizer.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\variable.cpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\builtins\types.cpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\builtins\attributes\atomic.cpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\builtins\attributes\barrier.cpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\builtins\attributes\dim.cpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\builtins\attributes\exclusive.cpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\builtins\attributes\globalPtr.cpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\builtins\attributes\implicitArg.cpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\builtins\attributes\inner.cpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\builtins\attributes\kernel.cpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\builtins\attributes\outer.cpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\builtins\attributes\restrict.cpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\builtins\attributes\shared.cpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\builtins\attributes\tile.cpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\binaryOpNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\callNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\charNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\constCastNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\cudaCallNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\deleteNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\dpcppAtomicNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\dpcppLocalMemoryNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\dynamicCastNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\emptyNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\expr.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\expressionParser.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\exprNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\exprNodeArray.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\exprOpNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\funcCastNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\functionNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\identifierNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\lambdaNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\leftUnaryOpNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\newNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\pairNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\parenCastNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\parenthesesNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\primitiveNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\reinterpretCastNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\rightUnaryOpNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\sizeofNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\staticCastNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\stringNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\subscriptNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\ternaryOpNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\throwNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\tupleNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\typeNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\variableNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\expr\vartypeNode.cpp">
+      <Filter>Source Files\src\occa\internal\lang\expr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\loaders\attributeLoader.cpp">
+      <Filter>Source Files\src\occa\internal\lang\loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\loaders\structLoader.cpp">
+      <Filter>Source Files\src\occa\internal\lang\loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\loaders\typeLoader.cpp">
+      <Filter>Source Files\src\occa\internal\lang\loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\loaders\variableLoader.cpp">
+      <Filter>Source Files\src\occa\internal\lang\loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\modes\cuda.cpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\modes\dpcpp.cpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\modes\hip.cpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\modes\metal.cpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\modes\okl.cpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\modes\oklForStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\modes\opencl.cpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\modes\openmp.cpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\modes\serial.cpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\modes\withLauncher.cpp">
+      <Filter>Source Files\src\occa\internal\lang\modes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\blockStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\breakStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\caseStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\classAccessStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\commentStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\continueStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\declarationStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\defaultStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\directiveStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\elifStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\elseStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\emptyStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\expressionStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\forStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\functionDeclStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\functionStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\gotoLabelStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\gotoStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\ifStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\namespaceStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\pragmaStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\returnStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\sourceCodeStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\statement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\statementArray.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\switchStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\statement\whileStatement.cpp">
+      <Filter>Source Files\src\occa\internal\lang\statement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\token\charToken.cpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\token\commentToken.cpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\token\directiveToken.cpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\token\functionToken.cpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\token\identifierToken.cpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\token\newlineToken.cpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\token\operatorToken.cpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\token\pragmaToken.cpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\token\primitiveToken.cpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\token\qualifierToken.cpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\token\stringToken.cpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\token\token.cpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\token\typeToken.cpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\token\unknownToken.cpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\token\variableToken.cpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\token\vartypeToken.cpp">
+      <Filter>Source Files\src\occa\internal\lang\token</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\type\array.cpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\type\class.cpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\type\enum.cpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\type\function.cpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\type\functionPtr.cpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\type\lambda.cpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\type\pointer.cpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\type\primitive.cpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\type\struct.cpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\type\structure.cpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\type\type.cpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\type\typedef.cpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\type\union.cpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\type\vartype.cpp">
+      <Filter>Source Files\src\occa\internal\lang\type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\cuda\buffer.cpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\cuda\device.cpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\cuda\kernel.cpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\cuda\memory.cpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\cuda\registration.cpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\cuda\stream.cpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\cuda\streamTag.cpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\cuda\utils.cpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\serial\buffer.cpp">
+      <Filter>Source Files\src\occa\internal\modes\serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\serial\device.cpp">
+      <Filter>Source Files\src\occa\internal\modes\serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\serial\kernel.cpp">
+      <Filter>Source Files\src\occa\internal\modes\serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\serial\memory.cpp">
+      <Filter>Source Files\src\occa\internal\modes\serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\serial\registration.cpp">
+      <Filter>Source Files\src\occa\internal\modes\serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\serial\stream.cpp">
+      <Filter>Source Files\src\occa\internal\modes\serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\openmp\device.cpp">
+      <Filter>Source Files\src\occa\internal\modes\openmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\openmp\registration.cpp">
+      <Filter>Source Files\src\occa\internal\modes\openmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\openmp\utils.cpp">
+      <Filter>Source Files\src\occa\internal\modes\openmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\dpcpp\buffer.cpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\dpcpp\device.cpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\dpcpp\kernel.cpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\dpcpp\memory.cpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\dpcpp\registration.cpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\dpcpp\stream.cpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\dpcpp\streamTag.cpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\dpcpp\utils.cpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\io\utils_win.cpp">
+      <Filter>Source Files\src\occa\internal\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\builtins\attributes\maxInnerDims.cpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\lang\builtins\attributes\noBarrier.cpp">
+      <Filter>Source Files\src\occa\internal\lang\builtins\attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\memoryPool.cpp">
+      <Filter>Source Files\src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\core\memoryPool.cpp">
+      <Filter>Source Files\src\occa\internal\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\serial\memoryPool.cpp">
+      <Filter>Source Files\src\occa\internal\modes\serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\dpcpp\memoryPool.cpp">
+      <Filter>Source Files\src\occa\internal\modes\dpcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\cuda\memoryPool.cpp">
+      <Filter>Source Files\src\occa\internal\modes\cuda</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\occa\internal\modes\serial\streamTag.cpp">
+      <Filter>Source Files\src\occa\internal\modes\serial</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\occa\internal\io\output.tpp">
+      <Filter>Source Files\src\occa\internal\io</Filter>
+    </None>
+    <None Include="..\..\src\occa\internal\utils\cli.tpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </None>
+    <None Include="..\..\src\occa\internal\utils\gc.tpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </None>
+    <None Include="..\..\src\occa\internal\utils\trie.tpp">
+      <Filter>Source Files\src\occa\internal\utils</Filter>
+    </None>
+    <None Include="..\..\src\occa\internal\lang\parser.tpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </None>
+    <None Include="..\..\src\occa\internal\lang\stream.tpp">
+      <Filter>Source Files\src\occa\internal\lang</Filter>
+    </None>
+    <None Include="..\..\src\occa\internal\lang\loaders\variableLoader.tpp">
+      <Filter>Source Files\src\occa\internal\lang\loaders</Filter>
+    </None>
+    <None Include="..\..\src\occa\internal\lang\utils\array.tpp">
+      <Filter>Source Files\src\occa\internal\lang\utils</Filter>
+    </None>
+    <None Include="..\..\include\occa\core\base.tpp">
+      <Filter>Header Files\include\occa\core</Filter>
+    </None>
+    <None Include="..\..\include\occa\core\device.tpp">
+      <Filter>Header Files\include\occa\core</Filter>
+    </None>
+    <None Include="..\..\include\occa\core\memory.tpp">
+      <Filter>Header Files\include\occa\core</Filter>
+    </None>
+    <None Include="..\..\include\occa\types\json.tpp">
+      <Filter>Header Files\include\occa\types</Filter>
+    </None>
+    <None Include="..\..\include\occa\core\memoryPool.tpp">
+      <Filter>Header Files\include\occa\core</Filter>
+    </None>
+  </ItemGroup>
+</Project>
