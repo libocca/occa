@@ -66,6 +66,11 @@ namespace occa {
       settings_["okl_version"] = OKL_VERSION_STR;
 
       OCCA_VERBOSE = env::get<bool>("OCCA_VERBOSE", false);
+
+#ifdef _DEBUG
+      OCCA_VERBOSE = true;    // NBN: test with verbose
+#endif
+
       if (OCCA_VERBOSE) {
         settings_["device/verbose"] = true;
         settings_["kernel/verbose"] = true;
@@ -91,6 +96,13 @@ namespace occa {
       io::endWithSlash(HOME);
       io::endWithSlash(CWD);
       io::endWithSlash(PATH);
+#else
+      // NBN:
+      OCCA_CACHE_DIR    = env::var("OCCA_CACHE_DIR");
+      OCCA_KERNEL_PATH  = split(env::var("OCCA_K_DIR"), ':', '\\');
+
+      HOME = occa::io::convertSlashes(env::var("HOMEPATH"));
+      CWD  = occa::io::convertSlashes(occa::io::currentWorkingDirectory());
 #endif
 
       // OCCA environment variables
@@ -149,13 +161,7 @@ namespace occa {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
         ss << env::var("HOME") << "/.occa";
 #else
-        ss << env::var("USERPROFILE") << "/AppData/Local/OCCA";
-
-#  if OCCA_64_BIT
-        ss << "_amd64";  // use different dir's fro 32 and 64 bit
-#  else
-        ss << "_x86";    // use different dir's fro 32 and 64 bit
-#  endif
+        ss << env::var("USERPROFILE") << "/AppData/Local/.occa";
 #endif
         env::OCCA_CACHE_DIR = ss.str();
       }
