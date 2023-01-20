@@ -12,10 +12,16 @@
 #  include <dirent.h>
 #  include <unistd.h>
 #else
+#  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
 #  include <string>
-#  include <algorithm> // std::replace
-#  include <io.h> // for _commit
+#  include <direct.h>    // NBN: _getcwd()
+#  include <algorithm>   // NBN: std::replace
+#  include <io.h>        // NBN: VC++ uses _commit() not fsync()
+#  include <filesystem>  // NBN: 
+
+// NBN: msvc replacement for getline(), mkdtemp(). See ./utils_win.cpp
+int64_t getline(char** line, size_t* len, FILE* fp);
 #endif
 
 #include <occa/utils/hash.hpp>
@@ -111,27 +117,12 @@ namespace occa {
 
     std::string convertSlashes(const std::string &filename) {
 #if (OCCA_OS == OCCA_WINDOWS_OS)
-      char slash = '\\';
-      if (isAbsolutePath(filename)) {
-        slash = filename[2];
-      } else {
-        const char *c = filename.c_str();
-        const char *c0 = c;
-
-        while (*c != '\0') {
-          if ((*c == '\\') || (*c == '/')) {
-            slash = *c;
-            break;
-          }
-          ++c;
-        }
-      }
-      if (slash == '\\') {
-        return std::replace(filename.begin(), filename.end(),
-                            '\\', '/');
-      }
-#endif
+      std::string s = filename;
+      std::replace(s.begin(), s.end(), '\\', '/');  // NBN: simplify old version
+      return s;
+#else
       return filename;
+#endif
     }
 
     std::string slashToSnake(const std::string &str) {
@@ -151,10 +142,13 @@ namespace occa {
       return ((0 < filename.size()) &&
               (filename[0] == '/'));
 #else
-      return ((3 <= filename.size())
-              isAlpha(filename[0]) &&
-              (filename[1] == ':') &&
-              ((filename[2] == '\\') || (filename[2] == '/')));
+      // NBN:
+      if (3 <= filename.size()) {
+        return ((isalpha(filename[0])) && (filename[1] == ':') &&
+               ((filename[2] == '\\') || (filename[2] == '/')));
+      } else {
+        return false;
+      }
 #endif
     }
 
@@ -331,6 +325,7 @@ namespace occa {
       strVector files;
       const std::string expDir = expandFilename(dir);
 
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       DIR *c_dir = ::opendir(expDir.c_str());
       if (!c_dir) {
         return files;
@@ -352,6 +347,24 @@ namespace occa {
         }
       }
       ::closedir(c_dir);
+#else
+      if (!std::filesystem::is_directory(expDir)) {
+        return files;
+      }
+      for (const auto& ref : std::filesystem::directory_iterator(expDir)) {
+        std::string fullname = ref.path().string();
+        if (fileType == DT_DIR) {
+          if (ref.is_directory()) {
+            endWithSlash(fullname);
+            files.push_back(fullname);      // NBN: add another directory
+          }
+        }
+        else if (ref.is_regular_file()) {
+          files.push_back(fullname);        // NBN: add another file
+        }
+      }
+#endif
+
       return files;
     }
 
@@ -428,28 +441,33 @@ namespace occa {
       const char *c = c_read(filename, &chars, fileType);
       std::string contents(c, chars);
       delete [] c;
+      
+#if (OCCA_OS == OCCA_WINDOWS_OS)
+      // NBN: if file was opened in binary mode, then the calls 
+      // to fgets() in custom getline() convert '\n' to "\r\n"
+      if (fileType == enums::FILE_TYPE_BINARY) {
+        // remove all '\r' from result, then resize the string by erasing any "tail" 
+        contents.erase( std::remove(contents.begin(), contents.end(), '\r'), contents.end() );
+      }
+#endif
+      
       return contents;
     }
 
     void sync(const std::string &filename) {
       const std::string filedir(dirname(filename));
-      int fd;
 
-      fd = open(filename.c_str(), O_RDONLY);
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+      int fd = open(filename.c_str(), O_RDONLY);
       fsync(fd);
-#else
-      _commit(fd);
-#endif
       close(fd);
 
       fd = open(filedir.c_str(), O_RDONLY);
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       fsync(fd);
-#else
-      _commit(fd);
-#endif
       close(fd);
+#else
+      fcloseall();
+#endif
     }
 
     void write(const std::string &filename,
@@ -462,8 +480,14 @@ namespace occa {
                  fp != 0);
 
       fputs(content.c_str(), fp);
+
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
       fclose(fp);
       io::sync(expFilename);
+#else
+      _commit(fileno(fp));        // NBN:
+      fclose(fp);
+#endif      
     }
 
     void stageFile(

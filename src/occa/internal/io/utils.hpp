@@ -102,6 +102,11 @@ namespace occa {
 
     void moveStagedTempFile(const std::string &tempFilename,
                             const std::string &expFilename);
+
+#if (OCCA_USING_VS)
+    std::string getVScompilerScript();    // NBN: helper routine, see ./utils_win.cpp
+#endif
+
   }
 }
 

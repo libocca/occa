@@ -4,6 +4,11 @@
 #include <iostream>
 #include <sstream>
 
+#ifdef _MSC_VER   // NBN: clear macro defs
+#undef stdout
+#undef stderr
+#endif
+
 namespace occa {
   namespace io {
     typedef void (*outputFunction_t)(const char *str);
