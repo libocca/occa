@@ -206,7 +206,11 @@ namespace occa {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
         compilerFlags = "-O3";
 #else
-        compilerFlags = " /Ox";
+        #ifdef NDEBUG
+        compilerFlags = " /Ox";   // optimized
+        #else
+        compilerFlags = " /Od";   // debug
+        #endif
 #endif
       }
 
@@ -229,33 +233,8 @@ namespace occa {
       if (kernelProps.get<std::string>("compiler_env_script").size()) {
         compilerEnvScript = (std::string) kernelProps["compiler_env_script"];
       } else {
-#if (OCCA_OS == OCCA_WINDOWS_OS)
-        std::string byteness;
-
-        if (sizeof(void*) == 4) {
-          byteness = "x86 ";
-        } else if (sizeof(void*) == 8) {
-          byteness = "amd64";
-        } else {
-          OCCA_FORCE_ERROR("sizeof(void*) is not equal to 4 or 8");
-        }
-#  if   (OCCA_VS_VERSION == 1800)
-        // MSVC++ 12.0 - Visual Studio 2013
-        char *visualStudioTools = getenv("VS120COMNTOOLS");
-#  elif (OCCA_VS_VERSION == 1700)
-        // MSVC++ 11.0 - Visual Studio 2012
-        char *visualStudioTools = getenv("VS110COMNTOOLS");
-#  else
-        //(OCCA_VS_VERSION < 1700)
-        // MSVC++ 10.0 - Visual Studio 2010
-        char *visualStudioTools = getenv("VS100COMNTOOLS");
-#  endif
-
-        if (visualStudioTools) {
-          compilerEnvScript = "\"" + std::string(visualStudioTools) + "..\\..\\VC\\vcvarsall.bat\" " + byteness;
-        } else {
-          io::stdout << "WARNING: Visual Studio environment variable not found -> compiler environment (vcvarsall.bat) maybe not correctly setup." << std::endl;
-        }
+#if (OCCA_USING_VS)
+        compilerEnvScript = io::getVScompilerScript();  // NBN: see io/utils_win.cpp
 #endif
       }
 
@@ -331,19 +310,24 @@ namespace occa {
                   << " 2>&1"
                   << std::endl;
 #else
-          command << kernelProps["compiler"]
-                  << " /D MC_CL_EXE"
-                  << " /D OCCA_OS=OCCA_WINDOWS_OS"
-                  << " /EHsc"
-                  << " /wd4244 /wd4800 /wd4804 /wd4018"
+          // NBN: compiler fails if not linked with cuda.lib ??
+          const std::string cudaLib = "C:/VS/CUDA/lib/x64/cuda.lib";
+
+          #ifdef NDEBUG
+          const std::string occaLib = env::OCCA_DIR + "lib/libocca.lib";
+          #else
+          const std::string occaLib = env::OCCA_DIR + "lib/libocca_d.lib"; // NBN: for debugging
+          #endif
+
+          command << compiler
                   << ' '       << compilerFlags
-                  << " /I"     << env::OCCA_DIR << "include"
-                  << " /I"     << env::OCCA_INSTALL_DIR << "include"
                   << ' '       << sourceFilename
-                  << " /link " << env::OCCA_INSTALL_DIR << "lib/libocca.lib",
-                  << ' '       << compilerLinkerFlags
-                  << " /OUT:"  << tempFilename
-                  << std::endl;
+                  << " -I"     << env::OCCA_DIR << "include"
+                  << " /link " << cudaLib
+                  << ' '       << occaLib
+                  << " /out:"  << tempFilename
+                  << std::ends;
+
 #endif
 
           const std::string &sCommand = strip(command.str());
@@ -352,17 +336,10 @@ namespace occa {
           }
 
           std::string commandOutput;
-#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
           const int commandExitCode = sys::call(
             sCommand.c_str(),
             commandOutput
           );
-#else
-          const int commandExitCode = sys::call(
-            ("\"" +  sCommand + "\"").c_str(),
-            commandOutput
-          );
-#endif
 
           if (commandExitCode) {
             OCCA_FORCE_ERROR(
