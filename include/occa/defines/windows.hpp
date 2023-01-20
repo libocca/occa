@@ -1,10 +1,8 @@
 #ifndef OCCA_DEFINES_WINDOWS_HEADER
 #define OCCA_DEFINES_WINDOWS_HEADER
-#  if OCCA_OS == OCCA_WINDOWS_OS
 
-// (OCCA_VS_VERSION == 1900) : MSVC++ 14.x - Visual Studio 2015
-// (OCCA_VS_VERSION >= 1910) : MSVC++ 15.x - Visual Studio 2017
-#define OCCA_VS_VERSION _MSC_VER
+#ifdef _MSC_VER
+#include <occa/defines/msvc.hpp>
+#endif
 
-#  endif
 #endif
