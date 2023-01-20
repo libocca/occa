@@ -288,19 +288,31 @@ namespace occa {
       }
 
       //---[ Compiling Command ]--------
+
       std::stringstream command;
+      
+#if (OCCA_USING_VS)
+      // NBN: TODO: add VS compiler script to allProps
+      command << io::getVScompilerScript() << " && ";
+#endif
+      
       command << allProps["compiler"]
               << ' ' << compilerFlags
               << " -cubin"
 #if (OCCA_OS == OCCA_WINDOWS_OS)
-              << " -D OCCA_OS=OCCA_WINDOWS_OS -D _MSC_VER=1800"
-#endif
+              << " -DOCCA_OS=OCCA_WINDOWS_OS -D_MSC_VER=" << _MSC_VER
+              << " -I"        << env::OCCA_DIR << "include"
+              << " -x cu " << sourceFilename
+              << " -o "    << binaryFilename
+              << " 2>&1";
+#else
               << " -I"        << env::OCCA_DIR << "include"
               << " -I"        << env::OCCA_INSTALL_DIR << "include"
               << " -L"        << env::OCCA_INSTALL_DIR << "lib -locca"
               << " -x cu " << sourceFilename
               << " -o "    << binaryFilename
               << " 2>&1";
+#endif
 
       const std::string &sCommand = command.str();
       if (verbose) {
