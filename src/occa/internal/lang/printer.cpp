@@ -19,9 +19,9 @@ namespace occa {
     }
 
     int printer::size() {
-      int pos = ss.tellg();
+      int pos = (int)ss.tellg();
       ss.seekg(0, ss.end);
-      int size = ss.tellg();
+      int size = (int)ss.tellg();
       ss.seekg(pos);
       return size;
     }

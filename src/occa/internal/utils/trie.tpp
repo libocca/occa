@@ -253,7 +253,7 @@ namespace occa {
         else {
           ++c;
           if (0 <= valueIndices[offset + OCCA_TRIE_MID]) {
-            retLength   = (c - cStart);
+            retLength   = (int)(c - cStart);
             retValueIndex = valueIndices[offset + OCCA_TRIE_MID];
           }
 

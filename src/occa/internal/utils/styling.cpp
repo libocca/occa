@@ -73,7 +73,7 @@ namespace occa {
       int fields = 0;
       std::vector<fieldGroup>::const_iterator it = groups.begin();
       while (it != groups.end()) {
-        fields += it->size();
+        fields += (int)it->size();
         ++it;
       }
       return fields;
