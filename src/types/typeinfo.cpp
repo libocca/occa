@@ -1,5 +1,8 @@
 #include <occa/types/typeinfo.hpp>
 
+// NBN: MSVC requires these to be defined in header
+#ifndef _MSC_VER
+
 namespace occa {
   template <> const std::string primitiveinfo<char>::id         = "c";
   template <> const std::string primitiveinfo<char>::name       = "char";
@@ -165,3 +168,5 @@ namespace occa {
   template <> const std::string typeinfo<double4>::name       = "double4";
   template <> const bool        typeinfo<double4>::isUnsigned = false;
 }
+
+#endif  // NBN: MSVC
