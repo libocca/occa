@@ -440,10 +440,6 @@ namespace occa {
                               const occa::json &props) {
     assertInitialized();
 
-    if (entries == 0) {
-      return memory();
-    }
-
     const dim_t bytes = entries * dtype.bytes();
     OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
                bytes >= 0);
