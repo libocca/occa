@@ -43,6 +43,19 @@ void testMalloc() {
   mem = occa::malloc(bytes, hostPtr, {{"use_host_pointer", false}});
   ASSERT_EQ(mem.ptr<int>()[0], value);
   ASSERT_NEQ(mem.ptr<int>(), hostPtr);
+
+  // test zero byte malloc
+  const occa::udim_t noBytes = 0 * sizeof(int);
+  hostPtr = NULL;
+
+  occa::memory noMem = occa::malloc(noBytes);
+  ASSERT_EQ(noMem.ptr(), (void*) NULL);
+
+  noMem = occa::malloc(noBytes, hostPtr);
+  ASSERT_EQ(noMem.ptr<int>(), hostPtr);
+
+  noMem = occa::malloc(noBytes, hostPtr, {{"use_host_pointer", true}});
+  ASSERT_EQ(noMem.ptr<int>(), hostPtr);
 }
 
 void testSlice() {
@@ -126,6 +139,19 @@ void testSlice() {
   }
   ASSERT_SAME_SIZE(device.memoryAllocated(), 0);
   ASSERT_SAME_SIZE(device.maxMemoryAllocated(), 10 * sizeof(float));
+
+
+  {
+    occa::memory nothing;
+    {
+      occa::memory mem = device.malloc<float>(0, data);
+      nothing = mem.slice(0, 0);
+      ASSERT_SAME_SIZE(device.memoryAllocated(), 0 * sizeof(float));
+      ASSERT_SAME_SIZE(device.maxMemoryAllocated(), 10 * sizeof(float));
+    }
+    ASSERT_SAME_SIZE(device.memoryAllocated(), 0 * sizeof(float));
+    ASSERT_SAME_SIZE(device.maxMemoryAllocated(), 10 * sizeof(float));
+  }
 }
 
 void testUnwrap() {
