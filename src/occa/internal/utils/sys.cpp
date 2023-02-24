@@ -82,7 +82,7 @@ namespace occa {
 
       return (double) (ct.tv_sec + (1.0e-9 * ct.tv_nsec));
 #elif (OCCA_OS == OCCA_MACOS_OS)
-#  ifdef __clang__
+#  if defined __clang__ && defined CLOCK_UPTIME_RAW
       uint64_t nanoseconds = clock_gettime_nsec_np(CLOCK_UPTIME_RAW);
 
       return 1.0e-9 * nanoseconds;
@@ -401,7 +401,7 @@ namespace occa {
 
     int getTID() {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-#if OCCA_OS == OCCA_MACOS_OS & (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12)
+#if OCCA_OS == OCCA_MACOS_OS & (MAC_OS_X_VERSION_MAX_ALLOWED >= 101200)
       uint64_t tid64;
       pthread_threadid_np(NULL, &tid64);
       pid_t tid = (pid_t)tid64;
