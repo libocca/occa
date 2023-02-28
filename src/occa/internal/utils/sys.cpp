@@ -82,7 +82,7 @@ namespace occa {
 
       return (double) (ct.tv_sec + (1.0e-9 * ct.tv_nsec));
 #elif (OCCA_OS == OCCA_MACOS_OS)
-#  ifdef __clang__
+#  if defined __clang__ && defined CLOCK_UPTIME_RAW
       uint64_t nanoseconds = clock_gettime_nsec_np(CLOCK_UPTIME_RAW);
 
       return 1.0e-9 * nanoseconds;
