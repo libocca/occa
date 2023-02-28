@@ -14,7 +14,7 @@
 #    include <CL/cl.h>
 #    include <CL/cl_gl.h>
 #  elif (OCCA_OS & OCCA_MACOS_OS)
-#    include <OpenCL/OpenCl.h>
+#    include <OpenCL/opencl.h>
 #  else
 #    include "CL/opencl.h"
 #  endif
