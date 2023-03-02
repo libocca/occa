@@ -43,6 +43,8 @@ namespace occa {
   void setStream(stream s);
 
   streamTag tagStream();
+
+  experimental::memoryPool createMemoryPool(const occa::json &props = occa::json());
   //====================================
 
   //---[ Kernel Functions ]-------------
@@ -131,6 +133,9 @@ namespace occa {
 
   void printModeInfo();
   //====================================
+
+  template<typename T>
+  void* unwrap(T& occaType);
 }
 
 #include "base.tpp"

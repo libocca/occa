@@ -6,11 +6,37 @@
 
 namespace occa {
   namespace opencl {
-    memory::memory(modeBuffer_t *modeBuffer_,
+    memory::memory(buffer *b,
                    udim_t size_, dim_t offset_) :
-      occa::modeMemory_t(modeBuffer_, size_, offset_),
+      occa::modeMemory_t(b, size_, offset_),
       useHostPtr(false) {
-      buffer *b = dynamic_cast<buffer*>(modeBuffer);
+      useHostPtr = b->useHostPtr;
+
+      if (offset==0 && size==b->size){
+        clMem = b->clMem;
+      } else {
+        cl_buffer_region info;
+        info.origin = offset;
+        info.size   = size;
+
+        cl_int error;
+        clMem = clCreateSubBuffer(b->clMem,
+                                  CL_MEM_READ_WRITE,
+                                  CL_BUFFER_CREATE_TYPE_REGION,
+                                  &info,
+                                  &error);
+        OCCA_OPENCL_ERROR("Device: clCreateSubBuffer", error);
+      }
+      if (useHostPtr) {
+        ptr = b->ptr + offset;
+      }
+    }
+
+    memory::memory(memoryPool *memPool,
+                   udim_t size_, dim_t offset_) :
+      occa::modeMemory_t(memPool, size_, offset_),
+      useHostPtr(false) {
+      opencl::buffer* b = dynamic_cast<opencl::buffer*>(memPool->buffer);
       useHostPtr = b->useHostPtr;
 
       if (offset==0 && size==b->size){
@@ -34,7 +60,6 @@ namespace occa {
     }
 
     memory::~memory() {
-      size = 0;
       useHostPtr = false;
     }
 
@@ -97,6 +122,10 @@ namespace occa {
                                             async ? CL_FALSE : CL_TRUE,
                                             offset_, bytes, dest,
                                             0, NULL, NULL));
+    }
+
+    void* memory::unwrap() {
+      return static_cast<void*>(&clMem);
     }
   }
 }

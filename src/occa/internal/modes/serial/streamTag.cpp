@@ -9,6 +9,9 @@ namespace occa {
       modeStreamTag_t(modeDevice_),
       time(time_) {}
 
-    streamTag::~streamTag() {}
+    void* streamTag::unwrap() {
+      OCCA_FORCE_ERROR("streamTag::unwrap is not defined for serial mode");
+      return nullptr;
+    }
   }
 }

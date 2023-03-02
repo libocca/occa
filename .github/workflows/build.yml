@@ -1,75 +1,69 @@
 name: Build
 
-on:
+on: 
   push:
-    branches: [ main, development ]
+    paths-ignore:
+      - 'README.md'
+      - 'INSTALL.md'
+      - 'docs/**'
   pull_request:
-    branches: [ main, development ]
+    paths-ignore:
+      - 'README.md'
+      - 'INSTALL.md'
+      - 'docs/**'
 
 jobs:
   run:
     strategy:
       matrix:
         include:
-          - name: "[Ubuntu] gcc-9"
-            os: ubuntu-latest
-            CC: gcc-9
-            CXX: g++-9
+          - name: "[Ubuntu] gcc-12"
+            os: ubuntu-22.04
+            CC: gcc-12
+            CXX: g++-12
             CXXFLAGS: -Wno-maybe-uninitialized
-            FC: gfortran-9
-            GCOV: gcov-9
+            FC: gfortran-12
+            GCOV: gcov-12
             OCCA_COVERAGE: 1
             OCCA_FORTRAN_ENABLED: 1
 
-          - name: "[Ubuntu] CMake + gcc-9"
-            os: ubuntu-latest
-            CC: gcc-9
-            CXX: g++-9
+          - name: "[Ubuntu] CMake + gcc-12"
+            os: ubuntu-22.04
+            CC: gcc-12
+            CXX: g++-12
             CXXFLAGS: -Wno-maybe-uninitialized -Wno-cpp
-            GCOV: gcov-9
-            OCCA_COVERAGE: 1
+            FC: gfortran-12
+            OCCA_FORTRAN_ENABLED: 1
             useCMake: true
 
-          - name: "[Ubuntu] clang-11"
-            os: ubuntu-latest
-            CC: clang-11
-            CXX: clang++-11
+          - name: "[Ubuntu] clang-14"
+            os: ubuntu-22.04
+            CC: clang-14
+            CXX: clang++-14
             CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
 
-          - name: "[Ubuntu] clang-10"
-            os: ubuntu-latest
-            CC: clang-10
-            CXX: clang++-10
+          - name: "[Ubuntu] clang-12"
+            os: ubuntu-22.04
+            CC: clang-12
+            CXX: clang++-12
             CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
 
           - name: "[Ubuntu] CMake + Intel/LLVM"
-            os: ubuntu-latest
+            os: ubuntu-22.04
             CC: icx
             CXX: icpx
             CXXFLAGS: -Wno-uninitialized
-            FC: ifx
-            GCOV: gcov-9
-            OCCA_COVERAGE: 1
+            OCCA_COVERAGE: 0
             useCMake: true
             useoneAPI: true
 
-          - name: "[MacOS] gcc-9"
-            os: macos-latest
-            CC: gcc-9
-            CXX: g++-9
-            CXXFLAGS: -Wno-maybe-uninitialized
-            GCOV: gcov-9
-            OCCA_COVERAGE: 1
-
           - name: "[MacOS] clang"
-            os: macos-latest
+            os: macos-12
             CC: clang
             CXX: clang++
             CXXFLAGS: -Wno-uninitialized
-            OCCA_COVERAGE: 0
-
 
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.name }}
@@ -86,7 +80,7 @@ jobs:
       FORTRAN_EXAMPLES: ${{ matrix.OCCA_FORTRAN_ENABLED }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: add oneAPI to apt
       if: ${{ matrix.useoneAPI }}
@@ -103,7 +97,8 @@ jobs:
       shell: bash
       run: |
         sudo apt update
-        sudo apt install intel-oneapi-compiler-dpcpp-cpp 
+        sudo apt install intel-oneapi-compiler-dpcpp-cpp
+        sudo apt install intel-oneapi-compiler-fortran
 
     - name: Compiler info
       if: ${{ !matrix.useCMake }}
@@ -115,8 +110,12 @@ jobs:
         cmake -S . -B build \
         -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
         -DCMAKE_INSTALL_PREFIX=install \
+        -DCMAKE_C_COMPILER=${CC} \
+        -DCMAKE_CXX_COMPILER=${CXX} \
+        -DCMAKE_Fortran_COMPILER=${FC} \
         -DENABLE_TESTS=ON \
-        -DENABLE_EXAMPLES=ON
+        -DENABLE_EXAMPLES=ON \
+        -DENABLE_FORTRAN=ON
 
     - name: CMake configure
       if: ${{ matrix.useCMake && matrix.useoneAPI}}
@@ -128,6 +127,8 @@ jobs:
         cmake -S . -B build \
         -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
         -DCMAKE_INSTALL_PREFIX=install \
+        -DCMAKE_C_COMPILER=${CC} \
+        -DCMAKE_CXX_COMPILER=${CXX} \
         -DENABLE_TESTS=ON \
         -DENABLE_EXAMPLES=ON \
         -DCMAKE_PREFIX_PATH="/opt/intel/oneapi/compiler/latest/linux;/opt/intel/oneapi/compiler/latest/linux/compiler"
@@ -165,7 +166,8 @@ jobs:
     - name: Run CTests
       if: ${{ matrix.useCMake && !matrix.useoneAPI }}
       run: |
-        ctest --test-dir build --progress --output-on-failure --parallel 8 --schedule-random -E "examples_cpp_arrays-opencl|examples_cpp_for_loops-opencl|examples_cpp_generic_inline_kernel-opencl|examples_cpp_shared_memory-opencl|examples_cpp_nonblocking_streams-opencl|examples_cpp_shared_memory-dpcpp|examples_cpp_nonblocking_streams-dpcpp|examples_cpp_for_loops-dpcpp|examples_cpp_arrays-dpcpp"
+        ctest --test-dir build --progress --output-on-failure --parallel 8 --schedule-random -E "examples_cpp_arrays-opencl|examples_cpp_for_loops-opencl|examples_cpp_generic_inline_kernel-opencl|examples_cpp_shared_memory-opencl|examples_cpp_nonblocking_streams-opencl|examples_cpp_for_loops-dpcpp|examples_cpp_arrays-dpcpp|examples_cpp_nonblocking_streams-dpcpp"
+
         
 
     - name: Run CTests
@@ -173,10 +175,11 @@ jobs:
       env:
         OCCA_CC: ${{ matrix.CC }}
         OCCA_CXX: ${{ matrix.CXX }}
+        OCCA_DPCPP_COMPILER: icpx
       run: |
         source /opt/intel/oneapi/setvars.sh
         export SYCL_DEVICE_FILTER=opencl.cpu
-        ctest --test-dir build --progress --output-on-failure --parallel 8 --schedule-random -E "examples_cpp_arrays-opencl|examples_cpp_for_loops-opencl|examples_cpp_generic_inline_kernel-opencl|examples_cpp_shared_memory-opencl|examples_cpp_nonblocking_streams-opencl|examples_cpp_shared_memory-dpcpp|examples_cpp_nonblocking_streams-dpcpp|examples_cpp_for_loops-dpcpp|examples_cpp_arrays-dpcpp"
+        ctest --test-dir build --progress --output-on-failure --parallel 8 --schedule-random -E "examples_cpp_arrays-opencl|examples_cpp_for_loops-opencl|examples_cpp_generic_inline_kernel-opencl|examples_cpp_shared_memory-opencl|examples_cpp_nonblocking_streams-opencl|examples_cpp_for_loops-dpcpp|examples_cpp_arrays-dpcpp|examples_cpp_nonblocking_streams-dpcpp"
 
     - name: Upload code coverage
       if: ${{ matrix.OCCA_COVERAGE }}

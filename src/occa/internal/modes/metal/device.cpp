@@ -5,6 +5,7 @@
 #include <occa/internal/modes/metal/kernel.hpp>
 #include <occa/internal/modes/metal/buffer.hpp>
 #include <occa/internal/modes/metal/memory.hpp>
+#include <occa/internal/modes/metal/memoryPool.hpp>
 #include <occa/internal/modes/metal/stream.hpp>
 #include <occa/internal/modes/metal/streamTag.hpp>
 #include <occa/internal/modes/serial/device.hpp>
@@ -39,13 +40,6 @@ namespace occa {
 
     device::~device() {
       metalDevice.free();
-    }
-
-    void device::finish() const {
-      metal::stream &stream = (
-        *((metal::stream*) (currentStream.getModeStream()))
-      );
-      stream.metalCommandQueue.finish();
     }
 
     bool device::hasSeparateMemorySpace() const {
@@ -167,7 +161,7 @@ namespace occa {
 
           const std::string airCommand = command.str();
           if (verbose) {
-            io::stdout << "Compiling [" << kernelName << "]\n" << airCommand << "\n";
+            io::stdout << "Compiling Air Binary [" << kernelName << "]\n" << airCommand << "\n";
           }
 
           std::string commandOutput;
@@ -179,12 +173,15 @@ namespace occa {
           if (commandExitCode) {
             OCCA_FORCE_ERROR(
               "Error compiling [" << kernelName << "],"
-              " Command: [" << airCommand << ']'
+              " Command: [" << airCommand << "] exited with code " << commandExitCode << "\n\n"
               << "Output:\n\n"
               << commandOutput << "\n"
             );
+          } else if (verbose) {
+              io::stdout << "Output:\n\n" << commandOutput << "\n";
           }
 
+          io::sync(tempFilename);
           return true;
         }
       );
@@ -203,7 +200,7 @@ namespace occa {
 
       const std::string metallibCommand = command.str();
       if (verbose) {
-        io::stdout << metallibCommand << '\n';
+        io::stdout << "Compiling Metallib [" << kernelName << "]\n" << metallibCommand << "\n";
       }
 
       std::string commandOutput;
@@ -215,10 +212,12 @@ namespace occa {
       if (commandExitCode) {
         OCCA_FORCE_ERROR(
           "Error compiling [" << kernelName << "],"
-          " Command: [" << metallibCommand << ']'
+          " Command: [" << metallibCommand << "] exited with code " << commandExitCode << "\n\n"
           << "Output:\n\n"
           << commandOutput << "\n"
         );
+      } else if (verbose) {
+          io::stdout << "Output:\n\n" << commandOutput << "\n";
       }
       //================================
     }
@@ -306,9 +305,17 @@ namespace occa {
       return new metal::memory(buf, bytes, 0);
     }
 
+    modeMemoryPool_t* device::createMemoryPool(const occa::json &props) {
+      return new metal::memoryPool(this, props);
+    }
+
     udim_t device::memorySize() const {
       return metalDevice.getMemorySize();
     }
     //==================================
+
+    void* device::unwrap() {
+      return static_cast<void*>(&metalDevice);
+    }
   }
 }

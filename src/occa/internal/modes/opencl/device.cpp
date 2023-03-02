@@ -4,6 +4,7 @@
 #include <occa/internal/modes/opencl/device.hpp>
 #include <occa/internal/modes/opencl/kernel.hpp>
 #include <occa/internal/modes/opencl/memory.hpp>
+#include <occa/internal/modes/opencl/memoryPool.hpp>
 #include <occa/internal/modes/opencl/buffer.hpp>
 #include <occa/internal/modes/opencl/stream.hpp>
 #include <occa/internal/modes/opencl/streamTag.hpp>
@@ -42,10 +43,10 @@ namespace occa {
       std::string compilerFlags;
 
       // Use "-cl-opt-disable" for debug-mode
-      if (env::var("OCCA_OPENCL_COMPILER_FLAGS").size()) {
-        compilerFlags = env::var("OCCA_OPENCL_COMPILER_FLAGS");
-      } else if (kernelProps.has("compiler_flags")) {
+      if (kernelProps.has("compiler_flags")) {
         compilerFlags = (std::string) kernelProps["compiler_flags"];
+      } else if (env::var("OCCA_OPENCL_COMPILER_FLAGS").size()) {
+        compilerFlags = env::var("OCCA_OPENCL_COMPILER_FLAGS");
       }
 
       std::string ocl_c_ver = "2.0";
@@ -63,11 +64,6 @@ namespace occa {
                           clReleaseContext(clContext) );
         clContext = NULL;
       }
-    }
-
-    void device::finish() const {
-      OCCA_OPENCL_ERROR("Device: Finish",
-                        clFinish(getCommandQueue()));
     }
 
     bool device::hasSeparateMemorySpace() const {
@@ -128,7 +124,7 @@ namespace occa {
     }
 
     occa::streamTag device::tagStream() {
-      cl_event clEvent;
+      cl_event clEvent = NULL;
 
 #ifdef CL_VERSION_1_2
       OCCA_OPENCL_ERROR("Device: Tagging Stream",
@@ -361,9 +357,17 @@ namespace occa {
       return new opencl::memory(buf, bytes, 0);
     }
 
+    modeMemoryPool_t* device::createMemoryPool(const occa::json &props) {
+      return new opencl::memoryPool(this, props);
+    }
+
     udim_t device::memorySize() const {
       return opencl::deviceGlobalMemSize(clDevice);
     }
     //==================================
+
+    void* device::unwrap() {
+      return static_cast<void*>(&clDevice);
+    }
   }
 }

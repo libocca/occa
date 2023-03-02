@@ -21,6 +21,9 @@ namespace occa {
       ::sycl::event e{commandQueue.memcpy(dest, src, num_bytes)};
       return dpcpp::streamTag(modeDevice, e);
     }
+
+    void* stream::unwrap() {
+      return static_cast<void*>(&commandQueue);
+    }
   }
 }
-

@@ -327,12 +327,20 @@ namespace occa {
 
   void memory::free() {
     if (modeMemory == NULL) return;
-    modeMemory->free();
+    delete modeMemory;
+    modeMemory = nullptr;
   }
 
   void memory::detach() {
     if (modeMemory == NULL) return;
     modeMemory->detach();
+    delete modeMemory;
+    modeMemory = nullptr;
+  }
+
+  void* memory::unwrap() {
+    assertInitialized();
+    return modeMemory->unwrap();
   }
 
   memory null;

@@ -90,7 +90,6 @@ Environment variables override compiled-time defines.
     - OCCA_HIP_ENABLED           : 0
     - OCCA_OPENCL_ENABLED        : 1
     - OCCA_METAL_ENABLED         : 0
-    - OCCA_MPI_ENABLED           : 0
   Run-Time Options:
     - OCCA_CXX                   : g++-8
     - OCCA_CXXFLAGS              : -g

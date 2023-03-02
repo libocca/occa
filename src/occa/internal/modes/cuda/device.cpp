@@ -6,6 +6,7 @@
 #include <occa/internal/modes/cuda/kernel.hpp>
 #include <occa/internal/modes/cuda/buffer.hpp>
 #include <occa/internal/modes/cuda/memory.hpp>
+#include <occa/internal/modes/cuda/memoryPool.hpp>
 #include <occa/internal/modes/cuda/stream.hpp>
 #include <occa/internal/modes/cuda/streamTag.hpp>
 #include <occa/internal/modes/cuda/utils.hpp>
@@ -47,10 +48,10 @@ namespace occa {
         compiler = "nvcc";
       }
 
-      if (env::var("OCCA_CUDA_COMPILER_FLAGS").size()) {
-        compilerFlags = env::var("OCCA_CUDA_COMPILER_FLAGS");
-      } else if (kernelProps.get<std::string>("compiler_flags").size()) {
+      if (kernelProps.get<std::string>("compiler_flags").size()) {
         compilerFlags = (std::string) kernelProps["compiler_flags"];
+      } else if (env::var("OCCA_CUDA_COMPILER_FLAGS").size()) {
+        compilerFlags = env::var("OCCA_CUDA_COMPILER_FLAGS");
       } else {
         compilerFlags = "-O3";
       }
@@ -86,11 +87,6 @@ namespace occa {
         );
         cuContext = NULL;
       }
-    }
-
-    void device::finish() const {
-      OCCA_CUDA_ERROR("Device: Finish",
-                      cuStreamSynchronize(getCuStream()));
     }
 
     bool device::hasSeparateMemorySpace() const {
@@ -189,7 +185,7 @@ namespace occa {
 
       waitFor(endTag);
 
-      float msTimeTaken;
+      float msTimeTaken = 0.0;
       OCCA_CUDA_ERROR("Device: Timing Between Tags",
                       cuEventElapsedTime(&msTimeTaken,
                                          cuStartTag->cuEvent,
@@ -234,8 +230,8 @@ namespace occa {
       }
 
       // Regular CUDA Kernel
-      CUmodule cuModule;
-      CUfunction cuFunction;
+      CUmodule cuModule = NULL;
+      CUfunction cuFunction = NULL;
       CUresult error;
 
       setCudaContext();
@@ -329,12 +325,15 @@ namespace occa {
       if (commandExitCode) {
         OCCA_FORCE_ERROR(
           "Error compiling [" << kernelName << "],"
-          " Command: [" << sCommand << ']'
+          " Command: [" << sCommand << "] exited with code " << commandExitCode << "\n"
           << "Output:\n\n"
           << commandOutput << "\n"
         );
+      } else if (verbose) {
+          io::stdout << "Output:\n\n" << commandOutput << "\n";
       }
-      //================================
+      
+      io::sync(binaryFilename);
     }
 
     modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
@@ -345,7 +344,7 @@ namespace occa {
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
                                                    const occa::json &kernelProps) {
-      CUmodule cuModule;
+      CUmodule cuModule = NULL;
       CUresult error;
 
       setCudaContext();
@@ -360,6 +359,7 @@ namespace occa {
       kernel &k = *(new kernel(this,
                                kernelName,
                                sourceFilename,
+                               cuModule,
                                kernelProps));
 
       k.launcherKernel = buildLauncherKernel(kernelHash,
@@ -377,7 +377,7 @@ namespace occa {
       for (int i = 0; i < launchedKernelsCount; ++i) {
         lang::kernelMetadata_t &metadata = launchedKernelsMetadata[i];
 
-        CUfunction cuFunction;
+        CUfunction cuFunction = NULL;
         error = cuModuleGetFunction(&cuFunction,
                                     cuModule,
                                     metadata.name.c_str());
@@ -389,7 +389,6 @@ namespace occa {
         kernel *cuKernel = new kernel(this,
                                       metadata.name,
                                       sourceFilename,
-                                      cuModule,
                                       cuFunction,
                                       kernelProps);
         cuKernel->metadata = metadata;
@@ -454,9 +453,17 @@ namespace occa {
       return new cuda::memory(buf, bytes, 0);
     }
 
+    modeMemoryPool_t* device::createMemoryPool(const occa::json &props) {
+      return new cuda::memoryPool(this, props);
+    }
+
     udim_t device::memorySize() const {
       return cuda::getDeviceMemorySize(cuDevice);
     }
     //==================================
+
+    void* device::unwrap() {
+      return static_cast<void*>(&cuDevice);
+    }
   }
 }

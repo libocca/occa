@@ -132,14 +132,12 @@ namespace occa
         // }
       }
 
-      // @note: As of SYCL 2020 this will need to change to `group_barrier(it.group())`
       void dpcppParser::addBarriers()
       {
         statementArray::from(root)
             .flatFilterByStatementType(statementType::empty, "barrier")
             .forEach([&](statement_t *smnt)
                      {
-                       // TODO 1.1: Implement proper barriers
                        emptyStatement &emptySmnt = (emptyStatement &)*smnt;
 
                        statement_t &barrierSmnt = (*(new sourceCodeStatement(

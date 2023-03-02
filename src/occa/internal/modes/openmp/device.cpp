@@ -14,14 +14,14 @@ namespace occa {
     hash_t device::hash() const {
       return (
         serial::device::hash()
-        ^ occa::hash("openmp")
+        ^ occa::hash("openmp device::hash")
       );
     }
 
     hash_t device::kernelHash(const occa::json &props) const {
       return (
         serial::device::kernelHash(props)
-        ^ occa::hash("openmp")
+        ^ occa::hash("openmp device::kernelHash")
       );
     }
 

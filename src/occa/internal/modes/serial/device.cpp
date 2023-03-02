@@ -6,6 +6,7 @@
 #include <occa/internal/modes/serial/kernel.hpp>
 #include <occa/internal/modes/serial/buffer.hpp>
 #include <occa/internal/modes/serial/memory.hpp>
+#include <occa/internal/modes/serial/memoryPool.hpp>
 #include <occa/internal/modes/serial/stream.hpp>
 #include <occa/internal/modes/serial/streamTag.hpp>
 #include <occa/internal/lang/modes/serial.hpp>
@@ -14,10 +15,6 @@ namespace occa {
   namespace serial {
     device::device(const occa::json &properties_) :
       occa::modeDevice_t(properties_) {}
-
-    device::~device() {}
-
-    void device::finish() const {}
 
     bool device::hasSeparateMemorySpace() const {
       return false;
@@ -197,12 +194,12 @@ namespace occa {
 #endif
       }
 
-      if (compilerLanguageFlag == sys::language::CPP && env::var("OCCA_CXXFLAGS").size()) {
+      if (kernelProps.get<std::string>("compiler_flags").size()) {
+        compilerFlags = (std::string) kernelProps["compiler_flags"];
+      } else if (compilerLanguageFlag == sys::language::CPP && env::var("OCCA_CXXFLAGS").size()) {
         compilerFlags = env::var("OCCA_CXXFLAGS");
       } else if (compilerLanguageFlag == sys::language::C && env::var("OCCA_CFLAGS").size()) {
         compilerFlags = env::var("OCCA_CFLAGS");
-      } else if (kernelProps.get<std::string>("compiler_flags").size()) {
-        compilerFlags = (std::string) kernelProps["compiler_flags"];
       } else if (compilerLanguageFlag == sys::language::CPP && env::var("CXXFLAGS").size()) {
         compilerFlags = env::var("CXXFLAGS");
       } else if (compilerLanguageFlag == sys::language::C && env::var("CFLAGS").size()) {
@@ -387,6 +384,7 @@ namespace occa {
             );
           }
 
+          io::sync(binaryFilename);
           return true;
         }
       );
@@ -472,9 +470,18 @@ namespace occa {
       return new serial::memory(buf, bytes, 0);
     }
 
+    modeMemoryPool_t* device::createMemoryPool(const occa::json &props) {
+      return new serial::memoryPool(this, props);
+    }
+
     udim_t device::memorySize() const {
       return sys::SystemInfo::load().memory.total;
     }
     //==================================
+
+    void* device::unwrap() {
+      OCCA_FORCE_ERROR("device::unwrap is not defined for serial mode");
+      return nullptr;
+    }
   }
 }

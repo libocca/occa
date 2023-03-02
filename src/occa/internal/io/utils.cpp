@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <fcntl.h>
 
 #include <occa/defines.hpp>
 
@@ -14,6 +15,7 @@
 #  include <windows.h>
 #  include <string>
 #  include <algorithm> // std::replace
+#  include <io.h> // for _commit
 #endif
 
 #include <occa/utils/hash.hpp>
@@ -429,6 +431,27 @@ namespace occa {
       return contents;
     }
 
+    void sync(const std::string &filename) {
+      const std::string filedir(dirname(filename));
+      int fd;
+
+      fd = open(filename.c_str(), O_RDONLY);
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+      fsync(fd);
+#else
+      _commit(fd);
+#endif
+      close(fd);
+
+      fd = open(filedir.c_str(), O_RDONLY);
+#if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
+      fsync(fd);
+#else
+      _commit(fd);
+#endif
+      close(fd);
+    }
+
     void write(const std::string &filename,
                const std::string &content) {
       std::string expFilename = io::expandFilename(filename);
@@ -439,9 +462,8 @@ namespace occa {
                  fp != 0);
 
       fputs(content.c_str(), fp);
-
-      fsync(fileno(fp));
       fclose(fp);
+      io::sync(expFilename);
     }
 
     void stageFile(

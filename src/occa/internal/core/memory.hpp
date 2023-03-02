@@ -36,7 +36,6 @@ namespace occa {
     modeMemory_t* slice(const dim_t offset_,
                         const udim_t bytes);
 
-    void free();
     void detach();
 
     //---[ Virtual Methods ]------------
@@ -62,6 +61,8 @@ namespace occa {
                           const udim_t destOffset = 0,
                           const udim_t srcOffset = 0,
                           const occa::json &props = occa::json()) = 0;
+
+    virtual void* unwrap() = 0;
     //==================================
 
     //---[ Friend Functions ]-----------

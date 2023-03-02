@@ -18,6 +18,8 @@ namespace occa
 
       virtual ~streamTag() = default;
 
+      void* unwrap() override;
+
       void waitFor();
       double submitTime();
       double startTime();

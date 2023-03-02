@@ -82,8 +82,8 @@ namespace occa {
       // TODO 1.1: This should be in the device, not the kernel
       static occa::dim maxInnerDims_(0);
       if (maxInnerDims_.x == 0) {
-        size_t dims_;
-        size_t bytes;
+        size_t dims_ = 0;
+        size_t bytes = 0;
         OCCA_OPENCL_ERROR("Kernel: Max Inner Dims",
                           clGetKernelWorkGroupInfo(clKernel,
                                                    clDevice,

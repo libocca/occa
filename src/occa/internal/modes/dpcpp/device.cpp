@@ -6,6 +6,7 @@
 #include <occa/internal/modes/dpcpp/kernel.hpp>
 #include <occa/internal/modes/dpcpp/buffer.hpp>
 #include <occa/internal/modes/dpcpp/memory.hpp>
+#include <occa/internal/modes/dpcpp/memoryPool.hpp>
 #include <occa/internal/modes/dpcpp/stream.hpp>
 #include <occa/internal/modes/dpcpp/streamTag.hpp>
 #include <occa/types/primitive.hpp>
@@ -48,11 +49,6 @@ namespace occa
 
       occa::json &kernelProps = properties["kernel"];
       setCompilerLinkerOptions(kernelProps);
-    }
-
-    void device::finish() const
-    {
-      getDpcppStream(currentStream).finish();
     }
 
     hash_t device::hash() const
@@ -100,12 +96,13 @@ namespace occa
       return new stream(this, props, q);
     }
 
+    // Uses a oneAPI extension to enqueue a barrier. 
+    // When ombined with in-order queues, this provides
+    // the execution required for `streamTag`s.
     occa::streamTag device::tagStream()
     {
-      //@note: This creates a host event which will return immediately.
-      // Unless we are using in-order queues, the current streamTag model is
-      // not terribly useful.
-      ::sycl::event dpcpp_event;
+      ::sycl::queue& dpcpp_queue = getDpcppStream(currentStream).commandQueue;
+      ::sycl::event dpcpp_event = dpcpp_queue.ext_oneapi_submit_barrier();
       return new occa::dpcpp::streamTag(this, dpcpp_event);
     }
 
@@ -123,7 +120,7 @@ namespace occa
       dpcppStartTag.waitFor();
       dpcppEndTag.waitFor();
 
-      return (dpcppEndTag.endTime() - dpcppStartTag.startTime());
+      return (dpcppEndTag.endTime() - dpcppStartTag.endTime());
     }
 
     
@@ -220,18 +217,28 @@ namespace occa
       }
 
       const std::string &sCommand = command.str();
-      if (verbose)
-      {
-        io::stdout << sCommand << '\n';
+      if (verbose) {
+        io::stdout << "Compiling [" << kernelName << "]\n" << sCommand << "\n";
       }
 
-      const int compileError = system(sCommand.c_str());
+      std::string commandOutput;
+      const int commandExitCode = sys::call(
+        sCommand.c_str(),
+        commandOutput
+      );
 
-      if (compileError)
-      {
-        OCCA_FORCE_ERROR("Error compiling [" << kernelName << "],"
-                          << " Command: ["<< sCommand << ']');
+      if (commandExitCode) {
+        OCCA_FORCE_ERROR(
+          "Error compiling [" << kernelName << "],"
+          " Command: [" << sCommand << "] exited with code " << commandExitCode << "\n\n"
+          << "Output:\n\n"
+          << commandOutput << "\n"
+        );
+      } else if (verbose) {
+        io::stdout << "Output:\n\n" << commandOutput << "\n";
       }
+      
+      io::sync(binaryFilename);
     }
 
     modeKernel_t *device::buildOKLKernelFromBinary(const hash_t kernelHash,
@@ -243,9 +250,12 @@ namespace occa
                                                    lang::sourceMetadata_t &deviceMetadata,
                                                    const occa::json &kernelProps)
     {
+      void *dl_handle = sys::dlopen(binaryFilename);
+
       dpcpp::kernel &k = *(new dpcpp::kernel(this,
                                              kernelName,
                                              sourceFilename,
+                                             dl_handle,
                                              kernelProps));
 
       k.launcherKernel = buildLauncherKernel(kernelHash,
@@ -256,8 +266,6 @@ namespace occa
       orderedKernelMetadata launchedKernelsMetadata = getLaunchedKernelsMetadata(
           kernelName,
           deviceMetadata);
-
-      void *dl_handle = sys::dlopen(binaryFilename);
 
       const int launchedKernelsCount = (int)launchedKernelsMetadata.size();
       for (int i = 0; i < launchedKernelsCount; ++i)
@@ -276,7 +284,6 @@ namespace occa
         kernel *dpcppKernel = new dpcpp::kernel(this,
                                metadata.name,
                                sourceFilename,
-                               dl_handle,
                                kernel_function,
                                kernelProps);
 
@@ -316,7 +323,7 @@ namespace occa
 
     dim device::maxInnerDims() const
     {
-      ::sycl::id<3> max_wi_sizes = dpcppDevice.get_info<::sycl::info::device::max_work_item_sizes>();
+      ::sycl::id<3> max_wi_sizes{dpcppDevice.get_info<::sycl::info::device::max_work_item_sizes<3>>()};
       return dim{max_wi_sizes[occa::dpcpp::x_index],
                  max_wi_sizes[occa::dpcpp::y_index],
                  max_wi_sizes[occa::dpcpp::z_index]};
@@ -362,12 +369,19 @@ namespace occa
       return new dpcpp::memory(buf, bytes, 0);
     }
 
+    modeMemoryPool_t* device::createMemoryPool(const occa::json &props) {
+      return new dpcpp::memoryPool(this, props);
+    }
+
     udim_t device::memorySize() const
     {
       uint64_t global_mem_size{dpcppDevice.get_info<::sycl::info::device::global_mem_size>()};
       return global_mem_size;
     }
 
+    void* device::unwrap() {
+      return static_cast<void*>(&dpcppDevice);
+    }
     //==================================
   } // namespace dpcpp
 } // namespace occa

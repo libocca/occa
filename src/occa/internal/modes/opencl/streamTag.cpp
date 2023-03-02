@@ -15,9 +15,13 @@ namespace occa {
                         clReleaseEvent(clEvent));
     }
 
+    void* streamTag::unwrap() {
+      return static_cast<void*>(&clEvent);
+    }
+
     double streamTag::startTime() {
       if (start_time < 0) {
-        cl_ulong clTime;
+        cl_ulong clTime = 0;
         OCCA_OPENCL_ERROR("streamTag: Getting event profiling info",
                           clGetEventProfilingInfo(clEvent,
                                                   CL_PROFILING_COMMAND_START,
@@ -31,7 +35,7 @@ namespace occa {
 
     double streamTag::endTime() {
       if (end_time < 0) {
-        cl_ulong clTime;
+        cl_ulong clTime = 0;
         OCCA_OPENCL_ERROR("streamTag: Getting event profiling info",
                           clGetEventProfilingInfo(clEvent,
                                                   CL_PROFILING_COMMAND_END,

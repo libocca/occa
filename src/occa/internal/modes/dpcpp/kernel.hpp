@@ -24,6 +24,13 @@ namespace occa
       kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
+             void* dlHandle_,
+             const occa::json &properties_);
+
+      kernel(modeDevice_t *modeDevice_,
+             const std::string &name_,
+             const std::string &sourceFilename_,
+             functionPtr_t function_,
              const occa::json &properties_);
 
       kernel(modeDevice_t *modeDevice_,
@@ -35,12 +42,12 @@ namespace occa
 
       virtual ~kernel();
 
-      virtual int maxDims() const override;
-      virtual dim maxOuterDims() const override;
-      virtual dim maxInnerDims() const override;
+      int maxDims() const override;
+      dim maxOuterDims() const override;
+      dim maxInnerDims() const override;
       udim_t maxInnerSize() const;
 
-      virtual void deviceRun() const override;
+      void deviceRun() const override;
     };
   } // namespace dpcpp
 } // namespace occa

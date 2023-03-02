@@ -77,6 +77,10 @@ namespace occa {
     return getDevice().tagStream();
   }
 
+  experimental::memoryPool createMemoryPool(const occa::json &props) {
+    return getDevice().createMemoryPool(props);
+  }
+
   //---[ Kernel Functions ]-------------
   kernel buildKernel(const std::string &filename,
                      const std::string &kernelName,

@@ -89,4 +89,12 @@ namespace occa {
     delete modeStreamTag;
     modeStreamTag = NULL;
   }
+
+  void* streamTag::unwrap() {
+    OCCA_ERROR(
+      "streamTag::unwrap: stream is uninitialized or has been free'd",
+      nullptr != modeStreamTag
+    );
+    return modeStreamTag->unwrap();
+  }
 }

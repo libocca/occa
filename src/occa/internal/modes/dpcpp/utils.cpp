@@ -35,7 +35,7 @@ namespace occa
       }
       else
       {
-        compiler = "dpcpp";
+        compiler = "clang++";
       }
       dpcpp_properties["compiler"] = compiler;
     }
@@ -43,13 +43,17 @@ namespace occa
     void setCompilerFlags(occa::json &dpcpp_properties) noexcept
     {
       std::string compiler_flags;
-      if (env::var("OCCA_DPCPP_COMPILER_FLAGS").size())
+      if (dpcpp_properties.has("compiler_flags"))
+      {
+        compiler_flags = dpcpp_properties["compiler_flags"].toString();
+      }
+      else if (env::var("OCCA_DPCPP_COMPILER_FLAGS").size())
       {
         compiler_flags = env::var("OCCA_DPCPP_COMPILER_FLAGS");
       }
-      else if (dpcpp_properties.has("compiler_flags"))
+      else
       {
-        compiler_flags = dpcpp_properties["compiler_flags"].toString();
+        compiler_flags = "-O3 -fsycl";
       }
       dpcpp_properties["compiler_flags"] = compiler_flags;
     }

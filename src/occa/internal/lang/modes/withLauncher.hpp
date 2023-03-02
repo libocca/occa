@@ -8,6 +8,8 @@ namespace occa {
   namespace lang {
     namespace okl {
       class withLauncher : public parser_t {
+       private:
+        bool add_barriers{true};
        public:
         serialParser launcherParser;
 

@@ -8,6 +8,7 @@ $(fObjPath)/occa_device_m.o:        $(fObjPath)/occa_types_m.o
 $(fObjPath)/occa_memory_m.o:        $(fObjPath)/occa_types_m.o
 $(fObjPath)/occa_kernel_m.o:        $(fObjPath)/occa_types_m.o
 $(fObjPath)/occa_kernelBuilder_m.o: $(fObjPath)/occa_types_m.o
+$(fObjPath)/occa_stream_m.o:        $(fObjPath)/occa_types_m.o
 $(fObjPath)/occa_uva_m.o:           $(fObjPath)/occa_types_m.o
 $(fObjPath)/occa_scope_m.o:         $(fObjPath)/occa_types_m.o
 $(fObjPath)/occa_json_m.o:          $(fObjPath)/occa_types_m.o
@@ -20,6 +21,7 @@ $(fObjPath)/occa_m.o:               $(fObjPath)/fc_string_m.o \
                                     $(fObjPath)/occa_memory_m.o \
                                     $(fObjPath)/occa_kernel_m.o \
                                     $(fObjPath)/occa_kernelBuilder_m.o \
+                                    $(fObjPath)/occa_stream_m.o \
                                     $(fObjPath)/occa_uva_m.o \
                                     $(fObjPath)/occa_scope_m.o \
                                     $(fObjPath)/occa_json_m.o

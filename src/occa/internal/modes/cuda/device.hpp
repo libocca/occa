@@ -30,28 +30,26 @@ namespace occa {
       device(const occa::json &properties_);
       virtual ~device();
 
-      virtual void finish() const;
+      bool hasSeparateMemorySpace() const override;
 
-      virtual bool hasSeparateMemorySpace() const;
+      hash_t hash() const override;
 
-      virtual hash_t hash() const;
+      hash_t kernelHash(const occa::json &props) const override;
 
-      virtual hash_t kernelHash(const occa::json &props) const;
-
-      virtual lang::okl::withLauncher* createParser(const occa::json &props) const;
+      lang::okl::withLauncher* createParser(const occa::json &props) const override;
 
       void* getNullPtr();
 
       void setCudaContext();
 
       //---[ Stream ]-------------------
-      virtual modeStream_t* createStream(const occa::json &props);
-      virtual modeStream_t* wrapStream(void* ptr, const occa::json &props);
+      modeStream_t* createStream(const occa::json &props) override;
+      modeStream_t* wrapStream(void* ptr, const occa::json &props) override;
 
-      virtual streamTag tagStream();
-      virtual void waitFor(streamTag tag);
-      virtual double timeBetween(const streamTag &startTag,
-                                 const streamTag &endTag);
+      streamTag tagStream() override;
+      void waitFor(streamTag tag) override;
+      double timeBetween(const streamTag &startTag,
+                         const streamTag &endTag) override;
 
       CUstream& getCuStream() const;
       //================================
@@ -65,7 +63,7 @@ namespace occa {
                                                    const bool usingOkl,
                                                    lang::sourceMetadata_t &launcherMetadata,
                                                    lang::sourceMetadata_t &deviceMetadata,
-                                                   const occa::json &kernelProps);
+                                                   const occa::json &kernelProps) override;
 
       void setArchCompilerFlags(const occa::json &kernelProps,
                                 std::string &compilerFlags);
@@ -83,24 +81,28 @@ namespace occa {
                                              const std::string &binaryFilename,
                                              lang::sourceMetadata_t &launcherMetadata,
                                              lang::sourceMetadata_t &deviceMetadata,
-                                             const occa::json &kernelProps);
+                                             const occa::json &kernelProps) override;
 
-      virtual modeKernel_t* buildKernelFromBinary(const std::string &filename,
-                                                  const std::string &kernelName,
-                                                  const occa::json &props);
+      modeKernel_t* buildKernelFromBinary(const std::string &filename,
+                                          const std::string &kernelName,
+                                          const occa::json &props) override;
       //================================
 
       //---[ Memory ]-------------------
-      virtual modeMemory_t* malloc(const udim_t bytes,
-                                   const void *src,
-                                   const occa::json &props);
+      modeMemory_t* malloc(const udim_t bytes,
+                           const void *src,
+                           const occa::json &props) override;
 
       modeMemory_t* wrapMemory(const void *ptr,
                                const udim_t bytes,
-                               const occa::json &props);
+                               const occa::json &props) override;
 
-      virtual udim_t memorySize() const;
+      modeMemoryPool_t* createMemoryPool(const occa::json &props) override;
+
+      udim_t memorySize() const override;
       //================================
+
+      void* unwrap() override;
     };
   }
 }

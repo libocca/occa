@@ -70,6 +70,10 @@ void occaDeviceFinish(occaDevice device) {
   occa::c::device(device).finish();
 }
 
+void occaDeviceFinishAll(occaDevice device) {
+  occa::c::device(device).finishAll();
+}
+
 bool occaDeviceHasSeparateMemorySpace(occaDevice device) {
   return (int) occa::c::device(device).hasSeparateMemorySpace();
 }
@@ -247,6 +251,23 @@ occaMemory occaDeviceTypedWrapMemory(occaDevice device,
   memory.dontUseRefs();
 
   return occa::c::newOccaType(memory);
+}
+//======================================
+
+//---[ MemoryPool ]---------------------
+occaMemoryPool occaDeviceCreateMemoryPool(occaDevice device,
+                                          occaJson props) {
+  occa::device device_ = occa::c::device(device);
+
+  occa::experimental::memoryPool memoryPool;
+  if (occa::c::isDefault(props)) {
+    memoryPool = device_.createMemoryPool();
+  } else {
+    memoryPool = device_.createMemoryPool(occa::c::json(props));
+  }
+  memoryPool.dontUseRefs();
+
+  return occa::c::newOccaType(memoryPool);
 }
 //======================================
 

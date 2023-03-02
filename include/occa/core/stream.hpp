@@ -136,6 +136,34 @@ namespace occa {
      * @endDoc
      */
     void free();
+
+    /**
+     * @startDoc{finish}
+     *
+     * Description:
+     *   Waits for all asynchronous operations, such as memory allocations
+     *   or kernel calls, submitted to this device to complete.
+     *
+     * @endDoc
+     */
+    void finish();
+
+    /**
+     * @startDoc{unwrap}
+     * 
+     * Description:
+     *   Retreives the mode-specific object associated with this [[memory]].
+     *   The lifetime of the returned object is the same as this memory.
+     *   Destruction of the returned object during this memory's lifetime results in undefined behavior.   
+     *  
+     *   > An OCCA application is responsible for correctly converting the returned `void*` pointer to the corresponding mode-specific memory type.
+     * 
+     * Returns:
+     *   A pointer to the mode-specific object associated with this stream.
+     * 
+     * @endDoc
+    */
+    void* unwrap();
   };
 
   std::ostream& operator << (std::ostream &out,

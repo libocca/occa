@@ -24,15 +24,15 @@ namespace occa {
              const std::string &name_,
              const std::string &sourceFilename_,
              const occa::json &properties_);
-      ~kernel();
+      virtual ~kernel();
 
-      int maxDims() const;
-      dim maxOuterDims() const;
-      dim maxInnerDims() const;
+      int maxDims() const override;
+      dim maxOuterDims() const override;
+      dim maxInnerDims() const override;
 
-      const lang::kernelMetadata_t& getMetadata() const;
+      const lang::kernelMetadata_t& getMetadata() const override;
 
-      void run() const;
+      void run() const override;
 
       friend class device;
     };

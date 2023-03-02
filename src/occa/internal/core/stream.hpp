@@ -16,6 +16,7 @@ namespace occa {
 
     modeStream_t(modeDevice_t *modeDevice_,
                  const occa::json &json_);
+    virtual ~modeStream_t();
 
     void dontUseRefs();
     void addStreamRef(stream *s);
@@ -23,7 +24,9 @@ namespace occa {
     bool needsFree() const;
 
     //---[ Virtual Methods ]------------
-    virtual ~modeStream_t() = 0;
+    virtual void finish() = 0;
+
+    virtual void* unwrap() = 0;
     //==================================
   };
 }

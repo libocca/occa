@@ -21,6 +21,13 @@ namespace occa {
       kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
              const std::string &sourceFilename_,
+             hipModule_t   hipModule_,
+             const occa::json &properties_);
+
+      kernel(modeDevice_t *modeDevice_,
+             const std::string &name_,
+             const std::string &sourceFilename_,
+             hipFunction_t hipFunction_,
              const occa::json &properties_);
 
       kernel(modeDevice_t *modeDevice_,
@@ -30,15 +37,15 @@ namespace occa {
              hipFunction_t hipFunction_,
              const occa::json &properties_);
 
-      ~kernel();
+      virtual ~kernel();
 
       hipStream_t& getHipStream() const;
 
-      int maxDims() const;
-      dim maxOuterDims() const;
-      dim maxInnerDims() const;
+      int maxDims() const override;
+      dim maxOuterDims() const override;
+      dim maxInnerDims() const override;
 
-      void deviceRun() const;
+      void deviceRun() const override;
     };
   }
 }

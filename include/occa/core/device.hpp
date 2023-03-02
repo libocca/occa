@@ -6,6 +6,7 @@
 
 #include <occa/core/kernel.hpp>
 #include <occa/core/memory.hpp>
+#include <occa/core/memoryPool.hpp>
 #include <occa/core/stream.hpp>
 #include <occa/defines.hpp>
 #include <occa/dtype.hpp>
@@ -349,12 +350,25 @@ namespace occa {
      * @startDoc{finish}
      *
      * Description:
-     *   Finishes any asynchronous operation queued up on the device, such as
-     *   [[async memory allocations|device.malloc]] or [[kernel calls|kernel.operator_parentheses]].
+     *   Waits for all asynchronous operations, such as
+     *   [[async memory allocations|device.malloc]] or [[kernel calls|kernel.operator_parentheses]],
+     *   submitted to the current stream on this device to complete.
      *
      * @endDoc
      */
     void finish();
+
+    /**
+     * @startDoc{finish}
+     *
+     * Description:
+     *   Waits for all asynchronous operations, such as
+     *   [[async memory allocations|device.malloc]] or [[kernel calls|kernel.operator_parentheses]],
+     *   submitted to all streams on this device to complete.
+     *
+     * @endDoc
+     */
+    void finishAll();
 
     /**
      * @startDoc{hasSeparateMemorySpace}
@@ -700,7 +714,39 @@ namespace occa {
                             const dim_t entries,
                             const dtype_t &dtype,
                             const occa::json &props = occa::json());
+
+    //  |---[ MemoryPool ]------------------
+    /**
+     * @startDoc{createMemoryPool}
+     *
+     * Description:
+     *   Creates and returns a new [[memoryPool]] to reserve [[memory]].
+     *
+     * Returns:
+     *   Newly created [[memoryPool]]
+     *
+     * @endDoc
+     */
+    experimental::memoryPool createMemoryPool(const occa::json &props = occa::json());
+
     //  |===============================
+
+    /**
+     * @startDoc{unwrap}
+     * 
+     * Description:
+     *   Retreives the mode-specific object associated with this [[device]].
+     *   The lifetime of the returned object is the same as this device.
+     *   Destruction of the returned object during this device's lifetime results in undefined behavior.   
+     *  
+     *   > An OCCA application is responsible for correctly converting the returned `void*` pointer to the corresponding mode-specific device type.
+     *   
+     * Returns:
+     *   A pointer to the mode-specific object associated with this device.
+     * 
+     * @endDoc
+    */
+    void* unwrap();
   };
 
   template <>

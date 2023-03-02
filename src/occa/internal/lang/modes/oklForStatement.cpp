@@ -52,7 +52,7 @@ namespace occa {
             if (!(0 < loop_range)) {
               valid = false;
               if(printErrors_)
-                forSmnt_.printError("OKL for loop is empty or infinite!");
+                forSmnt_.printError("OKL for loop range is empty or infinite!");
             }
           }
           delete loop_range_node;
@@ -75,36 +75,62 @@ namespace occa {
 
       bool oklForStatement::hasValidInit() {
         statement_t &initSmnt = *(forSmnt.init);
-        // Check for declaration
-        if (initSmnt.type() != statementType::declaration) {
-          if (printErrors) {
-            initSmnt.printError(sourceStr() + "Expected a declaration statement");
-          }
+        const auto init_statement_type = initSmnt.type();
+        
+        if(statementType::empty == init_statement_type) {
+          if(printErrors)
+            initSmnt.printError(sourceStr() 
+              + "OKL for loop init-statement cannot be be a null statement");
           return false;
         }
+
+        if(statementType::declaration != init_statement_type) {
+          if(printErrors)
+            initSmnt.printError(sourceStr()
+              + "OKL for loop init-statement must be a simple declaration with initializer");
+          return false;
+        }
+
         // Can only have one declaration
         declarationStatement &declSmnt = (declarationStatement&) initSmnt;
+        
         if (declSmnt.declarations.size() > 1) {
           if (printErrors) {
             declSmnt.declarations[1].printError(
-              sourceStr() + "Can only have 1 iterator variable"
+              sourceStr() + "OKL for loops can only have 1 iterator variable"
             );
           }
           return false;
         }
+        
         // Get iterator and value
         variableDeclaration &decl = declSmnt.declarations[0];
         iterator  = &decl.variable();
+        if(!(iterator->isNamed())) {
+          if(printErrors)
+            declSmnt.printError(sourceStr() 
+              + "OKL for loop variable does not have a name.");
+          return false;
+        }
+
+        if(!decl.hasValue()) {
+          if(printErrors)
+            decl.printError(sourceStr()
+              + "OKL for loop variable is not initialized.");
+          return false;
+        }
         initValue = decl.value;
-        // Valid types: {char, short, int, long}
+        // Valid types: {char, short, int, long, ptrdiff_t, size_t}
         const type_t *type = iterator->vartype.flatten().type;
         if (!type ||
             ((*type != char_)  &&
              (*type != short_) &&
-             (*type != int_))) {
+             (*type != int_) &&
+             (*type != ptrdiff_t_) &&
+             (*type != size_t_))) {
           if (printErrors) {
             iterator->printError(sourceStr() + "Iterator variable needs to be of type"
-                                 " [char, short, int, long]");
+                                 " [char, short, int, long, ptrdiff_t, size_t]");
           }
           return false;
         }

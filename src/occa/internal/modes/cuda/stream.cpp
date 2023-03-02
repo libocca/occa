@@ -18,5 +18,14 @@ namespace occa {
         );
       }
     }
+
+    void stream::finish() {
+      OCCA_CUDA_ERROR("Stream: Finish",
+                      cuStreamSynchronize(cuStream));
+    }
+
+    void* stream::unwrap() {
+      return static_cast<void*>(&cuStream);
+    }
   }
 }

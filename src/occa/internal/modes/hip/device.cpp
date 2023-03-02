@@ -7,6 +7,7 @@
 #include <occa/internal/modes/hip/kernel.hpp>
 #include <occa/internal/modes/hip/buffer.hpp>
 #include <occa/internal/modes/hip/memory.hpp>
+#include <occa/internal/modes/hip/memoryPool.hpp>
 #include <occa/internal/modes/hip/stream.hpp>
 #include <occa/internal/modes/hip/streamTag.hpp>
 #include <occa/internal/modes/hip/utils.hpp>
@@ -52,10 +53,10 @@ namespace occa {
         compiler = "hipcc";
       }
 
-      if (env::var("OCCA_HIP_COMPILER_FLAGS").size()) {
-        compilerFlags = env::var("OCCA_HIP_COMPILER_FLAGS");
-      } else if (kernelProps.get<std::string>("compiler_flags").size()) {
+      if (kernelProps.get<std::string>("compiler_flags").size()) {
         compilerFlags = (std::string) kernelProps["compiler_flags"];
+      } else if (env::var("OCCA_HIP_COMPILER_FLAGS").size()) {
+        compilerFlags = env::var("OCCA_HIP_COMPILER_FLAGS");
       } else {
         compilerFlags = "-O3";
       }
@@ -84,11 +85,6 @@ namespace occa {
     }
 
     device::~device() { }
-
-    void device::finish() const {
-      OCCA_HIP_ERROR("Device: Finish",
-                     hipStreamSynchronize(getHipStream()));
-    }
 
     bool device::hasSeparateMemorySpace() const {
       return true;
@@ -174,7 +170,7 @@ namespace occa {
 
       waitFor(endTag);
 
-      float msTimeTaken = 0;
+      float msTimeTaken = 0.0;
       OCCA_HIP_ERROR("Device: Timing Between Tags",
                      hipEventElapsedTime(&msTimeTaken,
                                          hipStartTag->hipEvent,
@@ -320,12 +316,15 @@ namespace occa {
       if (commandExitCode) {
         OCCA_FORCE_ERROR(
           "Error compiling [" << kernelName << "],"
-          " Command: [" << sCommand << "]\n"
+          " Command: [" << sCommand << "] exited with code " << commandExitCode << "\n\n"
           << "Output:\n\n"
           << commandOutput << "\n"
         );
+      } else if (verbose) {
+          io::stdout << "Output:\n\n" << commandOutput << "\n";
       }
-      //================================
+      
+      io::sync(binaryFilename);
     }
 
     modeKernel_t* device::buildOKLKernelFromBinary(const hash_t kernelHash,
@@ -345,6 +344,7 @@ namespace occa {
       kernel &k = *(new kernel(this,
                                kernelName,
                                sourceFilename,
+                               hipModule,
                                kernelProps));
 
       k.launcherKernel = buildLauncherKernel(kernelHash,
@@ -372,7 +372,6 @@ namespace occa {
         kernel *hipKernel = new kernel(this,
                                        metadata.name,
                                        sourceFilename,
-                                       hipModule,
                                        hipFunction,
                                        kernelProps);
         hipKernel->metadata = metadata;
@@ -437,9 +436,17 @@ namespace occa {
       return new hip::memory(buf, bytes, 0);
     }
 
+    modeMemoryPool_t* device::createMemoryPool(const occa::json &props) {
+      return new hip::memoryPool(this, props);
+    }
+
     udim_t device::memorySize() const {
       return hip::getDeviceMemorySize(hipDevice);
     }
     //==================================
+
+    void* device::unwrap() {
+      return static_cast<void*>(&hipDevice);
+    }
   }
 }

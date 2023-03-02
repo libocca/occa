@@ -16,6 +16,7 @@ namespace occa {
         parser_t(settings_),
         launcherParser(settings["launcher"]) {
         launcherParser.settings["okl/validate"] = false;
+        add_barriers = settings.get("okl/add_barriers", true);
       }
 
       //---[ Public ]-------------------
@@ -622,7 +623,7 @@ namespace occa {
       }
 
       bool withLauncher::usesBarriers() {
-        return true;
+        return add_barriers;
       }
     }
   }

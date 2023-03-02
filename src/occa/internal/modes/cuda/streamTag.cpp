@@ -14,5 +14,9 @@ namespace occa {
         cuEventDestroy(cuEvent)
       );
     }
+
+    void* streamTag::unwrap() {
+      return static_cast<void*>(&cuEvent);
+    }
   }
 }

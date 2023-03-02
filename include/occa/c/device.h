@@ -27,6 +27,8 @@ occaUDim_t occaDeviceMemoryAllocated(occaDevice device);
 
 void occaDeviceFinish(occaDevice device);
 
+void occaDeviceFinishAll(occaDevice device);
+
 bool occaDeviceHasSeparateMemorySpace(occaDevice device);
 
 //---[ Stream ]-------------------------
@@ -87,6 +89,11 @@ occaMemory occaDeviceTypedWrapMemory(occaDevice device,
                                      const occaUDim_t entries,
                                      const occaDtype dtype,
                                      occaJson props);
+//======================================
+
+//---[ MemoryPool ]---------------------
+occaMemoryPool occaDeviceCreateMemoryPool(occaDevice device,
+                                          occaJson props);
 //======================================
 
 OCCA_END_EXTERN_C

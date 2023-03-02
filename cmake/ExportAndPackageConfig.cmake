@@ -31,9 +31,6 @@ endif()
 if(OCCA_METAL_ENABLED)
   string(APPEND exportPackageDependencies "find_dependency(METAL)\n")
 endif()
-if (OCCA_MPI_ENABLED)
-  string(APPEND exportPackageDependencies "find_dependency(MPI)\n")
-endif()
 
 # List of what targets are exported, for use in configuring occaConfig.cmake.in
 # Explicit list because unfortunately no easy way to retrieve it through cmake, even though they all are part of the EXPORT occaExport
