@@ -48,7 +48,7 @@ namespace occa
       OCCA_DPCPP_ERROR(
           "streamTag: endTime",
           end_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_end>())
-      return end_time;
+      return end_time * one_over_nano;
     }
   } // namespace dpcpp
 } // namespace occa
