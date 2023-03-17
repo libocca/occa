@@ -25,16 +25,16 @@ namespace occa
     void setCompiler(occa::json &dpcpp_properties) noexcept
     {
       std::string compiler;
-      if (env::var("OCCA_DPCPP_COMPILER").size())
-      {
+      if (env::var("OCCA_DPCPP_COMPILER").size()) {
         compiler = env::var("OCCA_DPCPP_COMPILER");
-      }
-      else if (dpcpp_properties.has("compiler"))
-      {
+      } else if (dpcpp_properties.has("compiler")){
         compiler = dpcpp_properties["compiler"].toString();
-      }
-      else
-      {
+      } else if (env::var("OCCA_CXX").size()) {
+        compiler = env::var("OCCA_CXX");
+      } else if (env::var("CXX").size()) {
+        compiler = env::var("CXX");
+      } else {
+        OCCA_FORCE_WARNING("OCCA_DPCPP_COMPILER is defaulting to clang++");
         compiler = "clang++";
       }
       dpcpp_properties["compiler"] = compiler;
