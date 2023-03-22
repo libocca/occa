@@ -193,7 +193,7 @@ if(ENABLE_HIP)
     message("-- HIP include dirs: ${HIP_INCLUDE_DIRS}")
     message("-- HIP libraries:    ${HIP_LIBRARIES}")
 
-    # Use our wrapper imported target OCCA::depends::DPCPP,
+    # Use our wrapper imported target OCCA::depends::HIP,
     # (which wraps the _COMPILE_DEFINITIONS, _INCLUDE_DIRS and _LIBRARIES,) to make our package relocatable
     target_link_libraries(libocca PRIVATE OCCA::depends::HIP)
   else (HIP_FOUND)
@@ -213,7 +213,7 @@ if(ENABLE_METAL AND APPLE)
     message("-- METAL core services: ${CORE_SERVICES}")
     message("-- METAL app kit:       ${APP_KIT}")
 
-    # Use our wrapper imported target OCCA::depends::DPCPP,
+    # Use our wrapper imported target OCCA::depends::METAL,
     # (which wraps the three libraries variables,) to make our package relocatable
     target_link_libraries(libocca PRIVATE OCCA::depends::METAL)
   else()
