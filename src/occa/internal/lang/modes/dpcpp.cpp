@@ -257,13 +257,12 @@ namespace occa
             .forEach([&](statement_t *smnt)
                      {
                        functionDeclStatement &funcDeclSmnt = (functionDeclStatement &)*smnt;
-
-                       if (funcDeclSmnt.hasAttribute("kernel"))
-                       {
-                         return;
-                       }
+                       if (funcDeclSmnt.hasAttribute("kernel")) return;
 
                        vartype_t &vartype = funcDeclSmnt.function().returnType;
+                       if (vartype.has(occa::lang::static_)) return;
+                       
+                       // Only add SYCL_EXTERNAL if we have external linkage
                        vartype.qualifiers.addFirst(vartype.origin(), device);
                      });
       }
