@@ -1,4 +1,4 @@
-float add(const float* a,
+static float add(const float* a,
           int i,
           const float* b,
           int j) {
