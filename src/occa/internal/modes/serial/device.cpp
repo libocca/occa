@@ -373,10 +373,11 @@ namespace occa {
             );
           }
 
-          io::sync(binaryFilename);
           return true;
         }
       );
+      
+      io::sync(binaryFilename);
 
       modeKernel_t *k = buildKernelFromBinary(binaryFilename,
                                               kernelName,
