@@ -80,6 +80,10 @@ double occaTimeBetweenTags(occaStreamTag startTag,
   return occa::timeBetween(occa::c::streamTag(startTag),
                            occa::c::streamTag(endTag));
 }
+
+void* occaStreamUnwrap(occaStream stream) {
+  return occa::c::stream(stream).unwrap();
+}
 //======================================
 
 //---[ Kernel ]-------------------------
