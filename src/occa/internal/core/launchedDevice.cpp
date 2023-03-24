@@ -107,6 +107,7 @@ namespace occa {
                    << "] in [" << binaryFilename << "]\n";
       }
 
+      modeKernel_t* k;
       if (usingOkl) {
         lang::sourceMetadata_t launcherMetadata = (
           lang::sourceMetadata_t::fromBuildFile(hashDir + kc::launcherBuildFile)
@@ -114,7 +115,7 @@ namespace occa {
         lang::sourceMetadata_t deviceMetadata = (
           lang::sourceMetadata_t::fromBuildFile(hashDir + kc::buildFile)
         );
-        return buildOKLKernelFromBinary(kernelHash,
+        k = buildOKLKernelFromBinary(kernelHash,
                                         hashDir,
                                         kernelName,
                                         sourceFilename,
@@ -123,10 +124,15 @@ namespace occa {
                                         deviceMetadata,
                                         kernelProps);
       } else {
-        return buildKernelFromBinary(binaryFilename,
+        k = buildKernelFromBinary(binaryFilename,
                                      kernelName,
                                      kernelProps);
       }
+      if (k) {
+        k->sourceFilename = filename;
+        k->binaryFilename = binaryFilename;
+      }
+      return k;
     }
 
     lang::sourceMetadata_t launcherMetadata, deviceMetadata;
@@ -200,6 +206,10 @@ namespace occa {
       }
     );
 
+    if (k) {
+      k->sourceFilename = filename;
+      k->binaryFilename = binaryFilename;
+    }
     return k;
   }
 
