@@ -103,7 +103,7 @@ namespace occa {
         return;
       }
       typename entryRingMap_t::iterator it = rings.find(entry);
-      if (it == rings.end()) {
+      if (it != rings.end()) {
         ring_t<entry_t> &ring = it->second;
         ring.removeRef(entry);
         rings.erase(it);
