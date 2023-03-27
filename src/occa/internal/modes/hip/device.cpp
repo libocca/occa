@@ -112,6 +112,12 @@ namespace occa {
       return new lang::okl::hipParser(props);
     }
 
+    void device::getDeviceArchVersion(int *archMajorVersion_,
+                                      int *archMinorVersion_) const {
+      if (archMajorVersion_ != nullptr) *archMajorVersion_ = archMajorVersion;
+      if (archMinorVersion_ != nullptr) *archMinorVersion_ = archMinorVersion;
+    }
+
     //---[ Stream ]---------------------
     modeStream_t* device::createStream(const occa::json &props) {
       hipStream_t hipStream = NULL;
