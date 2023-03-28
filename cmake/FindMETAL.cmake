@@ -21,6 +21,6 @@ if(METAL_FOUND AND NOT TARGET OCCA::depends::METAL)
   # Put it in the OCCA namespace to make it clear that we created it.
   add_library(OCCA::depends::METAL INTERFACE IMPORTED)
   set_target_properties(OCCA::depends::METAL PROPERTIES
-    INTERFACE_LINK_LIBRARIES " ${METAL_LIBRARY} ${CORE_SERVICES} ${APP_KIT}"
+    INTERFACE_LINK_LIBRARIES "${METAL_LIBRARY} ${CORE_SERVICES} ${APP_KIT}"
   )
 endif()
