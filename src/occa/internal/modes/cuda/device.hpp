@@ -42,6 +42,9 @@ namespace occa {
 
       void setCudaContext();
 
+      void getDeviceArchVersion(int *archMajorVersion_,
+                                int *archMinorVersion_) const override;
+
       //---[ Stream ]-------------------
       modeStream_t* createStream(const occa::json &props) override;
       modeStream_t* wrapStream(void* ptr, const occa::json &props) override;

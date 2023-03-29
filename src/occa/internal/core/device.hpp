@@ -70,6 +70,9 @@ namespace occa {
     virtual hash_t hash() const = 0;
     virtual hash_t kernelHash(const occa::json &props) const = 0;
 
+    virtual void getDeviceArchVersion(int *archMajorVersion,
+                                      int *archMinorVersion) const;
+
     //  |---[ Stream ]------------------
     virtual modeStream_t* createStream(const occa::json &props) = 0;
     virtual modeStream_t* wrapStream(void *ptr, const occa::json &props) = 0;
