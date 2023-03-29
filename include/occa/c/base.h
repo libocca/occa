@@ -41,6 +41,8 @@ void occaWaitForTag(occaStreamTag tag);
 
 double occaTimeBetweenTags(occaStreamTag startTag,
                            occaStreamTag endTag);
+
+void* occaStreamUnwrap(occaStream stream);
 //======================================
 
 //---[ Kernel ]-------------------------
