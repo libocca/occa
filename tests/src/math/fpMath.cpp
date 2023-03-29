@@ -55,45 +55,48 @@ std::string kernel_back_half =
 
 void testUnaryFunctions(const occa::device& d) {
   for (auto fp_type : arg_types) {
-    std::string arg_decl = 
+    std::string arg_decl =
       "        " + fp_type + " " + unary_args + ";\n";
     for(auto func : unary_functions) {
-      std::string function_call = 
+      std::string function_call =
         "        " + fp_type + " w = " + func + "(" + unary_args + ");\n";
-      std::string kernel_src = 
+      std::string kernel_src =
         kernel_front_half + arg_decl + function_call +kernel_back_half;
 
-      occa::kernel k = d.buildKernelFromString(kernel_src,"f");
+      occa::kernel k = d.buildKernelFromString(kernel_src, "f",
+                                               {{"serial/include_std", true}});
     }
   }
 }
 
 void testBinaryFunctions(const occa::device& d) {
   for (auto fp_type : arg_types) {
-    std::string arg_decl = 
+    std::string arg_decl =
       "        " + fp_type + " " + binary_args + ";\n";
     for(auto func : binary_functions) {
-      std::string function_call = 
+      std::string function_call =
         "        " + fp_type + " w = " + func + "(" + binary_args + ");\n";
-      std::string kernel_src = 
+      std::string kernel_src =
         kernel_front_half + arg_decl + function_call +kernel_back_half;
 
-      occa::kernel k = d.buildKernelFromString(kernel_src,"f");
+      occa::kernel k = d.buildKernelFromString(kernel_src, "f",
+                                               {{"serial/include_std", true}});
     }
   }
 }
 
 void testTernaryFunctions(const occa::device& d) {
   for (auto fp_type : arg_types) {
-    std::string arg_decl = 
+    std::string arg_decl =
       "        " + fp_type + " " + ternary_args + ";\n";
     for(auto func : ternary_functions) {
-      std::string function_call = 
+      std::string function_call =
         "        " + fp_type + " w = " + func + "(" + ternary_args + ");\n";
-      std::string kernel_src = 
+      std::string kernel_src =
         kernel_front_half + arg_decl + function_call +kernel_back_half;
 
-      occa::kernel k = d.buildKernelFromString(kernel_src,"f");
+      occa::kernel k = d.buildKernelFromString(kernel_src, "f",
+                                               {{"serial/include_std", true}});
     }
   }
 }

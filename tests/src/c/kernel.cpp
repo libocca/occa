@@ -87,7 +87,7 @@ void testRun() {
     occa::env::OCCA_DIR + "tests/files/argKernel.okl"
   );
   occaJson kernelProps = occaJsonParse(
-    "{type_validation: false}"
+    "{type_validation: false, serial: {include_std: true}}"
   );
   occaKernel argKernel = (
     occaBuildKernel(argKernelFile.c_str(),
