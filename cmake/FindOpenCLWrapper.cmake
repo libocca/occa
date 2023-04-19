@@ -16,6 +16,7 @@ if(NOT OpenCL_FOUND)
       ENV NVHPC_ROOT
       ENV SYCL_ROOT
       /usr/local/cuda
+      /opt/rocm/
       /opt/rocm/opencl
       /opt/intel/oneapi/compiler/latest/linux
     PATH_SUFFIXES
@@ -32,6 +33,7 @@ if(NOT OpenCL_FOUND)
       ENV NVHPC_ROOT
       ENV SYCL_ROOT
       /usr/local/cuda
+      /opt/rocm/
       /opt/rocm/opencl
       /opt/intel/oneapi/compiler/latest/linux
     PATH_SUFFIXES
