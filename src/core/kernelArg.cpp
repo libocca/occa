@@ -53,7 +53,7 @@ namespace occa {
   }
 
   bool kernelArgData::isPointer() const {
-    return value.isPointer();
+    return ptrSize ? false : value.isPointer();
   }
 
   //====================================
@@ -76,6 +76,21 @@ namespace occa {
   kernelArg::~kernelArg() {}
 
   template <>
+  kernelArg::kernelArg(const char &arg) {
+    primitiveConstructor(static_cast<int8_t>(arg));
+  }
+
+  template <>
+  kernelArg::kernelArg(const unsigned char &arg) {
+    primitiveConstructor(static_cast<uint8_t>(arg));
+  }
+
+  template <>
+  kernelArg::kernelArg(const memory &arg) {
+    addMemory(arg.getModeMemory());
+  }
+
+  template <>
   kernelArg::kernelArg(modeMemory_t *arg) {
     addMemory(arg);
   }
@@ -83,6 +98,11 @@ namespace occa {
   template <>
   kernelArg::kernelArg(const modeMemory_t *arg) {
     addMemory(const_cast<modeMemory_t*>(arg));
+  }
+
+  template <>
+  kernelArg::kernelArg(const scopeKernelArg &arg) {
+    args = arg.args;
   }
 
   int kernelArg::size() const {
