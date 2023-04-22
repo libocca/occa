@@ -164,7 +164,7 @@ namespace occa {
 
   occa::memory memory::slice(const dim_t offset,
                              const dim_t count) const {
-    assertInitialized();
+    if (!isInitialized()) return memory();
 
     const int dtypeSize = modeMemory->dtype_->bytes();
     const dim_t offset_ = dtypeSize * offset;
@@ -189,7 +189,7 @@ namespace occa {
                         const dim_t bytes,
                         const dim_t offset,
                         const occa::json &props) {
-    assertInitialized();
+    if (!isInitialized()) return;
 
     udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
 
@@ -211,6 +211,7 @@ namespace occa {
                         const dim_t destOffset,
                         const dim_t srcOffset,
                         const occa::json &props) {
+    if (!isInitialized() && !src.isInitialized()) return;
     assertInitialized();
 
     udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
@@ -239,7 +240,7 @@ namespace occa {
                       const dim_t bytes,
                       const dim_t offset,
                       const occa::json &props) const {
-    assertInitialized();
+    if (!isInitialized()) return;
 
     udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
 
@@ -261,6 +262,7 @@ namespace occa {
                       const dim_t destOffset,
                       const dim_t srcOffset,
                       const occa::json &props) const {
+    if (!isInitialized() && !dest.isInitialized()) return;
     assertInitialized();
 
     udim_t bytes_ = ((bytes == -1) ? modeMemory->size : bytes);
