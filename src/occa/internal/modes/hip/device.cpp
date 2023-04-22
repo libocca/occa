@@ -72,7 +72,9 @@ namespace occa {
       if (startsWith(arch, "sm_")) {
         archFlag = " -arch=" + arch;
       } else if (startsWith(arch, "gfx")) {
-#if HIP_VERSION >= 305
+#if HIP_VERSION >= 502
+        archFlag = " --offload-arch=" + arch;
+#elif HIP_VERSION >= 305
         archFlag = " --amdgpu-target=" + arch;
 #else
         archFlag = " -t " + arch;
@@ -320,7 +322,7 @@ namespace occa {
       } else if (verbose) {
           io::stdout << "Output:\n\n" << commandOutput << "\n";
       }
-      
+
       io::sync(binaryFilename);
     }
 
