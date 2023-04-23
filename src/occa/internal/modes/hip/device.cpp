@@ -245,10 +245,12 @@ namespace occa {
       );
 
       if (hipccCompilerFlags.find("-arch=sm") == std::string::npos &&
-#if HIP_VERSION >= 305
-          hipccCompilerFlags.find("-t gfx") == std::string::npos
-#else
+#if HIP_VERSION >= 502
+          hipccCompilerFlags.find("--offload-arch=gfx") == std::string::npos
+#elif HIP_VERSION >= 305
           hipccCompilerFlags.find("--amdgpu-target=gfx") == std::string::npos
+#else
+          hipccCompilerFlags.find("-t gfx") == std::string::npos
 #endif
           ) {
         kernelProps["hipcc_compiler_flags"] += " ";
