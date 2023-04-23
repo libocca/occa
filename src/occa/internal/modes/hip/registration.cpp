@@ -25,9 +25,9 @@ namespace occa {
           hipDeviceProp_t props;
           OCCA_HIP_ERROR("Getting device properties",
                          hipGetDeviceProperties(&props, deviceId));
-	  if (props.name != NULL) {
-	    strcpy(deviceName, props.name);
-	  }
+          if (props.name != NULL) {
+            strcpy(deviceName, props.name);
+          }
 
           const udim_t bytes = props.totalGlobalMem;
           const std::string bytesStr = stringifyBytes(bytes);

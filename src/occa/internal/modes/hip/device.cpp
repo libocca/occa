@@ -22,7 +22,6 @@ namespace occa {
     device::device(const occa::json &properties_) :
       occa::launchedModeDevice_t(properties_) {
 
-      hipDeviceProp_t hipProps;
       if (!properties.has("wrapped")) {
         OCCA_ERROR("[HIP] device not given a [device_id] integer",
                    properties.has("device_id") &&
@@ -35,9 +34,6 @@ namespace occa {
 
         OCCA_HIP_ERROR("Device: Setting Device",
                        hipSetDevice(deviceID));
-
-        OCCA_HIP_ERROR("Getting device properties",
-                       hipGetDeviceProperties(&hipProps, deviceID));
       }
 
       p2pEnabled = false;
@@ -64,10 +60,11 @@ namespace occa {
       kernelProps["compiler"]       = compiler;
       kernelProps["compiler_flags"] = compilerFlags;
 
-      archMajorVersion = kernelProps.get<int>("arch/major", hipProps.major);
-      archMinorVersion = kernelProps.get<int>("arch/minor", hipProps.minor);
+      getDeviceArchVersion(deviceID, archMajorVersion, archMinorVersion);
+      archMajorVersion = kernelProps.get<int>("arch/major", archMajorVersion);
+      archMinorVersion = kernelProps.get<int>("arch/minor", archMinorVersion);
 
-      std::string arch = getDeviceArch(deviceID, archMajorVersion, archMinorVersion);
+      arch = getDeviceArch(deviceID);
       std::string archFlag;
       if (startsWith(arch, "sm_")) {
         archFlag = " -arch=" + arch;
@@ -94,10 +91,7 @@ namespace occa {
 
     hash_t device::hash() const {
       if (!hash_.initialized) {
-        std::stringstream ss;
-        ss << "major: " << archMajorVersion << ' '
-           << "minor: " << archMinorVersion;
-        hash_ = occa::hash(ss.str());
+        hash_ = occa::hash(arch);
       }
       return hash_;
     }
@@ -112,12 +106,6 @@ namespace occa {
 
     lang::okl::withLauncher* device::createParser(const occa::json &props) const {
       return new lang::okl::hipParser(props);
-    }
-
-    void device::getDeviceArchVersion(int *archMajorVersion_,
-                                      int *archMinorVersion_) const {
-      if (archMajorVersion_ != nullptr) *archMajorVersion_ = archMajorVersion;
-      if (archMinorVersion_ != nullptr) *archMinorVersion_ = archMinorVersion;
     }
 
     //---[ Stream ]---------------------

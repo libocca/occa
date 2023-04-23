@@ -176,9 +176,11 @@ namespace occa {
     return modeDevice->properties;
   }
 
-  void device::getDeviceArchVersion(int *archMajorVersion, int *archMinorVersion) const {
-    assertInitialized();
-    modeDevice->getDeviceArchVersion(archMajorVersion, archMinorVersion);
+  const std::string& device::arch() const {
+    static const std::string noArch = "No Arch";
+    return (modeDevice
+            ? modeDevice->arch
+            : noArch);
   }
 
   const occa::json& device::kernelProperties() const {

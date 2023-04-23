@@ -47,11 +47,19 @@ namespace occa {
       return ss.str();
     }
 
-    std::string getDeviceArch(
-      const int deviceId,
-      const int majorVersion,
-      const int minorVersion
-    ) {
+    void getDeviceArchVersion(const int deviceId,
+                              int& archMajorVersion,
+                              int& archMinorVersion) {
+      hipDeviceProp_t hipProps;
+
+      OCCA_HIP_ERROR("Getting HIP device properties",
+                     hipGetDeviceProperties(&hipProps, deviceId));
+
+      archMajorVersion = hipProps.major;
+      archMinorVersion = hipProps.minor;
+    }
+
+    std::string getDeviceArch(const int deviceId) {
       hipDeviceProp_t hipProps;
 
       OCCA_HIP_ERROR("Getting HIP device properties",
@@ -65,18 +73,13 @@ namespace occa {
 #endif
       }
 
-      std::string sm = "sm_";
-      sm += toString(
-        majorVersion >= 0
-        ? majorVersion
-        : hipProps.major
-      );
-      sm += toString(
-        minorVersion >= 0
-        ? minorVersion
-        : hipProps.minor
-      );
-      return sm;
+      int archMajorVersion=0, archMinorVersion=0;
+      getDeviceArchVersion(deviceId, archMajorVersion, archMinorVersion);
+
+      std::string arch = "sm_";
+      arch += toString(archMajorVersion);
+      arch += toString(archMinorVersion);
+      return arch;
     }
 
     void enablePeerToPeer(hipCtx_t context) {

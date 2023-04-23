@@ -14,7 +14,10 @@
 namespace occa {
   namespace serial {
     device::device(const occa::json &properties_) :
-      occa::modeDevice_t(properties_) {}
+      occa::modeDevice_t(properties_) {
+      // TODO: Maybe theres something more descriptive we can populate here
+      arch = std::string("CPU");
+    }
 
     bool device::hasSeparateMemorySpace() const {
       return false;
@@ -376,7 +379,7 @@ namespace occa {
           return true;
         }
       );
-      
+
       io::sync(binaryFilename);
 
       modeKernel_t *k = buildKernelFromBinary(binaryFilename,
