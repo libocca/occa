@@ -85,7 +85,8 @@ namespace occa {
         const kernelArgData &arg = arguments[i];
         const udim_t argSize = arg.size();
 
-        offset += offset % std::min(argSize, sizeof(void*)); //align
+        offset += offset % std::min(static_cast<size_t>(argSize),
+                                    sizeof(void*)); //align
 
         const void* val;
         if (!arg.isPointer()) {
