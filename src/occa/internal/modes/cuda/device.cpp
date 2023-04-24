@@ -60,9 +60,6 @@ namespace occa {
       kernelProps["compiler_flags"] = compilerFlags;
 
       getDeviceArchVersion(cuDevice, archMajorVersion, archMinorVersion);
-      archMajorVersion = kernelProps.get("arch/major", archMajorVersion);
-      archMinorVersion = kernelProps.get("arch/minor", archMinorVersion);
-
       arch = getDeviceArch(cuDevice);
     }
 
@@ -246,7 +243,11 @@ namespace occa {
     void device::setArchCompilerFlags(const occa::json &kernelProps,
                                       std::string &compilerFlags) {
       if (compilerFlags.find("-arch=sm_") == std::string::npos) {
-        compilerFlags += " -arch=" + arch;
+        int majorVersion = kernelProps.get("arch/major", archMajorVersion);
+        int minorVersion = kernelProps.get("arch/minor", archMinorVersion);
+        compilerFlags += " -arch=sm_";
+        compilerFlags += std::to_string(majorVersion);
+        compilerFlags += std::to_string(minorVersion);
       }
     }
 
