@@ -78,28 +78,30 @@ namespace occa {
         vArgs.resize(args);
       }
 
-      // HIP expects kernel arguments to be byte-aligned so we add padding to arguments
+      // HIP expects kernel arguments to be aligned
       char *dataPtr = (char*) &(vArgs[0]);
-      int padding = 0;
+      int offset = 0;
       for (int i = 0; i < args; ++i) {
         const kernelArgData &arg = arguments[i];
         const udim_t argSize = arg.size();
 
-        size_t bytes;
-        if ((padding + argSize) <= sizeof(void*)) {
-          bytes = argSize;
-          padding = sizeof(void*) - padding - argSize;
+        offset += offset % std::min(static_cast<size_t>(argSize),
+                                    sizeof(void*)); //align
+
+        const void* val;
+        if (!arg.isPointer()) {
+          val = arg.ptr();
         } else {
-          bytes = sizeof(void*);
-          dataPtr += padding;
-          padding = 0;
+          val = &(arg.value.value.ptr);
         }
 
-        ::memcpy(dataPtr, &arg.value.value.int64_, bytes);
-        dataPtr += bytes;
+        if (val) {
+          ::memcpy(dataPtr+offset, val, argSize);
+        }
+        offset += argSize;
       }
 
-      size_t size = vArgs.size() * sizeof(vArgs[0]);
+      size_t size = offset;
       void* config[] = {
         (void*) HIP_LAUNCH_PARAM_BUFFER_POINTER, &(vArgs[0]),
         (void*) HIP_LAUNCH_PARAM_BUFFER_SIZE, &size,

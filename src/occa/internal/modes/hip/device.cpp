@@ -72,7 +72,9 @@ namespace occa {
       if (startsWith(arch, "sm_")) {
         archFlag = " -arch=" + arch;
       } else if (startsWith(arch, "gfx")) {
-#if HIP_VERSION >= 305
+#if HIP_VERSION >= 502
+        archFlag = " --offload-arch=" + arch;
+#elif HIP_VERSION >= 305
         archFlag = " --amdgpu-target=" + arch;
 #else
         archFlag = " -t " + arch;
@@ -243,10 +245,12 @@ namespace occa {
       );
 
       if (hipccCompilerFlags.find("-arch=sm") == std::string::npos &&
-#if HIP_VERSION >= 305
-          hipccCompilerFlags.find("-t gfx") == std::string::npos
-#else
+#if HIP_VERSION >= 502
+          hipccCompilerFlags.find("--offload-arch=gfx") == std::string::npos
+#elif HIP_VERSION >= 305
           hipccCompilerFlags.find("--amdgpu-target=gfx") == std::string::npos
+#else
+          hipccCompilerFlags.find("-t gfx") == std::string::npos
 #endif
           ) {
         kernelProps["hipcc_compiler_flags"] += " ";
@@ -320,7 +324,7 @@ namespace occa {
       } else if (verbose) {
           io::stdout << "Output:\n\n" << commandOutput << "\n";
       }
-      
+
       io::sync(binaryFilename);
     }
 
