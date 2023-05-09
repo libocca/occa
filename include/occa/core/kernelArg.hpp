@@ -88,6 +88,11 @@ namespace occa {
       addPointer((void*) const_cast<type4<T>*>(&arg), sizeof(type4<T>));
     }
 
+    template <class T>
+    kernelArg(const T &arg) {
+      addPointer((void*) const_cast<T*>(&arg), sizeof(T));
+    }
+
     int size() const;
 
     device getDevice() const;
@@ -103,6 +108,15 @@ namespace occa {
 
     static int argumentCount(const std::vector<kernelArg> &arguments);
   };
+
+  template <>
+  kernelArg::kernelArg(const char &arg);
+
+  template <>
+  kernelArg::kernelArg(const unsigned char &arg);
+
+  template <>
+  kernelArg::kernelArg(const memory &arg);
 
   template <>
   kernelArg::kernelArg(modeMemory_t *arg);
@@ -181,6 +195,9 @@ namespace occa {
   template <>
   hash_t hash(const occa::scopeKernelArg &arg);
   //====================================
+
+  template <>
+  kernelArg::kernelArg(const scopeKernelArg &arg);
 }
 
 #endif

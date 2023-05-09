@@ -1,16 +1,20 @@
+typedef struct {
+  double x, y;
+} mystruct;
+
 @kernel void argKernel(void *nullPtr,
                        int *mem,
                        char i8,
-                       char u8,
+                       unsigned char u8,
                        short i16,
-                       short u16,
+                       unsigned short u16,
                        int i32,
-                       int u32,
+                       unsigned int u32,
                        long i64,
-                       long u64,
+                       unsigned long u64,
                        float f,
                        double d,
-                       int *xy,
+                       mystruct xy,
                        const char *str) {
   for (int i = 0; i < 1; ++i; @tile(1, @outer, @inner)) {
     // Note: NULL is not 0 because some backends don't handle NULL arguments properly
@@ -27,7 +31,7 @@
       "u64: %d\n"
       "f: %f\n"
       "d: %f\n"
-      "xy: [%d, %d]\n"
+      "xy: [%f, %f]\n"
       "str: %s\n",
       nullPtr,
       (int) mem[0],
@@ -41,7 +45,7 @@
       (int) u64,
       f,
       d,
-      xy[0], xy[1],
+      xy.x, xy.y,
       str
     );
     if (i8 != 3) {
