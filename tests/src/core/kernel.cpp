@@ -162,7 +162,13 @@ void testRun() {
   int value = 1;
   occa::memory mem = occa::malloc<int>(1, &value);
 
-  int xy[2] = {13, 14};
+  struct {
+    double x;
+    double y;
+  } xy;
+  xy.x = 13.0;
+  xy.y = 14.0;
+
   std::string str = "fifteen";
 
   argKernel(

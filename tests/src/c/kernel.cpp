@@ -110,7 +110,12 @@ void testRun() {
   occaMemory mem = occaMalloc(1 * sizeof(int), &value, occaDefault);
   value = 2;
 
-  int xy[2] = {13, 14};
+  struct {
+    double x,y;
+  } xy;
+  xy.x = 13.0;
+  xy.y = 14.0;
+
   std::string str = "fifteen";
 
   // Good argument types
@@ -128,7 +133,7 @@ void testRun() {
     occaUInt64(10),
     occaFloat(11.0),
     occaDouble(12.0),
-    occaStruct(xy, sizeof(xy)),
+    occaStruct(&xy, sizeof(xy)),
     occaString(str.c_str())
   );
 
@@ -146,7 +151,7 @@ void testRun() {
   occaKernelPushArg(argKernel, occaUInt64(10));
   occaKernelPushArg(argKernel, occaFloat(11.0));
   occaKernelPushArg(argKernel, occaDouble(12.0));
-  occaKernelPushArg(argKernel, occaStruct(xy, sizeof(xy)));
+  occaKernelPushArg(argKernel, occaStruct(&xy, sizeof(xy)));
   occaKernelPushArg(argKernel, occaString(str.c_str()));
   occaKernelRunFromArgs(argKernel);
 
@@ -164,7 +169,7 @@ void testRun() {
     occaUInt64(10),
     occaFloat(11.0),
     occaDouble(12.0),
-    occaStruct(xy, sizeof(xy)),
+    occaStruct(&xy, sizeof(xy)),
     occaString(str.c_str())
   };
 
