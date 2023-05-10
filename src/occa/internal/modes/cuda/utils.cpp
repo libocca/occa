@@ -52,6 +52,35 @@ namespace occa {
       return ss.str();
     }
 
+    void getDeviceArchVersion(CUdevice device,
+                              int& archMajorVersion,
+                              int& archMinorVersion) {
+#if CUDA_VERSION < 5000
+      OCCA_CUDA_ERROR("Device: Getting CUDA device arch",
+                      cuDeviceComputeCapability(&archMajorVersion,
+                                                &archMinorVersion,
+                                                device));
+#else
+      OCCA_CUDA_ERROR("Device: Getting CUDA device major version",
+                      cuDeviceGetAttribute(&archMajorVersion,
+                                           CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR,
+                                           device));
+      OCCA_CUDA_ERROR("Device: Getting CUDA device minor version",
+                      cuDeviceGetAttribute(&archMinorVersion,
+                                           CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR,
+                                           device));
+#endif
+    }
+
+    std::string getDeviceArch(CUdevice device) {
+      int archMajorVersion=0, archMinorVersion=0;
+      getDeviceArchVersion(device, archMajorVersion, archMinorVersion);
+      std::string arch = std::string("sm_");
+      arch += std::to_string(archMajorVersion);
+      arch += std::to_string(archMinorVersion);
+      return arch;
+    }
+
     void enablePeerToPeer(CUcontext context) {
 #if CUDA_VERSION >= 4000
       OCCA_CUDA_ERROR("Enabling Peer-to-Peer",

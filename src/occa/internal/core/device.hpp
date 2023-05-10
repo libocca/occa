@@ -10,6 +10,7 @@ namespace occa {
   class modeDevice_t {
    public:
     std::string mode;
+    std::string arch;
     occa::json properties;
     bool needsLauncherKernel;
 
@@ -69,9 +70,6 @@ namespace occa {
     hash_t versionedHash() const;
     virtual hash_t hash() const = 0;
     virtual hash_t kernelHash(const occa::json &props) const = 0;
-
-    virtual void getDeviceArchVersion(int *archMajorVersion,
-                                      int *archMinorVersion) const;
 
     //  |---[ Stream ]------------------
     virtual modeStream_t* createStream(const occa::json &props) = 0;

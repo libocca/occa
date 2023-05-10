@@ -56,6 +56,8 @@ namespace occa {
       compilerFlags += " -cl-std=CL" + ocl_c_ver;
 
       kernelProps["compiler_flags"] = compilerFlags;
+
+      arch = deviceName(platformID, deviceID);
     }
 
     device::~device() {

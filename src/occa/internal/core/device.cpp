@@ -142,12 +142,4 @@ namespace occa {
       cachedKernels.erase(it);
     }
   }
-
-  void modeDevice_t::getDeviceArchVersion(int *archMajorVersion,
-                                          int *archMinorVersion) const {
-    if (archMajorVersion != nullptr) *archMajorVersion = 0;
-    if (archMinorVersion != nullptr) *archMinorVersion = 0;
-    std::cout << "getDeviceArchVersion called with device mode = " <<
-          mode << ", but the functionality is not supported.\n";
-  }
 }

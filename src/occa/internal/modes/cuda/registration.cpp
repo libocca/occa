@@ -25,6 +25,7 @@ namespace occa {
         for (int deviceId = 0; deviceId < deviceCount; ++deviceId) {
           const udim_t bytes         = getDeviceMemorySize(getDevice(deviceId));
           const std::string bytesStr = stringifyBytes(bytes);
+          const std::string arch     = getDeviceArch(getDevice(deviceId));
 
           OCCA_CUDA_ERROR("Getting Device Name",
                           cuDeviceGetName(deviceName, 1024, deviceId));
@@ -32,6 +33,7 @@ namespace occa {
           section
             .add("Device Name", deviceName)
             .add("Device ID"  , toString(deviceId))
+            .add("Arch"       , arch)
             .add("Memory"     , bytesStr)
             .addDivider();
         }

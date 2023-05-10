@@ -59,24 +59,8 @@ namespace occa {
       kernelProps["compiler"] = compiler;
       kernelProps["compiler_flags"] = compilerFlags;
 
-#if CUDA_VERSION < 5000
-      OCCA_CUDA_ERROR("Device: Getting CUDA device arch",
-                      cuDeviceComputeCapability(&archMajorVersion,
-                                                &archMinorVersion,
-                                                cuDevice));
-#else
-      OCCA_CUDA_ERROR("Device: Getting CUDA device major version",
-                      cuDeviceGetAttribute(&archMajorVersion,
-                                           CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR,
-                                           cuDevice));
-      OCCA_CUDA_ERROR("Device: Getting CUDA device minor version",
-                      cuDeviceGetAttribute(&archMinorVersion,
-                                           CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR,
-                                           cuDevice));
-#endif
-
-      archMajorVersion = kernelProps.get("arch/major", archMajorVersion);
-      archMinorVersion = kernelProps.get("arch/minor", archMinorVersion);
+      getDeviceArchVersion(cuDevice, archMajorVersion, archMinorVersion);
+      arch = getDeviceArch(cuDevice);
     }
 
     device::~device() {
@@ -126,12 +110,6 @@ namespace occa {
     void device::setCudaContext() {
       OCCA_CUDA_ERROR("Device: Setting Context",
                       cuCtxSetCurrent(cuContext));
-    }
-
-    void device::getDeviceArchVersion(int *archMajorVersion_,
-                                      int *archMinorVersion_) const {
-      if (archMajorVersion_ != nullptr) *archMajorVersion_ = archMajorVersion;
-      if (archMinorVersion_ != nullptr) *archMinorVersion_ = archMinorVersion;
     }
 
     //---[ Stream ]---------------------
@@ -265,9 +243,11 @@ namespace occa {
     void device::setArchCompilerFlags(const occa::json &kernelProps,
                                       std::string &compilerFlags) {
       if (compilerFlags.find("-arch=sm_") == std::string::npos) {
+        int majorVersion = kernelProps.get("arch/major", archMajorVersion);
+        int minorVersion = kernelProps.get("arch/minor", archMinorVersion);
         compilerFlags += " -arch=sm_";
-        compilerFlags += std::to_string(archMajorVersion);
-        compilerFlags += std::to_string(archMinorVersion);
+        compilerFlags += std::to_string(majorVersion);
+        compilerFlags += std::to_string(minorVersion);
       }
     }
 
@@ -329,7 +309,7 @@ namespace occa {
       } else if (verbose) {
           io::stdout << "Output:\n\n" << commandOutput << "\n";
       }
-      
+
       io::sync(binaryFilename);
     }
 

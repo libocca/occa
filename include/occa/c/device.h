@@ -15,6 +15,8 @@ const char* occaDeviceMode(occaDevice device);
 
 occaJson occaDeviceGetProperties(occaDevice device);
 
+const char* occaDeviceArch(occaDevice device);
+
 occaJson occaDeviceGetKernelProperties(occaDevice device);
 
 occaJson occaDeviceGetMemoryProperties(occaDevice device);
