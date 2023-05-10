@@ -49,6 +49,8 @@ namespace occa
 
       occa::json &kernelProps = properties["kernel"];
       setCompilerLinkerOptions(kernelProps);
+
+      arch = dpcppDevice.get_info<::sycl::info::device::name>();
     }
 
     hash_t device::hash() const
@@ -57,7 +59,7 @@ namespace occa
       {
         std::stringstream ss;
         auto p = dpcppDevice.get_platform();
-        ss << "platform name: " << p.get_info<::sycl::info::platform::name>() 
+        ss << "platform name: " << p.get_info<::sycl::info::platform::name>()
           << " platform vendor: " << p.get_info<::sycl::info::platform::vendor>()
           << " platform version: " << p.get_info<::sycl::info::platform::version>()
           << " device name: " << dpcppDevice.get_info<::sycl::info::device::name>()
@@ -82,8 +84,8 @@ namespace occa
     //---[ Stream ]---------------------
     modeStream_t *device::createStream(const occa::json &props)
     {
-      ::sycl::queue q(dpcppContext, 
-                      dpcppDevice, 
+      ::sycl::queue q(dpcppContext,
+                      dpcppDevice,
                       {::sycl::property::queue::enable_profiling{},
                       ::sycl::property::queue::in_order{}
                       });
@@ -96,7 +98,7 @@ namespace occa
       return new stream(this, props, q);
     }
 
-    // Uses a oneAPI extension to enqueue a barrier. 
+    // Uses a oneAPI extension to enqueue a barrier.
     // When ombined with in-order queues, this provides
     // the execution required for `streamTag`s.
     occa::streamTag device::tagStream()
@@ -123,7 +125,7 @@ namespace occa
       return (dpcppEndTag.endTime() - dpcppStartTag.endTime());
     }
 
-    
+
     //==================================
 
     //---[ Kernel ]---------------------
@@ -237,7 +239,7 @@ namespace occa
       } else if (verbose) {
         io::stdout << "Output:\n\n" << commandOutput << "\n";
       }
-      
+
       io::sync(binaryFilename);
     }
 
@@ -280,7 +282,7 @@ namespace occa
         arguments.erase(arguments.begin());
 
         occa::functionPtr_t kernel_function = sys::dlsym(dl_handle, metadata.name);
-       
+
         kernel *dpcppKernel = new dpcpp::kernel(this,
                                metadata.name,
                                sourceFilename,

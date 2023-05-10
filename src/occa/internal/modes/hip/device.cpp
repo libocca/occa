@@ -22,7 +22,6 @@ namespace occa {
     device::device(const occa::json &properties_) :
       occa::launchedModeDevice_t(properties_) {
 
-      hipDeviceProp_t hipProps;
       if (!properties.has("wrapped")) {
         OCCA_ERROR("[HIP] device not given a [device_id] integer",
                    properties.has("device_id") &&
@@ -35,9 +34,6 @@ namespace occa {
 
         OCCA_HIP_ERROR("Device: Setting Device",
                        hipSetDevice(deviceID));
-
-        OCCA_HIP_ERROR("Getting device properties",
-                       hipGetDeviceProperties(&hipProps, deviceID));
       }
 
       p2pEnabled = false;
@@ -64,26 +60,7 @@ namespace occa {
       kernelProps["compiler"]       = compiler;
       kernelProps["compiler_flags"] = compilerFlags;
 
-      archMajorVersion = kernelProps.get<int>("arch/major", hipProps.major);
-      archMinorVersion = kernelProps.get<int>("arch/minor", hipProps.minor);
-
-      std::string arch = getDeviceArch(deviceID, archMajorVersion, archMinorVersion);
-      std::string archFlag;
-      if (startsWith(arch, "sm_")) {
-        archFlag = " -arch=" + arch;
-      } else if (startsWith(arch, "gfx")) {
-#if HIP_VERSION >= 502
-        archFlag = " --offload-arch=" + arch;
-#elif HIP_VERSION >= 305
-        archFlag = " --amdgpu-target=" + arch;
-#else
-        archFlag = " -t " + arch;
-#endif
-      } else {
-        OCCA_FORCE_ERROR("Unknown HIP arch");
-      }
-
-      kernelProps["compiler_flag_arch"] = archFlag;
+      arch = getDeviceArch(deviceID);
     }
 
     device::~device() { }
@@ -94,10 +71,7 @@ namespace occa {
 
     hash_t device::hash() const {
       if (!hash_.initialized) {
-        std::stringstream ss;
-        ss << "major: " << archMajorVersion << ' '
-           << "minor: " << archMinorVersion;
-        hash_ = occa::hash(ss.str());
+        hash_ = occa::hash(arch);
       }
       return hash_;
     }
@@ -112,12 +86,6 @@ namespace occa {
 
     lang::okl::withLauncher* device::createParser(const occa::json &props) const {
       return new lang::okl::hipParser(props);
-    }
-
-    void device::getDeviceArchVersion(int *archMajorVersion_,
-                                      int *archMinorVersion_) const {
-      if (archMajorVersion_ != nullptr) *archMajorVersion_ = archMajorVersion;
-      if (archMinorVersion_ != nullptr) *archMinorVersion_ = archMinorVersion;
     }
 
     //---[ Stream ]---------------------
@@ -253,8 +221,24 @@ namespace occa {
           hipccCompilerFlags.find("-t gfx") == std::string::npos
 #endif
           ) {
-        kernelProps["hipcc_compiler_flags"] += " ";
-        kernelProps["hipcc_compiler_flags"] += kernelProps["compiler_flag_arch"];
+
+        std::string archString = kernelProps.get<std::string>("arch", arch);
+
+        std::string archFlag;
+        if (startsWith(archString, "sm_")) {
+          archFlag = " -arch=" + archString;
+        } else if (startsWith(archString, "gfx")) {
+#if HIP_VERSION >= 502
+          archFlag = " --offload-arch=" + archString;
+#elif HIP_VERSION >= 305
+          archFlag = " --amdgpu-target=" + archString;
+#else
+          archFlag = " -t " + archString;
+#endif
+        } else {
+          OCCA_FORCE_ERROR("Unknown HIP arch");
+        }
+        kernelProps["hipcc_compiler_flags"] += archFlag;
       }
     }
 

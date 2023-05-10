@@ -36,6 +36,8 @@ namespace occa {
 
       metalDevice = api::metal::getDevice(deviceID);
       metalCommandQueue = metalDevice.createCommandQueue();
+
+      arch = metalDevice.getName();
     }
 
     device::~device() {

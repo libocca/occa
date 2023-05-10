@@ -33,9 +33,6 @@ namespace occa {
 
       lang::okl::withLauncher* createParser(const occa::json &props) const override;
 
-      void getDeviceArchVersion(int *archMajorVersion_,
-                                int *archMinorVersion_) const override;
-
       //---[ Stream ]-------------------
       modeStream_t* createStream(const occa::json &props) override;
       modeStream_t* wrapStream(void* ptr, const occa::json &props) override;

@@ -20,6 +20,12 @@ namespace occa {
 
     std::string getVersion();
 
+    void getDeviceArchVersion(CUdevice device,
+                              int& archMajorVersion,
+                              int& archMinorVersion);
+
+    std::string getDeviceArch(CUdevice device);
+
     void enablePeerToPeer(CUcontext context);
     void checkPeerToPeer(CUdevice destDevice,
                          CUdevice srcDevice);

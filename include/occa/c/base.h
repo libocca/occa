@@ -25,10 +25,6 @@ occaJson occaDeviceProperties();
 
 void occaFinish();
 
-void occaGetDeviceArchVersion(occaDevice device,
-                              int *archMajorVersion,
-                              int *archMinorVersion);
-
 occaStream occaCreateStream(occaJson props);
 
 occaStream occaGetStream();
