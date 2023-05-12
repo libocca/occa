@@ -282,7 +282,7 @@ include(ExportAndPackageConfig)
 
 install(CODE
   "configure_file(
-    ${CMAKE_SOURCE_DIR}/modulefiles/occa
+    ${OCCA_SOURCE_DIR}/modulefiles/occa
     ${CMAKE_INSTALL_PREFIX}/modulefiles/occa
     @ONLY
   )"
