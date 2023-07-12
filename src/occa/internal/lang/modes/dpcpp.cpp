@@ -20,6 +20,7 @@ namespace occa
             shared("auto", qualifierType::custom)
       {
         okl::addOklAttributes(*this);
+        simd_length = settings.get("simd_length",-1);
       }
 
       void dpcppParser::onClear()

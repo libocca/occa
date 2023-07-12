@@ -49,6 +49,8 @@ namespace occa
         static bool transformAtomicBasicExpressionStatement(expressionStatement &exprSmnt);
 
       private:
+        int simd_length;
+
         inline int dpcppDimensionOrder(const int index) { return 2 - index; }
       };
     } // namespace okl
