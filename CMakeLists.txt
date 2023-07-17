@@ -41,6 +41,14 @@ if(ENABLE_FORTRAN)
   enable_language(Fortran)
 endif()
 
+option(ENABLE_SHARABLE_DEVICE  "Enable sharable device by multiple threads"  OFF)
+if (ENABLE_SHARABLE_DEVICE)
+  add_compile_definitions(OCCA_THREAD_SHARABLE_ENABLED=1)
+  message("-- OCCA sharable by multi-threads     : Enabled")
+else()
+  add_compile_definitions(OCCA_THREAD_SHARABLE_ENABLED=0)
+endif()
+
 set(OCCA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(OCCA_BUILD_DIR  ${CMAKE_BINARY_DIR})
 

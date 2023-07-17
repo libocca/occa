@@ -6,12 +6,25 @@
 #include <occa/internal/utils/env.hpp>
 #include <occa/internal/utils/sys.hpp>
 
+#if OCCA_THREAD_SHARABLE_ENABLED
+#include <occa/utils/mutex.hpp>
+#endif
+
 namespace occa {
   json& settings() {
+#if OCCA_THREAD_SHARABLE_ENABLED
+    static json props;
+    static mutex_t mutex;
+    mutex.lock();
+#else
     thread_local  json props;
+#endif
     if (!props.size()) {
       props = env::baseSettings();
     }
+#if OCCA_THREAD_SHARABLE_ENABLED
+    mutex.unlock();
+#endif
     return std::ref(props);
   }
 
