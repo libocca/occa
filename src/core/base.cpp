@@ -6,11 +6,18 @@
 #include <occa/internal/modes.hpp>
 #include <occa/internal/utils/env.hpp>
 #include <occa/internal/utils/sys.hpp>
+#if ENABLE_THREAD_SHARABLE_OCCA
+#include <occa/utils/mutex.hpp>
+#endif
 
 namespace occa {
   //---[ Device Functions ]-------------
   device host() {
+#if ENABLE_THREAD_SHARABLE_OCCA
+    static device dev;
+#else
     thread_local device dev;
+#endif
     if (!dev.isInitialized()) {
       dev = occa::device({
         {"mode", "Serial"}
@@ -21,10 +28,20 @@ namespace occa {
   }
 
   device& getDevice() {
+#if ENABLE_THREAD_SHARABLE_OCCA
+    static device dev;
+    static mutex_t mutex;
+    mutex.lock();
+    if (!dev.isInitialized()) {
+      dev = host();
+    }
+    mutex.unlock();
+#else
     thread_local device dev;
     if (!dev.isInitialized()) {
       dev = host();
     }
+#endif
     return std::ref(dev);
   }
 

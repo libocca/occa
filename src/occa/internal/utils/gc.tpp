@@ -2,6 +2,10 @@
 
 namespace occa {
   namespace gc {
+   #if OCCA_THREAD_SHARABLE_ENABLED
+    template <class entry_t>
+    mutex_t ring_t<entry_t>::mutex;
+   #endif
     template <class entry_t>
     ring_t<entry_t>::ring_t() :
       useRefs(true),
@@ -20,12 +24,21 @@ namespace occa {
 
     template <class entry_t>
     void ring_t<entry_t>::addRef(entry_t *entry) {
+     #if OCCA_THREAD_SHARABLE_ENABLED
+      mutex.lock();
+     #endif
       if (!entry || head == entry) {
+       #if OCCA_THREAD_SHARABLE_ENABLED
+        mutex.unlock();
+       #endif
         return;
       }
       entry->removeRef();
       if (!head) {
         head = entry;
+       #if OCCA_THREAD_SHARABLE_ENABLED
+        mutex.unlock();
+       #endif
         return;
       }
       ringEntry_t *tail = head->leftRingEntry;
@@ -33,8 +46,33 @@ namespace occa {
       tail->rightRingEntry  = entry;
       head->leftRingEntry   = entry;
       entry->rightRingEntry = head;
+     #if OCCA_THREAD_SHARABLE_ENABLED
+      mutex.unlock();
+     #endif
     }
 
+   #if OCCA_THREAD_SHARABLE_ENABLED
+    template <class entry_t>
+    void ring_t<entry_t>::removeRef(entry_t *entry, const bool threadLock) {
+      if (threadLock)
+        mutex.lock();
+      // Check if the ring is empty
+      if (!entry || !head) {
+        mutex.unlock();
+        return;
+      }
+      ringEntry_t *tail = head->leftRingEntry;
+      // Remove the entry ref from its ring
+      entry->removeRef();
+      if (head == entry) {
+        // Change the head to the tail if entry happened to be the old head
+        head = ((tail != entry)
+                ? tail
+                : NULL);
+      }
+      mutex.unlock();
+    }
+   #else
     template <class entry_t>
     void ring_t<entry_t>::removeRef(entry_t *entry) {
       // Check if the ring is empty
@@ -51,7 +89,7 @@ namespace occa {
                 : NULL);
       }
     }
-
+   #endif
     template <class entry_t>
     bool ring_t<entry_t>::needsFree() const {
       // Object has no more references, safe to free now
@@ -102,10 +140,13 @@ namespace occa {
       if (!entry) {
         return;
       }
+     #if OCCA_THREAD_SHARABLE_ENABLED
+      ring_t<entry_t>::mutex.lock();
+     #endif
       typename entryRingMap_t::iterator it = rings.find(entry);
       if (it != rings.end()) {
         ring_t<entry_t> &ring = it->second;
-        ring.removeRef(entry);
+        ring.removeRef(entry, false);
         rings.erase(it);
         // Change key if head changed
         if (ring.head &&
@@ -116,6 +157,9 @@ namespace occa {
       } else {
         entry->removeRef();
       }
+     #if OCCA_THREAD_SHARABLE_ENABLED
+      ring_t<entry_t>::mutex.unlock();
+     #endif
     }
 
     template <class entry_t>
