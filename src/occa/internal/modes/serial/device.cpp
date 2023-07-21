@@ -39,6 +39,8 @@ namespace occa {
         ^ props["compiler_language"]
         ^ props["compiler_linker_flags"]
         ^ props["compiler_shared_flags"]
+        ^ props["include_occa"]
+        ^ props["link_occa"]
       );
     }
 
@@ -318,6 +320,9 @@ namespace occa {
         sys::addCompilerLibraryFlags(compilerFlags);
       }
 
+      const bool includeOcca = kernelProps.get("kernel/include_occa", isLauncherKernel);
+      const bool linkOcca    = kernelProps.get("kernel/link_occa", isLauncherKernel);
+
       io::stageFile(
         binaryFilename,
         true,
@@ -326,11 +331,15 @@ namespace occa {
           command << compiler
                   << ' '    << compilerFlags
                   << ' '    << sourceFilename
-                  << " -o " << tempFilename
-                  << " -I"  << env::OCCA_DIR << "include"
-                  << " -I"  << env::OCCA_INSTALL_DIR << "include"
-                  << " -L"  << env::OCCA_INSTALL_DIR << "lib -locca"
-                  << ' '    << compilerLinkerFlags
+                  << " -o " << tempFilename;
+          if (includeOcca) {
+            command << " -I"  << env::OCCA_DIR << "include"
+                    << " -I"  << env::OCCA_INSTALL_DIR << "include";
+          }
+          if (linkOcca) {
+            command << " -L"  << env::OCCA_INSTALL_DIR << "lib -locca";
+          }
+          command << ' '    << compilerLinkerFlags
                   << " 2>&1"
                   << std::endl;
 #else
@@ -339,12 +348,16 @@ namespace occa {
                   << " /D OCCA_OS=OCCA_WINDOWS_OS"
                   << " /EHsc"
                   << " /wd4244 /wd4800 /wd4804 /wd4018"
-                  << ' '       << compilerFlags
-                  << " /I"     << env::OCCA_DIR << "include"
-                  << " /I"     << env::OCCA_INSTALL_DIR << "include"
-                  << ' '       << sourceFilename
-                  << " /link " << env::OCCA_INSTALL_DIR << "lib/libocca.lib",
-                  << ' '       << compilerLinkerFlags
+                  << ' '       << compilerFlags;
+          if (includeOcca) {
+            command << " /I"     << env::OCCA_DIR << "include"
+                    << " /I"     << env::OCCA_INSTALL_DIR << "include";
+          }
+          command << ' '       << sourceFilename;
+          if (linkOcca) {
+            command << " /link " << env::OCCA_INSTALL_DIR << "lib/libocca.lib";
+          }
+          command << ' '       << compilerLinkerFlags
                   << " /OUT:"  << tempFilename
                   << std::endl;
 #endif

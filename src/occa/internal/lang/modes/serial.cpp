@@ -34,8 +34,11 @@ namespace occa {
 
       void serialParser::setupHeaders() {
         strVector headers;
-        const bool includingStd = settings.get("serial/include_std", true);
-        headers.push_back("include <occa.hpp>\n");
+        const bool includeOcca = settings.get("kernel/include_occa", false);
+        if (includeOcca) {
+          headers.push_back("include <occa.hpp>\n");
+        }
+        const bool includingStd = settings.get("serial/include_std", false);
         if (includingStd) {
           headers.push_back("include <stdint.h>");
           headers.push_back("include <cstdlib>");
@@ -51,7 +54,9 @@ namespace occa {
             if (includingStd) {
               header += "\nusing namespace std;";
             }
-            header += "\nusing namespace occa;";
+            if (includeOcca) {
+              header += "\nusing namespace occa;";
+            }
           }
           directiveToken token(root.source->origin,
                                header);

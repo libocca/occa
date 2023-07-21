@@ -154,7 +154,8 @@ void testRun() {
   );
   occa::kernel argKernel = occa::buildKernel(argKernelFile,
                                              "argKernel",
-                                             {{"type_validation", false}});
+                                             {{"type_validation", false},
+                                              {"serial/include_std", true}});
 
   argKernel.setRunDims(occa::dim(1, 1, 1),
                        occa::dim(1, 1, 1));

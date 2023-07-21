@@ -34,6 +34,8 @@ namespace occa {
       loopScope.device = device;
     }
 
+    loopScope.props["kernel/include_occa"] = true;
+
     const int outerIterationCount = (int) outerIterations.size();
     const int innerIterationCount = (int) innerIterations.size();
 
