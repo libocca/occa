@@ -55,6 +55,17 @@ namespace occa {
       }
       compilerFlags += " -cl-std=CL" + ocl_c_ver;
 
+      const bool includeOcca = kernelProps.get("kernel/include_occa", false);
+      const bool linkOcca    = kernelProps.get("kernel/link_occa", false);
+
+      if (includeOcca) {
+        compilerFlags += " -I" + env::OCCA_DIR + "include";
+        compilerFlags += " -I" + env::OCCA_INSTALL_DIR + "include";
+      }
+      if (linkOcca) {
+        compilerFlags += " -L" + env::OCCA_INSTALL_DIR + "lib -locca";
+      }
+
       kernelProps["compiler_flags"] = compilerFlags;
 
       arch = deviceName(platformID, deviceID);
@@ -87,7 +98,11 @@ namespace occa {
     }
 
     hash_t device::kernelHash(const occa::json &props) const {
-      return occa::hash(props["compiler_flags"]);
+      return (
+        occa::hash(props["compiler_flags"])
+        ^ props["kernel/include_occa"]
+        ^ props["kernel/link_occa"]
+      );
     }
 
     lang::okl::withLauncher* device::createParser(const occa::json &props) const {

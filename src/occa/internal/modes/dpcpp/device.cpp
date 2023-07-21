@@ -73,7 +73,11 @@ namespace occa
     hash_t device::kernelHash(const occa::json &props) const
     {
       return (
-          occa::hash(props["compiler"]) ^ props["compiler_flags"]);
+          occa::hash(props["compiler"])
+          ^ props["compiler_flags"]
+          ^ props["kernel/include_occa"]
+          ^ props["kernel/link_occa"]
+      );
     }
 
     lang::okl::withLauncher *device::createParser(const occa::json &props) const
@@ -197,6 +201,16 @@ namespace occa
       {
         sys::addCompilerIncludeFlags(compilerFlags);
         sys::addCompilerLibraryFlags(compilerFlags);
+      }
+
+      const bool includeOcca = kernelProps.get("kernel/include_occa", false);
+      const bool linkOcca    = kernelProps.get("kernel/link_occa", false);
+      if (includeOcca) {
+        compilerFlags += " -I" + env::OCCA_DIR + "include";
+        compilerFlags += " -I" + env::OCCA_INSTALL_DIR + "include";
+      }
+      if (linkOcca) {
+        compilerLinkerFlags += " -L" + env::OCCA_INSTALL_DIR + "lib -locca";
       }
 
       std::stringstream command;

@@ -29,30 +29,33 @@ std::string kernel_back_half =
 
 void testUnaryFunctions(const occa::device& d) {
   for (auto&& int_type : arg_types) {
-    const std::string arg_decl = 
+    const std::string arg_decl =
       "        " + int_type + " " + unary_args + "; \n";
     for (auto&& func : unary_functions) {
-      const std::string function_call = 
+      const std::string function_call =
         "        " + int_type + " w = " + func + "(" + unary_args + "); \n";
-      const std::string kernel_src = 
+      const std::string kernel_src =
         kernel_front_half + arg_decl + function_call +kernel_back_half;
 
-      occa::kernel k = d.buildKernelFromString(kernel_src,"f");
+      occa::kernel k = d.buildKernelFromString(kernel_src, "f",
+                                               {{"serial/include_std", true}});
     }
   }
 }
 
 void testBinaryFunctions(const occa::device& d) {
   for (auto&& int_type : arg_types) {
-    const std::string arg_decl = 
+    const std::string arg_decl =
       "        " + int_type + " " + binary_args + "; \n";
     for (auto&& func : binary_functions) {
-      const std::string function_call = 
+      const std::string function_call =
         "        " + int_type + " w = " + func + "(" + binary_args + "); \n";
-      const std::string kernel_src = 
+      const std::string kernel_src =
         kernel_front_half + arg_decl + function_call +kernel_back_half;
 
-      occa::kernel k = d.buildKernelFromString(kernel_src,"f");
+      occa::kernel k = d.buildKernelFromString(kernel_src, "f",
+                                               {{"serial/include_std", true},
+                                                {"kernel/include_occa", true}}); // For min/max
     }
   }
 }
