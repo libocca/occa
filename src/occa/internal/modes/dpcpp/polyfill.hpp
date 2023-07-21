@@ -6,6 +6,7 @@
 #if OCCA_DPCPP_ENABLED
 #include <sycl.hpp>
 #else
+#include <cstdint>
 #include <vector>
 namespace sycl {
 
