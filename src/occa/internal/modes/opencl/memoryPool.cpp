@@ -34,7 +34,7 @@ namespace occa {
       } else {
         cl_buffer_region info;
         info.origin = offset;
-        info.size   = size;
+        info.size   = m->size;
 
         cl_int error;
         m->clMem = clCreateSubBuffer(b->clMem,
