@@ -17,39 +17,13 @@ namespace occa
 {
   namespace dpcpp
   {
-    device::device(const occa::json &properties_)
-        : occa::launchedModeDevice_t(properties_)
+    device::device(const occa::json &properties_, 
+                   const ::sycl::context& context_,
+                   const ::sycl::device& device_)
+        : occa::launchedModeDevice_t(properties_), dpcppContext(context_), dpcppDevice(device_)
     {
-      if (!properties.has("wrapped"))
-      {
-        OCCA_ERROR(
-            "[dpcpp] device not given a [platform_id] integer",
-            properties.has("platform_id") && properties["platform_id"].isNumber());
-
-        OCCA_ERROR(
-            "[dpcpp] device not given a [device_id] integer",
-            properties.has("device_id") && properties["device_id"].isNumber());
-
-        platformID = properties.get<int>("platform_id");
-        deviceID = properties.get<int>("device_id");
-
-        auto platforms{::sycl::platform::get_platforms()};
-        OCCA_ERROR(
-            "Invalid platform number (" + toString(platformID) + ")",
-            (static_cast<size_t>(platformID) < platforms.size()));
-
-        auto devices{platforms[platformID].get_devices()};
-        OCCA_ERROR(
-            "Invalid device number (" + toString(deviceID) + ")",
-            (static_cast<size_t>(deviceID) < devices.size()));
-
-        dpcppDevice = devices[deviceID];
-        dpcppContext = ::sycl::context(devices[deviceID]);
-      }
-
       occa::json &kernelProps = properties["kernel"];
       setCompilerLinkerOptions(kernelProps);
-
       arch = dpcppDevice.get_info<::sycl::info::device::name>();
     }
 
