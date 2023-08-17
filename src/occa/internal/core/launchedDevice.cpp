@@ -91,7 +91,7 @@ namespace occa {
                                                   const bool usingOkl,
                                                   const occa::json &kernelProps) {
     const std::string hashDir = io::hashDir(filename, kernelHash);
-    std::string sourceFilename = hashDir + kc::sourceFile;
+    std::string sourceFilename = hashDir + kc::cachedSourceFilename(filename);
     const std::string binaryFilename = hashDir + kc::binaryFile;
 
     // Check if binary exists and is finished
@@ -140,12 +140,12 @@ namespace occa {
       // Cache raw origin
       sourceFilename = (
         io::cacheFile(filename,
-                      kc::cppRawSourceFile,
+                      kc::cachedRawSourceFilename(filename),
                       kernelHash,
                       assembleKernelHeader(kernelProps))
       );
 
-      const std::string outputFile = hashDir + kc::sourceFile;
+      const std::string outputFile = hashDir + kc::cachedSourceFilename(filename);
       const std::string launcherOutputFile = hashDir + kc::launcherSourceFile;
       bool valid = parseFile(sourceFilename,
                              outputFile,
@@ -180,7 +180,7 @@ namespace occa {
       // Cache in sourceFile to directly compile file
       sourceFilename = (
         io::cacheFile(filename,
-                      kc::sourceFile,
+                      kc::cachedSourceFilename(filename),
                       kernelHash,
                       assembleKernelHeader(kernelProps))
       );
