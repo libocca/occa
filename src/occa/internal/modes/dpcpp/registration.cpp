@@ -82,7 +82,30 @@ namespace occa {
     }
 
     modeDevice_t* dpcppMode::newDevice(const occa::json &props) {
-      return new occa::dpcpp::device(setModeProp(props));
+      // Refactor this into a helper function.
+      OCCA_ERROR(
+          "[dpcpp] device not given a [platform_id] integer",
+          props.has("platform_id") && props["platform_id"].isNumber());
+      int platformID = props.get<int>("platform_id");
+      
+      auto platforms{::sycl::platform::get_platforms()};
+      OCCA_ERROR(
+          "Invalid platform number (" + toString(platformID) + ")",
+          (static_cast<size_t>(platformID) < platforms.size()));
+      auto& platform = platforms[platformID];
+
+      OCCA_ERROR(
+          "[dpcpp] device not given a [device_id] integer",
+          props.has("device_id") && props["device_id"].isNumber());
+
+      int deviceID = props.get<int>("device_id");
+      auto devices{platform.get_devices()};
+      OCCA_ERROR(
+          "Invalid device number (" + toString(deviceID) + ")",
+          (static_cast<size_t>(deviceID) < devices.size()));
+      auto& dpcppDevice = devices[deviceID];
+
+      return new occa::dpcpp::device(setModeProp(props), dpcppDevice);
     }
 
     int dpcppMode::getDeviceCount(const occa::json& props) {
