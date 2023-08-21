@@ -119,8 +119,7 @@ namespace occa
       allProps["wrapped"] = true;
       allProps += props;
 
-      ::sycl::context sycl_context(sycl_device);
-      auto* wrapper{new dpcpp::device(allProps, sycl_context, sycl_device)};
+      auto* wrapper{new dpcpp::device(allProps, sycl_device)};
       wrapper->dontUseRefs();
 
       wrapper->currentStream = wrapper->createStream(allProps["stream"]);

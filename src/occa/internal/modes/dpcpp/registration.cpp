@@ -105,12 +105,7 @@ namespace occa {
           (static_cast<size_t>(deviceID) < devices.size()));
       auto& dpcppDevice = devices[deviceID];
 
-#if SYCL_EXT_ONEAPI_DEFAULT_CONTEXT
-      ::sycl::context dpcppContext = platform.ext_oneapi_get_default_context();
-#else
-      ::sycl::context dpcppContext(devices);
-#endif
-      return new occa::dpcpp::device(setModeProp(props), dpcppContext, dpcppDevice);
+      return new occa::dpcpp::device(setModeProp(props), dpcppDevice);
     }
 
     int dpcppMode::getDeviceCount(const occa::json& props) {

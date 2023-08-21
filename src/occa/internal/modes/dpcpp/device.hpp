@@ -17,11 +17,10 @@ namespace occa
       mutable hash_t hash_;
 
     public:
-      ::sycl::context dpcppContext;
       ::sycl::device dpcppDevice;
+      ::sycl::context dpcppContext;
 
       device(const occa::json &properties_, 
-             const ::sycl::context& context_,
              const ::sycl::device& device_);
       
       virtual ~device() = default;

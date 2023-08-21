@@ -18,9 +18,8 @@ namespace occa
   namespace dpcpp
   {
     device::device(const occa::json &properties_, 
-                   const ::sycl::context& context_,
                    const ::sycl::device& device_)
-        : occa::launchedModeDevice_t(properties_), dpcppContext(context_), dpcppDevice(device_)
+        : occa::launchedModeDevice_t(properties_), dpcppDevice(device_), dpcppContext(device_) 
     {
       occa::json &kernelProps = properties["kernel"];
       setCompilerLinkerOptions(kernelProps);
