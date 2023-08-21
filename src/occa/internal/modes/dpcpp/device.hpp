@@ -17,12 +17,12 @@ namespace occa
       mutable hash_t hash_;
 
     public:
-      int platformID{-1}, deviceID{-1};
-
       ::sycl::device dpcppDevice;
       ::sycl::context dpcppContext;
 
-      device(const occa::json &properties_);
+      device(const occa::json &properties_, 
+             const ::sycl::device& device_);
+      
       virtual ~device() = default;
 
       inline bool hasSeparateMemorySpace() const override { return true; }
