@@ -284,6 +284,7 @@ namespace occa
                 var.vartype.setType(auto_);
                 var.vartype.setReferenceToken(var.source);
                 var.vartype.arrays.clear();
+                var.vartype.qualifiers.clear();
               }
             });
       }
