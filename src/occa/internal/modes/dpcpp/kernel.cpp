@@ -49,7 +49,12 @@ namespace occa
     {
       if (dlHandle)
       {
-        sys::dlclose(dlHandle);
+        // WORKAROUND: dynamically loaded device code is effectively a
+        // shared resource managed by the sycl runtime. Unloading the
+        // dynamic library for our kernels can corrupt objects owned
+        // by the sycl implementation (e.g., kernel bundles), leading
+        // to runtime errors. For now avoid calling dlclose.
+        // sys::dlclose(dlHandle);
         dlHandle = nullptr;
       }
       function = nullptr;
