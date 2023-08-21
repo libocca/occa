@@ -37,7 +37,7 @@ namespace occa {
     occa::dpcpp::stream& getDpcppStream(const occa::stream& stream_);
     occa::dpcpp::streamTag &getDpcppStreamTag(const occa::streamTag& tag);
 
-    occa::device wrapDevice(::sycl::device device,
+    occa::device wrapDevice(::sycl::device sycl_device,
                             const occa::properties &props = occa::properties());
 
     void warn(const ::sycl::exception &e,

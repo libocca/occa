@@ -111,23 +111,18 @@ namespace occa
       return *dpcppTag;
     }
 
-    occa::device wrapDevice(::sycl::device device,
+    occa::device wrapDevice(::sycl::device sycl_device,
                             const occa::properties &props)
     {
       occa::properties allProps;
       allProps["mode"] = "dpcpp";
-      allProps["device_id"] = -1;
-      allProps["platform_id"] = -1;
       allProps["wrapped"] = true;
       allProps += props;
 
-      auto* wrapper{new dpcpp::device(allProps)};
+      auto* wrapper{new dpcpp::device(allProps, sycl_device)};
       wrapper->dontUseRefs();
 
-      wrapper->dpcppDevice = device;
-      wrapper->dpcppContext = ::sycl::context(device);
       wrapper->currentStream = wrapper->createStream(allProps["stream"]);
-
       return occa::device(wrapper);
     }
 
