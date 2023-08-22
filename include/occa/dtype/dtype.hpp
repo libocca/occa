@@ -13,6 +13,7 @@ namespace occa {
   class dtypeEnum_t;
   class dtypeStruct_t;
   class dtypeTuple_t;
+  class dtypeUnion_t;
   class json;
 
   typedef std::map<std::string, const dtype_t*> dtypeGlobalMap_t;
@@ -44,6 +45,8 @@ namespace occa {
     dtypeEnum_t *enum_;
     dtypeStruct_t *struct_;
     dtypeTuple_t *tuple_;
+    dtypeUnion_t *union_;
+
     mutable dtypeVector_t flatDtype;
 
   public:
@@ -196,6 +199,39 @@ namespace occa {
      * @endDoc
      */
     int tupleSize() const;
+
+    // Union methods
+    /**
+     * @startDoc{isUnion}
+     *
+     * Description:
+     *   Returns `true` if the data type represents a union.
+     *   It's different that a tuple since it can keep distinct data types in its fields.
+     *
+     * @endDoc
+     */
+    bool isUnion() const;
+
+    /**
+     * @startDoc{unionFieldCount}
+     *
+     * Description:
+     *   Returns how many fields are defined in the union
+     *
+     * @endDoc
+     */
+    int unionFieldCount() const;
+
+    /**
+     * @startDoc{unionFieldNames}
+     *
+     * Description:
+     *   Return the list of field names for the union
+     *
+     * @endDoc
+     */
+    const strVector& unionFieldNames() const;
+
 
     /**
      * @startDoc{operator_bracket[0]}
@@ -403,6 +439,36 @@ namespace occa {
   //====================================
 
 
+  //---[ Union ]-----------------------
+  class dtypeUnion_t {
+    friend class dtype_t;
+
+  private:
+    strVector fieldNames;
+    dtypeNameMap_t fieldTypes;
+
+    dtypeUnion_t();
+
+    dtypeUnion_t* clone() const;
+
+    bool matches(const dtypeUnion_t &other) const;
+
+    int fieldCount() const;
+
+    const dtype_t& operator [] (const int field) const;
+    const dtype_t& operator [] (const std::string &field) const;
+
+    void addField(const std::string &field,
+                  const dtype_t &dtype);
+
+    void addFlatDtypes(dtypeVector_t &vec) const;
+
+    void toJson(json &j, const std::string &name = "") const;
+    static dtypeUnion_t fromJson(const json &j);
+
+    std::string toString(const std::string &varName = "") const;
+  };
+  //====================================
 }
 
 #endif

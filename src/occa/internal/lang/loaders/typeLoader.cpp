@@ -1,6 +1,7 @@
 #include <occa/internal/lang/builtins/types.hpp>
 #include <occa/internal/lang/loaders/enumLoader.hpp>
 #include <occa/internal/lang/loaders/structLoader.hpp>
+#include <occa/internal/lang/loaders/unionLoader.hpp>
 #include <occa/internal/lang/loaders/typeLoader.hpp>
 #include <occa/internal/lang/parser.hpp>
 #include <occa/internal/lang/statementContext.hpp>
@@ -8,6 +9,7 @@
 #include <occa/internal/lang/tokenContext.hpp>
 #include <occa/internal/lang/type/enum.hpp>
 #include <occa/internal/lang/type/struct.hpp>
+#include <occa/internal/lang/type/union.hpp>
 #include <occa/internal/lang/variable.hpp>
 
 namespace occa {
@@ -65,11 +67,7 @@ namespace occa {
         if (kType & keywordType::qualifier) {
           const qualifier_t &qualifier = keyword.to<qualifierKeyword>().qualifier;
           type_t *type = NULL;
-          if (qualifier == union_) {
-            // TODO: type = loadUnion();
-            token->printError("Unions are not supported yet");
-            success = false;
-          } else if (qualifier == class_) {
+          if (qualifier == class_) {
             // TODO: type = loadClass();
             token->printError("Classes are not supported yet");
             success = false;
@@ -121,7 +119,10 @@ namespace occa {
         loadStruct(vartype);
         return success;
       }
-
+      if (vartype.has(union_)) {
+        loadUnion(vartype);
+        return success;
+      }
       tokenContext.printError("Expected a type");
       return false;
     }
@@ -284,6 +285,45 @@ namespace occa {
                       *typedefType);
     }
 
+    void typeLoader_t::loadUnion(vartype_t &vartype) {
+      unionLoader_t unionLoader(tokenContext, smntContext, parser);
+
+      // Load union
+      union_t *unionType = NULL;
+      success &= unionLoader.loadUnion(unionType);
+      if (!success) {
+        return;
+      }
+
+      if (!vartype.has(typedef_)) {
+        vartype.setType(*((identifierToken*) unionType->source),
+                        *unionType);
+        return;
+      }
+
+      // Load typedef name
+      if (!(token_t::safeType(tokenContext[0]) & tokenType::identifier)) {
+        tokenContext.printError("Expected typedef name");
+        success = false;
+        return;
+      }
+
+      identifierToken *nameToken = (identifierToken*) tokenContext[0];
+      ++tokenContext;
+
+      // Move the union qualifier over
+      vartype_t unionVartype(*((identifierToken*) unionType->source),
+                              *unionType);
+      unionVartype += union_;
+      vartype -= union_;
+
+      typedef_t *typedefType = new typedef_t(unionVartype, *nameToken);
+      typedefType->declaredBaseType = true;
+
+      vartype.setType(*nameToken,
+                      *typedefType);
+    }
+
     bool loadType(tokenContext_t &tokenContext,
                   statementContext_t &smntContext,
                   parser_t &parser,
@@ -332,6 +372,23 @@ namespace occa {
       return (!vartype.isValid()   && // Should not have a base type since we're defining it
               vartype.has(struct_) &&  // Should have struct_
               !vartype.has(typedef_)); // typedef struct is not loaded as a struct
+    }
+
+    bool isLoadingUnion(tokenContext_t &tokenContext,
+                         statementContext_t &smntContext,
+                         parser_t &parser) {
+      tokenContext.push();
+      tokenContext.supressErrors = true;
+
+      vartype_t vartype;
+      loadType(tokenContext, smntContext, parser, vartype);
+
+      tokenContext.supressErrors = false;
+      tokenContext.pop();
+
+      return (!vartype.isValid()   && // Should not have a base type since we're defining it
+              vartype.has(union_) &&  // Should have union_
+              !vartype.has(typedef_)); // typedef union is not loaded as a union
     }
   }
 }
