@@ -100,6 +100,8 @@ namespace occa {
 
       bool definesStruct() const;
 
+      bool definesUnion() const;
+
       void printDeclaration(printer &pout,
                             const std::string &varName,
                             const vartypePrintType_t printType = vartypePrintType_t::type) const;
