@@ -20,10 +20,10 @@ namespace occa {
       declaredBaseType(other.declaredBaseType) {}
 
     typedef_t::~typedef_t() {
-      if (baseType.isNamed() || !baseType.has(struct_) || !baseType.has(enum_)) {
+      if (baseType.isNamed() || !baseType.has(enum_) || !baseType.has(struct_) || !baseType.has(union_)) {
         return;
       }
-      // The typedef owns the nameless struct
+      // The typedef owns the nameless object
       delete baseType.type;
     }
 

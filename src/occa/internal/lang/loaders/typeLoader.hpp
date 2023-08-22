@@ -36,6 +36,8 @@ namespace occa {
 
       void loadStruct(vartype_t &vartype);
 
+      void loadUnion(vartype_t &vartype);
+
       friend bool loadType(tokenContext_t &tokenContext,
                            statementContext_t &smntContext,
                            parser_t &parser,
@@ -51,6 +53,10 @@ namespace occa {
                                   parser_t &parser);
 
       friend bool isLoadingStruct(tokenContext_t &tokenContext,
+                                  statementContext_t &smntContext,
+                                  parser_t &parser);
+
+      friend bool isLoadingUnion(tokenContext_t &tokenContext,
                                   statementContext_t &smntContext,
                                   parser_t &parser);
     };
@@ -70,6 +76,10 @@ namespace occa {
                          parser_t &parser);
 
     bool isLoadingStruct(tokenContext_t &tokenContext,
+                         statementContext_t &smntContext,
+                         parser_t &parser);
+
+    bool isLoadingUnion(tokenContext_t &tokenContext,
                          statementContext_t &smntContext,
                          parser_t &parser);
   }

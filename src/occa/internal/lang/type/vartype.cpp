@@ -385,6 +385,21 @@ namespace occa {
       );
     }
 
+    bool vartype_t::definesUnion() const {
+      if (typeToken && type && (type->type() & typeType::union_)) {
+        return (typeToken->origin == type->source->origin);
+      }
+      if (!has(typedef_)) {
+        return false;
+      }
+
+      typedef_t &typedefType = *((typedef_t*) type);
+      return (
+        typedefType.declaredBaseType
+        && typedefType.baseType.has(union_)
+      );
+    }
+
     void vartype_t::printDeclaration(printer &pout,
                                      const std::string &varName,
                                      const vartypePrintType_t printType) const {
