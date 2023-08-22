@@ -96,6 +96,8 @@ namespace occa {
 
       vartype_t flatten() const;
 
+      bool definesEnum() const;
+
       bool definesStruct() const;
 
       void printDeclaration(printer &pout,

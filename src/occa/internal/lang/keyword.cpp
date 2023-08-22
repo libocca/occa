@@ -305,8 +305,8 @@ namespace occa {
       keywords.add(*(new qualifierKeyword(virtual_)));
 
       keywords.add(*(new qualifierKeyword(class_)));
-      keywords.add(*(new qualifierKeyword(struct_)));
       keywords.add(*(new qualifierKeyword(enum_)));
+      keywords.add(*(new qualifierKeyword(struct_)));
       keywords.add(*(new qualifierKeyword(union_)));
 
       // Types

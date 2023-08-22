@@ -1,10 +1,12 @@
 #include <occa/internal/lang/builtins/types.hpp>
+#include <occa/internal/lang/loaders/enumLoader.hpp>
 #include <occa/internal/lang/loaders/structLoader.hpp>
 #include <occa/internal/lang/loaders/typeLoader.hpp>
 #include <occa/internal/lang/parser.hpp>
 #include <occa/internal/lang/statementContext.hpp>
 #include <occa/internal/lang/token.hpp>
 #include <occa/internal/lang/tokenContext.hpp>
+#include <occa/internal/lang/type/enum.hpp>
 #include <occa/internal/lang/type/struct.hpp>
 #include <occa/internal/lang/variable.hpp>
 
@@ -63,11 +65,7 @@ namespace occa {
         if (kType & keywordType::qualifier) {
           const qualifier_t &qualifier = keyword.to<qualifierKeyword>().qualifier;
           type_t *type = NULL;
-          if (qualifier == enum_) {
-            // TODO: type = loadEnum();
-            token->printError("Enums are not supported yet");
-            success = false;
-          } else if (qualifier == union_) {
+          if (qualifier == union_) {
             // TODO: type = loadUnion();
             token->printError("Unions are not supported yet");
             success = false;
@@ -115,7 +113,10 @@ namespace occa {
         vartype.type = &int_;
         return true;
       }
-
+      if (vartype.has(enum_)) {
+        loadEnum(vartype);
+        return success;
+      }
       if (vartype.has(struct_)) {
         loadStruct(vartype);
         return success;
@@ -205,6 +206,45 @@ namespace occa {
       ++tokenContext;
     }
 
+    void typeLoader_t::loadEnum(vartype_t &vartype) {
+      enumLoader_t enumLoader(tokenContext, smntContext, parser);
+
+      // Load enum
+      enum_t *enumType = NULL;
+      success &= enumLoader.loadEnum(enumType);
+      if (!success) {
+        return;
+      }
+
+      if (!vartype.has(typedef_)) {
+        vartype.setType(*((identifierToken*) enumType->source),
+                        *enumType);
+        return;
+      }
+
+      // Load typedef name
+      if (!(token_t::safeType(tokenContext[0]) & tokenType::identifier)) {
+        tokenContext.printError("Expected typedef name");
+        success = false;
+        return;
+      }
+
+      identifierToken *nameToken = (identifierToken*) tokenContext[0];
+      ++tokenContext;
+
+      // Move the enum qualifier over
+      vartype_t enumVartype(*((identifierToken*) enumType->source),
+                              *enumType);
+      enumVartype += enum_;
+      vartype -= enum_;
+
+      typedef_t *typedefType = new typedef_t(enumVartype, *nameToken);
+      typedefType->declaredBaseType = true;
+
+      vartype.setType(*nameToken,
+                      *typedefType);
+    }
+
     void typeLoader_t::loadStruct(vartype_t &vartype) {
       structLoader_t structLoader(tokenContext, smntContext, parser);
 
@@ -260,6 +300,23 @@ namespace occa {
       return loader.loadBaseType(vartype);
     }
 
+    bool isLoadingEnum(tokenContext_t &tokenContext,
+                         statementContext_t &smntContext,
+                         parser_t &parser) {
+      tokenContext.push();
+      tokenContext.supressErrors = true;
+
+      vartype_t vartype;
+      loadType(tokenContext, smntContext, parser, vartype);
+
+      tokenContext.supressErrors = false;
+      tokenContext.pop();
+
+      return (!vartype.isValid()   && // Should not have a base type since we're defining it
+              vartype.has(enum_) &&  // Should have enum_
+              !vartype.has(typedef_)); // typedef enum is not loaded as a enum
+    }
+
     bool isLoadingStruct(tokenContext_t &tokenContext,
                          statementContext_t &smntContext,
                          parser_t &parser) {
@@ -272,7 +329,7 @@ namespace occa {
       tokenContext.supressErrors = false;
       tokenContext.pop();
 
-      return (!vartype.isValid()   &&  // Should not have a base type since we're defining it
+      return (!vartype.isValid()   && // Should not have a base type since we're defining it
               vartype.has(struct_) &&  // Should have struct_
               !vartype.has(typedef_)); // typedef struct is not loaded as a struct
     }

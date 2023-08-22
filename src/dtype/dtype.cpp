@@ -14,6 +14,7 @@ namespace occa {
     name_(),
     bytes_(0),
     registered(false),
+    enum_(NULL),
     struct_(NULL),
     tuple_(NULL) {}
 
@@ -24,6 +25,7 @@ namespace occa {
     name_(name__),
     bytes_(bytes__),
     registered(registered_),
+    enum_(NULL),
     struct_(NULL),
     tuple_(NULL) {}
 
@@ -34,6 +36,7 @@ namespace occa {
     name_(),
     bytes_(0),
     registered(false),
+    enum_(NULL),
     struct_(NULL),
     tuple_(NULL) {
 
@@ -48,6 +51,7 @@ namespace occa {
     name_(),
     bytes_(0),
     registered(false),
+    enum_(NULL),
     struct_(NULL),
     tuple_(NULL) {
 
@@ -61,6 +65,7 @@ namespace occa {
     const dtype_t &other = other_.self();
 
     if (!ref || ref != &other) {
+      delete enum_;
       delete struct_;
       delete tuple_;
 
@@ -69,12 +74,14 @@ namespace occa {
         ref       = &other;
         name_     = "";
         bytes_    = 0;
+        enum_     = NULL;
         struct_   = NULL;
         tuple_    = NULL;
       } else {
         ref       = NULL;
         name_     = other.name_;
         bytes_    = other.bytes_;
+        enum_     = other.enum_ ? other.enum_->clone() : NULL;
         struct_   = other.struct_ ? other.struct_->clone() : NULL;
         tuple_    = other.tuple_ ? other.tuple_->clone() : NULL;
       }
@@ -83,6 +90,7 @@ namespace occa {
   }
 
   dtype_t::~dtype_t() {
+    delete enum_;
     delete struct_;
     delete tuple_;
   }
@@ -102,6 +110,36 @@ namespace occa {
 
   bool dtype_t::isRegistered() const {
     return self().registered;
+  }
+
+  // Enum methods
+  bool dtype_t::isEnum() const {
+    return self().enum_;
+  }
+
+  int dtype_t::enumEnumeratorCount() const {
+    const dtypeEnum_t *enumPtr = self().enum_;
+    if (enumPtr) {
+      return enumPtr->enumeratorCount();
+    }
+    return 0;
+  }
+
+  const strVector& dtype_t::enumEnumeratorNames() const {
+    const dtypeEnum_t *enumPtr = self().enum_;
+    OCCA_ERROR("Cannot get enumerators from a non-enum dtype_t", enumPtr != NULL);
+    return enumPtr->enumeratorNames;
+  }
+
+  dtype_t& dtype_t::addEnumerator(const std::string &enumerator) {
+
+    if (!enum_) {
+      enum_ = new dtypeEnum_t();
+    }
+
+    enum_->addEnumerator(enumerator);
+
+    return *this;
   }
 
   // Struct methods
@@ -208,11 +246,15 @@ namespace occa {
     }
 
     // Check type differences
-    if (((bool) a.struct_ != (bool) b.struct_) ||
+    if (((bool) a.enum_ != (bool) b.enum_) ||
+        ((bool) a.struct_ != (bool) b.struct_) ||
         ((bool) a.tuple_ != (bool) b.tuple_)) {
         return false;
     }
     // Check from the dtype type
+    if (a.enum_) {
+      return a.enum_->matches(*(b.enum_));
+    }
     if (a.struct_) {
       return a.struct_->matches(*(b.struct_));
     }
@@ -383,7 +425,9 @@ namespace occa {
       return ref->toJson(j, name);
     }
 
-    if (struct_) {
+    if (enum_) {
+      return enum_->toJson(j, name);
+    } else if (struct_) {
       return struct_->toJson(j, name);
     } else if (tuple_) {
       return tuple_->toJson(j, name);
@@ -422,6 +466,8 @@ namespace occa {
       OCCA_ERROR("Unknown dtype builtin [" << dtype.name_ << "]",
                  &builtin != &dtype::none);
       dtype = builtin;
+    } else if (type == "enum") {
+      dtype.enum_ = dtypeEnum_t::fromJson(j).clone();
     } else if (type == "struct") {
       dtype.struct_ = dtypeStruct_t::fromJson(j).clone();
     } else if (type == "tuple") {
@@ -446,7 +492,9 @@ namespace occa {
       name = self_.name_;
     }
 
-    if (self_.struct_) {
+    if (self_.enum_) {
+      ss << self_.enum_->toString(name);
+    } else if (self_.struct_) {
       ss << self_.struct_->toString(name);
     } else if (self_.tuple_) {
       ss << self_.tuple_->toString(name);
@@ -464,6 +512,121 @@ namespace occa {
   }
   //====================================
 
+
+  //---[ Enum ]-----------------------
+  dtypeEnum_t::dtypeEnum_t() {}
+
+  dtypeEnum_t* dtypeEnum_t::clone() const {
+    dtypeEnum_t *s = new dtypeEnum_t();
+    s->enumeratorNames = enumeratorNames;
+    return s;
+  }
+
+  bool dtypeEnum_t::matches(const dtypeEnum_t &other) const {
+    const int enumeratorCount = (int) enumeratorNames.size();
+    if (enumeratorCount != (int) other.enumeratorNames.size()) {
+      return false;
+    }
+
+    // Compare enumerators
+    const std::string *names1 = &(enumeratorNames[0]);
+    const std::string *names2 = &(other.enumeratorNames[0]);
+    for (int i = 0; i < enumeratorCount; ++i) {
+      const std::string &name1 = names1[i];
+      const std::string &name2 = names2[i];
+      if (name1 != name2) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  int dtypeEnum_t::enumeratorCount() const {
+    return (int) enumeratorNames.size();
+  }
+
+  void dtypeEnum_t::addEnumerator(const std::string &enumerator) {
+    const bool enumeratorExists = std::find(enumeratorNames.begin(), enumeratorNames.end(), enumerator) != enumeratorNames.end();
+    OCCA_ERROR("Enumerator [" << enumerator << "] is already in dtype_t", !enumeratorExists);
+
+    if (!enumeratorExists) {
+      enumeratorNames.push_back(enumerator);
+    }
+  }
+
+  void dtypeEnum_t::toJson(json &j, const std::string &name) const {
+    j.clear();
+    j.asObject();
+
+    j["type"] = "enum";
+    if (name.size()) {
+      j["name"] = name;
+    }
+
+    json &enumeratorsJson = j["enumerators"].asArray();
+    const int enumeratorCount = (int) enumeratorNames.size();
+
+    const std::string *names = &(enumeratorNames[0]);
+    for (int i = 0; i < enumeratorCount; ++i) {
+      const std::string &enumeratorName = names[i];
+
+      json enumeratorJson;
+      enumeratorJson["name"] = enumeratorName;
+      enumeratorsJson += enumeratorJson;
+    }
+  }
+
+  dtypeEnum_t dtypeEnum_t::fromJson(const json &j) {
+    OCCA_ERROR("JSON enumerator [enumerators] missing from enum", j.has("enumerators"));
+    OCCA_ERROR("JSON enumerator [enumerators] must be an array of dtypes", j["enumerators"].isArray());
+
+    const jsonArray &enumerators = j["enumerators"].array();
+    const int enumeratorCount = (int) enumerators.size();
+
+    dtypeEnum_t enum_;
+    for (int i = 0; i < enumeratorCount; ++i) {
+      const json &enumeratorJson = enumerators[i];
+      OCCA_ERROR("JSON enumerator [name] missing from enum enumerator", enumeratorJson.has("name"));
+      OCCA_ERROR("JSON enumerator [name] must be a string for enum enumerators", enumeratorJson["name"].isString());
+
+      enum_.addEnumerator(enumeratorJson["name"].string());
+    }
+
+    return enum_;
+  }
+
+  std::string dtypeEnum_t::toString(const std::string &enumName) const {
+    std::stringstream ss;
+    const int enumeratorCount = (int) enumeratorNames.size();
+
+    ss << "enum ";
+    if (enumName.size()) {
+      ss << enumName << ' ';
+    }
+    ss << '{';
+
+    if (!enumeratorCount) {
+      ss << '}';
+      return ss.str();
+    }
+
+    ss << '\n';
+
+    const std::string *names = &(enumeratorNames[0]);
+    dtype_t prevDtype = dtype::none;
+    for (int i = 0; i < enumeratorCount; ++i) {
+      const std::string &name = names[i];
+      if (i) {
+        ss << ", ";
+      }
+      ss << name;
+    }
+    ss << "\n}";
+
+    return ss.str();
+  }
+  //====================================
 
   //---[ Struct ]-----------------------
   dtypeStruct_t::dtypeStruct_t() {}
