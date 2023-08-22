@@ -10,8 +10,8 @@
 
 namespace occa {
   class dtype_t;
-  class dtypeTuple_t;
   class dtypeStruct_t;
+  class dtypeTuple_t;
   class json;
 
   typedef std::map<std::string, const dtype_t*> dtypeGlobalMap_t;
@@ -40,8 +40,8 @@ namespace occa {
     int bytes_;
     bool registered;
 
-    dtypeTuple_t *tuple_;
     dtypeStruct_t *struct_;
+    dtypeTuple_t *tuple_;
     mutable dtypeVector_t flatDtype;
 
   public:
@@ -99,27 +99,6 @@ namespace occa {
 
     bool isRegistered() const;
 
-    // Tuple methods
-    /**
-     * @startDoc{isTuple}
-     *
-     * Description:
-     *   Returns `true` if the data type holds a tuple type.
-     *   For example: `occa::dtype::int2` is a tuple of two `int`s
-     *
-     * @endDoc
-     */
-    bool isTuple() const;
-
-    /**
-     * @startDoc{tupleSize}
-     *
-     * Description:
-     *   Return how big the tuple is, for example `int2` would return `2`
-     *
-     * @endDoc
-     */
-    int tupleSize() const;
 
     // Struct methods
     /**
@@ -152,6 +131,28 @@ namespace occa {
      * @endDoc
      */
     const strVector& structFieldNames() const;
+
+    // Tuple methods
+    /**
+     * @startDoc{isTuple}
+     *
+     * Description:
+     *   Returns `true` if the data type holds a tuple type.
+     *   For example: `occa::dtype::int2` is a tuple of two `int`s
+     *
+     * @endDoc
+     */
+    bool isTuple() const;
+
+    /**
+     * @startDoc{tupleSize}
+     *
+     * Description:
+     *   Return how big the tuple is, for example `int2` would return `2`
+     *
+     * @endDoc
+     */
+    int tupleSize() const;
 
     /**
      * @startDoc{operator_bracket[0]}
@@ -186,7 +187,21 @@ namespace occa {
                       const int tupleSize_ = 1);
 
     // Dtype methods
+    /**
+     * @startDoc{setFlattenedDtype}
+     *
+     * Description:
+     *    Add flatten dtypes of each field.
+     * @endDoc
+     */
     void setFlattenedDtype() const;
+    /**
+     * @startDoc{addFlatDtypes}
+     *
+     * Description:
+     *    Add dtypes of each field.
+     * @endDoc
+     */
     void addFlatDtypes(dtypeVector_t &vec) const;
 
     /**
@@ -260,29 +275,6 @@ namespace occa {
                            const dtype_t &dtype);
 
 
-  //---[ Tuple ]------------------------
-  class dtypeTuple_t {
-    friend class dtype_t;
-
-  private:
-    const dtype_t dtype;
-    int size;
-
-    dtypeTuple_t(const dtype_t &dtype_,
-                 const int size_);
-
-    dtypeTuple_t* clone() const;
-
-    bool matches(const dtypeTuple_t &other) const;
-
-    void addFlatDtypes(dtypeVector_t &vec) const;
-
-    void toJson(json &j, const std::string &name = "") const;
-    static dtypeTuple_t fromJson(const json &j);
-
-    std::string toString(const std::string &varName = "") const;
-  };
-  //====================================
 
 
   //---[ Struct ]-----------------------
@@ -315,6 +307,33 @@ namespace occa {
     std::string toString(const std::string &varName = "") const;
   };
   //====================================
+
+
+  //---[ Tuple ]------------------------
+  class dtypeTuple_t {
+    friend class dtype_t;
+
+  private:
+    const dtype_t dtype;
+    int size;
+
+    dtypeTuple_t(const dtype_t &dtype_,
+                 const int size_);
+
+    dtypeTuple_t* clone() const;
+
+    bool matches(const dtypeTuple_t &other) const;
+
+    void addFlatDtypes(dtypeVector_t &vec) const;
+
+    void toJson(json &j, const std::string &name = "") const;
+    static dtypeTuple_t fromJson(const json &j);
+
+    std::string toString(const std::string &varName = "") const;
+  };
+  //====================================
+
+
 }
 
 #endif

@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include <occa/defines.hpp>
 #include <occa/dtype/builtins.hpp>
 #include <occa/dtype/dtype.hpp>
@@ -12,8 +14,8 @@ namespace occa {
     name_(),
     bytes_(0),
     registered(false),
-    tuple_(NULL),
-    struct_(NULL) {}
+    struct_(NULL),
+    tuple_(NULL) {}
 
   dtype_t::dtype_t(const std::string &name__,
                    const int bytes__,
@@ -22,8 +24,8 @@ namespace occa {
     name_(name__),
     bytes_(bytes__),
     registered(registered_),
-    tuple_(NULL),
-    struct_(NULL) {}
+    struct_(NULL),
+    tuple_(NULL) {}
 
   dtype_t::dtype_t(const std::string &name__,
                    const dtype_t &other,
@@ -32,8 +34,8 @@ namespace occa {
     name_(),
     bytes_(0),
     registered(false),
-    tuple_(NULL),
-    struct_(NULL) {
+    struct_(NULL),
+    tuple_(NULL) {
 
     *this = other;
 
@@ -46,8 +48,8 @@ namespace occa {
     name_(),
     bytes_(0),
     registered(false),
-    tuple_(NULL),
-    struct_(NULL) {
+    struct_(NULL),
+    tuple_(NULL) {
 
     *this = other;
   }
@@ -59,30 +61,30 @@ namespace occa {
     const dtype_t &other = other_.self();
 
     if (!ref || ref != &other) {
-      delete tuple_;
       delete struct_;
+      delete tuple_;
 
       if (other.registered) {
         // Clear values
-        ref     = &other;
-        name_   = "";
-        bytes_  = 0;
-        tuple_  = NULL;
-        struct_ = NULL;
+        ref       = &other;
+        name_     = "";
+        bytes_    = 0;
+        struct_   = NULL;
+        tuple_    = NULL;
       } else {
-        ref     = NULL;
-        name_   = other.name_;
-        bytes_  = other.bytes_;
-        tuple_  = other.tuple_ ? other.tuple_->clone() : NULL;
-        struct_ = other.struct_ ? other.struct_->clone() : NULL;
+        ref       = NULL;
+        name_     = other.name_;
+        bytes_    = other.bytes_;
+        struct_   = other.struct_ ? other.struct_->clone() : NULL;
+        tuple_    = other.tuple_ ? other.tuple_->clone() : NULL;
       }
     }
     return *this;
   }
 
   dtype_t::~dtype_t() {
-    delete tuple_;
     delete struct_;
+    delete tuple_;
   }
 
   const std::string& dtype_t::name() const {
@@ -94,26 +96,12 @@ namespace occa {
   }
 
   void dtype_t::registerType() {
-    OCCA_ERROR("Unable to register dtype references",
-               ref == NULL);
+    OCCA_ERROR("Unable to register dtype references", ref == NULL);
     registered = true;
   }
 
   bool dtype_t::isRegistered() const {
     return self().registered;
-  }
-
-  // Tuple methods
-  bool dtype_t::isTuple() const {
-    return self().tuple_;
-  }
-
-  int dtype_t::tupleSize() const {
-    const dtypeTuple_t *tuplePtr = self().tuple_;
-    if (tuplePtr) {
-      return tuplePtr->size;
-    }
-    return 0;
   }
 
   // Struct methods
@@ -131,34 +119,28 @@ namespace occa {
 
   const strVector& dtype_t::structFieldNames() const {
     const dtypeStruct_t *structPtr = self().struct_;
-    OCCA_ERROR("Cannot get fields from a non-struct dtype_t",
-               structPtr != NULL);
+    OCCA_ERROR("Cannot get fields from a non-struct dtype_t", structPtr != NULL);
     return structPtr->fieldNames;
   }
 
   const dtype_t& dtype_t::operator [] (const int field) const {
     const dtypeStruct_t *structPtr = self().struct_;
-    OCCA_ERROR("Cannot access fields from a non-struct dtype_t",
-               structPtr != NULL);
+    OCCA_ERROR("Cannot access fields from a non-struct dtype_t", structPtr != NULL);
     return (*structPtr)[field];
   }
 
   const dtype_t& dtype_t::operator [] (const std::string &field) const {
     const dtypeStruct_t *structPtr = self().struct_;
-    OCCA_ERROR("Cannot access fields from a non-struct dtype_t",
-               structPtr != NULL);
+    OCCA_ERROR("Cannot access fields from a non-struct dtype_t", structPtr != NULL);
     return (*structPtr)[field];
   }
 
   dtype_t& dtype_t::addField(const std::string &field,
                              const dtype_t &dtype,
                              const int tupleSize_) {
-    OCCA_ERROR("Cannot add a field to a dtype_t reference",
-               ref == NULL);
-    OCCA_ERROR("Cannot add a field to an tuple dtype_t",
-               tuple_ == NULL);
-    OCCA_ERROR("Tuple size must be a positive integer",
-               tupleSize_ > 0);
+    OCCA_ERROR("Cannot add a field to a dtype_t reference", ref == NULL);
+    OCCA_ERROR("Cannot add a field to an tuple dtype_t", tuple_ == NULL);
+    OCCA_ERROR("Tuple size must be a positive integer", tupleSize_ > 0);
 
     if (!struct_) {
       struct_ = new dtypeStruct_t();
@@ -169,8 +151,7 @@ namespace occa {
     if (tupleSize_ == 1) {
       struct_->addField(field, dtype);
     } else {
-      struct_->addField(field,
-                        tuple(dtype, tupleSize_));
+      struct_->addField(field, tuple(dtype, tupleSize_));
     }
 
     return *this;
@@ -227,16 +208,16 @@ namespace occa {
     }
 
     // Check type differences
-    if (((bool) a.tuple_ != (bool) b.tuple_) ||
-        ((bool) a.struct_ != (bool) b.struct_)) {
+    if (((bool) a.struct_ != (bool) b.struct_) ||
+        ((bool) a.tuple_ != (bool) b.tuple_)) {
         return false;
     }
     // Check from the dtype type
-    if (a.tuple_) {
-      return a.tuple_->matches(*(b.tuple_));
-    }
     if (a.struct_) {
       return a.struct_->matches(*(b.struct_));
+    }
+    if (a.tuple_) {
+      return a.tuple_->matches(*(b.tuple_));
     }
 
     // Shouldn't get here
@@ -402,10 +383,10 @@ namespace occa {
       return ref->toJson(j, name);
     }
 
-    if (tuple_) {
-      return tuple_->toJson(j, name);
-    } else if (struct_) {
+    if (struct_) {
       return struct_->toJson(j, name);
+    } else if (tuple_) {
+      return tuple_->toJson(j, name);
     }
 
     j.clear();
@@ -441,10 +422,10 @@ namespace occa {
       OCCA_ERROR("Unknown dtype builtin [" << dtype.name_ << "]",
                  &builtin != &dtype::none);
       dtype = builtin;
-    } else if (type == "tuple") {
-      dtype.tuple_ = dtypeTuple_t::fromJson(j).clone();
     } else if (type == "struct") {
       dtype.struct_ = dtypeStruct_t::fromJson(j).clone();
+    } else if (type == "tuple") {
+      dtype.tuple_ = dtypeTuple_t::fromJson(j).clone();
     } else if (type == "custom") {
       dtype.bytes_ = (int) j["bytes"];
     } else {
@@ -465,10 +446,10 @@ namespace occa {
       name = self_.name_;
     }
 
-    if (self_.tuple_) {
-      ss << self_.tuple_->toString(name);
-    } else if (self_.struct_) {
+    if (self_.struct_) {
       ss << self_.struct_->toString(name);
+    } else if (self_.tuple_) {
+      ss << self_.tuple_->toString(name);
     } else {
       ss << name;
     }
@@ -480,75 +461,6 @@ namespace occa {
                              const dtype_t &dtype) {
     out << dtype.toString();
     return out;
-  }
-  //====================================
-
-
-  //---[ Tuple ]----------------------
-  dtypeTuple_t::dtypeTuple_t(const dtype_t &dtype_,
-                             const int size_) :
-    dtype(dtype_),
-    size(size_) {}
-
-  dtypeTuple_t* dtypeTuple_t::clone() const {
-    return new dtypeTuple_t(dtype, size);
-  }
-
-  bool dtypeTuple_t::matches(const dtypeTuple_t &other) const {
-    if (size != other.size) {
-      return false;
-    }
-    return dtype.matches(other.dtype);
-  }
-
-  void dtypeTuple_t::addFlatDtypes(dtypeVector_t &vec) const {
-    for (int i = 0; i < size; ++i) {
-      dtype.addFlatDtypes(vec);
-    }
-  }
-
-  void dtypeTuple_t::toJson(json &j, const std::string &name) const {
-    j.clear();
-    j.asObject();
-
-    j["type"]  = "tuple";
-    if (name.size()) {
-      j["name"]  = name;
-    }
-    j["dtype"] = dtype::toJson(dtype);
-    j["size"]  = size;
-  }
-
-  dtypeTuple_t dtypeTuple_t::fromJson(const json &j) {
-    OCCA_ERROR("JSON field [dtype] missing from tuple",
-               j.has("dtype"));
-    OCCA_ERROR("JSON field [size] missing from tuple",
-               j.has("size"));
-    OCCA_ERROR("JSON field [size] must be an integer",
-               j["size"].isNumber());
-
-    return dtypeTuple_t(dtype_t::fromJson(j["dtype"]),
-                        (int) j["size"]);
-  }
-
-  std::string dtypeTuple_t::toString(const std::string &varName) const {
-    std::stringstream ss;
-
-    ss << dtype;
-
-    if (varName.size()) {
-      ss << ' ' << varName;
-    }
-
-    ss << '[';
-    if (size >= 0) {
-      ss << size;
-    } else {
-      ss << '?';
-    }
-    ss << ']';
-
-    return ss.str();
   }
   //====================================
 
@@ -719,4 +631,76 @@ namespace occa {
     return ss.str();
   }
   //====================================
+
+
+
+  //---[ Tuple ]----------------------
+  dtypeTuple_t::dtypeTuple_t(const dtype_t &dtype_,
+                             const int size_) :
+    dtype(dtype_),
+    size(size_) {}
+
+  dtypeTuple_t* dtypeTuple_t::clone() const {
+    return new dtypeTuple_t(dtype, size);
+  }
+
+  bool dtypeTuple_t::matches(const dtypeTuple_t &other) const {
+    if (size != other.size) {
+      return false;
+    }
+    return dtype.matches(other.dtype);
+  }
+
+  void dtypeTuple_t::addFlatDtypes(dtypeVector_t &vec) const {
+    for (int i = 0; i < size; ++i) {
+      dtype.addFlatDtypes(vec);
+    }
+  }
+
+  void dtypeTuple_t::toJson(json &j, const std::string &name) const {
+    j.clear();
+    j.asObject();
+
+    j["type"]  = "tuple";
+    if (name.size()) {
+      j["name"]  = name;
+    }
+    j["dtype"] = dtype::toJson(dtype);
+    j["size"]  = size;
+  }
+
+  dtypeTuple_t dtypeTuple_t::fromJson(const json &j) {
+    OCCA_ERROR("JSON field [dtype] missing from tuple",
+               j.has("dtype"));
+    OCCA_ERROR("JSON field [size] missing from tuple",
+               j.has("size"));
+    OCCA_ERROR("JSON field [size] must be an integer",
+               j["size"].isNumber());
+
+    return dtypeTuple_t(dtype_t::fromJson(j["dtype"]),
+                        (int) j["size"]);
+  }
+
+  std::string dtypeTuple_t::toString(const std::string &varName) const {
+    std::stringstream ss;
+
+    ss << dtype;
+
+    if (varName.size()) {
+      ss << ' ' << varName;
+    }
+
+    ss << '[';
+    if (size >= 0) {
+      ss << size;
+    } else {
+      ss << '?';
+    }
+    ss << ']';
+
+    return ss.str();
+  }
+  //====================================
+
+
 }
