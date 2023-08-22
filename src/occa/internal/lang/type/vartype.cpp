@@ -355,6 +355,21 @@ namespace occa {
       return flat;
     }
 
+    bool vartype_t::definesEnum() const {
+      if (typeToken && type && (type->type() & typeType::enum_)) {
+        return (typeToken->origin == type->source->origin);
+      }
+      if (!has(typedef_)) {
+        return false;
+      }
+
+      typedef_t &typedefType = *((typedef_t*) type);
+      return (
+        typedefType.declaredBaseType
+        && typedefType.baseType.has(enum_)
+      );
+    }
+
     bool vartype_t::definesStruct() const {
       if (typeToken && type && (type->type() & typeType::struct_)) {
         return (typeToken->origin == type->source->origin);

@@ -20,8 +20,7 @@ namespace occa {
       success(true) {}
 
     bool attributeLoader_t::loadAttributes(attributeTokenMap &attrs) {
-      while (success &&
-             (token_t::safeOperatorType(tokenContext[0]) & operatorType::attribute)) {
+      while (success && (token_t::safeOperatorType(tokenContext[0]) & operatorType::attribute)) {
         loadAttribute(attrs);
         if (!success) {
           break;
