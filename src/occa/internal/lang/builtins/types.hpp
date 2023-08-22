@@ -28,8 +28,8 @@ namespace occa {
     extern const qualifier_t virtual_;
 
     extern const qualifier_t class_;
-    extern const qualifier_t struct_;
     extern const qualifier_t enum_;
+    extern const qualifier_t struct_;
     extern const qualifier_t union_;
 
     // Windows types

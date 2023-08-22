@@ -10,6 +10,7 @@
 
 namespace occa {
   class dtype_t;
+  class dtypeEnum_t;
   class dtypeStruct_t;
   class dtypeTuple_t;
   class json;
@@ -40,6 +41,7 @@ namespace occa {
     int bytes_;
     bool registered;
 
+    dtypeEnum_t *enum_;
     dtypeStruct_t *struct_;
     dtypeTuple_t *tuple_;
     mutable dtypeVector_t flatDtype;
@@ -99,6 +101,47 @@ namespace occa {
 
     bool isRegistered() const;
 
+    // Enum methods
+    /**
+     * @startDoc{isEnum}
+     *
+     * Description:
+     *   Returns `true` if the data type represents a enum.
+     *   It's different that a tuple since it can keep distinct data types in its fields.
+     *
+     * @endDoc
+     */
+    bool isEnum() const;
+
+    /**
+     * @startDoc{enumEnumeratorCount}
+     *
+     * Description:
+     *   Returns how many enumerator are defined in the enum
+     *
+     * @endDoc
+     */
+    int enumEnumeratorCount() const;
+
+    /**
+     * @startDoc{enumEnumeratorNames}
+     *
+     * Description:
+     *   Return the list of enumerator names for the enum
+     *
+     * @endDoc
+     */
+    const strVector& enumEnumeratorNames() const;
+
+    /**
+     * @startDoc{addEnumerator}
+     *
+     * Description:
+     *   Add a enumerator to the enum type
+     *
+     * @endDoc
+     */
+    dtype_t& addEnumerator(const std::string &enumerator);
 
     // Struct methods
     /**
@@ -275,6 +318,32 @@ namespace occa {
                            const dtype_t &dtype);
 
 
+  //---[ Enum ]-----------------------
+  class dtypeEnum_t {
+    friend class dtype_t;
+
+  private:
+    strVector enumeratorNames;
+
+    dtypeEnum_t();
+
+    dtypeEnum_t* clone() const;
+
+    bool matches(const dtypeEnum_t &other) const;
+
+    int enumeratorCount() const;
+
+    const dtype_t& operator [] (const int enumerator) const;
+    const dtype_t& operator [] (const std::string &enumerator) const;
+
+    void addEnumerator(const std::string &enumerator);
+
+    void toJson(json &j, const std::string &name = "") const;
+    static dtypeEnum_t fromJson(const json &j);
+
+    std::string toString(const std::string &varName = "") const;
+  };
+  //====================================
 
 
   //---[ Struct ]-----------------------

@@ -19,11 +19,13 @@ namespace occa {
     class pointer_t;
     class array_t;
     class variable_t;
+    class enumerator_t;
 
     typedef std::vector<array_t>     arrayVector;
     typedef std::vector<pointer_t>   pointerVector;
     typedef std::vector<variable_t>  variableVector;
     typedef std::vector<variable_t*> variablePtrVector;
+    typedef std::vector<enumerator_t>enumeratorVector;
 
     namespace typeType {
       extern const int none;
@@ -35,9 +37,9 @@ namespace occa {
       extern const int lambda;
 
       extern const int class_;
+      extern const int enum_;
       extern const int struct_;
       extern const int union_;
-      extern const int enum_;
       extern const int structure;
     }
 

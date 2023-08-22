@@ -90,16 +90,21 @@ namespace occa {
 
         const typedef_t *originalTypedef = dynamic_cast<const typedef_t*>(var.vartype.type);
 
+        const bool typedefingEnum = (
+          originalTypedef != NULL
+          && originalTypedef->baseType.has(enum_)
+          && originalTypedef->declaredBaseType
+        );
+
         const bool typedefingStruct = (
           originalTypedef != NULL
           && originalTypedef->baseType.has(struct_)
           && originalTypedef->declaredBaseType
         );
-
         typedef_t *type = NULL;
 
-        if (typedefingStruct) {
-          // Struct typedefs already allocate a new type
+        if (typedefingStruct || typedefingEnum) {
+          // Struct & Enum typedefs already allocate a new type
           type = (typedef_t*) originalTypedef;
         } else {
           type = new typedef_t(var.vartype);
@@ -117,19 +122,23 @@ namespace occa {
 
         success = up->addToScope(*type, force);
 
-        // This type typedef's a struct so we need to add that
-        // type to the current scope
-        if (success && typedefingStruct) {
-          struct_t &structType = *((struct_t*) type->baseType.type);
-          success = up->addToScope(structType,
-                                   force);
+        if (success) {
+          // We need to add to the current scope
+          if (typedefingStruct) {
+            // that this type typedef's a struct
+            struct_t &structType = *((struct_t*) type->baseType.type);
+            success = up->addToScope(structType, force);
+          } else if (typedefingEnum) {
+            // that this type typedef's an enum
+            enum_t &enumType = *((enum_t*) type->baseType.type);
+            success = up->addToScope(enumType, force);
+          }
         }
-
         if (!success) {
           delete type;
         }
-      } else if (var.vartype.definesStruct()) {
-        // Struct
+      } else if (var.vartype.definesStruct() || var.vartype.definesEnum()) {
+        // Struct or Enum
         declaredType = true;
 
         success = up->addToScope(var.vartype.type->clone(),
@@ -205,10 +214,10 @@ namespace occa {
 
       const variableDeclaration &firstDecl = declarations[0];
 
-      // Pretty print newlines around the struct definition
+      // Pretty print newlines around the struct or enum definition
       const bool printNewlines = (
         declaredType
-        && firstDecl.variable().vartype.definesStruct()
+        && (firstDecl.variable().vartype.definesStruct() || firstDecl.variable().vartype.definesEnum())
       );
 
       if (printNewlines) {
