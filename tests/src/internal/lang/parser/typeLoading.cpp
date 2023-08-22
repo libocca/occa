@@ -9,6 +9,7 @@ void testArgumentLoading();
 void testFunctionPointerLoading();
 void testStructLoading();
 void testEnumLoading();
+void testUnionLoading();
 
 void testBaseTypeErrors();
 void testPointerTypeErrors();
@@ -28,6 +29,7 @@ int main(const int argc, const char **argv) {
   testStructLoading();
   testEnumLoading();
 
+  testUnionLoading();
 
   std::cerr << "\n---[ Testing type errors ]----------------------\n\n";
   testBaseTypeErrors();
@@ -359,6 +361,30 @@ void testEnumLoading() {
   vartype_t foo4 = ((typedef_t*) type.type)->baseType;
   ASSERT_EQ("foo4", foo4.name());
   ASSERT_TRUE(foo4.has(enum_));
+}
+
+void testUnionLoading() {
+  vartype_t type;
+
+  type = loadType("union foo1 {}");
+  ASSERT_EQ("foo1", type.name());
+  ASSERT_TRUE(type.has(union_));
+
+  type = loadType("union foo2 {} bar2");
+  ASSERT_EQ("foo2", type.name());
+  ASSERT_TRUE(type.has(union_));
+
+  type = loadType("union {} bar3");
+  ASSERT_EQ(0, (int) type.name().size());
+  ASSERT_TRUE(type.has(union_));
+
+  type = loadType("typedef union foo4 {} bar4");
+  ASSERT_EQ("bar4", type.name());
+  ASSERT_TRUE(type.has(typedef_));
+
+  vartype_t foo4 = ((typedef_t*) type.type)->baseType;
+  ASSERT_EQ("foo4", foo4.name());
+  ASSERT_TRUE(foo4.has(union_));
 }
 
 void testBaseTypeErrors() {
