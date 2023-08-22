@@ -30,8 +30,8 @@ int main(const int argc, const char **argv) {
   testNamespaceLoading();
   testStructLoading();
   // testClassLoading();
-  // testUnionLoading();
   testEnumLoading();
+  testUnionLoading();
   testFunctionLoading();
   testIfLoading();
   testForLoading();
@@ -283,7 +283,82 @@ void testClassLoading() {
 }
 
 void testUnionLoading() {
-  // TODO: Add union tests
+  statement_t *statement = NULL;
+  union_t *unionType = NULL;
+  typedef_t *typedefType = NULL;
+
+#define declSmnt         statement->to<declarationStatement>()
+#define getDeclType      declSmnt.declarations[0].variable().vartype.type
+#define setUnionType()   unionType = (union_t*) getDeclType
+#define setTypedefType() typedefType = (typedef_t*) getDeclType
+
+  // Test default union
+  setStatement(
+    "union idx3 {\n"
+    "  int i, *j, &k;\n"
+    "};",
+    statementType::declaration
+  );
+
+  setUnionType();
+
+  ASSERT_EQ("idx3",
+            unionType->name());
+
+  ASSERT_EQ(3,
+            (int) unionType->fields.size());
+
+  ASSERT_EQ("i",
+            unionType->fields[0].name());
+  ASSERT_EQ(&int_,
+            unionType->fields[0].vartype.type);
+
+  ASSERT_EQ("j",
+            unionType->fields[1].name());
+  ASSERT_EQ(&int_,
+            unionType->fields[1].vartype.type);
+
+  ASSERT_EQ("k",
+            unionType->fields[2].name());
+  ASSERT_EQ(&int_,
+            unionType->fields[2].vartype.type);
+
+  // Test default typedef union
+  setStatement(
+    "typedef union idx3_t {\n"
+    "  int i, *j, &k;\n"
+    "} idx3;",
+    statementType::declaration
+  );
+
+  setTypedefType();
+
+  ASSERT_EQ("idx3",
+            typedefType->name());
+
+  ASSERT_EQ("idx3_t",
+            typedefType->baseType.name());
+
+  // Test typedef anonymous union
+  setStatement(
+    "typedef union {\n"
+    "  int i, *j, &k;\n"
+    "} idx3;",
+    statementType::declaration
+  );
+
+  setTypedefType();
+
+  ASSERT_EQ("idx3",
+            typedefType->name());
+
+  ASSERT_EQ(0,
+            (int) typedefType->baseType.name().size());
+
+#undef declSmnt
+#undef getDeclType
+#undef getUnionType
+#undef getTypedefType
 }
 
 void testEnumLoading() {
