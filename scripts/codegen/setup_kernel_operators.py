@@ -24,7 +24,7 @@ EDIT_WARNING = f'''
 // =========================================
 '''.strip()
 
-MAX_ARGS = 60
+MAX_ARGS = 128
 
 
 def to_file(filename):
