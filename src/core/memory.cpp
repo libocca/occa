@@ -132,10 +132,7 @@ namespace occa {
   }
 
   udim_t memory::size() const {
-    if (modeMemory == NULL) {
-      return 0;
-    }
-    return modeMemory->size;
+    return length();
   }
 
   udim_t memory::length() const {
@@ -143,6 +140,11 @@ namespace occa {
       return 0;
     }
     return modeMemory->size / modeMemory->dtype_->bytes();
+  }
+
+  udim_t memory::byte_size() const {
+    if (modeMemory == NULL) return 0;
+    else return modeMemory->size;
   }
 
   bool memory::operator == (const occa::memory &other) const {
@@ -172,12 +174,12 @@ namespace occa {
                                       ? (length() - offset)
                                       : count);
 
-    OCCA_ERROR("Trying to allocate negative bytes (" << bytes << ")",
+    OCCA_ERROR("Trying to allocate negative elements (" << count << ")",
                bytes >= 0);
 
-    OCCA_ERROR("Cannot have offset and bytes greater than the memory size ("
-               << offset_ << " + " << bytes << " > " << size() << ")",
-               (offset_ + (dim_t) bytes) <= (dim_t) size());
+    OCCA_ERROR("Memory size is less than offset + count ("
+                << size() << " <" << offset << " + " << count << ")",
+               (offset + (dim_t) count) <= (dim_t) size());
 
     occa::memory m(modeMemory->slice(offset_, bytes));
     m.setDtype(dtype());
@@ -330,7 +332,7 @@ namespace occa {
 
     occa::memory mem = (
       occa::device(modeMemory->getModeDevice())
-      .malloc(size(), *this, properties())
+      .malloc(byte_size(), *this, properties())
     );
     mem.setDtype(dtype());
 
