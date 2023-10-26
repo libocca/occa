@@ -15,7 +15,7 @@ namespace occa {
       hipModule_t hipModule;
       hipFunction_t hipFunction;
 
-      mutable std::vector<void*> vArgs;
+      mutable std::vector<std::byte> vArgs;
 
     public:
       kernel(modeDevice_t *modeDevice_,
