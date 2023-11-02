@@ -43,10 +43,10 @@ jobs:
             CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
 
-          - name: "[Ubuntu] clang-12"
+          - name: "[Ubuntu] clang-13"
             os: ubuntu-22.04
-            CC: clang-12
-            CXX: clang++-12
+            CC: clang-13
+            CXX: clang++-13
             CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
 
