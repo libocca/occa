@@ -330,10 +330,10 @@ ifdef OCCA_HIP_ENABLED
       hipPlatform = $(HIP_PLATFORM)
     endif
 
-    ifeq ($(hipPlatform),nvcc)
+    ifeq ($(hipPlatform),nvidia)
       linkerFlags += -lcuda
       linkerFlags += -lcudart
-    else ifeq ($(hipPlatform),$(filter $(hipPlatform),hcc amd))
+    else ifeq ($(hipPlatform),amd)
       #set HIP_COMPILER if not supplied by user
       ifeq (,$(HIP_COMPILER))
         hipCompiler = $(shell $(HIP_PATH)/bin/hipconfig --compiler)
@@ -341,10 +341,8 @@ ifdef OCCA_HIP_ENABLED
         hipCompiler = $(HIP_COMPILER)
       endif
 
-      #Select HCC or HIP Runtime
-      ifeq ($(hipCompiler),hcc)
-        linkerFlags += -lhip_hcc
-      else ifeq ($(hipCompiler),clang)
+      #Select HIP Runtime
+      ifeq ($(hipCompiler),clang)
         linkerFlags += -lamdhip64
       endif
     endif
@@ -366,10 +364,10 @@ else
       hipPlatform = $(HIP_PLATFORM)
     endif
 
-    ifeq ($(hipPlatform),nvcc)
+    ifeq ($(hipPlatform),nvidia)
       hipLibFlags  = $(call libraryFlagsFor,cuda)
       hipLibFlags += $(call libraryFlagsFor,cudart)
-    else ifeq ($(hipPlatform),$(filter $(hipPlatform),hcc amd))
+    else ifeq ($(hipPlatform),amd)
       #set HIP_COMPILER if not supplied by user
       ifeq (,$(HIP_COMPILER))
         hipCompiler = $(shell $(HIP_PATH)/bin/hipconfig --compiler)
@@ -377,10 +375,8 @@ else
         hipCompiler = $(HIP_COMPILER)
       endif
 
-      #Select HCC or HIP Runtime
-      ifeq ($(hipCompiler),hcc)
-        hipLibFlags = $(call libraryFlagsFor,hip_hcc)
-      else ifeq ($(hipCompiler),clang)
+      #Select HIP Runtime
+      ifeq ($(hipCompiler),clang)
         hipLibFlags = $(call libraryFlagsFor,amdhip64)
       endif
     endif
