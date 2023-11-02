@@ -274,13 +274,13 @@ namespace occa {
       //---[ Compiling Command ]--------
       command << compiler
               << " --genco"
-#if defined(__HIP_PLATFORM_NVCC___) || (HIP_VERSION >= 305)
+#if defined(__HIP_PLATFORM_NVIDIA__) || (HIP_VERSION >= 305)
               << ' ' << compilerFlags
 #else
               << " -f=\\\"" << compilerFlags << "\\\""
 #endif
               << ' ' << hipccCompilerFlags;
-#if defined(__HIP_PLATFORM_NVCC___) || (HIP_VERSION >= 305)
+#if defined(__HIP_PLATFORM_NVIDIA__) || (HIP_VERSION >= 305)
       const bool includeOcca = kernelProps.get("kernel/include_occa", false);
       const bool linkOcca    = kernelProps.get("kernel/link_occa", false);
       if (includeOcca) {
