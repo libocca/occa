@@ -44,7 +44,7 @@ Mission critical computational science and engineering applications from the pub
 
  - Fortan 90 compiler
  - CUDA 9 or later
- - HIP 3.5 or later
+ - HIP 4.2 or later
  - SYCL 2020 or later
  - OpenCL 2.0 or later
  - OpenMP 4.0 or later

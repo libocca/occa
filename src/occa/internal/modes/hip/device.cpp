@@ -216,14 +216,7 @@ namespace occa {
       );
 
       if (hipccCompilerFlags.find("-arch=sm") == std::string::npos &&
-#if HIP_VERSION >= 502
-          hipccCompilerFlags.find("--offload-arch=gfx") == std::string::npos
-#elif HIP_VERSION >= 305
-          hipccCompilerFlags.find("--amdgpu-target=gfx") == std::string::npos
-#else
-          hipccCompilerFlags.find("-t gfx") == std::string::npos
-#endif
-          ) {
+          hipccCompilerFlags.find("--offload-arch=gfx") == std::string::npos) {
 
         std::string archString = kernelProps.get<std::string>("arch", arch);
 
@@ -231,13 +224,7 @@ namespace occa {
         if (startsWith(archString, "sm_")) {
           archFlag = " -arch=" + archString;
         } else if (startsWith(archString, "gfx")) {
-#if HIP_VERSION >= 502
           archFlag = " --offload-arch=" + archString;
-#elif HIP_VERSION >= 305
-          archFlag = " --amdgpu-target=" + archString;
-#else
-          archFlag = " -t " + archString;
-#endif
         } else {
           OCCA_FORCE_ERROR("Unknown HIP arch");
         }
@@ -274,13 +261,9 @@ namespace occa {
       //---[ Compiling Command ]--------
       command << compiler
               << " --genco"
-#if defined(__HIP_PLATFORM_NVIDIA__) || (HIP_VERSION >= 305)
               << ' ' << compilerFlags
-#else
-              << " -f=\\\"" << compilerFlags << "\\\""
-#endif
               << ' ' << hipccCompilerFlags;
-#if defined(__HIP_PLATFORM_NVIDIA__) || (HIP_VERSION >= 305)
+
       const bool includeOcca = kernelProps.get("kernel/include_occa", false);
       const bool linkOcca    = kernelProps.get("kernel/link_occa", false);
       if (includeOcca) {
@@ -291,7 +274,6 @@ namespace occa {
             /* NC: hipcc doesn't seem to like linking a library in */
               //<< " -L"        << env::OCCA_INSTALL_DIR << "lib -locca";
       }
-#endif
       command << ' '    << sourceFilename
               << " -o " << binaryFilename
               << " 2>&1";
