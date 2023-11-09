@@ -72,15 +72,25 @@ namespace occa {
 
     void kernel::deviceRun() const {
       const int args = (int) arguments.size();
-      if (!args) {
-        vArgs.resize(1);
-      } else if ((int) vArgs.size() < args) {
-        vArgs.resize(args);
+
+      int offset = 0;
+      for (int i = 0; i < args; ++i) {
+        const kernelArgData &arg = arguments[i];
+        const udim_t argSize = arg.size();
+
+        offset += offset % std::min(static_cast<size_t>(argSize),
+                                    sizeof(void*)); //align
+        offset += argSize;
+      }
+
+      size_t argBufferSize = std::max(offset,1);
+      if (vArgs.size() < argBufferSize) {
+        vArgs.resize(argBufferSize);
       }
 
       // HIP expects kernel arguments to be aligned
-      char *dataPtr = (char*) &(vArgs[0]);
-      int offset = 0;
+      std::byte *dataPtr = vArgs.data();
+      offset = 0;
       for (int i = 0; i < args; ++i) {
         const kernelArgData &arg = arguments[i];
         const udim_t argSize = arg.size();
