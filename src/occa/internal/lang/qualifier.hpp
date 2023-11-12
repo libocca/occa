@@ -9,7 +9,11 @@
 
 namespace occa {
   namespace lang {
+    class exprNode;
+    typedef std::vector<exprNode*> exprNodeVector;
+
     namespace qualifierType {
+
       extern const udim_t none;
 
       extern const udim_t auto_;
@@ -21,6 +25,11 @@ namespace occa {
       extern const udim_t register_;
       extern const udim_t long_;
       extern const udim_t longlong_;
+      extern const udim_t attribute_;
+
+      // Windows types
+      extern const udim_t declspec_;
+
       extern const udim_t typeInfo;
 
       extern const udim_t forPointers_;
@@ -55,9 +64,6 @@ namespace occa {
       extern const udim_t struct_;
       extern const udim_t union_;
 
-      // Windows types
-      extern const udim_t dllexport_;
-
       extern const udim_t newType_;
       extern const udim_t newType;
 
@@ -88,15 +94,29 @@ namespace occa {
     public:
       fileOrigin origin;
       const qualifier_t *qualifier;
+      exprNodeVector args;
 
       qualifierWithSource(const qualifier_t &qualifier_);
 
       qualifierWithSource(const fileOrigin &origin_,
                           const qualifier_t &qualifier_);
 
+      qualifierWithSource(const fileOrigin &origin_,
+                          const qualifier_t &qualifier_,
+                          const exprNodeVector &args_);
+
+      qualifierWithSource(const qualifierWithSource &other);
+
+      ~qualifierWithSource();
+
+      qualifierWithSource& operator = (const qualifierWithSource &other);
+
       void printWarning(const std::string &message) const;
       void printError(const std::string &message) const;
     };
+
+    printer& operator << (printer &pout,
+                          const qualifierWithSource &qualifier);
 
     typedef std::vector<qualifierWithSource> qualifierVector_t;
 
@@ -105,7 +125,6 @@ namespace occa {
       qualifierVector_t qualifiers;
 
       qualifiers_t();
-      ~qualifiers_t();
 
       void clear();
 
@@ -128,11 +147,20 @@ namespace occa {
       qualifiers_t& add(const fileOrigin &origin,
                         const qualifier_t &qualifier);
 
+      qualifiers_t& add(const fileOrigin &origin,
+                        const qualifier_t &qualifier,
+                        const exprNodeVector &args);
+
       qualifiers_t& add(const qualifierWithSource &qualifier);
 
       qualifiers_t& add(const int index,
                         const fileOrigin &origin,
                         const qualifier_t &qualifier);
+
+      qualifiers_t& add(const int index,
+                        const fileOrigin &origin,
+                        const qualifier_t &qualifier,
+                        const exprNodeVector &args);
 
       qualifiers_t& add(const int index,
                         const qualifierWithSource &qualifier);

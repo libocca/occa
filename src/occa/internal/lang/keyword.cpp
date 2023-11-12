@@ -291,6 +291,8 @@ namespace occa {
       keywords.add(*(new qualifierKeyword(volatile_)));
       keywords.add(*(new qualifierKeyword(long_)));
       keywords.add(*(new qualifierKeyword(longlong_)));
+      keywords.add(*(new qualifierKeyword(attribute_)));
+      keywords.add(*(new qualifierKeyword(declspec_)));
 
       keywords.add(*(new qualifierKeyword(extern_)));
       keywords.add(*(new qualifierKeyword(externC)));

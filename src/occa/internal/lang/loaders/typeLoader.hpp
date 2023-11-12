@@ -23,8 +23,7 @@ namespace occa {
 
       bool loadType(vartype_t &vartype);
 
-      void loadVartypeQualifier(token_t *token,
-                                const qualifier_t &qualifier,
+      void loadVartypeQualifier(const qualifier_t &qualifier,
                                 vartype_t &vartype);
 
       void setVartypePointers(vartype_t &vartype);

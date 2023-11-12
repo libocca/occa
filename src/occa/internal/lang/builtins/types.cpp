@@ -11,6 +11,10 @@ namespace occa {
     const qualifier_t volatile_     ("volatile"      , qualifierType::volatile_);
     const qualifier_t long_         ("long"          , qualifierType::long_);
     const qualifier_t longlong_     ("long long"     , qualifierType::longlong_);
+    const qualifier_t attribute_    ("__attribute__" , qualifierType::attribute_);
+
+    // Windows types
+    const qualifier_t declspec_     ("__declspec"    , qualifierType::declspec_);
 
     const qualifier_t extern_       ("extern"        , qualifierType::extern_);
     const qualifier_t externC       ("extern \"C\""  , qualifierType::externC);
@@ -28,10 +32,6 @@ namespace occa {
     const qualifier_t enum_         ("enum"          , qualifierType::enum_);
     const qualifier_t struct_       ("struct"        , qualifierType::struct_);
     const qualifier_t union_        ("union"         , qualifierType::union_);
-
-    // Windows types
-    // TODO: Properly handle compiler extension attributes
-    const qualifier_t dllexport_    ("__declspec(dllexport)", qualifierType::dllexport_);
 
     const primitive_t bool_         ("bool");
     const primitive_t char_         ("char");
@@ -89,6 +89,6 @@ namespace occa {
     const primitive_t double2       ("double2");
     const primitive_t double3       ("double3");
     const primitive_t double4       ("double4");
-    
+
   } // namespace lang
 }
