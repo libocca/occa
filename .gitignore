@@ -21,6 +21,10 @@ opt
 /.compiledDefines
 /include/occa/defines/compiledDefines.hpp
 /include/occa/scripts
+/include/occa/core/kernelOperators.hpp_codegen
+/src/core/kernelOperators.cpp_codegen
+/src/occa/internal/utils/runFunction.cpp_codegen
+/include/occa/defines/macros.hpp_codegen
 
 # Binaries generated to fetch compiler information
 /scripts/compiler/compilerSupportsMPI

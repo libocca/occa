@@ -8,7 +8,7 @@ Generates:
 
 import os
 import functools
-
+import argparse
 
 OCCA_DIR = os.environ.get(
     'OCCA_DIR',
@@ -79,7 +79,7 @@ def run_function_from_arguments(N):
     content = '\nswitch (argc) {\n'
     for n in range(N + 1):
         content += run_function_from_argument(n)
-    content += '}\n';
+    content += '  default:\n    OCCA_FORCE_ERROR("TOO MANY KERNEL ARGUMENTS REQUESTED");\n}\n'
 
     return content
 
@@ -148,7 +148,44 @@ def operator_definition(N):
 '''
     return content
 
+def macro_count2(N):
+    content = '#  define OCCA_ARG_COUNT2( \\\n'
+    indent=' ' * 2
+    for n in range(1, N+1):
+        if n % 10 == 1:
+            content += indent
+        content += '_' + str(n) + ', '
+        if n % 10 == 0:
+            content += '\\\n'
+    if N % 10 > 0:
+        content += '\\\n'
+    content += indent + 'N,  ...) N\n'
+    return content
+
+def macro_count(N):
+    content = '#  define OCCA_ARG_COUNT(...) OCCA_ARG_COUNT2( \\\n'
+    indent=' ' * 2
+    content += indent + '__VA_ARGS__, \\\n' + indent
+    for n in range(N, 0, -1):
+        content += str(n) + ', '
+        if n % 10 == 1:
+            content += '\\\n' + indent
+    content += '0)\n'
+    return content
+
+@to_file('include/occa/defines/macros.hpp_codegen')
+def macro_declarations(N):
+    return ''.join(
+        macro_count2(N) + '\n' + macro_count(N)
+    )
+
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(usage=__doc__)
+    parser.add_argument("-N","--NargsMax", type=int, default=MAX_ARGS)
+    args = parser.parse_args()
+    MAX_ARGS = args.NargsMax
+
     run_function_from_arguments(MAX_ARGS)
     operator_declarations(MAX_ARGS)
     operator_definitions(MAX_ARGS)
+    macro_declarations(MAX_ARGS)
