@@ -252,15 +252,16 @@ endif
 
 
 #---[ Variable Dependencies ]---------------------
-fortranEnabled = 0
-mpiEnabled     = 0
-openmpEnabled  = 0
-cudaEnabled    = 0
-hipEnabled     = 0
-openclEnabled  = 0
-metalEnabled   = 0
-dpcppEnabled	 = 0
-
+fortranEnabled        = 0
+mpiEnabled            = 0
+openmpEnabled         = 0
+cudaEnabled           = 0
+hipEnabled            = 0
+openclEnabled         = 0
+metalEnabled          = 0
+dpcppEnabled          = 0
+threadSharableEnabled = 0
+maxArgs               = 128
 
 #---[ Fortran ]-------------------------
 ifdef OCCA_FORTRAN_ENABLED
@@ -480,6 +481,15 @@ ifeq ($(usingMacOS),1)
   endif
 endif
 
+#---[ Other parameters ]---------------------------
+ifdef OCCA_THREAD_SHARABLE_ENABLED
+  threadSharableEnabled = $(OCCA_THREAD_SHARABLE_ENABLED)
+endif
+
+ifdef OCCA_MAX_ARGS
+  maxArgs = $(OCCA_MAX_ARGS)
+endif
+
 ifeq ($(cudaEnabled),1)
   compilerFlags += -Wno-c++11-long-long
 endif
@@ -491,11 +501,13 @@ else
   OCCA_CHECK_ENABLED := 0
 endif
 
-OCCA_FORTRAN_ENABLED := $(fortranEnabled)
-OCCA_OPENMP_ENABLED  := $(openmpEnabled)
-OCCA_CUDA_ENABLED    := $(cudaEnabled)
-OCCA_HIP_ENABLED     := $(hipEnabled)
-OCCA_OPENCL_ENABLED  := $(openclEnabled)
-OCCA_METAL_ENABLED   := $(metalEnabled)
-OCCA_DPCPP_ENABLED   := $(dpcppEnabled)
+OCCA_FORTRAN_ENABLED         := $(fortranEnabled)
+OCCA_OPENMP_ENABLED          := $(openmpEnabled)
+OCCA_CUDA_ENABLED            := $(cudaEnabled)
+OCCA_HIP_ENABLED             := $(hipEnabled)
+OCCA_OPENCL_ENABLED          := $(openclEnabled)
+OCCA_METAL_ENABLED           := $(metalEnabled)
+OCCA_DPCPP_ENABLED           := $(dpcppEnabled)
+OCCA_THREAD_SHARABLE_ENABLED := $(threadSharableEnabled)
+OCCA_MAX_ARGS                := $(maxArgs)
 #=================================================

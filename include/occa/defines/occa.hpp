@@ -15,8 +15,6 @@
 #define OKL_VERSION       10600
 #define OKL_VERSION_STR   "1.6.0"
 
-#define OCCA_MAX_ARGS 128
-
 #define OCCA_DEFAULT_MEM_BYTE_ALIGN 32
 
 #endif
