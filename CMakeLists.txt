@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.17 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.21 FATAL_ERROR)
 
 #---[ CMake Config ]--------------------
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -244,6 +244,16 @@ if(ENABLE_METAL AND APPLE)
   endif()
 endif()
 #=======================================
+  
+if(NOT OCCA_IS_TOP_LEVEL)
+# OCCA is being built as a subdirectory in another project
+  set(OCCA_OPENMP_ENABLED ${OCCA_OPENMP_ENABLED} PARENT_SCOPE)
+  set(OCCA_CUDA_ENABLED ${OCCA_CUDA_ENABLED} PARENT_SCOPE)
+  set(OCCA_HIP_ENABLED ${OCCA_HIP_ENABLED} PARENT_SCOPE)
+  set(OCCA_DPCPP_ENABLED ${OCCA_DPCPP_ENABLED} PARENT_SCOPE)
+  set(OCCA_OPENCL_ENABLED ${OCCA_OPENCL_ENABLED} PARENT_SCOPE)
+  set(OCCA_METAL_ENABLED ${OCCA_METAL_ENABLED} PARENT_SCOPE)
+endif()
 
 # Generate CompiledDefines from libraries we found
 configure_file(
