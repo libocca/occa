@@ -85,8 +85,14 @@ namespace occa {
   }
 
   void modeDevice_t::finishAll() const {
-    for(auto* stream : streams) {
-      if(stream) stream->finish();
+    if (streamRing.head) {
+      auto* start = static_cast<modeStream_t*>(streamRing.head);
+      auto* current = start;
+      // Every device 
+      do {
+        current->finish();
+        current = static_cast<modeStream_t*>(current->rightRingEntry);
+      } while (current != start);
     }
   }
 
