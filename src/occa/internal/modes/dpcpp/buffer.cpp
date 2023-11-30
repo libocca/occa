@@ -15,11 +15,13 @@ namespace occa {
     buffer::~buffer() {
       if (!isWrapped && ptr) {
         auto& dpcpp_device = getDpcppDevice(modeDevice);
+        // Unlike CUDA and HIP, freeing memory in SYCL is not
+        // synchronous across all streams.
+        dpcpp_device.finishAll();
         OCCA_DPCPP_ERROR("Memory: Freeing SYCL alloc'd memory",
                          ::sycl::free(ptr,dpcpp_device.dpcppContext));
       }
       ptr = nullptr;
-      size = 0;
     }
 
     void buffer::malloc(udim_t bytes) {
