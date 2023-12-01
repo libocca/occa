@@ -189,7 +189,7 @@ namespace occa {
     self.run();
   }
 
-#include "kernelOperators.cpp_codegen"
+#include "codegen/kernelOperators.cpp_codegen"
 
   void kernel::free() {
     // ~modeKernel_t NULLs all wrappers
