@@ -80,15 +80,7 @@ namespace occa
 
       std::string dpcppParser::launchBoundsAttribute(const int innerDims[3])
       {
-        std::stringstream ss; 
-        ss << "[[sycl::reqd_work_group_size("
-           << innerDims[2]
-           << ","
-           << innerDims[1]
-           << ","
-           << innerDims[0]
-           << ")]]\n";
-        return ss.str();
+        return "";
       }
 
       // @note: As of SYCL 2020 this will need to change from `CL/sycl.hpp` to `sycl.hpp`
