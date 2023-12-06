@@ -31,7 +31,10 @@ def to_file(filename):
     def inner_to_file(func):
         @functools.wraps(func)
         def cached_func(*args, **kwargs):
-            with open(OCCA_DIR + '/' + filename, 'w') as f:
+            filepath = OCCA_DIR + '/' + filename
+            dirpath = os.path.dirname(os.path.abspath(filepath))
+            os.makedirs(dirpath, exist_ok=True)
+            with open(filepath, 'w') as f:
                 content = func(*args, **kwargs)
                 f.write(EDIT_WARNING + '\n\n');
                 f.write(content + '\n')
@@ -74,7 +77,7 @@ def array_args(N, indent):
     return content
 
 
-@to_file('src/occa/internal/utils/runFunction.cpp_codegen')
+@to_file('include/codegen/runFunction.cpp_codegen')
 def run_function_from_arguments(N):
     content = '\nswitch (argc) {\n'
     for n in range(N + 1):
@@ -101,7 +104,7 @@ def run_function_from_argument(N):
     return content
 
 
-@to_file('include/occa/core/kernelOperators.hpp_codegen')
+@to_file('include/codegen/kernelOperators.hpp_codegen')
 def operator_declarations(N):
     # We manually define the 0-argument kernel for documentation purposes
     return '\n\n'.join(
@@ -118,7 +121,7 @@ def operator_declaration(N):
     return content
 
 
-@to_file('src/core/kernelOperators.cpp_codegen')
+@to_file('include/codegen/kernelOperators.cpp_codegen')
 def operator_definitions(N):
     return '\n'.join(
         operator_definition(n) for n in range(N + 1)
@@ -173,7 +176,7 @@ def macro_count(N):
     content += '0)\n'
     return content
 
-@to_file('include/occa/defines/macros.hpp_codegen')
+@to_file('include/codegen/macros.hpp_codegen')
 def macro_declarations(N):
     return ''.join(
         macro_count2(N) + '\n' + macro_count(N)
@@ -182,10 +185,11 @@ def macro_declarations(N):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(usage=__doc__)
     parser.add_argument("-N","--NargsMax", type=int, default=MAX_ARGS)
+    parser.add_argument("--skipInline", action='store_true')
     args = parser.parse_args()
-    MAX_ARGS = args.NargsMax
 
-    run_function_from_arguments(MAX_ARGS)
+    run_function_from_arguments(args.NargsMax)
+    MAX_ARGS = MAX_ARGS if args.skipInline else args.NargsMax
     operator_declarations(MAX_ARGS)
     operator_definitions(MAX_ARGS)
     macro_declarations(MAX_ARGS)
