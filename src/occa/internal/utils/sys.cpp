@@ -992,7 +992,7 @@ namespace occa {
     }
 
     void runFunction(functionPtr_t f, const int argc, void **args) {
-#include "runFunction.cpp_codegen"
+#include "codegen/runFunction.cpp_codegen"
     }
 
     std::string stacktrace(const int frameStart,

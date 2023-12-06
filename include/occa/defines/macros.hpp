@@ -24,7 +24,7 @@
 // Just in case someone wants to run with an older format than C99
 #ifndef OCCA_DISABLE_VARIADIC_MACROS
 
-#include "macros.hpp_codegen"
+#include "codegen/macros.hpp_codegen"
 
 #endif // OCCA_DISABLE_VARIADIC_MACROS
 
