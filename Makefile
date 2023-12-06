@@ -80,6 +80,14 @@ else
 endif
 #=================================================
 
+PLACE_GENERATED_CODES := $(shell mkdir -p $(OCCA_DIR)/include/occa/core/codegen | \
+                                 mkdir -p $(OCCA_DIR)/src/core/codegen | \
+                                 mkdir -p $(OCCA_DIR)/src/occa/internal/utils/codegen | \
+                                 mkdir -p $(OCCA_DIR)/include/occa/defines/codegen)
+PLACE_GENERATED_CODES := $(shell cp $(OCCA_DIR)/scripts/codegen/kernelOperators.hpp_codegen.in $(OCCA_DIR)/include/occa/core/codegen/kernelOperators.hpp_codegen | \
+                                 cp $(OCCA_DIR)/scripts/codegen/kernelOperators.cpp_codegen.in $(OCCA_DIR)/src/core/codegen/kernelOperators.cpp_codegen | \
+                                 cp $(OCCA_DIR)/scripts/codegen/runFunction.cpp_codegen.in $(OCCA_DIR)/src/occa/internal/utils/codegen/runFunction.cpp_codegen | \
+                                 cp $(OCCA_DIR)/scripts/codegen/macros.hpp_codegen.in $(OCCA_DIR)/include/occa/defines/codegen/macros.hpp_codegen)
 
 #---[ Compile Library ]---------------------------
 # Setup compiled defines and force rebuild if defines changed
