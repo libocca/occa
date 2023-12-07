@@ -42,7 +42,6 @@ namespace occa
         void setSharedQualifiers();
         void setKernelQualifiers(function_t &function);
         void migrateLocalDecls(functionDeclStatement &kernelSmnt);
-        void setLaunchBounds();
 
         void setupAtomics();
         static bool transformAtomicBlockStatement(blockStatement &blockSmnt);

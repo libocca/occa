@@ -5,7 +5,22 @@
 #include <occa/internal/lang/builtins/attributes.hpp>
 #include <occa/internal/lang/builtins/types.hpp>
 #include <occa/internal/lang/expr.hpp>
+#include <occa/internal/lang/attribute.hpp>
 // #include <stringstream>
+
+namespace {
+class SubgroupSize : public occa::lang::attribute_t {
+public:      
+  SubgroupSize() = default;
+
+  const std::string& name() const override {
+    static const std::string name_ = "intel::reqd_sub_group_size";
+    return name_;
+  }
+  bool forStatementType(const int sType) const override { return false;}
+  bool isValid(const occa::lang::attributeToken_t &attr) const override {return true;}
+};
+}
 
 namespace occa
 {
@@ -183,6 +198,23 @@ namespace occa
 
                          lambda_t &sycl_kernel = *(new lambda_t(capture_t::byValue));
                          sycl_kernel.addArgument(sycl_nditem);
+
+                         if(0 < simd_length) {
+                           // Make idenifierNode for attributeArg
+                           attributeArg_t subgroup_size_arg(
+                            new identifierNode(
+                              new identifierToken(originSource::builtin, "subgroup_size_arg"),
+                              std::to_string(simd_length)));
+                           
+                           // Create attributeToken
+                           attributeToken_t subgroup_size_token(new SubgroupSize(),
+                             new identifierToken(originSource::builtin, "subgroup_size"),
+                             occa::lang::attribute_style::cpp);
+
+                           subgroup_size_token.args.push_back(subgroup_size_arg);
+
+                           sycl_kernel.attributes["subgroup_size"] = subgroup_size_token;
+                         }
 
                          sycl_kernel.body->swap(k);
 

@@ -66,6 +66,11 @@ namespace occa {
       attrType(&attrType_),
       source((identifierToken*) token_t::clone(&source_)) {}
 
+    attributeToken_t::attributeToken_t(attribute_t *attrType_,
+                                       identifierToken* source_,
+                                       attribute_style style_)
+      : attrType(attrType_), source(source_), style(style_) {}
+
     attributeToken_t::attributeToken_t(const attributeToken_t &other) :
       attrType(NULL),
       source(NULL) {
