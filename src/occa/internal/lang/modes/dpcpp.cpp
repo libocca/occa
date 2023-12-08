@@ -35,7 +35,7 @@ namespace occa
             shared("auto", qualifierType::custom)
       {
         okl::addOklAttributes(*this);
-        simd_length = settings.get("simd_length",-1);
+        simd_length_default = settings_.get("simd_length",-1);
       }
 
       void dpcppParser::onClear()
@@ -199,18 +199,21 @@ namespace occa
                          lambda_t &sycl_kernel = *(new lambda_t(capture_t::byValue));
                          sycl_kernel.addArgument(sycl_nditem);
 
+                         int simd_length = simd_length_default;
+                         if (k.hasAttribute("simd_length")) {
+                           const attributeToken_t& attr = k.attributes["simd_length"];
+                           simd_length = attr.args[0].expr->evaluate();
+                         }
+
                          if(0 < simd_length) {
-                           // Make idenifierNode for attributeArg
                            attributeArg_t subgroup_size_arg(
                             new identifierNode(
                               new identifierToken(originSource::builtin, "subgroup_size_arg"),
                               std::to_string(simd_length)));
                            
-                           // Create attributeToken
                            attributeToken_t subgroup_size_token(new SubgroupSize(),
                              new identifierToken(originSource::builtin, "subgroup_size"),
                              occa::lang::attribute_style::cpp);
-
                            subgroup_size_token.args.push_back(subgroup_size_arg);
 
                            sycl_kernel.attributes["subgroup_size"] = subgroup_size_token;

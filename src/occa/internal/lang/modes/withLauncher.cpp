@@ -437,6 +437,10 @@ namespace occa {
         forStatement &newForSmnt = (forStatement&) forSmnt.clone();
         newKernelSmnt.set(newForSmnt);
 
+        if (newForSmnt.hasAttribute("simd_length")) {
+          newKernelSmnt.addAttribute(newForSmnt.attributes["simd_length"]);
+        }
+
         bool addLaunchBoundsAttribute{true};
         int kernelInnerDims[3] = {1,1,1};
         if (newForSmnt.hasAttribute("max_inner_dims")) {
