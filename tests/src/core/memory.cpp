@@ -4,11 +4,13 @@
 void testMalloc();
 void testSlice();
 void testUnwrap();
+void testCast();
 
 int main(const int argc, const char **argv) {
   testMalloc();
   testSlice();
   testUnwrap();
+  testCast();
 
   return 0;
 }
@@ -153,4 +155,19 @@ void testUnwrap() {
   }
 
   delete[] host_memory;
+}
+
+void testCast() {
+  occa::device occa_device({{"mode", "Serial"}});
+
+  occa::memory occa_memory = occa_device.malloc<double>(10);
+
+  ASSERT_TRUE(occa::dtype::double_ == occa_memory.dtype());
+
+  occa::memory casted_memory = occa_memory.cast(occa::dtype::byte);
+
+  ASSERT_TRUE(occa::dtype::double_ == occa_memory.dtype());
+  ASSERT_TRUE(occa::dtype::byte == casted_memory.dtype());
+
+  ASSERT_EQ(occa_memory.size(), casted_memory.size());
 }
