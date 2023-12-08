@@ -315,8 +315,8 @@ namespace occa {
     }
 
     array concat(const array &other) const {
-      const udim_t bytes1 = memory_.byte_size();
-      const udim_t bytes2 = other.memory_.byte_size();
+      const udim_t entries = memory_.length();
+      const udim_t other_entries = other.memory_.length();
 
       occa::memory ret = getDevice().template malloc<T>(entries + other_entries);
       ret.copyFrom(memory_, entries, 0);

@@ -173,7 +173,7 @@ void testCast() {
   ASSERT_TRUE(occa::dtype::double_ == occa_memory.dtype());
   ASSERT_TRUE(occa::dtype::byte == casted_memory.dtype());
 
-  ASSERT_EQ(occa_memory.size(), casted_memory.size());
+  ASSERT_EQ(occa_memory.byte_size(), casted_memory.byte_size());
 }
 
 void testCopy() {
