@@ -25,7 +25,7 @@ namespace occa {
     template <class ReturnType>
     void setupReturnMemory(const ReturnType &value) const {
       setupReturnMemoryArray<ReturnType>(1);
-      returnMemory.copyFrom(&value, sizeof(ReturnType));
+      returnMemory.copyFrom(&value, 1);
     }
 
     template <class ReturnType>
@@ -39,8 +39,7 @@ namespace occa {
 
     template <class ReturnType>
     void setReturnValue(ReturnType &value) const {
-      size_t bytes = sizeof(ReturnType);
-      returnMemory.copyTo(&value, bytes);
+      returnMemory.copyTo(&value, 1);
     }
 
     virtual occa::scope getMapArrayScopeOverrides() const {

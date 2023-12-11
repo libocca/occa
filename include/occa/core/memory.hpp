@@ -326,7 +326,7 @@ namespace occa {
      * @endDoc
      */
     void copyFrom(const void *src,
-                  const dim_t bytes = -1,
+                  const dim_t count = -1,
                   const dim_t offset = 0,
                   const occa::json &props = occa::json());
 
@@ -352,7 +352,7 @@ namespace occa {
      * @endDoc
      */
     void copyFrom(const memory src,
-                  const dim_t bytes = -1,
+                  const dim_t count = -1,
                   const dim_t destOffset = 0,
                   const dim_t srcOffset = 0,
                   const occa::json &props = occa::json());
@@ -386,7 +386,7 @@ namespace occa {
      * @endDoc
      */
     void copyTo(void *dest,
-                const dim_t bytes = -1,
+                const dim_t count = -1,
                 const dim_t offset = 0,
                 const occa::json &props = occa::json()) const;
 
@@ -412,7 +412,7 @@ namespace occa {
      * @endDoc
      */
     void copyTo(const memory dest,
-                const dim_t bytes = -1,
+                const dim_t count = -1,
                 const dim_t destOffset = 0,
                 const dim_t srcOffset = 0,
                 const occa::json &props = occa::json()) const;
