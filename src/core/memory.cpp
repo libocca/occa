@@ -203,7 +203,7 @@ namespace occa {
 
     OCCA_ERROR("Destination memory has size [" << modeMemory->size << "],"
                << " trying to access [" << offset_ << ", " << (offset_ + bytes) << "]",
-               (bytes + offset_) <= modeMemory->size);
+               udim_t(bytes + offset_) <= modeMemory->size);
 
     modeMemory->copyFrom(src, bytes, offset_, props);
   }
@@ -232,11 +232,11 @@ namespace occa {
 
     OCCA_ERROR("Source memory has size [" << src.modeMemory->size << "],"
                << " trying to access [" << srcOffset_ << ", " << (srcOffset_ + bytes) << "]",
-               (bytes + srcOffset_) <= src.modeMemory->size);
+               udim_t(bytes + srcOffset_) <= src.modeMemory->size);
 
     OCCA_ERROR("Destination memory has size [" << modeMemory->size << "],"
                << " trying to access [" << destOffset_ << ", " << (destOffset_ + bytes) << "]",
-               (bytes + destOffset_) <= modeMemory->size);
+               udim_t(bytes + destOffset_) <= modeMemory->size);
 
     modeMemory->copyFrom(src.modeMemory, bytes, destOffset_, srcOffset_, props);
   }
@@ -259,7 +259,7 @@ namespace occa {
 
     OCCA_ERROR("Source memory has size [" << modeMemory->size << "],"
                << " trying to access [" << offset_ << ", " << (offset_ + bytes) << "]",
-               (bytes + offset_) <= modeMemory->size);
+               udim_t(bytes + offset_) <= modeMemory->size);
 
     modeMemory->copyTo(dest, bytes, offset_, props);
   }
@@ -288,11 +288,11 @@ namespace occa {
 
     OCCA_ERROR("Source memory has size [" << modeMemory->size << "],"
                << " trying to access [" << srcOffset_ << ", " << (srcOffset_ + bytes) << "]",
-               (bytes + srcOffset_) <= modeMemory->size);
+               udim_t(bytes + srcOffset_) <= modeMemory->size);
 
     OCCA_ERROR("Destination memory has size [" << dest.modeMemory->size << "],"
                << " trying to access [" << destOffset_ << ", " << (destOffset_ + bytes) << "]",
-               (bytes + destOffset_) <= dest.modeMemory->size);
+               udim_t(bytes + destOffset_) <= dest.modeMemory->size);
 
     dest.modeMemory->copyFrom(modeMemory, bytes, destOffset_, srcOffset_, props);
   }
