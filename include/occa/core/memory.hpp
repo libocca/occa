@@ -307,17 +307,18 @@ namespace occa {
      * @startDoc{copyFrom[0]}
      *
      * Description:
-     *   Copies data from the input `src` to the caller [[memory]] object
+     *   Copies `count` elements from `src` into caller's data buffer, beginning at `offset`.
      *
      * Arguments:
      *   src:
      *     Data source.
      *
-     *   bytes:
-     *     How many bytes to copy.
+     *   count:
+     *     The number of elements of type [[dtype_t]] to copy.
      *
      *   offset:
-     *     The [[memory]] offset where data transfer will start.
+     *     The number of elements from beginning of the caller's 
+     *     data buffer the destination range is shifted.
      *
      *   props:
      *     Any backend-specific properties for memory transfer.
@@ -367,17 +368,18 @@ namespace occa {
      * @startDoc{copyTo[0]}
      *
      * Description:
-     *   Copies data from the input `src` to the caller [[memory]] object
+     *   Copies `count` elements to `dest` from caller's data buffer, beginning at `offset`.
      *
      * Arguments:
      *   dest:
      *     Where to copy the [[memory]] data to.
      *
-     *   bytes:
-     *     How many bytes to copy
+     *   count:
+     *     The number of elements of type [[dtype_t]] to copy
      *
      *   offset:
-     *     The [[memory]] offset where data transfer will start.
+     *     The number of elements from beginning of the caller's 
+     *     data buffer the source range is shifted.
      *
      *   props:
      *     Any backend-specific properties for memory transfer.
