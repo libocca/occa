@@ -42,7 +42,7 @@ namespace occa {
       bool kernelHasValidReturnType(functionDeclStatement &kernelSmnt) {
         vartype_t &returnType = kernelSmnt.function().returnType;
 
-        if (returnType.qualifiers.size() || (*returnType.type != void_)) {
+        if (*returnType.type != void_) {
           returnType.printError(
             "[@kernel] functions must have a [void] return type"
           );
