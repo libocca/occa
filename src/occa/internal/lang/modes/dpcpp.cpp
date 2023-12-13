@@ -6,20 +6,76 @@
 #include <occa/internal/lang/builtins/types.hpp>
 #include <occa/internal/lang/expr.hpp>
 #include <occa/internal/lang/attribute.hpp>
-// #include <stringstream>
 
 namespace {
-class SubgroupSize : public occa::lang::attribute_t {
-public:      
-  SubgroupSize() = default;
 
-  const std::string& name() const override {
-    static const std::string name_ = "intel::reqd_sub_group_size";
-    return name_;
+class dpcppLambda_t : public occa::lang::lambda_t {
+public:
+  int simd_length{-1};
+
+  dpcppLambda_t(occa::lang::capture_t capture_, int simd_length_)
+   : lambda_t(capture_), simd_length(simd_length_) {}
+
+  dpcppLambda_t(const dpcppLambda_t& other) 
+    : lambda_t(other), simd_length(other.simd_length) {}
+
+  ~dpcppLambda_t() = default;
+
+  bool equals(const type_t &other) const override {
+    const dpcppLambda_t &other_ = other.to<dpcppLambda_t>();
+    if (simd_length != other_.simd_length) return false;
+    return lambda_t::equals(other);
   }
-  bool forStatementType(const int sType) const override { return false;}
-  bool isValid(const occa::lang::attributeToken_t &attr) const override {return true;}
+
+  void printDeclaration(occa::lang::printer &pout) const override {
+    pout << "[";
+
+    switch (this->capture) {
+    case occa::lang::capture_t::byValue:
+      pout << "=";
+      break;
+    case occa::lang::capture_t::byReference:
+      pout << "&";
+      break;
+    default:
+      pout << "???";
+      break;
+    }
+
+    pout << "](";
+    
+    if (!args.empty()) {
+      const std::string argIndent = pout.indentFromNewline();
+      args[0]->printDeclaration(pout);
+      for (std::size_t i = 1; i < args.size(); ++i) {
+        pout << ",\n" << argIndent;
+        args[i]->printDeclaration(pout);
+      }
+    }
+    pout << ") ";
+    
+    if (0 < simd_length) {
+      pout << "[[intel::reqd_sub_group_size("; 
+      pout.print(simd_length);
+      pout << ")]]";
+    }
+
+    pout << " {";
+
+    pout.printNewline();
+    pout.pushInlined(false);
+    pout.addIndentation();
+
+    body->print(pout);
+
+    pout.removeIndentation();
+    pout.popInlined();
+    pout.printNewline();
+    pout.printIndentation();
+    pout << "}\n";
+  }
 };
+
 }
 
 namespace occa
@@ -196,8 +252,6 @@ namespace occa
                          lambda_t &cg_function = *(new lambda_t(capture_t::byReference));
                          cg_function.addArgument(sycl_handler);
 
-                         lambda_t &sycl_kernel = *(new lambda_t(capture_t::byValue));
-                         sycl_kernel.addArgument(sycl_nditem);
 
                          int simd_length = simd_length_default;
                          if (k.hasAttribute("simd_length")) {
@@ -205,20 +259,8 @@ namespace occa
                            simd_length = attr.args[0].expr->evaluate();
                          }
 
-                         if(0 < simd_length) {
-                           attributeArg_t subgroup_size_arg(
-                            new identifierNode(
-                              new identifierToken(originSource::builtin, "subgroup_size_arg"),
-                              std::to_string(simd_length)));
-                           
-                           attributeToken_t subgroup_size_token(new SubgroupSize(),
-                             new identifierToken(originSource::builtin, "subgroup_size"),
-                             occa::lang::attribute_style::cpp);
-                           subgroup_size_token.args.push_back(subgroup_size_arg);
-
-                           sycl_kernel.attributes["subgroup_size"] = subgroup_size_token;
-                         }
-
+                         dpcppLambda_t& sycl_kernel = *(new dpcppLambda_t(capture_t::byValue, simd_length));
+                         sycl_kernel.addArgument(sycl_nditem);
                          sycl_kernel.body->swap(k);
 
                          lambdaNode sycl_kernel_node(sycl_kernel.source, sycl_kernel);
