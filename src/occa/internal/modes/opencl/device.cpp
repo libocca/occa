@@ -17,27 +17,10 @@
 
 namespace occa {
   namespace opencl {
-    device::device(const occa::json &properties_) :
-      occa::launchedModeDevice_t(properties_) {
+    device::device(const occa::json &properties_, cl_device_id clDevice_) :
+      occa::launchedModeDevice_t(properties_), clDevice(clDevice_) {
 
-      if (!properties.has("wrapped")) {
-        cl_int error;
-        OCCA_ERROR("[OpenCL] device not given a [platform_id] integer",
-                   properties.has("platform_id") &&
-                   properties["platform_id"].isNumber());
-
-        OCCA_ERROR("[OpenCL] device not given a [device_id] integer",
-                   properties.has("device_id") &&
-                   properties["device_id"].isNumber());
-
-        platformID = properties.get<int>("platform_id");
-        deviceID   = properties.get<int>("device_id");
-
-        clDevice = opencl::deviceID(platformID, deviceID);
-
-        clContext = clCreateContext(NULL, 1, &clDevice, NULL, NULL, &error);
-        OCCA_OPENCL_ERROR("Device: Creating Context", error);
-      }
+      clContext = createContextFromDevice(clDevice);
 
       occa::json &kernelProps = properties["kernel"];
       std::string compilerFlags;
@@ -68,7 +51,7 @@ namespace occa {
 
       kernelProps["compiler_flags"] = compilerFlags;
 
-      arch = deviceName(platformID, deviceID);
+      arch = opencl::deviceStrInfo(clDevice, CL_DEVICE_NAME);
     }
 
     device::~device() {
@@ -85,13 +68,14 @@ namespace occa {
 
     hash_t device::hash() const {
       if (!hash_.initialized) {
+        cl_platform_id platform_id = getPlatformFromDevice(clDevice);
         std::stringstream ss;
-        ss << "platform name: " << opencl::platformName(platformID)
-          << " platform vendor: " << opencl::platformVendor(platformID)
-          << " platform version: " << opencl::platformVersion(platformID)
-          << " device name: " << opencl::deviceName(platformID,deviceID)
-          << " device vendor: " << opencl::deviceVendor(platformID,deviceID)
-          << " device version: " << opencl::deviceVersion(platformID,deviceID);
+        ss << "platform name: "    << opencl::platformName(platform_id)
+          << " platform vendor: "  << opencl::platformVendor(platform_id)
+          << " platform version: " << opencl::platformVersion(platform_id)
+          << " device name: "      << opencl::deviceName(clDevice)
+          << " device vendor: "    << opencl::deviceVendor(clDevice)
+          << " device version: "   << opencl::deviceVersion(clDevice);
         hash_ = occa::hash(ss.str());
       }
       return hash_;

@@ -29,30 +29,33 @@ namespace occa {
     bool isEnabled();
 
     int getPlatformCount();
-    cl_platform_id platformID(int pID);
+    std::vector<cl_platform_id> getPlatforms();
+    cl_platform_id getPlatformFromDevice(cl_device_id device_id);
 
     std::string platformStrInfo(cl_platform_id clPID, cl_platform_info clInfo);
-    std::string platformName(int pID);
-    std::string platformVendor(int pID);
-    std::string platformVersion(int pID);
+    
+    std::string platformName(cl_platform_id platform_id);
+    std::string platformVendor(cl_platform_id platform_id);
+    std::string platformVersion(cl_platform_id platform_id);
 
-    int getDeviceCount(info::device_type deviceType = info::device_type::all);
-    int getDeviceCountInPlatform(int pID, info::device_type type = info::device_type::all);
+    int getDeviceCount(info::device_type type = info::device_type::all);
+    int getDeviceCountInPlatform(cl_platform_id, info::device_type type = info::device_type::all);
 
-    cl_device_id deviceID(int pID, int dID, info::device_type deviceType = info::device_type::all);
+    std::vector<cl_device_id> getDevicesInPlatform(cl_platform_id platform_id, info::device_type deviceType = info::device_type::all);
 
     std::string deviceStrInfo(cl_device_id clDID, cl_device_info clInfo);
-    std::string deviceName(int pID, int dID);
-    std::string deviceVendor(int pID, int dID);
-    std::string deviceVersion(int pID, int dID);
+    std::string deviceName(cl_device_id device_id);
+    std::string deviceVendor(cl_device_id device_id);
+    std::string deviceVersion(cl_device_id device_id);
 
     cl_device_type deviceType(info::device_type type);
-    info::device_type deviceType(int pID, int dID);
+    info::device_type deviceType(cl_device_id device_id);
 
-    int deviceCoreCount(int pID, int dID);
+    int deviceCoreCount(cl_device_id device_id);
 
     udim_t deviceGlobalMemSize(cl_device_id dID);
-    udim_t deviceGlobalMemSize(int pID, int dID);
+
+    cl_context createContextFromDevice(cl_device_id device_id);
 
     void buildProgramFromSource(info_t &info,
                                 const std::string &source,
@@ -75,12 +78,6 @@ namespace occa {
 
     bool saveProgramBinary(info_t &info,
                            const std::string &binaryFile);
-
-    cl_context getCLContext(occa::device device);
-
-    cl_mem getCLMemory(occa::memory memory);
-
-    cl_kernel getCLKernel(occa::kernel kernel);
 
     occa::device wrapDevice(cl_device_id clDevice,
                             cl_context context,

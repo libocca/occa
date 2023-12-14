@@ -17,19 +17,7 @@ namespace occa {
       clProgram(NULL),
       clKernel(NULL) {}
 
-    bool isEnabled() {
-      cl_uint platformCount = 0;
-      cl_int error = clGetPlatformIDs(0, NULL, &platformCount);
-      // Only count as enabled if there is a device available
-      if (!error) {
-        for (cl_uint platformId = 0; platformId < platformCount; ++platformId) {
-          if (getDeviceCountInPlatform(platformId)) {
-            return true;
-          }
-        }
-      }
-      return false;
-    }
+    bool isEnabled() {return (0 < getDeviceCount());}
 
     int getPlatformCount() {
       cl_uint platformCount = 0;
@@ -40,17 +28,21 @@ namespace occa {
       return platformCount;
     }
 
-    cl_platform_id platformID(int pID) {
-      cl_platform_id *platforms = new cl_platform_id[pID + 1];
-
+    std::vector<cl_platform_id> getPlatforms() {
+      int platform_count = getPlatformCount();
+      std::vector<cl_platform_id> platforms(platform_count);
+      
       OCCA_OPENCL_ERROR("OpenCL: Get Platform ID",
-                        clGetPlatformIDs(pID + 1, platforms, NULL));
+        clGetPlatformIDs(platform_count, platforms.data(), NULL));  
+      
+      return platforms;
+    }
 
-      cl_platform_id ret = platforms[pID];
-
-      delete [] platforms;
-
-      return ret;
+    cl_platform_id getPlatformFromDevice(cl_device_id device_id) {
+      cl_platform_id platform_id;
+      OCCA_OPENCL_ERROR("OpenCL: Get Platform From Device",
+        clGetDeviceInfo(device_id,CL_DEVICE_PLATFORM,sizeof(cl_platform_id),&platform_id,NULL));
+      return platform_id;
     }
 
     std::string platformStrInfo(cl_platform_id clPID,
@@ -107,19 +99,16 @@ namespace occa {
       return ret.substr(firstNS, (lastNS - firstNS + 1));
     }
 
-     std::string platformName(int pID) {
-      cl_platform_id clPID = platformID(pID);
-      return platformStrInfo(clPID, CL_PLATFORM_NAME);
+    std::string platformName(cl_platform_id platform_id) {
+      return platformStrInfo(platform_id, CL_PLATFORM_NAME);
     }
 
-    std::string platformVendor(int pID) {
-      cl_platform_id clPID = platformID(pID);
-      return platformStrInfo(clPID, CL_PLATFORM_VENDOR);
+    std::string platformVendor(cl_platform_id platform_id) {
+      return platformStrInfo(platform_id, CL_PLATFORM_VENDOR);
     }
 
-    std::string platformVersion(int pID) {
-      cl_platform_id clPID = platformID(pID);
-      return platformStrInfo(clPID, CL_PLATFORM_VERSION);
+    std::string platformVersion(cl_platform_id platform_id) {
+      return platformStrInfo(platform_id, CL_PLATFORM_VERSION);
     }
 
     cl_device_type deviceType(info::device_type type) {
@@ -142,41 +131,31 @@ namespace occa {
     }
 
     int getDeviceCount(info::device_type type) {
-      int pCount = opencl::getPlatformCount();
-      int ret = 0;
-
-      for (int p = 0; p < pCount; ++p)
-        ret += getDeviceCountInPlatform(p, type);
-
-      return ret;
+      auto platforms{getPlatforms()};
+      int device_count{0};
+      for (auto& p : platforms) {
+        device_count += getDeviceCountInPlatform(p, type);
+      }
+      return device_count;
     }
 
-    int getDeviceCountInPlatform(int pID, info::device_type type) {
-      cl_platform_id clPID = platformID(pID);
+    int getDeviceCountInPlatform(cl_platform_id platform_id, info::device_type type) {
       cl_uint deviceCount = 0;
-      clGetDeviceIDs(clPID, deviceType(type),
-                     0, NULL, &deviceCount);
-
+      OCCA_OPENCL_ERROR("OpenCL: getDeviceCountInPlatform",
+        clGetDeviceIDs(platform_id, deviceType(type), 0, NULL, &deviceCount);
+      );
       return deviceCount;
     }
 
-    cl_device_id deviceID(int pID, int dID, info::device_type type) {
-      cl_device_id *devices = new cl_device_id[dID + 1];
-
-      cl_platform_id clPID = platformID(pID);
-
-      OCCA_OPENCL_ERROR("OpenCL: Get Device ID Count",
-                        clGetDeviceIDs(clPID,
-                                       deviceType(type),
-                                       dID + 1, devices, NULL));
-
-      cl_device_id ret = devices[dID];
-
-      delete [] devices;
-
-      return ret;
+    std::vector<cl_device_id> getDevicesInPlatform(cl_platform_id platform_id, info::device_type type) {
+      int device_count = getDeviceCountInPlatform(platform_id, type);
+      std::vector<cl_device_id> devices(device_count);
+      OCCA_OPENCL_ERROR("OpenCL: getDevicesInPlatform",
+        clGetDeviceIDs(platform_id, deviceType(type), device_count, devices.data(), NULL)
+      );
+      return devices;
     }
-
+   
     std::string deviceStrInfo(cl_device_id clDID,
                               cl_device_info clInfo) {
       size_t bytes = 0;
@@ -231,18 +210,15 @@ namespace occa {
       return ret.substr(firstNS, (lastNS - firstNS + 1));
     }
 
-    std::string deviceName(int pID, int dID) {
-      cl_device_id clDID = deviceID(pID, dID);
-      return deviceStrInfo(clDID, CL_DEVICE_NAME);
+    std::string deviceName(cl_device_id device_id) {
+      return deviceStrInfo(device_id, CL_DEVICE_NAME);
     }
 
-    info::device_type deviceType(int pID, int dID) {
-      cl_device_id clDID = deviceID(pID, dID);
+    info::device_type deviceType(cl_device_id device_id) {
       cl_device_type clDeviceType = CL_DEVICE_TYPE_ALL;
 
-      OCCA_OPENCL_ERROR(
-        "OpenCL: Get Device Type",
-        clGetDeviceInfo(clDID,CL_DEVICE_TYPE,sizeof(clDeviceType), &clDeviceType, NULL)
+      OCCA_OPENCL_ERROR("OpenCL: Get Device Type",
+        clGetDeviceInfo(device_id,CL_DEVICE_TYPE,sizeof(clDeviceType), &clDeviceType, NULL)
       );
 
       if (clDeviceType & CL_DEVICE_TYPE_CPU)
@@ -255,43 +231,35 @@ namespace occa {
       return info::device_type::all;
     }
 
-    std::string deviceVendor(int pID, int dID) {
-      cl_device_id clDID = deviceID(pID, dID);
-      return deviceStrInfo(clDID, CL_DEVICE_VENDOR);
+    std::string deviceVendor(cl_device_id device_id) {
+      return deviceStrInfo(device_id, CL_DEVICE_VENDOR);
     }
 
-    std::string deviceVersion(int pID, int dID) {
-      cl_device_id clDID = deviceID(pID, dID);
-      return deviceStrInfo(clDID, CL_DEVICE_VERSION);
+    std::string deviceVersion(cl_device_id device_id) {
+      return deviceStrInfo(device_id, CL_DEVICE_VERSION);
     }
 
-    int deviceCoreCount(int pID, int dID) {
-      cl_device_id clDID = deviceID(pID, dID);
+    int deviceCoreCount(cl_device_id device_id) {
       cl_uint ret = 0;
 
       OCCA_OPENCL_ERROR("OpenCL: Get Device Core Count",
-                        clGetDeviceInfo(clDID,
-                                        CL_DEVICE_MAX_COMPUTE_UNITS,
-                                        sizeof(ret), &ret, NULL));
-
+        clGetDeviceInfo(device_id,CL_DEVICE_MAX_COMPUTE_UNITS,sizeof(ret), &ret, NULL)
+      );
       return ret;
     }
 
-    udim_t deviceGlobalMemSize(cl_device_id dID) {
+    udim_t deviceGlobalMemSize(cl_device_id device_id) {
       cl_ulong ret = 0;
-
       OCCA_OPENCL_ERROR("OpenCL: Get Device Available Memory",
-                        clGetDeviceInfo(dID,
-                                        CL_DEVICE_GLOBAL_MEM_SIZE,
-                                        sizeof(ret), &ret, NULL));
-
+        clGetDeviceInfo(device_id, CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(ret), &ret, NULL));
       return ret;
     }
 
-    udim_t deviceGlobalMemSize(int pID, int dID) {
-      cl_device_id clDID = deviceID(pID, dID);
-
-      return deviceGlobalMemSize(clDID);
+    cl_context createContextFromDevice(cl_device_id device_id) {
+      cl_int error;
+      cl_context context = clCreateContext(NULL, 1, &device_id, NULL, NULL, &error);
+      OCCA_OPENCL_ERROR("OpenCL: Create ContextFromDevice", error);
+      return context;
     }
 
     void buildProgramFromSource(info_t &info,
@@ -458,41 +426,18 @@ namespace occa {
       return true;
     }
 
-    cl_context getCLContext(occa::device device) {
-      return ((opencl::device*) device.getModeDevice())->clContext;
-    }
-
-    cl_mem getCLMemory(occa::memory memory) {
-      return ((opencl::memory*) memory.getModeMemory())->clMem;
-    }
-
-    cl_kernel getCLKernel(occa::kernel kernel) {
-      return ((opencl::kernel*) kernel.getModeKernel())->clKernel;
-    }
-
-    occa::device wrapDevice(cl_device_id clDevice,
-                            cl_context context,
+    occa::device wrapDevice(cl_device_id device_id,
                             const occa::json &props) {
-
       occa::json allProps;
-      allProps["mode"]        = "OpenCL";
-      allProps["platform_id"] = -1;
-      allProps["device_id"]   = -1;
-      allProps["wrapped"]     = true;
+      allProps["mode"] = "OpenCL";
+      allProps["wrapped"] = true;
       allProps += props;
 
-      opencl::device &dev = *(new opencl::device(allProps));
-      dev.dontUseRefs();
+      auto* wrapper{new opencl::device(allProps, device_id)};
+      wrapper->dontUseRefs();
 
-      dev.platformID = (int) allProps["platform_id"];
-      dev.deviceID   = (int) allProps["device_id"];
-
-      dev.clDevice  = clDevice;
-      dev.clContext = context;
-
-      dev.currentStream = dev.createStream(allProps["stream"]);
-
-      return occa::device(&dev);
+      wrapper->currentStream = wrapper->createStream(allProps["stream"]);
+      return occa::device(wrapper);
     }
 
     void warn(cl_int errorCode,
