@@ -82,12 +82,13 @@ namespace occa {
   static cl_device_info CL_DEVICE_VERSION = 5;
   static cl_device_info CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS = 6;
   static cl_device_info CL_DEVICE_MAX_WORK_ITEM_SIZES = 7;
+  static cl_device_info CL_DEVICE_PLATFORM = 8;
 
-  static cl_device_type CL_DEVICE_TYPE_ACCELERATOR = 0;
-  static cl_device_type CL_DEVICE_TYPE_CPU = 1;
-  static cl_device_type CL_DEVICE_TYPE_GPU = 2;
-  static cl_device_type CL_DEVICE_TYPE_ALL = 3;
-  static cl_device_type CL_DEVICE_TYPE_DEFAULT = 4;
+  static constexpr cl_device_type CL_DEVICE_TYPE_ACCELERATOR = 0;
+  static constexpr cl_device_type CL_DEVICE_TYPE_CPU = 1;
+  static constexpr cl_device_type CL_DEVICE_TYPE_GPU = 2;
+  static constexpr cl_device_type CL_DEVICE_TYPE_ALL = 3;
+  static constexpr cl_device_type CL_DEVICE_TYPE_DEFAULT = 4;
 
   static cl_kernel_work_group_info CL_KERNEL_WORK_GROUP_SIZE = 0;
 

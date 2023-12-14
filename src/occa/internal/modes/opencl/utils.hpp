@@ -20,16 +20,11 @@ namespace occa {
       info_t();
     };
 
-    namespace info {
-      enum class device_type {
-        cpu, gpu, accelerator, all = cpu | gpu | accelerator
-      };
-    }
+    constexpr cl_device_type default_device_type = (CL_DEVICE_TYPE_CPU | CL_DEVICE_TYPE_GPU);
 
     bool isEnabled();
 
-    int getPlatformCount();
-    std::vector<cl_platform_id> getPlatforms();
+    std::vector<cl_platform_id> getPlatforms(cl_device_type device_type = default_device_type);
     cl_platform_id getPlatformFromDevice(cl_device_id device_id);
 
     std::string platformStrInfo(cl_platform_id clPID, cl_platform_info clInfo);
@@ -38,18 +33,17 @@ namespace occa {
     std::string platformVendor(cl_platform_id platform_id);
     std::string platformVersion(cl_platform_id platform_id);
 
-    int getDeviceCount(info::device_type type = info::device_type::all);
-    int getDeviceCountInPlatform(cl_platform_id, info::device_type type = info::device_type::all);
+    int getDeviceCount(cl_device_type device_type = default_device_type);
+    int getDeviceCountInPlatform(cl_platform_id, cl_device_type device_type = default_device_type);
 
-    std::vector<cl_device_id> getDevicesInPlatform(cl_platform_id platform_id, info::device_type deviceType = info::device_type::all);
+    std::vector<cl_device_id> getDevicesInPlatform(cl_platform_id platform_id, cl_device_type device_type = default_device_type);
 
     std::string deviceStrInfo(cl_device_id clDID, cl_device_info clInfo);
     std::string deviceName(cl_device_id device_id);
     std::string deviceVendor(cl_device_id device_id);
     std::string deviceVersion(cl_device_id device_id);
 
-    cl_device_type deviceType(info::device_type type);
-    info::device_type deviceType(cl_device_id device_id);
+    cl_device_type deviceType(cl_device_id device_type);
 
     int deviceCoreCount(cl_device_id device_id);
 

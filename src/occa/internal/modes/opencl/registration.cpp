@@ -17,7 +17,7 @@ namespace occa {
     }
 
     styling::section& openclMode::getDescription() {
-      static styling::section section("OpenCL");
+      static styling::section section(modeName);
       if (section.size() == 0) {
         int platform_id{0};
         auto platform_list = getPlatforms();
@@ -31,20 +31,23 @@ namespace occa {
           auto device_list = getDevicesInPlatform(p);
           for (auto& d : device_list) {
             std::string device_name_str = deviceName(d);
-            info::device_type type = deviceType(d);
+            cl_device_type device_type = deviceType(d);
             std::string device_type_str;
-            switch (type) {
-              case info::device_type::cpu:
+            switch (device_type) {
+              case CL_DEVICE_TYPE_CPU:
                 device_type_str = "cpu";
                 break;
-              case info::device_type::gpu:
+              case CL_DEVICE_TYPE_GPU:
                 device_type_str = "gpu";
                 break;
-              case info::device_type::accelerator:
+              case CL_DEVICE_TYPE_ACCELERATOR:
                 device_type_str = "accelerator";
                 break;
-              case info::device_type::all:
-                device_type_str = "all!?";
+              case CL_DEVICE_TYPE_ALL:
+                device_type_str = "all";
+                break;
+              default:
+                device_type_str = "???";
                 break;
             }
 

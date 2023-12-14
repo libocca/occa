@@ -28,13 +28,17 @@ namespace occa {
       return platformCount;
     }
 
-    std::vector<cl_platform_id> getPlatforms() {
+    std::vector<cl_platform_id> getPlatforms(cl_device_type device_type) {
       int platform_count = getPlatformCount();
-      std::vector<cl_platform_id> platforms(platform_count);
+      std::vector<cl_platform_id> all_platforms(platform_count);
       
       OCCA_OPENCL_ERROR("OpenCL: Get Platform ID",
-        clGetPlatformIDs(platform_count, platforms.data(), NULL));  
+        clGetPlatformIDs(platform_count, all_platforms.data(), NULL));  
       
+      std::vector<cl_platform_id> platforms;
+      for (auto& p : all_platforms) {
+        if (0 < getDeviceCountInPlatform(p, device_type)) platforms.push_back(p);
+      }
       return platforms;
     }
 
@@ -46,7 +50,7 @@ namespace occa {
     }
 
     std::string platformStrInfo(cl_platform_id clPID,
-                              cl_platform_info clInfo) {
+                                cl_platform_info clInfo) {
       size_t bytes = 0;
 
       OCCA_OPENCL_ERROR("OpenCL: Getting Platform String Info",
@@ -111,48 +115,31 @@ namespace occa {
       return platformStrInfo(platform_id, CL_PLATFORM_VERSION);
     }
 
-    cl_device_type deviceType(info::device_type type) {
-      cl_device_type dtype = CL_DEVICE_TYPE_DEFAULT;
-      switch (type) {
-        case info::device_type::cpu:
-          dtype = CL_DEVICE_TYPE_CPU;
-          break;
-        case info::device_type::gpu:
-          dtype = CL_DEVICE_TYPE_GPU;
-          break;
-        case info::device_type::accelerator:
-          dtype = CL_DEVICE_TYPE_ACCELERATOR;
-          break;
-        case info::device_type::all:
-          dtype = CL_DEVICE_TYPE_ALL;
-          break;
-      }
-      return dtype;
-    }
-
-    int getDeviceCount(info::device_type type) {
+    int getDeviceCount(cl_device_type device_type) {
       auto platforms{getPlatforms()};
       int device_count{0};
       for (auto& p : platforms) {
-        device_count += getDeviceCountInPlatform(p, type);
+        device_count += getDeviceCountInPlatform(p, device_type);
       }
       return device_count;
     }
 
-    int getDeviceCountInPlatform(cl_platform_id platform_id, info::device_type type) {
+    int getDeviceCountInPlatform(cl_platform_id platform_id, cl_device_type device_type) {
       cl_uint deviceCount = 0;
-      OCCA_OPENCL_ERROR("OpenCL: getDeviceCountInPlatform",
-        clGetDeviceIDs(platform_id, deviceType(type), 0, NULL, &deviceCount);
-      );
+     
+      cl_int err = clGetDeviceIDs(platform_id, device_type, 0, NULL, &deviceCount);
+      if (CL_DEVICE_NOT_FOUND != err) OCCA_OPENCL_ERROR("OpenCL: getDeviceCountIntPlatform", err);
+
       return deviceCount;
     }
 
-    std::vector<cl_device_id> getDevicesInPlatform(cl_platform_id platform_id, info::device_type type) {
-      int device_count = getDeviceCountInPlatform(platform_id, type);
+    std::vector<cl_device_id> getDevicesInPlatform(cl_platform_id platform_id, cl_device_type device_type) {
+      int device_count = getDeviceCountInPlatform(platform_id, device_type);
       std::vector<cl_device_id> devices(device_count);
-      OCCA_OPENCL_ERROR("OpenCL: getDevicesInPlatform",
-        clGetDeviceIDs(platform_id, deviceType(type), device_count, devices.data(), NULL)
-      );
+      if (0 < device_count) {
+        OCCA_OPENCL_ERROR("OpenCL: getDevicesInPlatform",
+          clGetDeviceIDs(platform_id, device_type, device_count, devices.data(), NULL));
+      }
       return devices;
     }
    
@@ -214,21 +201,14 @@ namespace occa {
       return deviceStrInfo(device_id, CL_DEVICE_NAME);
     }
 
-    info::device_type deviceType(cl_device_id device_id) {
-      cl_device_type clDeviceType = CL_DEVICE_TYPE_ALL;
+    cl_device_type deviceType(cl_device_id device_id) {
+      cl_device_type clDeviceType;
 
       OCCA_OPENCL_ERROR("OpenCL: Get Device Type",
         clGetDeviceInfo(device_id,CL_DEVICE_TYPE,sizeof(clDeviceType), &clDeviceType, NULL)
       );
 
-      if (clDeviceType & CL_DEVICE_TYPE_CPU)
-        return info::device_type::cpu;
-      if (clDeviceType & CL_DEVICE_TYPE_GPU)
-        return info::device_type::gpu;
-      if (clDeviceType & CL_DEVICE_TYPE_ACCELERATOR)
-        return info::device_type::accelerator;
-      
-      return info::device_type::all;
+      return clDeviceType;
     }
 
     std::string deviceVendor(cl_device_id device_id) {
