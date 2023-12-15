@@ -14,6 +14,7 @@
 #include <occa/internal/lang/builtins/attributes/outer.hpp>
 #include <occa/internal/lang/builtins/attributes/restrict.hpp>
 #include <occa/internal/lang/builtins/attributes/shared.hpp>
+#include <occa/internal/lang/builtins/attributes/simdLength.hpp>
 #include <occa/internal/lang/builtins/attributes/tile.hpp>
 
 #endif
