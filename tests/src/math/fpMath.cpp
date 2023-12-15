@@ -102,15 +102,20 @@ void testTernaryFunctions(const occa::device& d) {
 }
 
 int main() {
-  std::vector<occa::device> devices = {
-    occa::device({{"mode", "Serial"}}),
-    occa::device({{"mode", "OpenMP"}}),
-    occa::device({{"mode", "CUDA"},{"device_id", 0}}),
-    occa::device({{"mode", "HIP"},{"device_id", 0}}),
-    occa::device({{"mode", "OpenCL"},{"platform_id",0},{"device_id", 0}}),
-    occa::device({{"mode", "dpcpp"},{"platform_id",0},{"device_id", 0}})
-  };
-
+  std::vector<occa::device> devices;
+  if (occa::modeIsEnabled("Serial"))
+    devices.push_back(occa::device({{"mode", "Serial"}}));
+  if (occa::modeIsEnabled("OpenMP"))
+    devices.push_back(occa::device({{"mode", "OpenMP"}}));
+  if (occa::modeIsEnabled("CUDA"))
+    devices.push_back(occa::device({{"mode", "CUDA"},{"device_id", 0}}));
+  if (occa::modeIsEnabled("HIP"))
+    devices.push_back(occa::device({{"mode", "HIP"},{"device_id", 0}}));
+  if (occa::modeIsEnabled("OpenCL"))
+    devices.push_back(occa::device({{"mode", "OpenCL"},{"platform_id",0},{"device_id", 0}}));
+  if (occa::modeIsEnabled("dpcpp"))
+    devices.push_back(occa::device({{"mode", "dpcpp"},{"platform_id",0},{"device_id", 0}}));
+  
   for(auto &d : devices) {
     std::cout << "Testing mode: " << d.mode() << "\n";
     testUnaryFunctions(d);
