@@ -110,19 +110,22 @@ void testWrapMemory() {
   int *hostPtr = &value;
 
   occa::memory mem = device.wrapMemory((void*) hostPtr, bytes);
+  mem.setDtype(occa::dtype::int_);
   ASSERT_EQ(mem.ptr<int>()[0], value);
   ASSERT_EQ(mem.ptr<int>(), hostPtr);
-  ASSERT_EQ((int) mem.length<int>(), 1);
+  ASSERT_EQ((int) mem.length(), 1);
 
   mem = device.wrapMemory(hostPtr, 1);
+  mem.setDtype(occa::dtype::int_);
   ASSERT_EQ(mem.ptr<int>()[0], value);
   ASSERT_EQ(mem.ptr<int>(), hostPtr);
-  ASSERT_EQ((int) mem.length<int>(), 1);
+  ASSERT_EQ((int) mem.length(), 1);
 
   mem = device.wrapMemory(hostPtr, 1, {{"use_host_pointer", false}});
+  mem.setDtype(occa::dtype::int_);
   ASSERT_EQ(mem.ptr<int>()[0], value);
   ASSERT_EQ(mem.ptr<int>(), hostPtr);
-  ASSERT_EQ((int) mem.length<int>(), 1);
+  ASSERT_EQ((int) mem.length(), 1);
 }
 
 void testUnwrap() {
