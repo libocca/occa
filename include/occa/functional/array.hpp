@@ -129,7 +129,7 @@ namespace occa {
         : entries
       );
 
-      memory_.copyFrom(src, safeEntries * sizeof(T));
+      memory_.copyFrom(src, safeEntries);
     }
 
   void copyFrom(const occa::memory src,
@@ -140,7 +140,7 @@ namespace occa {
         : entries
       );
 
-      memory_.copyFrom(src, safeEntries * sizeof(T));
+      memory_.copyFrom(src, safeEntries);
     }
 
     void copyTo(T *dest,
@@ -151,7 +151,7 @@ namespace occa {
         : entries
       );
 
-      memory_.copyTo(dest, safeEntries * sizeof(T));
+      memory_.copyTo(dest, safeEntries);
     }
 
     void copyTo(occa::memory dest,
@@ -162,7 +162,7 @@ namespace occa {
         : entries
       );
 
-      memory_.copyTo(dest, safeEntries * sizeof(T));
+      memory_.copyTo(dest, safeEntries);
     }
     //==================================
 
@@ -297,17 +297,13 @@ namespace occa {
     //---[ Utility methods ]------------
     T& operator [] (const dim_t index) {
       static T value;
-      memory_.copyTo(&value,
-                     sizeof(T),
-                     index * sizeof(T));
+      memory_.copyTo(&value,1,index);
       return value;
     }
 
     T& operator [] (const dim_t index) const {
       static T value;
-      memory_.copyTo(&value,
-                     sizeof(T),
-                     index * sizeof(T));
+      memory_.copyTo(&value,1,index);
       return value;
     }
 
@@ -319,12 +315,12 @@ namespace occa {
     }
 
     array concat(const array &other) const {
-      const udim_t bytes1 = memory_.size();
-      const udim_t bytes2 = other.memory_.size();
+      const udim_t entries = length();
+      const udim_t other_entries = other.length();
 
-      occa::memory ret = getDevice().template malloc<T>(length() + other.length());
-      ret.copyFrom(memory_, bytes1, 0);
-      ret.copyFrom(other.memory_, bytes2, bytes1);
+      occa::memory ret = getDevice().template malloc<T>(entries + other_entries);
+      ret.copyFrom(memory_, entries, 0);
+      ret.copyFrom(other.memory_, other_entries, entries);
 
       return array(ret);
     }
