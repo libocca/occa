@@ -63,6 +63,8 @@ namespace occa {
       void clear();
 
       bool exists() const;
+
+      bool canEvaluate() const;
     };
     //==================================
 

@@ -5,7 +5,78 @@
 #include <occa/internal/lang/builtins/attributes.hpp>
 #include <occa/internal/lang/builtins/types.hpp>
 #include <occa/internal/lang/expr.hpp>
-// #include <stringstream>
+#include <occa/internal/lang/attribute.hpp>
+
+namespace {
+
+class dpcppLambda_t : public occa::lang::lambda_t {
+public:
+  int simd_length{-1};
+
+  dpcppLambda_t(occa::lang::capture_t capture_, int simd_length_)
+   : lambda_t(capture_), simd_length(simd_length_) {}
+
+  dpcppLambda_t(const dpcppLambda_t& other) 
+    : lambda_t(other), simd_length(other.simd_length) {}
+
+  ~dpcppLambda_t() = default;
+
+  bool equals(const type_t &other) const override {
+    const dpcppLambda_t &other_ = other.to<dpcppLambda_t>();
+    if (simd_length != other_.simd_length) return false;
+    return lambda_t::equals(other);
+  }
+
+  void printDeclaration(occa::lang::printer &pout) const override {
+    pout << "[";
+
+    switch (this->capture) {
+    case occa::lang::capture_t::byValue:
+      pout << "=";
+      break;
+    case occa::lang::capture_t::byReference:
+      pout << "&";
+      break;
+    default:
+      pout << "???";
+      break;
+    }
+
+    pout << "](";
+    
+    if (!args.empty()) {
+      const std::string argIndent = pout.indentFromNewline();
+      args[0]->printDeclaration(pout);
+      for (std::size_t i = 1; i < args.size(); ++i) {
+        pout << ",\n" << argIndent;
+        args[i]->printDeclaration(pout);
+      }
+    }
+    pout << ") ";
+    
+    if (0 < simd_length) {
+      pout << "[[intel::reqd_sub_group_size("; 
+      pout.print(simd_length);
+      pout << ")]]";
+    }
+
+    pout << " {";
+
+    pout.printNewline();
+    pout.pushInlined(false);
+    pout.addIndentation();
+
+    body->print(pout);
+
+    pout.removeIndentation();
+    pout.popInlined();
+    pout.printNewline();
+    pout.printIndentation();
+    pout << "}\n";
+  }
+};
+
+}
 
 namespace occa
 {
@@ -20,6 +91,7 @@ namespace occa
             shared("auto", qualifierType::custom)
       {
         okl::addOklAttributes(*this);
+        simd_length_default = settings_.get("simd_length",-1);
       }
 
       void dpcppParser::onClear()
@@ -79,15 +151,7 @@ namespace occa
 
       std::string dpcppParser::launchBoundsAttribute(const int innerDims[3])
       {
-        std::stringstream ss; 
-        ss << "[[sycl::reqd_work_group_size("
-           << innerDims[2]
-           << ","
-           << innerDims[1]
-           << ","
-           << innerDims[0]
-           << ")]]\n";
-        return ss.str();
+        return "";
       }
 
       // @note: As of SYCL 2020 this will need to change from `CL/sycl.hpp` to `sycl.hpp`
@@ -188,9 +252,15 @@ namespace occa
                          lambda_t &cg_function = *(new lambda_t(capture_t::byReference));
                          cg_function.addArgument(sycl_handler);
 
-                         lambda_t &sycl_kernel = *(new lambda_t(capture_t::byValue));
-                         sycl_kernel.addArgument(sycl_nditem);
 
+                         int simd_length = simd_length_default;
+                         if (k.hasAttribute("simd_length")) {
+                           const attributeToken_t& attr = k.attributes["simd_length"];
+                           simd_length = attr.args[0].expr->evaluate();
+                         }
+
+                         dpcppLambda_t& sycl_kernel = *(new dpcppLambda_t(capture_t::byValue, simd_length));
+                         sycl_kernel.addArgument(sycl_nditem);
                          sycl_kernel.body->swap(k);
 
                          lambdaNode sycl_kernel_node(sycl_kernel.source, sycl_kernel);

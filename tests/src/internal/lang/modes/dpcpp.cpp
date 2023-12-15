@@ -28,6 +28,7 @@ void testSharedAnnotation();
 void testBarriers();
 void testAtomic();
 void testSource();
+void testSimdLength();
 
 int main(const int argc, const char **argv) {
   parser.settings["okl/validate"] = true;
@@ -38,6 +39,7 @@ int main(const int argc, const char **argv) {
   testSharedAnnotation();
   testBarriers();
   testSource();
+  testSimdLength();
 
   return 0;
 }
@@ -162,4 +164,58 @@ void testSource() {
     "  }\n"
     "}\n"
   );
+}
+
+void testSimdLengthAttribute() {
+  const std::string kernel_source = R"(
+    @kernel void f() {
+      @outer @simd_length(16)
+      for (int o = 0; o < 1; ++o) {
+        @inner for (int i = 0; i < 32; ++i) {
+          int j = i + o;
+        }
+      }
+    }
+  )";
+
+  parser.parseSource(kernel_source);
+  ASSERT_TRUE(parser.success);
+
+  printer pout;
+  parser.root.print(pout);
+  const std::string translated_source = pout.str();
+
+  auto pos = translated_source.find("[[intel::reqd_sub_group_size(16)]]");
+  ASSERT_TRUE(std::string::npos != pos);
+}
+
+void testSimdLengthProperty() {
+  const std::string kernel_source = R"(
+    @kernel void f() {
+      @outer for (int o = 0; o < 1; ++o) {
+        @inner for (int i = 0; i < 32; ++i) {
+          int j = i + o;
+        }
+      }
+    }
+  )";
+
+  occa::json properties;
+  properties["simd_length"] = 16;
+  occa::lang::okl::dpcppParser dpcpp_parser(properties);
+
+  dpcpp_parser.parseSource(kernel_source);
+  ASSERT_TRUE(parser.success);
+
+  printer pout;
+  dpcpp_parser.root.print(pout);
+  const std::string translated_source = pout.str();
+
+  auto pos = translated_source.find("[[intel::reqd_sub_group_size(16)]]");
+  ASSERT_TRUE(std::string::npos != pos);
+}
+
+void testSimdLength() {
+  testSimdLengthAttribute();
+  testSimdLengthProperty();
 }
