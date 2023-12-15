@@ -61,7 +61,7 @@ program main
                                occaDefault)
 
   ! Copy memory to the device
-  call occaCopyPtrToMem(o_a, C_loc(a), entries*C_float, 0_occaUDim_t, occaDefault)
+  call occaCopyPtrToMem(o_a, C_loc(a), entries, 0_occaUDim_t, occaDefault)
   call occaCopyPtrToMem(o_b, C_loc(b), occaAllBytes   , 0_occaUDim_t, occaDefault)
 
   ! Set stream and launch device kernel
