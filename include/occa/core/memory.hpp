@@ -196,38 +196,35 @@ namespace occa {
      * @startDoc{size}
      *
      * Description:
-     *   Get the byte size of the allocated memory
+     *   Returns the number of elements of size [[dtype_t]] held in this memory.
+     *   If no type was given during [[allocation|device.malloc]], returns the
+     *   size of the storage in bytes.
      *
      * @endDoc
      */
     udim_t size() const;
 
     /**
-     * @startDoc{length[0]}
+     * @startDoc{length}
      *
      * Description:
-     *   Get the length of the memory object, using its underlying [[dtype_t]].
-     *   This [[dtype_t]] can be fetched through the [[memory.dtype]] method
-     *
-     *   If no type was given during [[allocation|device.malloc]] or was ever set
-     *   through [[casting it|memory.cast]], it will return the bytes just like [[memory.size]].
+     *   Returns the number of elements of size [[dtype_t]] held in this memory.
+     *   If no type was given during [[allocation|device.malloc]], returns the
+     *   size of the storage in bytes.
      *
      * @endDoc
      */
     udim_t length() const;
 
     /**
-     * @startDoc{length[1]}
+     * @startDoc{byte_size}
      *
-     * Overloaded Description:
-     *   Same as above but explicitly chose the type (`T`)
+     * Description:
+     *   Get the size of the allocated memory in bytes.
      *
      * @endDoc
      */
-    template <class T>
-    udim_t length() const {
-      return size() / sizeof(T);
-    }
+    udim_t byte_size() const;
 
     /**
      * @startDoc{operator_equals[0]}
