@@ -48,17 +48,18 @@ namespace occa {
         return true;
       }
 
-      const int tokenCount = tokenContext.size();
-      int tokenPos;
+      if (!tokenContext.size()) {
+        tokenContext.printError("Unable to load type");
+        return false;
+      }
 
-      for (tokenPos = 0; tokenPos < tokenCount; ++tokenPos) {
-        token_t *token = tokenContext[tokenPos];
-
-        if (token->type() & tokenType::comment) {
+      while (tokenContext.size()) {
+        if (tokenContext[0]->type() & tokenType::comment) {
+          ++tokenContext;
           continue;
         }
 
-        keyword_t &keyword = parser.keywords.get(smntContext, token);
+        keyword_t &keyword = parser.keywords.get(smntContext, tokenContext[0]);
         const int kType    = keyword.type();
         if (kType & keywordType::none) {
           break;
@@ -69,37 +70,33 @@ namespace occa {
           type_t *type = NULL;
           if (qualifier == class_) {
             // TODO: type = loadClass();
-            token->printError("Classes are not supported yet");
+            tokenContext[0]->printError("Classes are not supported yet");
             success = false;
           }
           if (!success) {
             return false;
           }
+
           if (!type) {
-            loadVartypeQualifier(token,
-                                 keyword.to<qualifierKeyword>().qualifier,
-                                 vartype);
+            loadVartypeQualifier(qualifier, vartype);
           } else {
             vartype.type = type;
             vartype.typeToken = (identifierToken*) type->source->clone();
+          }
+          if (!success) {
+            return false;
           }
           continue;
         }
         if ((kType & keywordType::type) &&
             !vartype.isValid()) {
           vartype.type = &(keyword.to<typeKeyword>().type_);
-          vartype.typeToken = (identifierToken*) token->clone();
+          vartype.typeToken = (identifierToken*) tokenContext[0]->clone();
+          ++tokenContext;
           continue;
         }
 
         break;
-      }
-
-      if (tokenPos) {
-        tokenContext += tokenPos;
-      } else {
-        tokenContext.printError("Unable to load type");
-        return false;
       }
 
       if (vartype.isValid()) {
@@ -127,9 +124,11 @@ namespace occa {
       return false;
     }
 
-    void typeLoader_t::loadVartypeQualifier(token_t *token,
-                                            const qualifier_t &qualifier,
+    void typeLoader_t::loadVartypeQualifier(const qualifier_t &qualifier,
                                             vartype_t &vartype) {
+      token_t *token = tokenContext[0];
+      ++tokenContext;
+
       // Handle long/long long case
       if (&qualifier == &long_) {
         if (vartype.has(long_)) {
@@ -148,13 +147,53 @@ namespace occa {
         return;
       }
 
-      // Non-long qualifiers
-      if (!vartype.has(qualifier)) {
+      // qualifier takes arguments
+      if (token_t::safeOperatorType(tokenContext[0]) & operatorType::parenthesesStart) {
+        tokenContext.pushPairRange();
+
+        exprNodeVector args;
+        tokenRangeVector argRanges;
+        getArgumentRanges(tokenContext, argRanges);
+
+        const int argCount = (int) argRanges.size();
+
+        for (int i = 0; i < argCount; ++i) {
+          tokenContext.push(argRanges[i].start,
+                            argRanges[i].end);
+
+          if (!tokenContext.size()) {
+            args.push_back(new emptyNode());
+            tokenContext.popAndSkip();
+            continue;
+          }
+
+          args.push_back(tokenContext.parseExpression(smntContext, parser));
+
+          if (!success) {
+            freeExprNodeVector(args);
+            return;
+          }
+
+          tokenContext.popAndSkip();
+        }
+
         vartype.add(token->origin,
-                    qualifier);
+                    qualifier,
+                    args);
+
+        freeExprNodeVector(args);
+        tokenContext.popAndSkip();
+
       } else {
-        token->printWarning("Ignoring duplicate qualifier");
+        // Non-long qualifiers
+        if (!vartype.has(qualifier)) {
+          vartype.add(token->origin,
+                      qualifier);
+        } else {
+          token->printWarning("Ignoring duplicate qualifier");
+        }
       }
+
     }
 
     void typeLoader_t::setVartypePointers(vartype_t &vartype) {
