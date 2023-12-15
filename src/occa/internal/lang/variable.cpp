@@ -120,6 +120,12 @@ namespace occa {
       vartype.add(origin, qualifier);
     }
 
+    void variable_t::add(const fileOrigin &origin,
+                         const qualifier_t &qualifier,
+                         const exprNodeVector &args) {
+      vartype.add(origin, qualifier, args);
+    }
+
     void variable_t::add(const qualifierWithSource &qualifier) {
       vartype.add(qualifier);
     }
@@ -128,6 +134,13 @@ namespace occa {
                          const fileOrigin &origin,
                          const qualifier_t &qualifier) {
       vartype.add(index, origin, qualifier);
+    }
+
+    void variable_t::add(const int index,
+                         const fileOrigin &origin,
+                         const qualifier_t &qualifier,
+                         const exprNodeVector &args) {
+      vartype.add(index, origin, qualifier, args);
     }
 
     void variable_t::add(const int index,
