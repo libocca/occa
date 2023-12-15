@@ -111,8 +111,6 @@ int main() {
     devices.push_back(occa::device({{"mode", "CUDA"},{"device_id", 0}}));
   if (occa::modeIsEnabled("HIP"))
     devices.push_back(occa::device({{"mode", "HIP"},{"device_id", 0}}));
-  if (occa::modeIsEnabled("OpenCL"))
-    devices.push_back(occa::device({{"mode", "OpenCL"},{"platform_id",0},{"device_id", 0}}));
   if (occa::modeIsEnabled("dpcpp"))
     devices.push_back(occa::device({{"mode", "dpcpp"},{"platform_id",0},{"device_id", 0}}));
   
