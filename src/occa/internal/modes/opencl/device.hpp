@@ -9,18 +9,15 @@ namespace occa {
     class info_t;
 
     class device : public occa::launchedModeDevice_t {
-      friend cl_context getContext(occa::device device);
 
     private:
       mutable hash_t hash_;
 
     public:
-      int platformID, deviceID;
-
       cl_device_id clDevice;
       cl_context clContext;
 
-      device(const occa::json &properties_);
+      device(const occa::json &properties_, cl_device_id clDevice_);
       virtual ~device();
 
       bool hasSeparateMemorySpace() const override;
