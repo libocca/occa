@@ -54,6 +54,11 @@ namespace occa {
     bool attributeArg_t::exists() const {
       return expr;
     }
+
+    bool attributeArg_t::canEvaluate() const {
+      if (!expr) return false;
+      return expr->canEvaluate();  
+    }
     //==================================
 
     //---[ Attribute ]------------------
