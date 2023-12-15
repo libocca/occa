@@ -54,6 +54,7 @@ jobs:
             os: ubuntu-22.04
             CC: icx
             CXX: icpx
+            FC: ifx
             CXXFLAGS: -Wno-uninitialized
             OCCA_COVERAGE: 0
             useCMake: true
@@ -124,14 +125,16 @@ jobs:
         OCCA_CXX: ${{ matrix.CXX }}
       run: |
         source /opt/intel/oneapi/setvars.sh
+        export SYCL_ROOT=/opt/intel/oneapi/compiler/latest
         cmake -S . -B build \
         -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
         -DCMAKE_INSTALL_PREFIX=install \
         -DCMAKE_C_COMPILER=${CC} \
         -DCMAKE_CXX_COMPILER=${CXX} \
+        -DCMAKE_Fortran_COMPILER=${FC} \
         -DENABLE_TESTS=ON \
         -DENABLE_EXAMPLES=ON \
-        -DCMAKE_PREFIX_PATH="/opt/intel/oneapi/compiler/latest/linux;/opt/intel/oneapi/compiler/latest/linux/compiler"
+        -DENABLE_FORTRAN=ON
     
     - name: CMake build
       if: ${{ matrix.useCMake && !matrix.useoneAPI}}
@@ -179,7 +182,7 @@ jobs:
       run: |
         source /opt/intel/oneapi/setvars.sh
         export ONEAPI_DEVICE_SELECTOR=*:cpu
-        ctest --test-dir build --progress --output-on-failure --parallel 8 --schedule-random -E "examples_cpp_arrays-opencl|examples_cpp_for_loops-opencl|examples_cpp_generic_inline_kernel-opencl|examples_cpp_shared_memory-opencl|examples_cpp_nonblocking_streams-opencl|examples_cpp_for_loops-dpcpp|examples_cpp_arrays-dpcpp|examples_cpp_generic_inline_kernel-dpcpp|examples_cpp_nonblocking_streams-dpcpp"
+        ctest --test-dir build --progress --output-on-failure --parallel 8 --schedule-random -E "opencl-*|examples_cpp_for_loops-dpcpp|examples_cpp_arrays-dpcpp|examples_cpp_generic_inline_kernel-dpcpp|examples_cpp_nonblocking_streams-dpcpp"
 
     - name: Upload code coverage
       if: ${{ matrix.OCCA_COVERAGE }}
