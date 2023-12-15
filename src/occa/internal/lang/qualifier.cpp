@@ -23,8 +23,12 @@ namespace occa {
       const udim_t long_         = (((uint64_t) 1) << 7);
       const udim_t longlong_     = (((uint64_t) 1) << 8);
       const udim_t register_     = (((uint64_t) 1) << 9);
+      const udim_t attribute_    = (((uint64_t) 1) << 10);
 
-      const udim_t typeInfo_     = (((uint64_t) 1) << 10);
+      // Windows types
+      const udim_t declspec_    = (((uint64_t) 1) << 11);
+
+      const udim_t typeInfo_     = (((uint64_t) 1) << 12);
       const udim_t typeInfo      = (const_     |
                                     constexpr_ |
                                     signed_    |
@@ -33,20 +37,24 @@ namespace occa {
                                     long_      |
                                     longlong_  |
                                     register_  |
+                                    attribute_ |
+                                    declspec_  |
                                     typeInfo_);
 
-      const udim_t forPointers_  = (((uint64_t) 1) << 11);
-      const udim_t forPointers   = (const_    |
-                                    volatile_ |
+      const udim_t forPointers_  = (((uint64_t) 1) << 13);
+      const udim_t forPointers   = (const_     |
+                                    volatile_  |
+                                    attribute_ |
+                                    declspec_  |
                                     forPointers_);
 
-      const udim_t extern_       = (((uint64_t) 1) << 12);
-      const udim_t externC       = (((uint64_t) 1) << 13);
-      const udim_t externCpp     = (((uint64_t) 1) << 14);
-      const udim_t static_       = (((uint64_t) 1) << 15);
-      const udim_t thread_local_ = (((uint64_t) 1) << 16);
+      const udim_t extern_       = (((uint64_t) 1) << 14);
+      const udim_t externC       = (((uint64_t) 1) << 15);
+      const udim_t externCpp     = (((uint64_t) 1) << 16);
+      const udim_t static_       = (((uint64_t) 1) << 17);
+      const udim_t thread_local_ = (((uint64_t) 1) << 18);
 
-      const udim_t globalScope_  = (((uint64_t) 1) << 17);
+      const udim_t globalScope_  = (((uint64_t) 1) << 19);
       const udim_t globalScope   = (extern_       |
                                     externC       |
                                     externCpp     |
@@ -54,36 +62,33 @@ namespace occa {
                                     thread_local_ |
                                     globalScope_);
 
-      const udim_t friend_       = (((uint64_t) 1) << 18);
-      const udim_t mutable_      = (((uint64_t) 1) << 19);
+      const udim_t friend_       = (((uint64_t) 1) << 20);
+      const udim_t mutable_      = (((uint64_t) 1) << 21);
 
-      const udim_t classInfo_    = (((uint64_t) 1) << 20);
+      const udim_t classInfo_    = (((uint64_t) 1) << 22);
       const udim_t classInfo     = (friend_  |
                                     mutable_ |
                                     classInfo_);
 
-      const udim_t inline_       = (((uint64_t) 1) << 21);
-      const udim_t virtual_      = (((uint64_t) 1) << 22);
-      const udim_t explicit_     = (((uint64_t) 1) << 23);
+      const udim_t inline_       = (((uint64_t) 1) << 23);
+      const udim_t virtual_      = (((uint64_t) 1) << 24);
+      const udim_t explicit_     = (((uint64_t) 1) << 25);
 
-      const udim_t functionInfo_ = (((uint64_t) 1) << 24);
+      const udim_t functionInfo_ = (((uint64_t) 1) << 26);
       const udim_t functionInfo  = (typeInfo  |
                                     inline_   |
                                     virtual_  |
                                     explicit_ |
                                     functionInfo_);
 
-      const udim_t builtin_      = (((uint64_t) 1) << 25);
-      const udim_t typedef_      = (((uint64_t) 1) << 26);
-      const udim_t class_        = (((uint64_t) 1) << 27);
-      const udim_t enum_         = (((uint64_t) 1) << 28);
-      const udim_t struct_       = (((uint64_t) 1) << 29);
-      const udim_t union_        = (((uint64_t) 1) << 30);
+      const udim_t builtin_      = (((uint64_t) 1) << 27);
+      const udim_t typedef_      = (((uint64_t) 1) << 28);
+      const udim_t class_        = (((uint64_t) 1) << 29);
+      const udim_t enum_         = (((uint64_t) 1) << 30);
+      const udim_t struct_       = (((uint64_t) 1) << 31);
+      const udim_t union_        = (((uint64_t) 1) << 32);
 
-      // Windows types
-      const udim_t dllexport_    = (((uint64_t) 1) << 31);
-
-      const udim_t newType_      = (((uint64_t) 1) << 32);
+      const udim_t newType_      = (((uint64_t) 1) << 33);
       const udim_t newType       = (typedef_ |
                                     class_   |
                                     enum_    |
@@ -91,7 +96,7 @@ namespace occa {
                                     union_   |
                                     newType_);
 
-      const udim_t custom        = (((uint64_t) 1) << 33);
+      const udim_t custom        = (((uint64_t) 1) << 34);
     }
 
     //---[ Qualifier ]------------------
@@ -127,6 +132,38 @@ namespace occa {
       origin(origin_),
       qualifier(&qualifier_) {}
 
+    qualifierWithSource::qualifierWithSource(const fileOrigin &origin_,
+                                             const qualifier_t &qualifier_,
+                                             const exprNodeVector &args_) :
+      origin(origin_),
+      qualifier(&qualifier_) {
+      cloneExprNodeVector(args, args_);
+    }
+
+    qualifierWithSource::qualifierWithSource(const qualifierWithSource &other) :
+      origin(),
+      qualifier() {
+
+      *this = other;
+    }
+
+    qualifierWithSource::~qualifierWithSource() {
+      freeExprNodeVector(args);
+      args.clear();
+    }
+
+    qualifierWithSource& qualifierWithSource::operator = (const qualifierWithSource &other) {
+      if (this == &other) {
+        return *this;
+      }
+
+      origin = other.origin;
+      qualifier = other.qualifier;
+      cloneExprNodeVector(args, other.args);
+
+      return *this;
+    }
+
     void qualifierWithSource::printWarning(const std::string &message) const {
       origin.printWarning(message);
     }
@@ -134,9 +171,66 @@ namespace occa {
       origin.printError(message);
     }
 
-    qualifiers_t::qualifiers_t() {}
+    printer& operator << (printer &pout,
+                          const qualifierWithSource &qualifier) {
 
-    qualifiers_t::~qualifiers_t() {}
+      if (!qualifier.args.size()) {
+        pout << *(qualifier.qualifier);
+      } else {
+        bool useNewlineDelimiters = false;
+        std::string qualifierName = qualifier.qualifier->name;
+        int lineWidth = (
+          pout.cursorPosition()
+          + (int) qualifierName.size()
+        );
+
+        const int argCount = (int) qualifier.args.size();
+        for (int i = 0; i < argCount; ++i) {
+          const std::string argStr = qualifier.args[i]->toString();
+          const int argSize = (int) argStr.size();
+          lineWidth += argSize;
+
+          useNewlineDelimiters |= (
+            argSize > PRETTIER_MAX_VAR_WIDTH
+            || lineWidth > PRETTIER_MAX_LINE_WIDTH
+          );
+        }
+
+        pout << qualifierName
+             << '(';
+
+        if (useNewlineDelimiters) {
+          pout.addIndentation();
+          pout.printNewline();
+          pout.printIndentation();
+        }
+
+        for (int i = 0; i < argCount; ++i) {
+          if (i) {
+            if (useNewlineDelimiters) {
+              pout << ',';
+              pout.printNewline();
+              pout.printIndentation();
+            } else {
+              pout << ", ";
+            }
+          }
+          pout << *(qualifier.args[i]);
+        }
+
+        if (useNewlineDelimiters) {
+          pout.removeIndentation();
+          pout.printNewline();
+          pout.printIndentation();
+        }
+
+        pout << ')';
+      }
+
+      return pout;
+    }
+
+    qualifiers_t::qualifiers_t() {}
 
     void qualifiers_t::clear() {
       qualifiers.clear();
@@ -217,6 +311,17 @@ namespace occa {
       return *this;
     }
 
+    qualifiers_t& qualifiers_t::add(const fileOrigin &origin,
+                                    const qualifier_t &qualifier,
+                                    const exprNodeVector &args) {
+      if (!has(qualifier)) {
+        qualifiers.push_back(
+          qualifierWithSource(origin, qualifier, args)
+        );
+      }
+      return *this;
+    }
+
     qualifiers_t& qualifiers_t::add(const qualifierWithSource &qualifier) {
       if (!has(*(qualifier.qualifier))) {
         qualifiers.push_back(qualifier);
@@ -235,6 +340,23 @@ namespace occa {
         qualifiers.insert(
           qualifiers.begin() + safeIndex,
           qualifierWithSource(origin, qualifier)
+        );
+      }
+      return *this;
+    }
+
+    qualifiers_t& qualifiers_t::add(const int index,
+                                    const fileOrigin &origin,
+                                    const qualifier_t &qualifier,
+                                    const exprNodeVector &args) {
+      if (!has(qualifier)) {
+        int safeIndex = 0;
+        if (index > (int) qualifiers.size()) {
+          safeIndex = (int) qualifiers.size();
+        }
+        qualifiers.insert(
+          qualifiers.begin() + safeIndex,
+          qualifierWithSource(origin, qualifier, args)
         );
       }
       return *this;
@@ -292,9 +414,9 @@ namespace occa {
       if (!count) {
         return pout;
       }
-      pout << *(quals[0].qualifier);
+      pout << quals[0];
       for (int i = 1; i < count; ++i) {
-        pout << ' ' << *(quals[i].qualifier);
+        pout << ' ' << quals[i];
       }
       return pout;
     }
