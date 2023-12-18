@@ -59,7 +59,7 @@ For convenience, the shell script `configure-cmake.sh` has been provided to driv
 
 The following demonstrates a typical sequence of shell commands to build, test, and install occa:
 ```shell
-$ ./configure.sh
+$ ./configure-cmake.sh
 $ cmake --build build --parallel <number-of-threads>
 $ ctest --test-dir build --output-on-failure
 $ cmake --install build --prefix install

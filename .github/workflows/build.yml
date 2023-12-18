@@ -54,9 +54,10 @@ jobs:
             os: ubuntu-22.04
             CC: icx
             CXX: icpx
-            FC: ifx
             CXXFLAGS: -Wno-uninitialized
+            FC: ifx
             OCCA_COVERAGE: 0
+            OCCA_FORTRAN_ENABLED: 1
             useCMake: true
             useoneAPI: true
 
@@ -114,9 +115,9 @@ jobs:
         -DCMAKE_C_COMPILER=${CC} \
         -DCMAKE_CXX_COMPILER=${CXX} \
         -DCMAKE_Fortran_COMPILER=${FC} \
-        -DENABLE_TESTS=ON \
-        -DENABLE_EXAMPLES=ON \
-        -DENABLE_FORTRAN=ON
+        -DOCCA_ENABLE_TESTS=ON \
+        -DOCCA_ENABLE_EXAMPLES=ON \
+        -DOCCA_ENABLE_FORTRAN=${OCCA_FORTRAN_ENABLED}
 
     - name: CMake configure
       if: ${{ matrix.useCMake && matrix.useoneAPI}}
@@ -125,16 +126,15 @@ jobs:
         OCCA_CXX: ${{ matrix.CXX }}
       run: |
         source /opt/intel/oneapi/setvars.sh
-        export SYCL_ROOT=/opt/intel/oneapi/compiler/latest
         cmake -S . -B build \
         -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
         -DCMAKE_INSTALL_PREFIX=install \
         -DCMAKE_C_COMPILER=${CC} \
         -DCMAKE_CXX_COMPILER=${CXX} \
         -DCMAKE_Fortran_COMPILER=${FC} \
-        -DENABLE_TESTS=ON \
-        -DENABLE_EXAMPLES=ON \
-        -DENABLE_FORTRAN=ON
+        -DOCCA_ENABLE_TESTS=ON \
+        -DOCCA_ENABLE_EXAMPLES=ON \
+        -DOCCA_ENABLE_FORTRAN=${OCCA_FORTRAN_ENABLED}
     
     - name: CMake build
       if: ${{ matrix.useCMake && !matrix.useoneAPI}}

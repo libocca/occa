@@ -25,7 +25,7 @@ OCCA uses the [CMake] build system. For convenience, the shell script `configure
 
 Example
 ```shell
-$ CC=clang CXX=clang++ ENABLE_OPENMP="OFF" ./configure-cmake.sh
+$ CC=clang CXX=clang++ OCCA_ENABLE_OPENMP="OFF" ./configure-cmake.sh
 ``` 
 
 | Build Parameter | Description | Default |
@@ -37,15 +37,15 @@ $ CC=clang CXX=clang++ ENABLE_OPENMP="OFF" ./configure-cmake.sh
 | CXXFLAGS | C++ compiler flags | *empty* | 
 | CC | C11 compiler| `gcc` |
 | CFLAGS | C compiler flags | *empty* |
-| ENABLE_CUDA | Enable use of the CUDA backend | `ON`|
-| ENABLE_HIP | Enable use of the HIP backend | `ON`|
-| ENABLE_DPCPP | Enable use of the DPC++ backend | `ON`|
-| ENABLE_OPENCL | Enable use of the OpenCL backend | `ON`|
-| ENABLE_OPENMP | Enable use of the OpenMP backend | `ON`|
-| ENABLE_METAL | Enable use of the Metal backend | `ON`|
-| ENABLE_TESTS | Build OCCA's test harness | `ON` |
-| ENABLE_EXAMPLES | Build OCCA examples | `ON` |
-| ENABLE_FORTRAN | Build the Fortran language bindings | `OFF`|
+| OCCA_ENABLE_CUDA | Enable use of the CUDA backend | `ON`|
+| OCCA_ENABLE_HIP | Enable use of the HIP backend | `ON`|
+| OCCA_ENABLE_DPCPP | Enable use of the DPC++ backend | `ON`|
+| OCCA_ENABLE_OPENCL | Enable use of the OpenCL backend | `ON`|
+| OCCA_ENABLE_OPENMP | Enable use of the OpenMP backend | `ON`|
+| OCCA_ENABLE_METAL | Enable use of the Metal backend | `ON`|
+| OCCA_ENABLE_TESTS | Build OCCA's test harness | `ON` |
+| OCCA_ENABLE_EXAMPLES | Build OCCA examples | `ON` |
+| OCCA_ENABLE_FORTRAN | Build the Fortran language bindings | `OFF`|
 | FC | Fortran 90 compiler | `gfortran` |
 | FFLAGS | Fortran compiler flags | *empty* |
 

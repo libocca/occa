@@ -61,7 +61,7 @@ set(CMAKE_C_FLAGS "${SUPPORTED_WARN_C_FLAGS} ${CMAKE_C_FLAGS}")
 set_optional_c_flag(SUPPORTED_WERROR_C_FLAGS "-Werror")
 set(CMAKE_C_FLAGS_DEBUG "${SUPPORTED_WERROR_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG}")
 
-if (ENABLE_FORTRAN)
+if (OCCA_ENABLE_FORTRAN)
   include(CheckFortranCompilerFlag)
 
   function(set_optional_fortran_flag var)
