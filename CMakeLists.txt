@@ -11,7 +11,7 @@ cmake_policy(SET CMP0056 NEW)
 
 #---[ Build Config ]--------------------
 project(OCCA
-  VERSION 1.6.0
+  VERSION 1.7.0
   DESCRIPTION  "JIT Compilation for Multiple Architectures: C++, OpenMP, CUDA, HIP, OpenCL, Metal"
   HOMEPAGE_URL "https://github.com/libocca/occa"
   LANGUAGES    C CXX)
