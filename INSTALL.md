@@ -4,7 +4,7 @@
 
 ### Minimum
 
-- [CMake] v3.17 or newer
+- [CMake] v3.21 or newer
 - C++17 compiler
 - C11 compiler
 
