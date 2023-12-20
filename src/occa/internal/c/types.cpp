@@ -247,7 +247,7 @@ namespace occa {
       return oType;
     }
 
-    occaType newOccaType(occa::experimental::memoryPool memoryPool) {
+    occaType newOccaType(occa::memoryPool memoryPool) {
       occa::modeMemoryPool_t *modeMemoryPool = memoryPool.getModeMemoryPool();
       if (!modeMemoryPool) {
         return occaUndefined;
@@ -386,13 +386,13 @@ namespace occa {
       return occa::memory((occa::modeMemory_t*) value.value.ptr);
     }
 
-    occa::experimental::memoryPool memoryPool(occaType value) {
+    occa::memoryPool memoryPool(occaType value) {
       if (occaIsUndefined(value)) {
-        return occa::experimental::memoryPool();
+        return occa::memoryPool();
       }
       OCCA_ERROR("Input is not an occaMemoryPool",
                  value.type == typeType::memoryPool);
-      return occa::experimental::memoryPool((occa::modeMemoryPool_t*) value.value.ptr);
+      return occa::memoryPool((occa::modeMemoryPool_t*) value.value.ptr);
     }
 
     occa::stream stream(occaType value) {
@@ -981,7 +981,7 @@ void occaPrintTypeInfo(occaType value) {
         info["type"]  = "memoryPool";
         info["value"] = (void*) value.value.ptr;
 
-        occa::experimental::memoryPool memPool = occa::c::memoryPool(value);
+        occa::memoryPool memPool = occa::c::memoryPool(value);
         if (memPool.isInitialized()) {
           info["mode"]   = memPool.mode();
           info["props"]  = memPool.properties();

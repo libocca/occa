@@ -263,7 +263,7 @@ occaMemoryPool occaDeviceCreateMemoryPool(occaDevice device,
                                           occaJson props) {
   occa::device device_ = occa::c::device(device);
 
-  occa::experimental::memoryPool memoryPool;
+  occa::memoryPool memoryPool;
   if (occa::c::isDefault(props)) {
     memoryPool = device_.createMemoryPool();
   } else {
