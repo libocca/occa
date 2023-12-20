@@ -94,7 +94,7 @@ namespace occa {
     return getDevice().tagStream();
   }
 
-  experimental::memoryPool createMemoryPool(const occa::json &props) {
+  memoryPool createMemoryPool(const occa::json &props) {
     return getDevice().createMemoryPool(props);
   }
 

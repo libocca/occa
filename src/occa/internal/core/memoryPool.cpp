@@ -5,8 +5,6 @@
 
 namespace occa {
 
-  using experimental::memoryPool;
-
   modeMemoryPool_t::modeMemoryPool_t(modeDevice_t *modeDevice_,
                                      const occa::json &properties_) :
     modeBuffer_t(modeDevice_, 0, properties_),

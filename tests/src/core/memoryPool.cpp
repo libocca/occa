@@ -23,7 +23,7 @@ void testReserve() {
     {"mode", "Serial"}
   });
 
-  occa::experimental::memoryPool memPool = device.createMemoryPool();
+  occa::memoryPool memPool = device.createMemoryPool();
 
   /*Set aligment to 5*sizeof(float) bytes*/
   memPool.setAlignment(5 * sizeof(float));

@@ -16,6 +16,7 @@
 #include <occa/core/device.hpp>
 #include <occa/core/kernel.hpp>
 #include <occa/core/memory.hpp>
+#include <occa/core/memoryPool.hpp>
 #include <occa/core/stream.hpp>
 #include <occa/core/streamTag.hpp>
 
@@ -44,7 +45,7 @@ namespace occa {
 
   streamTag tagStream();
 
-  experimental::memoryPool createMemoryPool(const occa::json &props = occa::json());
+  memoryPool createMemoryPool(const occa::json &props = occa::json());
   //====================================
 
   //---[ Kernel Functions ]-------------
