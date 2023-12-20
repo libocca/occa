@@ -78,17 +78,17 @@ namespace occa {
                             const occa::json &props);
 
   void memcpy(memory dest, const void *src,
-              const dim_t bytes = -1,
+              const dim_t count = -1,
               const dim_t offset = 0,
               const occa::json &props = json());
 
   void memcpy(void *dest, memory src,
-              const dim_t bytes = -1,
+              const dim_t count = -1,
               const dim_t offset = 0,
               const occa::json &props = json());
 
   void memcpy(memory dest, memory src,
-              const dim_t bytes = -1,
+              const dim_t count = -1,
               const dim_t destOffset = 0,
               const dim_t srcOffset = 0,
               const occa::json &props = json());
