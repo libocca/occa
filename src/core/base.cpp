@@ -152,28 +152,28 @@ namespace occa {
   }
 
   void memcpy(memory dest, const void *src,
-              const dim_t bytes,
+              const dim_t count,
               const dim_t offset,
               const occa::json &props) {
 
-    dest.copyFrom(src, bytes, offset, props);
+    dest.copyFrom(src, count, offset, props);
   }
 
   void memcpy(void *dest, memory src,
-              const dim_t bytes,
+              const dim_t count,
               const dim_t offset,
               const occa::json &props) {
 
-    src.copyTo(dest, bytes, offset, props);
+    src.copyTo(dest, count, offset, props);
   }
 
   void memcpy(memory dest, memory src,
-              const dim_t bytes,
+              const dim_t count,
               const dim_t destOffset,
               const dim_t srcOffset,
               const occa::json &props) {
 
-    dest.copyFrom(src, bytes, destOffset, srcOffset, props);
+    dest.copyFrom(src, count, destOffset, srcOffset, props);
   }
 
   void memcpy(memory dest, const void *src,
