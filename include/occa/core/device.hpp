@@ -742,7 +742,7 @@ namespace occa {
      *
      * @endDoc
      */
-    experimental::memoryPool createMemoryPool(const occa::json &props = occa::json());
+    memoryPool createMemoryPool(const occa::json &props = occa::json());
 
     //  |===============================
 
