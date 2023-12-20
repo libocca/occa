@@ -1,7 +1,7 @@
 #include <occa/internal/c/types.hpp>
 #include <occa/c/dtype.h>
 #include <occa/c/memory.h>
-#include <occa/c/experimental/memoryPool.h>
+#include <occa/c/memoryPool.h>
 
 OCCA_START_EXTERN_C
 
@@ -57,7 +57,7 @@ occaMemory occaMemoryPoolReserve(occaDevice device,
 occaMemory occaMemoryPoolTypedReserve(occaMemoryPool memoryPool,
                                       const occaUDim_t entries,
                                       const occaDtype dtype) {
-  occa::experimental::memoryPool memoryPool_ = occa::c::memoryPool(memoryPool);
+  occa::memoryPool memoryPool_ = occa::c::memoryPool(memoryPool);
   const occa::dtype_t &dtype_ = occa::c::dtype(dtype);
 
   occa::memory memory = memoryPool_.reserve(entries, dtype_);

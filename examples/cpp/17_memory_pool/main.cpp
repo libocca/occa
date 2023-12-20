@@ -34,7 +34,7 @@ int main(int argc, const char **argv) {
   occa::json properties;
   properties["verbose"] = args["options/verbose"];
 
-  occa::experimental::memoryPool memPool = device.createMemoryPool(properties);
+  occa::memoryPool memPool = device.createMemoryPool(properties);
 
   int alignment = memPool.alignment();
 
