@@ -60,8 +60,29 @@ macro(compile_cpp_example_with_modes target file)
   endif()
 endmacro()
 
+macro(compile_concurrency_example target file)
+  add_executable(examples_concurrency_${target} ${file})
+  target_link_libraries(examples_concurrency_${target} libocca pthread)
+  target_include_directories(examples_concurrency_${target} PRIVATE
+    $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/src>)
+  if (OCCA_ENABLE_TESTS)
+    add_test_without_mode(examples_concurrency_${target})
+  endif()
+endmacro()
+
+macro(compile_concurrency_example_with_modes target file)
+  add_executable(examples_concurrency_${target} ${file})
+  target_link_libraries(examples_concurrency_${target} libocca pthread)
+  target_include_directories(examples_concurrency_${target} PRIVATE
+    $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/src>)
+  if (OCCA_ENABLE_TESTS)
+    add_test_with_modes(examples_concurrency_${target})
+  endif()
+endmacro()
+
 add_subdirectory(c)
 add_subdirectory(cpp)
+add_subdirectory(concurrency)
 
 if (OCCA_ENABLE_FORTRAN)
   macro(compile_fortran_example_with_modes target file)

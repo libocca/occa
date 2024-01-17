@@ -1,0 +1,2 @@
+add_subdirectory(01_openmp_stream)
+add_subdirectory(02_threadsafe_device)
