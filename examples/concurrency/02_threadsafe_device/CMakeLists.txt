@@ -1,0 +1,4 @@
+compile_concurrency_example_with_modes(threadsafe_device main.cpp)
+
+add_custom_target(concurrency_example_threadsafe_device_okl ALL COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/powerOfPiMult.okl powerOfPiMult.okl)
+add_dependencies(examples_concurrency_threadsafe_device concurrency_example_threadsafe_device_okl)
