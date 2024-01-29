@@ -145,7 +145,7 @@ if(OCCA_ENABLE_CUDA)
     message("-- CUDA driver library: ${CUDAToolkit_LIBRARY_DIR}")
 
     # Use the provided imported target CUDA::cuda_driver, to make our package relocatable
-    target_link_libraries(libocca PRIVATE CUDA::cuda_driver)
+	target_link_libraries(libocca PUBLIC CUDA::cuda_driver)
   else()
     set(OCCA_CUDA_ENABLED 0)
   endif()
