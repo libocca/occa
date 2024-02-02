@@ -19,6 +19,7 @@
 #    include <errno.h>
 #    include <sys/sysinfo.h>
 #  else // OCCA_MACOS_OS
+#    include <AvailabilityMacros.h>
 #    include <mach/mach_host.h>
 #    ifdef __clang__
 #      include <CoreServices/CoreServices.h>
