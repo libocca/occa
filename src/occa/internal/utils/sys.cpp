@@ -402,12 +402,13 @@ namespace occa {
 
     int getTID() {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-#if OCCA_OS == OCCA_MACOS_OS & (MAC_OS_X_VERSION_MAX_ALLOWED >= 101200)
+#if OCCA_OS == OCCA_MACOS_OS & (MAC_OS_X_VERSION_MIN_REQUIRED >= 1070)
       uint64_t tid64;
-      pthread_threadid_np(NULL, &tid64);
+      pthread_threadid_np(nullptr, &tid64);
       pid_t tid = (pid_t)tid64;
 #else
-      pid_t tid = syscall(SYS_gettid);
+      uint64_t tid;
+      tid = pthread_mach_thread_np(pthread_self());
 #endif
       return tid;
 #else
