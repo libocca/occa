@@ -407,8 +407,7 @@ namespace occa {
       pthread_threadid_np(nullptr, &tid64);
       pid_t tid = (pid_t)tid64;
 #else
-      uint64_t tid;
-      tid = pthread_mach_thread_np(pthread_self());
+      pid_t tid = syscall(SYS_gettid);
 #endif
       return tid;
 #else
