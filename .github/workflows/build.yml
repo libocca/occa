@@ -82,7 +82,7 @@ jobs:
       FORTRAN_EXAMPLES: ${{ matrix.OCCA_FORTRAN_ENABLED }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: add oneAPI to apt
       if: ${{ matrix.useoneAPI }}
