@@ -14,21 +14,22 @@ namespace occa {
     needsLauncherKernel = true;
   }
 
+
   bool launchedModeDevice_t::parseFile(const std::string &filename,
                                        const std::string &outputFile,
                                        const std::string &launcherOutputFile,
                                        const occa::json &kernelProps,
                                        lang::sourceMetadata_t &launcherMetadata,
-                                       lang::sourceMetadata_t &deviceMetadata) {
-    lang::okl::withLauncher &parser = *(createParser(kernelProps));
-    parser.parseFile(filename);
+                                       lang::sourceMetadata_t &deviceMetadata)
+  {
+    std::unique_ptr<lang::okl::withLauncher> parser(createParser(kernelProps));
+    parser->parseFile(filename);
 
     // Verify if parsing succeeded
-    if (!parser.succeeded()) {
+    if (!parser->succeeded()) {
       if (!kernelProps.get("silent", false)) {
         OCCA_FORCE_ERROR("Unable to transform OKL kernel [" << filename << "]");
       }
-      delete &parser;
       return false;
     }
 
@@ -39,17 +40,16 @@ namespace occa {
         const std::string &tempOutputFilename = tempFilenames[0];
         const std::string &tempLauncherOutputFilename = tempFilenames[1];
 
-        parser.writeToFile(tempOutputFilename);
-        parser.launcherParser.writeToFile(tempLauncherOutputFilename);
+        parser->writeToFile(tempOutputFilename);
+        parser->launcherParser.writeToFile(tempLauncherOutputFilename);
 
         return true;
       }
     );
 
-    parser.launcherParser.setSourceMetadata(launcherMetadata);
-    parser.setSourceMetadata(deviceMetadata);
+    parser->launcherParser.setSourceMetadata(launcherMetadata);
+    parser->setSourceMetadata(deviceMetadata);
 
-    delete &parser;
     return true;
   }
 
@@ -138,12 +138,10 @@ namespace occa {
     lang::sourceMetadata_t launcherMetadata, deviceMetadata;
     if (usingOkl) {
       // Cache raw origin
-      sourceFilename = (
-        io::cacheFile(filename,
-                      kc::cachedRawSourceFilename(filename),
-                      kernelHash,
-                      assembleKernelHeader(kernelProps))
-      );
+      sourceFilename = io::cacheFile(filename,
+                                     kc::cachedRawSourceFilename(filename),
+                                     kernelHash,
+                                     assembleKernelHeader(kernelProps));
 
       const std::string outputFile = hashDir + kc::cachedSourceFilename(filename);
       const std::string launcherOutputFile = hashDir + kc::launcherSourceFile;
