@@ -129,6 +129,44 @@ namespace occa {
     }
 
     namespace v3 {
+
+        std::vector<std::string> buildDefines(const json &kernelProp) {
+          const json &defines = kernelProp["defines"];
+          if (!defines.isObject()) {
+            {};
+          }
+
+          std::vector<std::string> definesStrings;
+          const jsonObject &defineMap = defines.object();
+          jsonObject::const_iterator it = defineMap.cbegin();
+          while (it != defineMap.end()) {
+            const std::string &define = it->first;
+            const json &value = it->second;
+
+            //preprocessor.addSourceDefine(define, value);
+            std::string defineString = define + "=" + value.toString();
+            definesStrings.push_back(std::move(defineString));
+            ++it;
+          }
+          return definesStrings;
+        }
+
+        std::vector<std::filesystem::path> buildIncludes(const json &kernelProp) {
+          std::vector<std::filesystem::path> includes;
+          json oklIncludePaths = kernelProp.get("okl/include_paths", json{});
+          if (oklIncludePaths.isArray()) {
+            jsonArray pathArray = oklIncludePaths.array();
+            const int pathCount = (int) pathArray.size();
+            for (int i = 0; i < pathCount; ++i) {
+                json path = pathArray[i];
+                if (path.isString()) {
+                    includes.push_back(std::filesystem::path(path.string()));
+                }
+            }
+          }
+          return includes;
+        }
+
         bool runTranslate(const json &options,
                           const json &arguments,
                           const json &kernelProps,
@@ -157,8 +195,8 @@ namespace occa {
                 ::exit(1);
             }
 
-//            kernelProps["defines"].asObject() += getOptionDefines(options["define"]);
-//            kernelProps["okl/include_paths"] = options["include-path"];
+            auto defines = buildDefines(kernelProps);
+            auto includes = buildIncludes(kernelProps);
 
             std::string fullFilePath = io::expandFilename(filename);
             std::ifstream sourceFile(fullFilePath);
@@ -168,8 +206,8 @@ namespace occa {
                 .astProcType = oklt::AstProcessorType::OKL_WITH_SEMA,
                 .sourceCode = std::move(sourceCode),
                 .sourcePath = std::filesystem::path(fullFilePath),
-                .inlcudeDirectories = {},
-                .defines = {}
+                .inlcudeDirectories = std::move(includes),
+                .defines = std::move(defines)
             };
             auto result = normalizeAndTranspile(std::move(input));
 
