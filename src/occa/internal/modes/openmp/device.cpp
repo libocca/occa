@@ -1,3 +1,5 @@
+#include <fstream>
+
 #include <occa/internal/core/kernel.hpp>
 #include <occa/internal/utils/env.hpp>
 #include <occa/internal/io/output.hpp>
@@ -5,6 +7,9 @@
 #include <occa/internal/modes/serial/device.hpp>
 #include <occa/internal/modes/openmp/device.hpp>
 #include <occa/internal/modes/openmp/utils.hpp>
+
+#include "oklt/pipeline/normalizer_and_transpiler.h"
+#include "oklt/core/error.h"
 
 namespace occa {
   namespace openmp {
@@ -25,10 +30,32 @@ namespace occa {
       );
     }
 
+    bool device::transpileFile(const std::string &filename,
+                       const std::string &outputFile,
+                       const occa::json &kernelProps,
+                       lang::sourceMetadata_t &metadata)
+    {
+      std::string fullFilePath = io::expandFilename(filename);
+      std::ifstream sourceFile(fullFilePath);
+      std::string sourceCode{std::istreambuf_iterator<char>(sourceFile), {}};
+      oklt::UserInput input {
+          .backend = oklt::TargetBackend::CUDA,
+          .astProcType = oklt::AstProcessorType::OKL_WITH_SEMA,
+          .sourceCode = std::move(sourceCode),
+          .sourcePath = std::filesystem::path(fullFilePath),
+          .inlcudeDirectories = {},
+          .defines = {}
+      };
+      auto result = normalizeAndTranspile(std::move(input));
+      return true;
+    }
+
+
     bool device::parseFile(const std::string &filename,
                            const std::string &outputFile,
                            const occa::json &kernelProps,
-                           lang::sourceMetadata_t &metadata) {
+                           lang::sourceMetadata_t &metadata)
+    {
       lang::okl::openmpParser parser(kernelProps);
       parser.parseFile(filename);
 

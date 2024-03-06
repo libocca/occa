@@ -157,6 +157,9 @@ namespace occa {
                 ::exit(1);
             }
 
+//            kernelProps["defines"].asObject() += getOptionDefines(options["define"]);
+//            kernelProps["okl/include_paths"] = options["include-path"];
+
             std::string fullFilePath = io::expandFilename(filename);
             std::ifstream sourceFile(fullFilePath);
             std::string sourceCode{std::istreambuf_iterator<char>(sourceFile), {}};
@@ -170,11 +173,42 @@ namespace occa {
             };
             auto result = normalizeAndTranspile(std::move(input));
 
+            if(!result) {
+                std::stringstream ss;
+                for(const auto &err: result.error()) {
+                    ss << err.desc << std::endl;
+                }
+                printError(ss.str());
+                ::exit(1);
+            }
+
+            if (options["verbose"]) {
+                json translationInfo;
+                // Filename
+                translationInfo["translate_info/filename"] = io::expandFilename(filename);
+                // Date information
+                translationInfo["translate_info/date"] = sys::date();
+                translationInfo["translate_info/human_date"] = sys::humanDate();
+                // Version information
+                translationInfo["translate_info/occa_version"] = OCCA_VERSION_STR;
+                translationInfo["translate_info/okl_version"] = OKL_VERSION_STR;
+                // Kernel properties
+                translationInfo["kernel_properties"] = kernelProps;
+
+                io::stdout
+                    << "/* Translation Info:\n"
+                    << translationInfo
+                    << "*/\n";
+            }
+
             bool hasLauncher = transpiler->second == oklt::TargetBackend::CUDA ||
                                transpiler->second == oklt::TargetBackend::HIP ||
                                transpiler->second == oklt::TargetBackend::DPCPP;
             if(printLauncher && hasLauncher) {
                 //TODO: add launcher printing
+            } else {
+                auto userOutput = result.value();
+                io::stdout << userOutput.kernel.sourceCode;
             }
 
             return true;
@@ -268,12 +302,24 @@ namespace occa {
             } else {
                 io::stdout << parser->toString();
             }
-
-            if (!success) {
-                ::exit(1);
-            }
             return true;
         }
+    }
+
+    int getTranspilerVersion(const json &options) {
+        json jsonTranspileVersion = options["transpiler-version"];
+        int transpilerVersion = 2;
+        //INFO: have no idea why json here has array type
+        if(jsonTranspileVersion.isArray()) {
+            json elem = jsonTranspileVersion.asArray()[0];
+            if(elem.isString()) {
+                try {
+                    transpilerVersion = std::stoi(elem.string());
+                } catch(const std::exception &)
+                {}
+            }
+        }
+        return transpilerVersion;
     }
 
     bool runTranslate(const json &args) {
@@ -283,14 +329,7 @@ namespace occa {
       const std::string originalMode = options["mode"];
       const std::string mode = lowercase(originalMode);
 
-      json jsonTranspileVersion = options["transpiler-version"];
-      int transpilerVersion = 2;
-      if(jsonTranspileVersion.isString()) {
-        try {
-            transpilerVersion = std::stoi(jsonTranspileVersion.string());
-        } catch(const std::exception &)
-        {}
-      }
+      int transpilerVersion = getTranspilerVersion(options);
 
       json kernelProps = getOptionProperties(options["kernel-props"]);
       kernelProps["mode"] = mode;
@@ -321,6 +360,7 @@ namespace occa {
       kernelProps["verbose"] = kernelProps.get("verbose", true);
       kernelProps["okl/include_paths"] = options["include-path"];
       kernelProps["defines"].asObject() += getOptionDefines(options["define"]);
+      kernelProps["transpiler-version"] = getTranspilerVersion(options);
 
       device device(deviceProps);
       device.buildKernel(filename, kernelName, kernelProps);
@@ -459,6 +499,9 @@ namespace occa {
                      .withArg())
           .addOption(cli::option('v', "verbose",
                                  "Verbose output"))
+          .addOption(cli::option('t', "transpiler-version",
+                                 "provide transpiler version")
+                     .reusable().withArg())
           .addArgument(cli::argument("FILE",
                                      "An .okl file")
                        .isRequired()
@@ -485,6 +528,9 @@ namespace occa {
                                  "Add additional define")
                      .reusable()
                      .withArg())
+          .addOption(cli::option('t', "transpiler-version",
+                                 "provide transpiler version")
+                     .reusable().withArg())
           .addArgument(cli::argument("FILE",
                                      "An .okl file")
                        .isRequired()

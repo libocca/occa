@@ -1,4 +1,5 @@
 #include <map>
+#include <fstream>
 
 #include <occa/core/base.hpp>
 #include <occa/types/primitive.hpp>
@@ -8,12 +9,86 @@
 #include <occa/internal/modes/serial/kernel.hpp>
 #include <occa/internal/utils/string.hpp>
 
+
+#include "oklt/pipeline/normalizer_and_transpiler.h"
+#include "oklt/core/error.h"
+
+
 namespace occa {
   launchedModeDevice_t::launchedModeDevice_t(const occa::json &properties_) :
     modeDevice_t(properties_) {
     needsLauncherKernel = true;
   }
 
+  bool launchedModeDevice_t::transpileFile(const std::string &filename,
+                     const std::string &outputFile,
+                     const std::string &launcherOutputFile,
+                     const occa::json &kernelProps,
+                     lang::sourceMetadata_t &launcherMetadata,
+                     lang::sourceMetadata_t &deviceMetadata)
+  {
+    static const std::map<std::string, oklt::TargetBackend> targetBackends =
+        {
+         // {"openmp", oklt::TargetBackend::OPENMP},
+         {"cuda", oklt::TargetBackend::CUDA},
+         {"hip", oklt::TargetBackend::HIP},
+         {"dpcpp", oklt::TargetBackend::DPCPP},
+    };
+
+    auto targetIter = targetBackends.find(mode);
+    if(targetIter == targetBackends.end()) {
+        std::string errorDescription = "Can't find target backend: " + mode;
+        OCCA_FORCE_ERROR(errorDescription +
+                             ", unable to transform OKL kernel [" << filename << "]");
+        return false;
+    }
+
+    std::string fullFilePath = io::expandFilename(filename);
+    std::ifstream sourceFile(fullFilePath);
+    std::string sourceCode{std::istreambuf_iterator<char>(sourceFile), {}};
+    oklt::UserInput input {
+        .backend = oklt::TargetBackend::CUDA,
+        .astProcType = oklt::AstProcessorType::OKL_WITH_SEMA,
+        .sourceCode = std::move(sourceCode),
+        .sourcePath = std::filesystem::path(fullFilePath),
+        .inlcudeDirectories = {},
+        .defines = {}
+    };
+    auto result = normalizeAndTranspile(std::move(input));
+
+    if(!result) {
+        std::stringstream ss;
+        ss << "Unable to transform OKL kernel [" << filename << "]" << std::endl;
+        ss << "Transpilation errors occured: " << std::endl;
+        for(const auto &err: result.error()) {
+            ss << err.desc << std::endl;
+        }
+        OCCA_FORCE_ERROR(ss.str());
+        return false;
+    }
+
+    auto userOutput = result.value();
+    io::stageFiles(
+        { outputFile, launcherOutputFile },
+        true,
+        [&](const strVector &tempFilenames) -> bool {
+            const std::string &tempOutputFilename = tempFilenames[0];
+            const std::string &tempLauncherOutputFilename = tempFilenames[1];
+
+            std::ofstream transpiledTempOutput(tempOutputFilename);
+            transpiledTempOutput << userOutput.kernel.sourceCode;
+
+            //TODO: need to check
+            std::ofstream laucherOutputFile(tempLauncherOutputFilename);
+            laucherOutputFile << userOutput.launcher.sourceCode;
+            return true;
+        });
+    //TODO: make convertors
+    // launcherMetadata = userOutput.launcher.metadataJson;
+    // deviceMetadata = userOutput.kernel.metadataJson;
+
+    return true;
+  }
 
   bool launchedModeDevice_t::parseFile(const std::string &filename,
                                        const std::string &outputFile,
@@ -143,16 +218,30 @@ namespace occa {
                                      kernelHash,
                                      assembleKernelHeader(kernelProps));
 
+      int transpilerVersion = kernelProps.get("transpiler-version", 2);
       const std::string outputFile = hashDir + kc::cachedSourceFilename(filename);
       const std::string launcherOutputFile = hashDir + kc::launcherSourceFile;
-      bool valid = parseFile(sourceFilename,
-                             outputFile,
-                             launcherOutputFile,
-                             kernelProps,
-                             launcherMetadata,
-                             deviceMetadata);
-      if (!valid) {
-        return NULL;
+
+      bool isValid = false;
+      if(transpilerVersion > 2) {
+        isValid = transpileFile(sourceFilename,
+                                outputFile,
+                                launcherOutputFile,
+                                kernelProps,
+                                launcherMetadata,
+                                deviceMetadata);
+      } else {
+          isValid = parseFile(sourceFilename,
+                                 outputFile,
+                                 launcherOutputFile,
+                                 kernelProps,
+                                 launcherMetadata,
+                                 deviceMetadata);
+
+      }
+
+      if (!isValid) {
+          return nullptr;
       }
       sourceFilename = outputFile;
 
