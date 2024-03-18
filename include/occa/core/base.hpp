@@ -42,6 +42,7 @@ namespace occa {
   stream createStream(const occa::json &props = occa::json());
   stream getStream();
   void setStream(stream s);
+  void streamWait(stream s, streamTag tag);
 
   streamTag tagStream();
 

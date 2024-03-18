@@ -77,6 +77,16 @@ namespace occa {
                        lastCommandBufferObj);
       }
 
+      void commandQueue_t::waitForEvent(const event_t &event) {
+        if (lastCommandBufferObj) {
+          id<MTLEvent> metalEvent = (__bridge id<MTLEvent>) event.eventObj;
+          id<MTLCommandBuffer> metalCommandBuffer = (
+            (__bridge id<MTLCommandBuffer>) lastCommandBufferObj
+          );
+          [metalCommandBuffer encodeWaitForEvent:metalEvent value:event.signalValue];
+        }
+      }
+
       void commandQueue_t::clearCommandBuffer(void *commandBufferObj) {
         if (commandBufferObj == lastCommandBufferObj) {
           freeLastCommandBuffer();

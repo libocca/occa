@@ -25,10 +25,17 @@ namespace occa {
         eventObj(eventObj_),
         eventId(eventId_),
         commandBufferObj(commandBufferObj_),
-        eventTime(0) {
+        eventTime(0),
+        signalValue(1) {
           // If there are no active command buffers, use the current time
           if (!commandBufferObj) {
             eventTime = occa::sys::currentTime();
+          } else {
+            id<MTLEvent> metalEvent = (__bridge id<MTLEvent>) eventObj;
+            id<MTLCommandBuffer> metalCommandBuffer = (
+              (__bridge id<MTLCommandBuffer>) commandBufferObj
+            );
+            [metalCommandBuffer encodeSignalEvent:metalEvent value:signalValue];
           }
         }
 
@@ -37,7 +44,8 @@ namespace occa {
         eventId(other.eventId),
         eventObj(other.eventObj),
         commandBufferObj(other.commandBufferObj),
-        eventTime(other.eventTime) {}
+        eventTime(other.eventTime),
+        signalValue(other.signalValue) {}
 
         event_t& event_t::operator = (const event_t &other) {
         commandQueue = other.commandQueue;
@@ -45,6 +53,7 @@ namespace occa {
         eventObj = other.eventObj;
         commandBufferObj = other.commandBufferObj;
         eventTime = other.eventTime;
+        signalValue = other.signalValue;
         return *this;
       }
 

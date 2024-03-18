@@ -12,6 +12,7 @@
 namespace occa {
   class modeStream_t; class stream;
   class modeDevice_t; class device;
+  class streamTag;
 
   /**
    * @startDoc{stream}
@@ -147,6 +148,17 @@ namespace occa {
      * @endDoc
      */
     void finish();
+
+     /**
+     * @startDoc{waitFor}
+     *
+     * Description:
+     *   Waits for any operations submitted before a given streamg tag recording
+     *   to complete where the stream tag may be created on a different stream.
+     *
+     * @endDoc
+     */
+    void waitFor(occa::streamTag tag);
 
     /**
      * @startDoc{unwrap}

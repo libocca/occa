@@ -295,6 +295,7 @@ public:
   }
 
   sycl::event ext_oneapi_submit_barrier()  { return sycl::event();}
+  sycl::event ext_oneapi_submit_barrier( const std::vector<sycl::event> &waitList ) { return sycl::event(); }
 };
 
 inline void* malloc_device(size_t num_bytes, 

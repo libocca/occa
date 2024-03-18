@@ -73,6 +73,7 @@ namespace occa {
       event_t commandQueue_t::createEvent() const {
         return event_t();
       }
+      void commandQueue_t::waitForEvent(const event_t &event) {}
 
       void commandQueue_t::clearCommandBuffer(void *commandBufferObj) {}
       void commandQueue_t::setLastCommandBuffer(void *commandBufferObj) {}
