@@ -1,4 +1,5 @@
 #include <occa/internal/modes/hip/stream.hpp>
+#include <occa/internal/modes/hip/streamTag.hpp>
 #include <occa/internal/modes/hip/utils.hpp>
 
 namespace occa {
@@ -21,6 +22,14 @@ namespace occa {
     void stream::finish() {
       OCCA_HIP_ERROR("Stream: Finish",
                      hipStreamSynchronize(hipStream));
+    }
+
+    void stream::waitFor(occa::streamTag tag) {
+      occa::hip::streamTag *hipTag = (
+        dynamic_cast<occa::hip::streamTag*>(tag.getModeStreamTag())
+      );
+      OCCA_HIP_ERROR("Stream: waitFor",
+                     hipStreamWaitEvent(hipStream, hipTag->hipEvent, 0));
     }
 
     void* stream::unwrap() {

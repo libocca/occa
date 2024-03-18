@@ -25,6 +25,7 @@ namespace occa {
 
     //---[ Virtual Methods ]------------
     virtual void finish() = 0;
+    virtual void waitFor(streamTag tag) = 0;
 
     virtual void* unwrap() = 0;
     //==================================

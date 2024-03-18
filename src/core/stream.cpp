@@ -2,6 +2,7 @@
 #include <occa/core/device.hpp>
 #include <occa/internal/core/device.hpp>
 #include <occa/internal/core/stream.hpp>
+#include <occa/internal/core/streamTag.hpp>
 
 namespace occa {
   stream::stream() :
@@ -100,6 +101,10 @@ namespace occa {
 
   void stream::finish() {
     if(modeStream) modeStream->finish();
+  }
+
+  void stream::waitFor(occa::streamTag tag) {
+    if(modeStream) modeStream->waitFor(tag);
   }
 
   void* stream::unwrap() {

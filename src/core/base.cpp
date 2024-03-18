@@ -94,6 +94,10 @@ namespace occa {
     return getDevice().tagStream();
   }
 
+  void streamWait(stream s, streamTag tag) {
+    s.waitFor(tag);
+  }
+
   memoryPool createMemoryPool(const occa::json &props) {
     return getDevice().createMemoryPool(props);
   }

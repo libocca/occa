@@ -1,4 +1,5 @@
 #include <occa/internal/modes/opencl/stream.hpp>
+#include <occa/internal/modes/opencl/streamTag.hpp>
 #include <occa/internal/modes/opencl/utils.hpp>
 
 namespace occa {
@@ -17,6 +18,15 @@ namespace occa {
     void stream::finish() {
       OCCA_OPENCL_ERROR("Stream: finish",
                         clFinish(commandQueue));
+    }
+
+    void stream::waitFor(occa::streamTag tag) {
+      occa::opencl::streamTag *clTag = (
+        dynamic_cast<occa::opencl::streamTag*>(tag.getModeStreamTag())
+      );
+      OCCA_OPENCL_ERROR("Stream: waitFor",
+                        clEnqueueBarrierWithWaitList(commandQueue,
+                                                     1, &(clTag->clEvent), NULL));
     }
 
     void* stream::unwrap() {

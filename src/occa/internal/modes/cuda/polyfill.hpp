@@ -275,6 +275,10 @@ namespace occa {
   inline CUresult cuStreamSynchronize(CUstream hStream) {
     return OCCA_CUDA_IS_NOT_ENABLED;
   }
+
+  inline CUresult cuStreamWaitEvent(CUstream hStream, CUevent hEvent, unsigned int  Flags) {
+    return OCCA_CUDA_IS_NOT_ENABLED;
+  }
 }
 
 #endif

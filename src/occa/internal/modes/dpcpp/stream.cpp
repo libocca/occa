@@ -16,6 +16,13 @@ namespace occa {
                        commandQueue.wait_and_throw());
     }
 
+    void stream::waitFor(occa::streamTag tag)
+    {
+      auto& dpcppTag{getDpcppStreamTag(tag)};
+      OCCA_DPCPP_ERROR("stream::waitFor",
+                       commandQueue.ext_oneapi_submit_barrier( std::vector<sycl::event>{dpcppTag.dpcppEvent} ));
+    }
+
     occa::dpcpp::streamTag stream::memcpy(void * dest,const void* src, occa::udim_t num_bytes)
     {
       ::sycl::event e{commandQueue.memcpy(dest, src, num_bytes)};
