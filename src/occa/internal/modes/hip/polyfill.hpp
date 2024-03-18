@@ -284,6 +284,10 @@ namespace occa {
   inline hipError_t hipStreamSynchronize(hipStream_t hStream) {
     return OCCA_HIP_IS_NOT_ENABLED;
   }
+
+  inline hipError_t hipStreamWaitEvent(hipStream_t stream, hipEvent_t event, unsigned int flags) {
+    return OCCA_HIP_IS_NOT_ENABLED;
+  }
 }
 
 #endif

@@ -1,4 +1,5 @@
 #include <occa/internal/modes/metal/stream.hpp>
+#include <occa/internal/modes/metal/streamTag.hpp>
 
 namespace occa {
   namespace metal {
@@ -18,6 +19,13 @@ namespace occa {
 
     void stream::finish() {
       metalCommandQueue.finish();
+    }
+
+    void stream::waitFor(occa::streamTag tag) {
+      occa::metal::streamTag *metalTag = (
+        dynamic_cast<occa::metal::streamTag*>(tag.getModeStreamTag())
+      );
+      metalCommandQueue.waitForEvent(metalTag->metalEvent);
     }
 
     void* stream::unwrap() {

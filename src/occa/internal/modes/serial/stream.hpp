@@ -13,6 +13,7 @@ namespace occa {
 
       virtual ~stream();
       void finish() override;
+      void waitFor(occa::streamTag tag) override;
 
       void* unwrap() override;
     };

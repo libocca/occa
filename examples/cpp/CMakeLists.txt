@@ -14,6 +14,7 @@ add_subdirectory(14_cuda_interop)
 add_subdirectory(17_memory_pool)
 
 add_subdirectory(18_nonblocking_streams)
+add_subdirectory(19_stream_tags)
 add_subdirectory(20_native_dpcpp_kernel)
 add_subdirectory(30_device_function)
 

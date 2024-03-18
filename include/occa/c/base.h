@@ -35,6 +35,8 @@ occaStreamTag occaTagStream();
 
 void occaWaitForTag(occaStreamTag tag);
 
+void occaStreamWaitForTag(occaStream stream, occaStreamTag tag);
+
 double occaTimeBetweenTags(occaStreamTag startTag,
                            occaStreamTag endTag);
 
