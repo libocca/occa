@@ -75,6 +75,10 @@ void occaWaitForTag(occaStreamTag tag) {
   occa::waitFor(occa::c::streamTag(tag));
 }
 
+void occaStreamWaitForTag(occaStream stream, occaStreamTag tag) {
+  occa::streamWait(occa::c::stream(stream), occa::c::streamTag(tag));
+}
+
 double occaTimeBetweenTags(occaStreamTag startTag,
                            occaStreamTag endTag) {
   return occa::timeBetween(occa::c::streamTag(startTag),
