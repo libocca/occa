@@ -76,8 +76,12 @@ int main(int argc, const char **argv) {
   // WARNING: This will disable runtime type checking
   o_ab = device.malloc(entries * sizeof(float));
 
+  occa::json buildProps({
+      {"transpiler-version", 3}
+  });
+
   // Compile the kernel at run-time
-  occa::kernel addVectors = device.buildKernel("addVectors.okl","addVectors");
+  occa::kernel addVectors = device.buildKernel("addVectors.okl","addVectors", buildProps);
 
   // Copy memory to the device
   o_a.copyFrom(a);

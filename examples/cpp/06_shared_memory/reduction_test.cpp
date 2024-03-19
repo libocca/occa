@@ -1,3 +1,9 @@
+// template<typename T>
+// struct ComplexType {
+//  T v1;
+//  T v2;
+// };
+
 @kernel void reductionWithSharedMemory(const int entries,
                                        const float *vec,
                                        float *blockSum) {

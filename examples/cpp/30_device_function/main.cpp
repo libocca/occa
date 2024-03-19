@@ -35,7 +35,11 @@ int main(int argc, const char **argv) {
   o_a.copyFrom(a.data());
   o_b.copyFrom(b.data());
 
-  auto addVectors = device.buildKernel("addVectors.okl","addVectors");
+  occa::json buildProps({
+      {"transpiler-version", 3}
+  });
+
+  auto addVectors = device.buildKernel("addVectors.okl","addVectors", buildProps);
   addVectors(entries, o_a, o_b, o_ab);
   o_ab.copyTo(ab.data());
 

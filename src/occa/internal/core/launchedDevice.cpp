@@ -1,6 +1,3 @@
-#include <map>
-#include <fstream>
-
 #include <occa/core/base.hpp>
 #include <occa/types/primitive.hpp>
 #include <occa/internal/core/launchedDevice.hpp>
@@ -8,11 +5,13 @@
 #include <occa/internal/modes/serial/device.hpp>
 #include <occa/internal/modes/serial/kernel.hpp>
 #include <occa/internal/utils/string.hpp>
-
+#include <occa/internal/utils/transpiler_utils.h>
 
 #include "oklt/pipeline/normalizer_and_transpiler.h"
 #include "oklt/core/error.h"
 
+#include <map>
+#include <fstream>
 
 namespace occa {
   launchedModeDevice_t::launchedModeDevice_t(const occa::json &properties_) :
@@ -29,7 +28,6 @@ namespace occa {
   {
     static const std::map<std::string, oklt::TargetBackend> targetBackends =
         {
-         // {"openmp", oklt::TargetBackend::OPENMP},
          {"cuda", oklt::TargetBackend::CUDA},
          {"hip", oklt::TargetBackend::HIP},
          {"dpcpp", oklt::TargetBackend::DPCPP},
@@ -44,121 +42,8 @@ namespace occa {
         return false;
     }
 
-    std::string fullFilePath = io::expandFilename(filename);
-    std::ifstream sourceFile(fullFilePath);
-    std::string sourceCode{std::istreambuf_iterator<char>(sourceFile), {}};
-    oklt::UserInput input {
-        .backend = oklt::TargetBackend::CUDA,
-        .astProcType = oklt::AstProcessorType::OKL_WITH_SEMA,
-        .sourceCode = std::move(sourceCode),
-        .sourcePath = std::filesystem::path(fullFilePath),
-        .inlcudeDirectories = {},
-        .defines = {}
-    };
-    auto result = normalizeAndTranspile(std::move(input));
-
-    if(!result) {
-        std::stringstream ss;
-        ss << "Unable to transform OKL kernel [" << filename << "]" << std::endl;
-        ss << "Transpilation errors occured: " << std::endl;
-        for(const auto &err: result.error()) {
-            ss << err.desc << std::endl;
-        }
-        OCCA_FORCE_ERROR(ss.str());
-        return false;
-    }
-
-    auto userOutput = result.value();
-    io::stageFiles(
-        { outputFile, launcherOutputFile },
-        true,
-        [&](const strVector &tempFilenames) -> bool {
-            const std::string &tempOutputFilename = tempFilenames[0];
-            const std::string &tempLauncherOutputFilename = tempFilenames[1];
-
-            std::ofstream transpiledTempOutput(tempOutputFilename);
-            transpiledTempOutput << userOutput.kernel.sourceCode;
-
-            //TODO: need to check
-            std::ofstream laucherOutputFile(tempLauncherOutputFilename);
-            laucherOutputFile << userOutput.launcher.sourceCode;
-            return true;
-        });
-    //TODO: make convertors
-    // launcherMetadata = userOutput.launcher.metadataJson;
-    // deviceMetadata = userOutput.kernel.metadataJson;
-
-    return true;
-  }
-
-  namespace impl_v3 {
-      std::vector<std::string> buildDefines(const json &kernelProp) {
-        const json &defines = kernelProp["defines"];
-        if (!defines.isObject()) {
-            {};
-        }
-
-        std::vector<std::string> definesStrings;
-        const jsonObject &defineMap = defines.object();
-        jsonObject::const_iterator it = defineMap.cbegin();
-        while (it != defineMap.end()) {
-            const std::string &define = it->first;
-            const json value = it->second;
-
-            //preprocessor.addSourceDefine(define, value);
-            std::string defineString = define + "=" + value.toString();
-            definesStrings.push_back(std::move(defineString));
-            ++it;
-        }
-        return definesStrings;
-      }
-
-      std::vector<std::filesystem::path> buildIncludes(const json &kernelProp) {
-        std::vector<std::filesystem::path> includes;
-        json oklIncludePaths = kernelProp.get("okl/include_paths", json{});
-        if (oklIncludePaths.isArray()) {
-            jsonArray pathArray = oklIncludePaths.array();
-            const int pathCount = (int) pathArray.size();
-            for (int i = 0; i < pathCount; ++i) {
-                json path = pathArray[i];
-                if (path.isString()) {
-                    includes.push_back(std::filesystem::path(path.string()));
-                }
-            }
-        }
-        return includes;
-      }
-  }
-  bool launchedModeDevice_t::parseFile(const std::string &filename,
-                                       const std::string &outputFile,
-                                       const std::string &launcherOutputFile,
-                                       const occa::json &kernelProps,
-                                       lang::sourceMetadata_t &launcherMetadata,
-                                       lang::sourceMetadata_t &deviceMetadata)
-  {
-    std::unique_ptr<lang::okl::withLauncher> parser(createParser(kernelProps));
-    parser->parseFile(filename);
-
-
-    // ============ HOT HACK FOR DEMO, use new transpiler directly ==============
-    static const std::map<std::string, oklt::TargetBackend> targetBackends =
-        {
-         // {"openmp", oklt::TargetBackend::OPENMP},
-         {"cuda", oklt::TargetBackend::CUDA},
-         {"hip", oklt::TargetBackend::HIP},
-         {"dpcpp", oklt::TargetBackend::DPCPP},
-         };
-
-    std::string normalized_mode = lowercase(mode);
-    auto targetIter = targetBackends.find(normalized_mode);
-    if(targetIter == targetBackends.end()) {
-        std::string errorDescription = "Can't find target backend: " + mode;
-        OCCA_FORCE_ERROR(errorDescription +
-                             ", unable to transform OKL kernel [" << filename << "]");
-        return false;
-    }
-    auto defines = impl_v3::buildDefines(kernelProps);
-    auto includes = impl_v3::buildIncludes(kernelProps);
+    auto defines = transpiler::buildDefines(kernelProps);
+    auto includes = transpiler::buildIncludes(kernelProps);
 
     std::string fullFilePath = io::expandFilename(filename);
     std::ifstream sourceFile(fullFilePath);
@@ -174,16 +59,49 @@ namespace occa {
     auto result = normalizeAndTranspile(std::move(input));
 
     if(!result) {
-        std::stringstream ss;
-        ss << "Unable to transform OKL kernel [" << filename << "]" << std::endl;
-        ss << "Transpilation errors occured: " << std::endl;
-        for(const auto &err: result.error()) {
-            ss << err.desc << std::endl;
+        if (!kernelProps.get("silent", false)) {
+            std::stringstream ss;
+            ss << "Unable to transform OKL kernel [" << filename << "]" << std::endl;
+            ss << "Transpilation errors occured: " << std::endl;
+            for(const auto &err: result.error()) {
+                ss << err.desc << std::endl;
+            }
+            OCCA_FORCE_ERROR(ss.str());
         }
-        OCCA_FORCE_ERROR(ss.str());
         return false;
     }
-    // ============ HOT HACK FOR DEMO, use new transpiler directly ==============
+
+    auto userOutput = result.value();
+    io::stageFiles(
+        { outputFile, launcherOutputFile },
+        true,
+        [&](const strVector &tempFilenames) -> bool {
+            const std::string &tempOutputFilename = tempFilenames[0];
+            const std::string &tempLauncherOutputFilename = tempFilenames[1];
+
+            std::ofstream transpiledTempOutput(tempOutputFilename);
+            transpiledTempOutput << userOutput.kernel.sourceCode;
+
+            std::ofstream laucherOutputFile(tempLauncherOutputFilename);
+            laucherOutputFile << userOutput.launcher.sourceCode;
+            return true;
+        });
+
+     transpiler::makeMetadata(launcherMetadata, userOutput.launcher.metadataJson);
+     transpiler::makeMetadata(deviceMetadata, userOutput.kernel.metadataJson);
+
+    return true;
+  }
+
+  bool launchedModeDevice_t::parseFile(const std::string &filename,
+                                       const std::string &outputFile,
+                                       const std::string &launcherOutputFile,
+                                       const occa::json &kernelProps,
+                                       lang::sourceMetadata_t &launcherMetadata,
+                                       lang::sourceMetadata_t &deviceMetadata)
+  {
+    std::unique_ptr<lang::okl::withLauncher> parser(createParser(kernelProps));
+    parser->parseFile(filename);
 
     // Verify if parsing succeeded
     if (!parser->succeeded()) {
@@ -192,8 +110,6 @@ namespace occa {
       }
       return false;
     }
-
-    auto &userOutput = result.value();
     io::stageFiles(
       { outputFile, launcherOutputFile },
       true,
@@ -201,11 +117,7 @@ namespace occa {
         const std::string &tempOutputFilename = tempFilenames[0];
         const std::string &tempLauncherOutputFilename = tempFilenames[1];
 
-        // ============ HOT HACK FOR DEMO, use new transpiler directly ==============
-        // parser->writeToFile(tempOutputFilename);
-        std::ofstream ofs(tempOutputFilename);
-        ofs << userOutput.kernel.sourceCode;
-        // ============ HOT HACK FOR DEMO, use new transpiler directly ==============
+        parser->writeToFile(tempOutputFilename);
         parser->launcherParser.writeToFile(tempLauncherOutputFilename);
 
         return true;

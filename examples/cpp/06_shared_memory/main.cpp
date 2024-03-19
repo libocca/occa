@@ -45,19 +45,18 @@ int main(int argc, const char **argv) {
   // Pass value of 'block' at kernel compile-time
   occa::json reductionProps({
     {"defines/block", block},
+    {"transpiler-version", 3}
   });
 
-  occa::kernel reductionWithSharedMemory = (
-    occa::buildKernel("reduction.okl",
-                      "reductionWithSharedMemory",
-                      reductionProps)
-  );
+  occa::kernel reductionWithSharedMemory =
+      occa::buildKernel("reduction.okl",
+                        "reductionWithSharedMemory",
+                        reductionProps);
 
-  occa::kernel reductionWithAtomics = (
+  occa::kernel reductionWithAtomics =
     occa::buildKernel("reduction.okl",
                       "reductionWithAtomics",
-                      reductionProps)
-  );
+                       reductionProps);
 
   // Host -> Device
   o_vec.copyFrom(vec);

@@ -239,13 +239,15 @@ namespace occa {
                     << "*/\n";
             }
 
+            auto userOutput = result.value();
             bool hasLauncher = transpiler->second == oklt::TargetBackend::CUDA ||
                                transpiler->second == oklt::TargetBackend::HIP ||
                                transpiler->second == oklt::TargetBackend::DPCPP;
             if(printLauncher && hasLauncher) {
+                io::stdout << userOutput.launcher.sourceCode;
                 //TODO: add launcher printing
             } else {
-                auto userOutput = result.value();
+                // auto userOutput = result.value();
                 io::stdout << userOutput.kernel.sourceCode;
             }
 
