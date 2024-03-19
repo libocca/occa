@@ -75,6 +75,12 @@ namespace occa {
       //================================
 
       void* unwrap() override;
+
+  private:
+      bool transpileFile(const std::string &filename,
+                         const std::string &outputFile,
+                         const occa::json &kernelProps,
+                         lang::sourceMetadata_t &metadata);
     };
   }
 }

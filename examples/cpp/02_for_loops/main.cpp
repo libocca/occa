@@ -45,6 +45,7 @@ int main(int argc, const char **argv) {
     // Props for the kernel are passed here
     // For example, if we wanted to define a variable at compile-time:
     // {"defines/MY_VALUE", value}
+    {"transpiler-version", 3},
   });
 
   // JIT-compile a kernel given the for-loop definitions:

@@ -76,9 +76,14 @@ int main(int argc, const char **argv) {
   occa::memory o_b  = occa::malloc(entries / 2, myFloat2Dtype);
   occa::memory o_ab = occa::malloc(entries / 4, myFloat4Dtype);
 
+  occa::json buildProps({
+      {"transpiler-version", 3}
+  });
+
   // Compile the kernel at run-time
   occa::kernel addVectors = occa::buildKernel("addVectors.okl",
-                                              "addVectors");
+                                              "addVectors",
+                                              buildProps);
 
   // Copy memory to the device
   o_a.copyFrom(a);
