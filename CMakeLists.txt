@@ -71,7 +71,7 @@ endif()
 
 include(SetCompilerFlags)
 include(CheckCXXCompilerFlag)
-# include(CPM.cmake)
+#include(cmake/CPM.cmake)
 
 check_cxx_compiler_flag("-fno-strict-aliasing" COMPILER_SUPPORTS_NO_STRICT_ALIASING)
 if(COMPILER_SUPPORTS_NO_STRICT_ALIASING)
@@ -104,12 +104,12 @@ set_target_properties(libocca PROPERTIES
 find_package(Threads REQUIRED)
 find_package(oklt REQUIRED)
 
-#CPMAddPackage(NAME libocca/occa-transpiler@devel
-#    VERSION 3.11.2
-#    GITHUB_REPOSITORY nlohmann/json
-#    OPTIONS "JSON_BuildTests OFF")
-
-
+#CPMAddPackage(
+#    NAME oklt
+#    GITHUB_REPOSITORY libocca/occa-transpiler
+#    GIT_TAG v0.1
+#    OPTIONS "TRANSPILER_TESTS OFF"
+#)
 
 # Use the provided imported target Threads::Threads, to make our package relocatable
 target_link_libraries(libocca PRIVATE
