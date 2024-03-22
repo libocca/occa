@@ -16,7 +16,6 @@ std::vector<std::string> buildDefines(const json &kernelProp) {
         const std::string &define = it->first;
         const json value = it->second;
 
-        //preprocessor.addSourceDefine(define, value);
         std::string defineString = define + "=" + value.toString();
         definesStrings.push_back(std::move(defineString));
         ++it;
