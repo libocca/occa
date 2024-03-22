@@ -112,7 +112,6 @@ namespace occa {
     }
 
     template <> dtype_t get<unsigned long>() {
-      // return long_;
       return ulong_;
     }
 

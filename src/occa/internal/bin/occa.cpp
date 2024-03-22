@@ -143,7 +143,6 @@ namespace occa {
             const std::string &define = it->first;
             const json &value = it->second;
 
-            //preprocessor.addSourceDefine(define, value);
             std::string defineString = define + "=" + value.toString();
             definesStrings.push_back(std::move(defineString));
             ++it;
@@ -245,9 +244,7 @@ namespace occa {
                                transpiler->second == oklt::TargetBackend::DPCPP;
             if(printLauncher && hasLauncher) {
                 io::stdout << userOutput.launcher.sourceCode;
-                //TODO: add launcher printing
             } else {
-                // auto userOutput = result.value();
                 io::stdout << userOutput.kernel.sourceCode;
             }
 
