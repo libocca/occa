@@ -6,6 +6,12 @@
 #include <occa/internal/modes/openmp/device.hpp>
 #include <occa/internal/modes/openmp/utils.hpp>
 
+#include <occa/internal/utils/transpiler_utils.h>
+#include "oklt/pipeline/normalizer_and_transpiler.h"
+#include "oklt/core/error.h"
+
+#include <fstream>
+
 namespace occa {
   namespace openmp {
     device::device(const occa::json &properties_) :
@@ -25,10 +31,59 @@ namespace occa {
       );
     }
 
+    bool device::transpileFile(const std::string &filename,
+                       const std::string &outputFile,
+                       const occa::json &kernelProps,
+                       lang::sourceMetadata_t &metadata)
+    {
+      auto defines = transpiler::buildDefines(kernelProps);
+      auto includes = transpiler::buildIncludes(kernelProps);
+
+      std::string fullFilePath = io::expandFilename(filename);
+      std::ifstream sourceFile(fullFilePath);
+      std::string sourceCode{std::istreambuf_iterator<char>(sourceFile), {}};
+      oklt::UserInput input {
+          .backend = oklt::TargetBackend::OPENMP,
+          .astProcType = oklt::AstProcessorType::OKL_WITH_SEMA,
+          .sourceCode = std::move(sourceCode),
+          .sourcePath = std::filesystem::path(fullFilePath),
+          .inlcudeDirectories = std::move(includes),
+          .defines = std::move(defines)
+      };
+      auto result = normalizeAndTranspile(std::move(input));
+      if(!result) {
+          if (!kernelProps.get("silent", false)) {
+              std::stringstream ss;
+              ss << "Unable to transform OKL kernel [" << filename << "]" << std::endl;
+              ss << "Transpilation errors occured: " << std::endl;
+              for(const auto &err: result.error()) {
+                  ss << err.desc << std::endl;
+              }
+              OCCA_FORCE_ERROR(ss.str());
+          }
+          return false;
+      }
+
+      auto userOutput = result.value();
+
+      io::stageFile(
+          outputFile,
+          true,
+          [&](const std::string &tempFilename) -> bool {
+              std::ofstream transpiledTempOutput(tempFilename);
+              transpiledTempOutput << userOutput.kernel.sourceCode;
+              return true;
+          });
+      transpiler::makeMetadata(metadata, userOutput.kernel.metadataJson);
+      return true;
+    }
+
+
     bool device::parseFile(const std::string &filename,
                            const std::string &outputFile,
                            const occa::json &kernelProps,
-                           lang::sourceMetadata_t &metadata) {
+                           lang::sourceMetadata_t &metadata)
+    {
       lang::okl::openmpParser parser(kernelProps);
       parser.parseFile(filename);
 

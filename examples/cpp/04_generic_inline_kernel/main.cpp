@@ -46,7 +46,8 @@ int main(int argc, const char **argv) {
     {"ab", array_ab}
   }, {
     // Define TILE_SIZE at compile-time
-    {"defines/TILE_SIZE", 16}
+    {"defines/TILE_SIZE", 16},
+    {"transpiler-version", 3},
   });
 
   OCCA_JIT(scope, (

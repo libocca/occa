@@ -399,6 +399,7 @@ namespace occa {
   }
 
   const dtype_t& dtype_t::getBuiltin(const std::string &name) {
+    //TODO: make normal map initialization of static var
     static dtypeGlobalMap_t dtypeMap;
     if (!dtypeMap.size()) {
       dtypeMap["none"] = &dtype::none;
@@ -413,6 +414,7 @@ namespace occa {
       dtypeMap["long"]   = &dtype::long_;
       dtypeMap["float"]  = &dtype::float_;
       dtypeMap["double"] = &dtype::double_;
+      dtypeMap["unsigned long"] = &dtype::ulong_;
 
       // Sized primitives
       dtypeMap["int8"]   = dtype::get<int8_t>().ref;

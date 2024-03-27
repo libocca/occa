@@ -1,4 +1,6 @@
 #include <fstream>
+#include <functional>
+#include <stdexcept>
 
 #include <occa/core.hpp>
 
@@ -12,6 +14,9 @@
 #include <occa/internal/lang/modes/metal.hpp>
 #include <occa/internal/lang/modes/dpcpp.hpp>
 #include <occa/internal/modes.hpp>
+
+#include "oklt/pipeline/normalizer_and_transpiler.h"
+#include "oklt/core/error.h"
 
 namespace occa {
   namespace bin {
@@ -123,6 +128,237 @@ namespace occa {
       return true;
     }
 
+    namespace v3 {
+
+        std::vector<std::string> buildDefines(const json &kernelProp) {
+          const json &defines = kernelProp["defines"];
+          if (!defines.isObject()) {
+            {};
+          }
+
+          std::vector<std::string> definesStrings;
+          const jsonObject &defineMap = defines.object();
+          jsonObject::const_iterator it = defineMap.cbegin();
+          while (it != defineMap.end()) {
+            const std::string &define = it->first;
+            const json &value = it->second;
+
+            std::string defineString = define + "=" + value.toString();
+            definesStrings.push_back(std::move(defineString));
+            ++it;
+          }
+          return definesStrings;
+        }
+
+        std::vector<std::filesystem::path> buildIncludes(const json &kernelProp) {
+          std::vector<std::filesystem::path> includes;
+          json oklIncludePaths = kernelProp.get("okl/include_paths", json{});
+          if (oklIncludePaths.isArray()) {
+            jsonArray pathArray = oklIncludePaths.array();
+            const int pathCount = (int) pathArray.size();
+            for (int i = 0; i < pathCount; ++i) {
+                json path = pathArray[i];
+                if (path.isString()) {
+                    includes.push_back(std::filesystem::path(path.string()));
+                }
+            }
+          }
+          return includes;
+        }
+
+        bool runTranslate(const json &options,
+                          const json &arguments,
+                          const json &kernelProps,
+                          const std::string &originalMode,
+                          const std::string &mode)
+        {
+            static const std::map<std::string, oklt::TargetBackend> targetBackends =
+            {
+                {"openmp", oklt::TargetBackend::OPENMP},
+                {"cuda", oklt::TargetBackend::CUDA},
+                {"hip", oklt::TargetBackend::HIP},
+                {"dpcpp", oklt::TargetBackend::DPCPP},
+            };
+
+            const bool printLauncher = options["launcher"];
+            const std::string filename = arguments[0];
+
+            if (!io::exists(filename)) {
+                printError("File [" + filename + "] doesn't exist" );
+                ::exit(1);
+            }
+
+            auto transpiler = targetBackends.find(mode);
+            if(transpiler == targetBackends.end()) {
+                printError("Unable to translate for mode [" + originalMode + "]");
+                ::exit(1);
+            }
+
+            auto defines = buildDefines(kernelProps);
+            auto includes = buildIncludes(kernelProps);
+
+            std::string fullFilePath = io::expandFilename(filename);
+            std::ifstream sourceFile(fullFilePath);
+            std::string sourceCode{std::istreambuf_iterator<char>(sourceFile), {}};
+            oklt::UserInput input {
+                .backend = oklt::TargetBackend::CUDA,
+                .astProcType = oklt::AstProcessorType::OKL_WITH_SEMA,
+                .sourceCode = std::move(sourceCode),
+                .sourcePath = std::filesystem::path(fullFilePath),
+                .inlcudeDirectories = std::move(includes),
+                .defines = std::move(defines)
+            };
+            auto result = normalizeAndTranspile(std::move(input));
+
+            if(!result) {
+                std::stringstream ss;
+                for(const auto &err: result.error()) {
+                    ss << err.desc << std::endl;
+                }
+                printError(ss.str());
+                ::exit(1);
+            }
+
+            if (options["verbose"]) {
+                json translationInfo;
+                // Filename
+                translationInfo["translate_info/filename"] = io::expandFilename(filename);
+                // Date information
+                translationInfo["translate_info/date"] = sys::date();
+                translationInfo["translate_info/human_date"] = sys::humanDate();
+                // Version information
+                translationInfo["translate_info/occa_version"] = OCCA_VERSION_STR;
+                translationInfo["translate_info/okl_version"] = OKL_VERSION_STR;
+                // Kernel properties
+                translationInfo["kernel_properties"] = kernelProps;
+
+                io::stdout
+                    << "/* Translation Info:\n"
+                    << translationInfo
+                    << "*/\n";
+            }
+
+            auto userOutput = result.value();
+            bool hasLauncher = transpiler->second == oklt::TargetBackend::CUDA ||
+                               transpiler->second == oklt::TargetBackend::HIP ||
+                               transpiler->second == oklt::TargetBackend::DPCPP;
+            if(printLauncher && hasLauncher) {
+                io::stdout << userOutput.launcher.sourceCode;
+            } else {
+                io::stdout << userOutput.kernel.sourceCode;
+            }
+
+            return true;
+        }
+    }
+
+    namespace v2 {
+        bool runTranslate(const json &options,
+                          const json &arguments,
+                          const json &kernelProps,
+                          const std::string &originalMode,
+                          const std::string &mode)
+        {
+            using ParserBuildFunc = std::function<std::unique_ptr<lang::parser_t>(const json &params)>;
+            static const std::map<std::string, ParserBuildFunc> originalParserBackends =
+                {
+                    {"", [](const json &params) {
+                         return std::make_unique<lang::okl::serialParser>(params);
+                     }},
+                    {"serial", [](const json &params) {
+                         return std::make_unique<lang::okl::serialParser>(params);
+                     }},
+                    {"openmp", [](const json &params) {
+                         return std::make_unique<lang::okl::openmpParser>(params);
+                     }},
+                    {"cuda", [](const json &params) {
+                         return std::make_unique<lang::okl::cudaParser>(params);
+                     }},
+                    {"hip", [](const json &params) {
+                         return std::make_unique<lang::okl::hipParser>(params);
+                     }},
+                    {"opencl", [](const json &params) {
+                         return std::make_unique<lang::okl::openclParser>(params);
+                     }},
+                    {"metal", [](const json &params) {
+                         return std::make_unique<lang::okl::metalParser>(params);
+                     }},
+                    {"dpcpp", [](const json &params) {
+                         return std::make_unique<lang::okl::dpcppParser>(params);
+                     }}
+                };
+
+            const bool printLauncher = options["launcher"];
+            const std::string filename = arguments[0];
+
+            if (!io::exists(filename)) {
+                printError("File [" + filename + "] doesn't exist" );
+                ::exit(1);
+            }
+
+            auto parserIt = originalParserBackends.find(mode);
+            if(parserIt == originalParserBackends.end()) {
+                printError("Unable to translate for mode [" + originalMode + "]");
+                ::exit(1);
+            }
+
+            std::unique_ptr<lang::parser_t> parser = parserIt->second(kernelProps);
+            parser->parseFile(filename);
+
+            bool success = parser->succeeded();
+            if (!success) {
+                ::exit(1);
+            }
+
+            if (options["verbose"]) {
+                json translationInfo;
+                // Filename
+                translationInfo["translate_info/filename"] = io::expandFilename(filename);
+                // Date information
+                translationInfo["translate_info/date"] = sys::date();
+                translationInfo["translate_info/human_date"] = sys::humanDate();
+                // Version information
+                translationInfo["translate_info/occa_version"] = OCCA_VERSION_STR;
+                translationInfo["translate_info/okl_version"] = OKL_VERSION_STR;
+                // Kernel properties
+                translationInfo["kernel_properties"] = kernelProps;
+
+                io::stdout
+                    << "/* Translation Info:\n"
+                    << translationInfo
+                    << "*/\n";
+            }
+
+            if (printLauncher && ((mode == "cuda")
+                                  || (mode == "hip")
+                                  || (mode == "opencl")
+                                  || (mode == "dpcpp")
+                                  || (mode == "metal"))) {
+                lang::parser_t *launcherParser = &(((occa::lang::okl::withLauncher*) parser.get())->launcherParser);
+                io::stdout << launcherParser->toString();
+            } else {
+                io::stdout << parser->toString();
+            }
+            return true;
+        }
+    }
+
+    int getTranspilerVersion(const json &options) {
+        json jsonTranspileVersion = options["transpiler-version"];
+        int transpilerVersion = 2;
+        //INFO: have no idea why json here has array type
+        if(jsonTranspileVersion.isArray()) {
+            json elem = jsonTranspileVersion.asArray()[0];
+            if(elem.isString()) {
+                try {
+                    transpilerVersion = std::stoi(elem.string());
+                } catch(const std::exception &)
+                {}
+            }
+        }
+        return transpilerVersion;
+    }
+
     bool runTranslate(const json &args) {
       const json &options = args["options"];
       const json &arguments = args["arguments"];
@@ -130,85 +366,17 @@ namespace occa {
       const std::string originalMode = options["mode"];
       const std::string mode = lowercase(originalMode);
 
-      const bool printLauncher = options["launcher"];
-      const std::string filename = arguments[0];
-
-      if (!io::exists(filename)) {
-        printError("File [" + filename + "] doesn't exist" );
-        ::exit(1);
-      }
+      int transpilerVersion = getTranspilerVersion(options);
 
       json kernelProps = getOptionProperties(options["kernel-props"]);
       kernelProps["mode"] = mode;
       kernelProps["defines"].asObject() += getOptionDefines(options["define"]);
       kernelProps["okl/include_paths"] = options["include-path"];
 
-      lang::parser_t *parser = NULL;
-      lang::parser_t *launcherParser = NULL;
-      if (mode == "" || mode == "serial") {
-        parser = new lang::okl::serialParser(kernelProps);
-      } else if (mode == "openmp") {
-        parser = new lang::okl::openmpParser(kernelProps);
-      } else if (mode == "cuda") {
-        parser = new lang::okl::cudaParser(kernelProps);
-      } else if (mode == "hip") {
-        parser = new lang::okl::hipParser(kernelProps);
-      } else if (mode == "opencl") {
-        parser = new lang::okl::openclParser(kernelProps);
-      } else if (mode == "metal") {
-        parser = new lang::okl::metalParser(kernelProps);
-      } else if (mode == "dpcpp") {
-        parser = new lang::okl::dpcppParser(kernelProps);
+      if(transpilerVersion > 2) {
+        return v3::runTranslate(options, arguments, kernelProps, originalMode, mode);
       }
-
-      if (!parser) {
-        printError("Unable to translate for mode [" + originalMode + "]");
-        ::exit(1);
-      }
-
-      parser->parseFile(filename);
-
-      bool success = parser->succeeded();
-      if (!success) {
-        delete parser;
-        ::exit(1);
-      }
-
-      if (options["verbose"]) {
-        json translationInfo;
-        // Filename
-        translationInfo["translate_info/filename"] = io::expandFilename(filename);
-        // Date information
-        translationInfo["translate_info/date"] = sys::date();
-        translationInfo["translate_info/human_date"] = sys::humanDate();
-        // Version information
-        translationInfo["translate_info/occa_version"] = OCCA_VERSION_STR;
-        translationInfo["translate_info/okl_version"] = OKL_VERSION_STR;
-        // Kernel properties
-        translationInfo["kernel_properties"] = kernelProps;
-
-        io::stdout
-            << "/* Translation Info:\n"
-            << translationInfo
-            << "*/\n";
-      }
-
-      if (printLauncher && ((mode == "cuda")
-                            || (mode == "hip")
-                            || (mode == "opencl")
-                            || (mode == "dpcpp")
-                            || (mode == "metal"))) {
-        launcherParser = &(((occa::lang::okl::withLauncher*) parser)->launcherParser);
-        io::stdout << launcherParser->toString();
-      } else {
-        io::stdout << parser->toString();
-      }
-
-      delete parser;
-      if (!success) {
-        ::exit(1);
-      }
-      return true;
+      return v2::runTranslate(options, arguments, kernelProps, originalMode, mode);
     }
 
     bool runCompile(const json &args) {
@@ -229,6 +397,7 @@ namespace occa {
       kernelProps["verbose"] = kernelProps.get("verbose", true);
       kernelProps["okl/include_paths"] = options["include-path"];
       kernelProps["defines"].asObject() += getOptionDefines(options["define"]);
+      kernelProps["transpiler-version"] = getTranspilerVersion(options);
 
       device device(deviceProps);
       device.buildKernel(filename, kernelName, kernelProps);
@@ -367,6 +536,9 @@ namespace occa {
                      .withArg())
           .addOption(cli::option('v', "verbose",
                                  "Verbose output"))
+          .addOption(cli::option('t', "transpiler-version",
+                                 "provide transpiler version")
+                     .reusable().withArg())
           .addArgument(cli::argument("FILE",
                                      "An .okl file")
                        .isRequired()
@@ -393,6 +565,9 @@ namespace occa {
                                  "Add additional define")
                      .reusable()
                      .withArg())
+          .addOption(cli::option('t', "transpiler-version",
+                                 "provide transpiler version")
+                     .reusable().withArg())
           .addArgument(cli::argument("FILE",
                                      "An .okl file")
                        .isRequired()

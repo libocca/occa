@@ -34,3 +34,4 @@
     @atomic *sum += vec[i];
   }
 }
+

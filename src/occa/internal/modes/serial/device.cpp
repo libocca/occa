@@ -11,6 +11,12 @@
 #include <occa/internal/modes/serial/streamTag.hpp>
 #include <occa/internal/lang/modes/serial.hpp>
 
+#include <occa/internal/utils/transpiler_utils.h>
+#include "oklt/pipeline/normalizer_and_transpiler.h"
+#include "oklt/core/error.h"
+
+#include <fstream>
+
 namespace occa {
   namespace serial {
     device::device(const occa::json &properties_) :
@@ -70,6 +76,55 @@ namespace occa {
 
       return (srEndTag->time - srStartTag->time);
     }
+
+
+    bool device::transpileFile(const std::string &filename,
+                               const std::string &outputFile,
+                               const occa::json &kernelProps,
+                               lang::sourceMetadata_t &metadata)
+    {
+      auto defines = transpiler::buildDefines(kernelProps);
+      auto includes = transpiler::buildIncludes(kernelProps);
+
+      std::string fullFilePath = io::expandFilename(filename);
+      std::ifstream sourceFile(fullFilePath);
+      std::string sourceCode{std::istreambuf_iterator<char>(sourceFile), {}};
+      oklt::UserInput input {
+          .backend = oklt::TargetBackend::SERIAL,
+          .astProcType = oklt::AstProcessorType::OKL_WITH_SEMA,
+          .sourceCode = std::move(sourceCode),
+          .sourcePath = std::filesystem::path(fullFilePath),
+          .inlcudeDirectories = std::move(includes),
+          .defines = std::move(defines)
+      };
+      auto result = normalizeAndTranspile(std::move(input));
+      if(!result) {
+        if (!kernelProps.get("silent", false)) {
+            std::stringstream ss;
+            ss << "Unable to transform OKL kernel [" << filename << "]" << std::endl;
+            ss << "Transpilation errors occured: " << std::endl;
+            for(const auto &err: result.error()) {
+                ss << err.desc << std::endl;
+            }
+            OCCA_FORCE_ERROR(ss.str());
+        }
+        return false;
+      }
+
+      auto userOutput = result.value();
+
+      io::stageFile(
+          outputFile,
+          true,
+          [&](const std::string &tempFilename) -> bool {
+              std::ofstream transpiledTempOutput(tempFilename);
+              transpiledTempOutput << userOutput.kernel.sourceCode;
+              return true;
+          });
+      transpiler::makeMetadata(metadata, userOutput.kernel.metadataJson);
+      return true;
+    }
+
     //==================================
 
     //---[ Kernel ]---------------------
@@ -286,10 +341,22 @@ namespace occa {
 
         if (compilingOkl) {
           const std::string outputFile = hashDir + kc::cachedSourceFilename(filename);
-          bool valid = parseFile(sourceFilename,
+          int transpilerVersion = kernelProps.get("transpiler-version", 2);
+
+          bool valid = false;
+          if(transpilerVersion > 2) {
+              valid = transpileFile(sourceFilename,
+                                      outputFile,
+                                      kernelProps,
+                                      metadata);
+          } else {
+              valid = parseFile(sourceFilename,
                                  outputFile,
                                  kernelProps,
                                  metadata);
+
+          }
+
           if (!valid) {
             return NULL;
           }

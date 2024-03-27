@@ -69,6 +69,14 @@ namespace occa {
       const occa::json &kernelProps
     ) = 0;
     //==================================
+
+    private:
+        bool transpileFile(const std::string &filename,
+                           const std::string &outputFile,
+                           const std::string &launcherOutputFile,
+                           const occa::json &kernelProps,
+                           lang::sourceMetadata_t &launcherMetadata,
+                           lang::sourceMetadata_t &deviceMetadata);
   };
 }
 
