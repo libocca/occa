@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.17 FATAL_ERROR)
 #---[ CMake Config ]--------------------
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-list(APPEND CMAKE_PREFIX_PATH "$ENV{OKL_TRANSPILER}")
+# list(APPEND CMAKE_PREFIX_PATH "$ENV{OKL_TRANSPILER}")
 
 
 message(STATUS "Using CMake version ${CMAKE_VERSION}")
@@ -67,9 +67,17 @@ else()
   set(OCCA_OS "OCCA_WINDOWS_OS")
 endif()
 
+# INFO: order is important, deps should not apply compiler flags
+include(cmake/CPM.cmake)
+CPMAddPackage(
+    NAME occa-transpiler
+    GITHUB_REPOSITORY libocca/occa-transpiler
+    GIT_TAG 17214e84788c852ef4f1452ecfbe90dc676c94cb
+    OPTIONS "TRANSPILER_TESTS OFF"
+)
+
 include(SetCompilerFlags)
 include(CheckCXXCompilerFlag)
-#include(cmake/CPM.cmake)
 
 check_cxx_compiler_flag("-fno-strict-aliasing" COMPILER_SUPPORTS_NO_STRICT_ALIASING)
 if(COMPILER_SUPPORTS_NO_STRICT_ALIASING)
@@ -100,19 +108,12 @@ set_target_properties(libocca PROPERTIES
 
 # Find needed and requested packages
 find_package(Threads REQUIRED)
-find_package(oklt REQUIRED)
-
-#CPMAddPackage(
-#    NAME oklt
-#    GITHUB_REPOSITORY libocca/occa-transpiler
-#    GIT_TAG v0.1
-#    OPTIONS "TRANSPILER_TESTS OFF"
-#)
+# find_package(oklt REQUIRED)
 
 # Use the provided imported target Threads::Threads, to make our package relocatable
 target_link_libraries(libocca PRIVATE
   Threads::Threads ${CMAKE_DL_LIBS}
-  occa::occa-transpiler
+  occa-transpiler
 )
 
 target_include_directories(libocca PUBLIC
