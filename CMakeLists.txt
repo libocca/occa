@@ -3,8 +3,6 @@ cmake_minimum_required (VERSION 3.21 FATAL_ERROR)
 #---[ CMake Config ]--------------------
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-# list(APPEND CMAKE_PREFIX_PATH "$ENV{OKL_TRANSPILER}")
-
 
 message(STATUS "Using CMake version ${CMAKE_VERSION}")
 cmake_policy(SET CMP0054 NEW)
@@ -110,7 +108,6 @@ set_target_properties(libocca PROPERTIES
 
 # Find needed and requested packages
 find_package(Threads REQUIRED)
-# find_package(oklt REQUIRED)
 
 # Use the provided imported target Threads::Threads, to make our package relocatable
 target_link_libraries(libocca PRIVATE
