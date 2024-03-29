@@ -9,7 +9,6 @@
 namespace occa {
   class modeDevice_t {
    public:
-    //TODO: move to private members & make getters/setters
     std::string mode;
     std::string arch;
     occa::json properties;
