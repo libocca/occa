@@ -72,7 +72,7 @@ include(cmake/CPM.cmake)
 CPMAddPackage(
     NAME occa-transpiler
     GITHUB_REPOSITORY libocca/occa-transpiler
-    GIT_TAG 17214e84788c852ef4f1452ecfbe90dc676c94cb
+    GIT_TAG 17e9259b14a1e12aef2108bb61652aea98c744a0
     OPTIONS "TRANSPILER_TESTS OFF"
 )
 
