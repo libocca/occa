@@ -17,6 +17,7 @@
 
 #include "oklt/pipeline/normalizer_and_transpiler.h"
 #include "oklt/core/error.h"
+#include <occa/internal/utils/transpiler_utils.h>
 
 namespace occa {
   namespace bin {
@@ -130,42 +131,6 @@ namespace occa {
 
     namespace v3 {
 
-        std::vector<std::string> buildDefines(const json &kernelProp) {
-          const json &defines = kernelProp["defines"];
-          if (!defines.isObject()) {
-            {};
-          }
-
-          std::vector<std::string> definesStrings;
-          const jsonObject &defineMap = defines.object();
-          jsonObject::const_iterator it = defineMap.cbegin();
-          while (it != defineMap.end()) {
-            const std::string &define = it->first;
-            const json &value = it->second;
-
-            std::string defineString = define + "=" + value.toString();
-            definesStrings.push_back(std::move(defineString));
-            ++it;
-          }
-          return definesStrings;
-        }
-
-        std::vector<std::filesystem::path> buildIncludes(const json &kernelProp) {
-          std::vector<std::filesystem::path> includes;
-          json oklIncludePaths = kernelProp.get("okl/include_paths", json{});
-          if (oklIncludePaths.isArray()) {
-            jsonArray pathArray = oklIncludePaths.array();
-            const int pathCount = (int) pathArray.size();
-            for (int i = 0; i < pathCount; ++i) {
-                json path = pathArray[i];
-                if (path.isString()) {
-                    includes.push_back(std::filesystem::path(path.string()));
-                }
-            }
-          }
-          return includes;
-        }
-
         bool runTranslate(const json &options,
                           const json &arguments,
                           const json &kernelProps,
@@ -194,8 +159,8 @@ namespace occa {
                 ::exit(1);
             }
 
-            auto defines = buildDefines(kernelProps);
-            auto includes = buildIncludes(kernelProps);
+            auto defines = transpiler::buildDefines(kernelProps);
+            auto includes = transpiler::buildIncludes(kernelProps);
 
             std::string fullFilePath = io::expandFilename(filename);
             std::ifstream sourceFile(fullFilePath);
