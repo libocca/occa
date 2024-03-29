@@ -49,7 +49,7 @@ namespace occa {
     std::ifstream sourceFile(fullFilePath);
     std::string sourceCode{std::istreambuf_iterator<char>(sourceFile), {}};
     oklt::UserInput input {
-        .backend = oklt::TargetBackend::CUDA,
+        .backend = targetIter->second,
         .astProcType = oklt::AstProcessorType::OKL_WITH_SEMA,
         .sourceCode = std::move(sourceCode),
         .sourcePath = std::filesystem::path(fullFilePath),
