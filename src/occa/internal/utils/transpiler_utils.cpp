@@ -1,4 +1,5 @@
 #include <occa/internal/utils/transpiler_utils.h>
+#include <occa/internal/utils/env.hpp>
 
 namespace occa {
 namespace transpiler {
@@ -35,6 +36,10 @@ std::vector<std::filesystem::path> buildIncludes(const json &kernelProp) {
                 includes.push_back(std::filesystem::path(path.string()));
             }
         }
+    }
+    auto &envIncludes = env::OCCA_INCLUDE_PATH;
+    for(const auto &includePath: envIncludes) {
+        includes.push_back(includePath);
     }
     return includes;
 }
