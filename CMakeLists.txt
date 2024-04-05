@@ -37,7 +37,7 @@ option(OCCA_ENABLE_DPCPP "Build with SYCL/DPCPP if available" ON)
 option(OCCA_ENABLE_TESTS    "Build tests"               OFF)
 option(OCCA_ENABLE_EXAMPLES "Build simple examples"     OFF)
 option(OCCA_ENABLE_FORTRAN  "Enable Fortran interface"  OFF)
-option(OCCA_TRANSPILER      "Build with occa-transpiler dependecy" ON)
+option(OCCA_TRANSPILER      "Build with occa-transpiler dependecy" OFF)
 
 if(OCCA_ENABLE_FORTRAN)
   enable_language(Fortran)
