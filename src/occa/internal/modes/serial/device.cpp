@@ -11,11 +11,12 @@
 #include <occa/internal/modes/serial/streamTag.hpp>
 #include <occa/internal/lang/modes/serial.hpp>
 
+#ifdef BUILD_WITH_OCCA_TRANSPILER
 #include <occa/internal/utils/transpiler_utils.h>
 #include "oklt/pipeline/normalizer_and_transpiler.h"
 #include "oklt/core/error.h"
-
 #include <fstream>
+#endif
 
 namespace occa {
   namespace serial {
@@ -77,7 +78,7 @@ namespace occa {
       return (srEndTag->time - srStartTag->time);
     }
 
-
+#ifdef BUILD_WITH_OCCA_TRANSPILER
     bool device::transpileFile(const std::string &filename,
                                const std::string &outputFile,
                                const occa::json &kernelProps,
@@ -124,6 +125,7 @@ namespace occa {
       transpiler::makeMetadata(metadata, userOutput.kernel.metadataJson);
       return true;
     }
+#endif
 
     //==================================
 
@@ -341,6 +343,8 @@ namespace occa {
 
         if (compilingOkl) {
           const std::string outputFile = hashDir + kc::cachedSourceFilename(filename);
+
+#ifdef BUILD_WITH_OCCA_TRANSPILER
           int transpilerVersion = kernelProps.get("transpiler-version", 2);
 
           bool valid = false;
@@ -358,8 +362,17 @@ namespace occa {
           }
 
           if (!valid) {
-            return NULL;
+            return nullptr;
           }
+#else
+          if(!parseFile(sourceFilename,
+                        outputFile,
+                        kernelProps,
+                         metadata))
+          {
+            return nullptr;
+          }
+#endif
           sourceFilename = outputFile;
 
           writeKernelBuildFile(hashDir + kc::buildFile,

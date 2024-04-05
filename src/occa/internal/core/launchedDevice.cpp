@@ -7,8 +7,10 @@
 #include <occa/internal/utils/string.hpp>
 #include <occa/internal/utils/transpiler_utils.h>
 
+#ifdef BUILD_WITH_OCCA_TRANSPILER
 #include "oklt/pipeline/normalizer_and_transpiler.h"
 #include "oklt/core/error.h"
+#endif
 
 #include <map>
 #include <fstream>
@@ -19,6 +21,7 @@ namespace occa {
     needsLauncherKernel = true;
   }
 
+#ifdef BUILD_WITH_OCCA_TRANSPILER
   bool launchedModeDevice_t::transpileFile(const std::string &filename,
                      const std::string &outputFile,
                      const std::string &launcherOutputFile,
@@ -92,6 +95,7 @@ namespace occa {
 
     return true;
   }
+#endif
 
   bool launchedModeDevice_t::parseFile(const std::string &filename,
                                        const std::string &outputFile,
@@ -220,10 +224,11 @@ namespace occa {
                                      kernelHash,
                                      assembleKernelHeader(kernelProps));
 
-      int transpilerVersion = kernelProps.get("transpiler-version", 2);
       const std::string outputFile = hashDir + kc::cachedSourceFilename(filename);
       const std::string launcherOutputFile = hashDir + kc::launcherSourceFile;
 
+#ifdef BUILD_WITH_OCCA_TRANSPILER
+      int transpilerVersion = kernelProps.get("transpiler-version", 2);
       bool isValid = false;
       if(transpilerVersion > 2) {
         isValid = transpileFile(sourceFilename,
@@ -245,6 +250,17 @@ namespace occa {
       if (!isValid) {
           return nullptr;
       }
+#else
+      if(!parseFile(sourceFilename,
+                    outputFile,
+                    launcherOutputFile,
+                    kernelProps,
+                    launcherMetadata,
+                    deviceMetadata))
+      {
+        return nullptr;
+      }
+#endif
       sourceFilename = outputFile;
 
       buildLauncherKernel(kernelHash,

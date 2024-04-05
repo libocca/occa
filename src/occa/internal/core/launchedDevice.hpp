@@ -70,6 +70,7 @@ namespace occa {
     ) = 0;
     //==================================
 
+#ifdef BUILD_WITH_OCCA_TRANSPILER
     private:
         bool transpileFile(const std::string &filename,
                            const std::string &outputFile,
@@ -77,6 +78,7 @@ namespace occa {
                            const occa::json &kernelProps,
                            lang::sourceMetadata_t &launcherMetadata,
                            lang::sourceMetadata_t &deviceMetadata);
+#endif
   };
 }
 

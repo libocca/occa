@@ -37,6 +37,7 @@ option(OCCA_ENABLE_DPCPP "Build with SYCL/DPCPP if available" ON)
 option(OCCA_ENABLE_TESTS    "Build tests"               OFF)
 option(OCCA_ENABLE_EXAMPLES "Build simple examples"     OFF)
 option(OCCA_ENABLE_FORTRAN  "Enable Fortran interface"  OFF)
+option(OCCA_TRANSPILER      "Build with occa-transpiler dependecy" ON)
 
 if(OCCA_ENABLE_FORTRAN)
   enable_language(Fortran)
@@ -68,13 +69,15 @@ else()
 endif()
 
 # INFO: order is important, deps should not apply compiler flags
-include(cmake/CPM.cmake)
-CPMAddPackage(
-    NAME occa-transpiler
-    GITHUB_REPOSITORY libocca/occa-transpiler
-    GIT_TAG 17e9259b14a1e12aef2108bb61652aea98c744a0
-    OPTIONS "TRANSPILER_TESTS OFF"
-)
+if (OCCA_TRANSPILER)
+    include(cmake/CPM.cmake)
+    CPMAddPackage(
+        NAME occa-transpiler
+        GITHUB_REPOSITORY libocca/occa-transpiler
+        GIT_TAG c761972e9158fd29ba1093339c81043a22b78427
+        OPTIONS "TRANSPILER_TESTS OFF"
+    )
+endif()
 
 include(SetCompilerFlags)
 include(CheckCXXCompilerFlag)
@@ -111,9 +114,7 @@ find_package(Threads REQUIRED)
 
 # Use the provided imported target Threads::Threads, to make our package relocatable
 target_link_libraries(libocca PRIVATE
-  Threads::Threads ${CMAKE_DL_LIBS}
-  occa-transpiler
-)
+  Threads::Threads ${CMAKE_DL_LIBS})
 
 target_include_directories(libocca PUBLIC
   $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/include>
@@ -124,6 +125,15 @@ target_include_directories(libocca PRIVATE
   $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/src>)
 
 target_compile_definitions(libocca PRIVATE -DUSE_CMAKE)
+
+if (OCCA_TRANSPILER)
+    target_link_libraries(libocca
+        PRIVATE
+            occa-transpiler
+    )
+    target_compile_definitions(libocca PRIVATE -DBUILD_WITH_OCCA_TRANSPILER)
+endif()
+
 #=======================================
 
 #---[ OpenMP ]--------------------------

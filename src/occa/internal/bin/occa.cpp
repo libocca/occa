@@ -15,8 +15,10 @@
 #include <occa/internal/lang/modes/dpcpp.hpp>
 #include <occa/internal/modes.hpp>
 
+#ifdef BUILD_WITH_OCCA_TRANSPILER
 #include "oklt/pipeline/normalizer_and_transpiler.h"
 #include "oklt/core/error.h"
+#endif
 #include <occa/internal/utils/transpiler_utils.h>
 
 namespace occa {
@@ -129,6 +131,7 @@ namespace occa {
       return true;
     }
 
+#ifdef BUILD_WITH_OCCA_TRANSPILER
     namespace v3 {
 
         bool runTranslate(const json &options,
@@ -216,6 +219,7 @@ namespace occa {
             return true;
         }
     }
+#endif
 
     namespace v2 {
         bool runTranslate(const json &options,
@@ -331,17 +335,20 @@ namespace occa {
       const std::string originalMode = options["mode"];
       const std::string mode = lowercase(originalMode);
 
-      int transpilerVersion = getTranspilerVersion(options);
-
       json kernelProps = getOptionProperties(options["kernel-props"]);
       kernelProps["mode"] = mode;
       kernelProps["defines"].asObject() += getOptionDefines(options["define"]);
       kernelProps["okl/include_paths"] = options["include-path"];
 
+#ifdef BUILD_WITH_OCCA_TRANSPILER
+      int transpilerVersion = getTranspilerVersion(options);
       if(transpilerVersion > 2) {
         return v3::runTranslate(options, arguments, kernelProps, originalMode, mode);
       }
       return v2::runTranslate(options, arguments, kernelProps, originalMode, mode);
+#else
+      return v2::runTranslate(options, arguments, kernelProps, originalMode, mode);
+#endif
     }
 
     bool runCompile(const json &args) {

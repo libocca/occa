@@ -6,11 +6,12 @@
 #include <occa/internal/modes/openmp/device.hpp>
 #include <occa/internal/modes/openmp/utils.hpp>
 
+#ifdef BUILD_WITH_OCCA_TRANSPILER
 #include <occa/internal/utils/transpiler_utils.h>
 #include "oklt/pipeline/normalizer_and_transpiler.h"
 #include "oklt/core/error.h"
-
 #include <fstream>
+#endif
 
 namespace occa {
   namespace openmp {
@@ -31,6 +32,7 @@ namespace occa {
       );
     }
 
+#ifdef BUILD_WITH_OCCA_TRANSPILER
     bool device::transpileFile(const std::string &filename,
                        const std::string &outputFile,
                        const occa::json &kernelProps,
@@ -77,7 +79,7 @@ namespace occa {
       transpiler::makeMetadata(metadata, userOutput.kernel.metadataJson);
       return true;
     }
-
+#endif
 
     bool device::parseFile(const std::string &filename,
                            const std::string &outputFile,
