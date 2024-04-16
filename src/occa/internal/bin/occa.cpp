@@ -16,10 +16,12 @@
 #include <occa/internal/modes.hpp>
 
 #ifdef BUILD_WITH_OCCA_TRANSPILER
+#include <occa/internal/utils/transpiler_utils.h>
 #include "oklt/pipeline/normalizer_and_transpiler.h"
 #include "oklt/core/error.h"
+#include "oklt/util/io_helper.h"
 #endif
-#include <occa/internal/utils/transpiler_utils.h>
+
 
 namespace occa {
   namespace bin {
@@ -165,16 +167,21 @@ namespace occa {
             auto defines = transpiler::buildDefines(kernelProps);
             auto includes = transpiler::buildIncludes(kernelProps);
 
-            std::string fullFilePath = io::expandFilename(filename);
-            std::ifstream sourceFile(fullFilePath);
-            std::string sourceCode{std::istreambuf_iterator<char>(sourceFile), {}};
+            std::filesystem::path sourcePath = io::expandFilename(filename);
+            auto sourceCode = oklt::util::readFileAsStr(sourcePath);
+            if(!sourceCode) {
+                printError("Can't open file: " + sourcePath.string());
+                ::exit(sourceCode.error());
+            }
+
             oklt::UserInput input {
                 .backend = transpiler->second,
                 .astProcType = oklt::AstProcessorType::OKL_WITH_SEMA,
-                .sourceCode = std::move(sourceCode),
-                .sourcePath = std::filesystem::path(fullFilePath),
+                .source = std::move(sourceCode.value()),
+                .headers = {},
+                .sourcePath = sourcePath,
                 .inlcudeDirectories = std::move(includes),
-                .defines = std::move(defines)
+                .defines = std::move(defines),
             };
             auto result = normalizeAndTranspile(std::move(input));
 
@@ -211,9 +218,9 @@ namespace occa {
                                transpiler->second == oklt::TargetBackend::HIP ||
                                transpiler->second == oklt::TargetBackend::DPCPP;
             if(printLauncher && hasLauncher) {
-                io::stdout << userOutput.launcher.sourceCode;
+                io::stdout << userOutput.launcher.source;
             } else {
-                io::stdout << userOutput.kernel.sourceCode;
+                io::stdout << userOutput.kernel.source;
             }
 
             return true;

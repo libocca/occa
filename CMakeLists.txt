@@ -37,7 +37,7 @@ option(OCCA_ENABLE_DPCPP "Build with SYCL/DPCPP if available" ON)
 option(OCCA_ENABLE_TESTS    "Build tests"               OFF)
 option(OCCA_ENABLE_EXAMPLES "Build simple examples"     OFF)
 option(OCCA_ENABLE_FORTRAN  "Enable Fortran interface"  OFF)
-option(OCCA_TRANSPILER      "Build with occa-transpiler dependecy" OFF)
+option(OCCA_TRANSPILER      "Build with occa-transpiler dependecy" ON)
 
 if(OCCA_ENABLE_FORTRAN)
   enable_language(Fortran)
@@ -74,7 +74,7 @@ if (OCCA_TRANSPILER)
     CPMAddPackage(
         NAME occa-transpiler
         GITHUB_REPOSITORY libocca/occa-transpiler
-        GIT_TAG c761972e9158fd29ba1093339c81043a22b78427
+        GIT_TAG 2bb202e68de5052ec6e44a086fdf7b36b7e8db88
         OPTIONS "TRANSPILER_TESTS OFF"
     )
 endif()

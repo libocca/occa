@@ -15,7 +15,7 @@
 #include <occa/internal/utils/transpiler_utils.h>
 #include "oklt/pipeline/normalizer_and_transpiler.h"
 #include "oklt/core/error.h"
-#include <fstream>
+#include "oklt/util/io_helper.h"
 #endif
 
 namespace occa {
@@ -87,14 +87,20 @@ namespace occa {
       auto defines = transpiler::buildDefines(kernelProps);
       auto includes = transpiler::buildIncludes(kernelProps);
 
-      std::string fullFilePath = io::expandFilename(filename);
-      std::ifstream sourceFile(fullFilePath);
-      std::string sourceCode{std::istreambuf_iterator<char>(sourceFile), {}};
+      std::filesystem::path sourcePath = io::expandFilename(filename);
+      auto sourceCode = oklt::util::readFileAsStr(sourcePath);
+      if(!sourceCode) {
+        std::string errorDescription = "Can't read file: ";
+        OCCA_FORCE_ERROR(errorDescription << sourcePath.string());
+        return false;
+      }
+
       oklt::UserInput input {
           .backend = oklt::TargetBackend::SERIAL,
           .astProcType = oklt::AstProcessorType::OKL_WITH_SEMA,
-          .sourceCode = std::move(sourceCode),
-          .sourcePath = std::filesystem::path(fullFilePath),
+          .source = std::move(sourceCode.value()),
+          .headers = {},
+          .sourcePath = sourcePath,
           .inlcudeDirectories = std::move(includes),
           .defines = std::move(defines)
       };
@@ -118,11 +124,11 @@ namespace occa {
           outputFile,
           true,
           [&](const std::string &tempFilename) -> bool {
-              std::ofstream transpiledTempOutput(tempFilename);
-              transpiledTempOutput << userOutput.kernel.sourceCode;
-              return true;
-          });
-      transpiler::makeMetadata(metadata, userOutput.kernel.metadataJson);
+              std::filesystem::path transpiledSourcePath(tempFilename);
+              auto ret = oklt::util::writeFileAsStr(transpiledSourcePath, userOutput.kernel.source);
+              return ret.has_value();
+      });
+      transpiler::makeMetadata(metadata, userOutput.kernel.metadata);
       return true;
     }
 #endif
