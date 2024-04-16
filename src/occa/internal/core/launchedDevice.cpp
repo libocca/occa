@@ -5,15 +5,16 @@
 #include <occa/internal/modes/serial/device.hpp>
 #include <occa/internal/modes/serial/kernel.hpp>
 #include <occa/internal/utils/string.hpp>
-#include <occa/internal/utils/transpiler_utils.h>
+
 
 #ifdef BUILD_WITH_OCCA_TRANSPILER
+#include <occa/internal/utils/transpiler_utils.h>
 #include "oklt/pipeline/normalizer_and_transpiler.h"
+#include "oklt/util/io_helper.h"
 #include "oklt/core/error.h"
 #endif
 
 #include <map>
-#include <fstream>
 
 namespace occa {
   launchedModeDevice_t::launchedModeDevice_t(const occa::json &properties_) :
@@ -48,14 +49,20 @@ namespace occa {
     auto defines = transpiler::buildDefines(kernelProps);
     auto includes = transpiler::buildIncludes(kernelProps);
 
-    std::string fullFilePath = io::expandFilename(filename);
-    std::ifstream sourceFile(fullFilePath);
-    std::string sourceCode{std::istreambuf_iterator<char>(sourceFile), {}};
+    std::filesystem::path sourcePath = io::expandFilename(filename);
+    auto sourceCode = oklt::util::readFileAsStr(sourcePath);
+    if(!sourceCode) {
+        std::string errorDescription = "Can't read file: ";
+        OCCA_FORCE_ERROR(errorDescription << sourcePath.string());
+        return false;
+    }
+
     oklt::UserInput input {
         .backend = targetIter->second,
         .astProcType = oklt::AstProcessorType::OKL_WITH_SEMA,
-        .sourceCode = std::move(sourceCode),
-        .sourcePath = std::filesystem::path(fullFilePath),
+        .source = std::move(sourceCode.value()),
+        .headers = {},
+        .sourcePath = sourcePath,
         .inlcudeDirectories = std::move(includes),
         .defines = std::move(defines)
     };
@@ -79,19 +86,16 @@ namespace occa {
         { outputFile, launcherOutputFile },
         true,
         [&](const strVector &tempFilenames) -> bool {
-            const std::string &tempOutputFilename = tempFilenames[0];
-            const std::string &tempLauncherOutputFilename = tempFilenames[1];
+            std::filesystem::path transpiledSource(tempFilenames[0]);
+            std::filesystem::path launcherSource(tempFilenames[1]);
 
-            std::ofstream transpiledTempOutput(tempOutputFilename);
-            transpiledTempOutput << userOutput.kernel.sourceCode;
-
-            std::ofstream laucherOutputFile(tempLauncherOutputFilename);
-            laucherOutputFile << userOutput.launcher.sourceCode;
-            return true;
+            auto ret1 = oklt::util::writeFileAsStr(transpiledSource, userOutput.kernel.source);
+            auto ret2 = oklt::util::writeFileAsStr(launcherSource, userOutput.launcher.source);
+            return ret1 && ret2;
         });
 
-     transpiler::makeMetadata(launcherMetadata, userOutput.launcher.metadataJson);
-     transpiler::makeMetadata(deviceMetadata, userOutput.kernel.metadataJson);
+     transpiler::makeMetadata(launcherMetadata, userOutput.launcher.metadata);
+     transpiler::makeMetadata(deviceMetadata, userOutput.kernel.metadata);
 
     return true;
   }

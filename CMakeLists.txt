@@ -74,7 +74,7 @@ if (OCCA_TRANSPILER)
     CPMAddPackage(
         NAME occa-transpiler
         GITHUB_REPOSITORY libocca/occa-transpiler
-        GIT_TAG c761972e9158fd29ba1093339c81043a22b78427
+        GIT_TAG 2bb202e68de5052ec6e44a086fdf7b36b7e8db88
         OPTIONS "TRANSPILER_TESTS OFF"
     )
 endif()
