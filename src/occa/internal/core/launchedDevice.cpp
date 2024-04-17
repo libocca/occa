@@ -14,6 +14,7 @@
 #include "oklt/core/error.h"
 #endif
 
+#include <memory>
 #include <map>
 
 namespace occa {
