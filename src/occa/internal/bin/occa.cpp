@@ -22,6 +22,8 @@
 #include "oklt/util/io_helper.h"
 #endif
 
+#include <memory>
+
 
 namespace occa {
   namespace bin {
