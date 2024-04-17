@@ -20,7 +20,5 @@ if(METAL_FOUND AND NOT TARGET OCCA::depends::METAL)
   # Create our wrapper imported target
   # Put it in the OCCA namespace to make it clear that we created it.
   add_library(OCCA::depends::METAL INTERFACE IMPORTED)
-  set_target_properties(OCCA::depends::METAL PROPERTIES
-    INTERFACE_LINK_LIBRARIES "${METAL_LIBRARY} ${CORE_SERVICES} ${APP_KIT}"
-  )
+  target_link_libraries(OCCA::depends::METAL INTERFACE ${METAL_LIBRARY} ${CORE_SERVICES} ${APP_KIT})
 endif()
