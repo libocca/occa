@@ -1,4 +1,5 @@
 #include <occa/internal/modes/cuda/stream.hpp>
+#include <occa/internal/modes/cuda/streamTag.hpp>
 #include <occa/internal/modes/cuda/utils.hpp>
 
 namespace occa {
@@ -22,6 +23,14 @@ namespace occa {
     void stream::finish() {
       OCCA_CUDA_ERROR("Stream: Finish",
                       cuStreamSynchronize(cuStream));
+    }
+
+    void stream::waitFor(occa::streamTag tag) {
+      occa::cuda::streamTag *cuTag = (
+        dynamic_cast<occa::cuda::streamTag*>(tag.getModeStreamTag())
+      );
+      OCCA_CUDA_ERROR("Stream: waitFor",
+                      cuStreamWaitEvent(cuStream, cuTag->cuEvent, 0));
     }
 
     void* stream::unwrap() {

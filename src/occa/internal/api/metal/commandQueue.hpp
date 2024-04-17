@@ -34,6 +34,7 @@ namespace occa {
         void freeLastCommandBuffer();
 
         event_t createEvent() const;
+        void waitForEvent(const event_t &event);
 
         void clearCommandBuffer(void *commandBufferObj);
         void setLastCommandBuffer(void *commandBufferObj);

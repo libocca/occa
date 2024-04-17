@@ -13,6 +13,7 @@ namespace occa {
         int eventId;
         void *commandBufferObj;
         double eventTime;
+        int signalValue;
 
         event_t();
 
