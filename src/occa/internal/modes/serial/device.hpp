@@ -76,12 +76,12 @@ namespace occa {
 
       void* unwrap() override;
 
-#ifdef BUILD_WITH_OCCA_TRANSPILER
+#ifdef BUILD_WITH_CLANG_BASED_TRANSPILER
   private:
-      bool transpileFile(const std::string &filename,
-                         const std::string &outputFile,
-                         const occa::json &kernelProps,
-                         lang::sourceMetadata_t &metadata);
+      virtual bool transpileFile(const std::string &filename,
+                                 const std::string &outputFile,
+                                 const occa::json &kernelProps,
+                                 lang::sourceMetadata_t &metadata);
 #endif
     };
   }

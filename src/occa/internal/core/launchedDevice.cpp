@@ -6,11 +6,11 @@
 #include <occa/internal/modes/serial/kernel.hpp>
 #include <occa/internal/utils/string.hpp>
 
-#ifdef BUILD_WITH_OCCA_TRANSPILER
+#ifdef BUILD_WITH_CLANG_BASED_TRANSPILER
 #include <occa/internal/utils/transpiler_utils.h>
-#include "oklt/pipeline/normalizer_and_transpiler.h"
-#include "oklt/util/io_helper.h"
-#include "oklt/core/error.h"
+#include <oklt/pipeline/normalizer_and_transpiler.h>
+#include <oklt/util/io_helper.h>
+#include <oklt/core/error.h>
 #endif
 
 #include <map>
@@ -22,7 +22,7 @@ namespace occa {
     needsLauncherKernel = true;
   }
 
-#ifdef BUILD_WITH_OCCA_TRANSPILER
+#ifdef BUILD_WITH_CLANG_BASED_TRANSPILER
   bool launchedModeDevice_t::transpileFile(const std::string &filename,
                      const std::string &outputFile,
                      const std::string &launcherOutputFile,
@@ -232,7 +232,7 @@ namespace occa {
       const std::string outputFile = hashDir + kc::cachedSourceFilename(filename);
       const std::string launcherOutputFile = hashDir + kc::launcherSourceFile;
 
-#ifdef BUILD_WITH_OCCA_TRANSPILER
+#ifdef BUILD_WITH_CLANG_BASED_TRANSPILER
       int transpilerVersion = kernelProps.get("transpiler-version", 2);
       bool isValid = false;
       if(transpilerVersion > 2) {
