@@ -48,6 +48,7 @@ Mission critical computational science and engineering applications from the pub
  - SYCL 2020 or later
  - OpenCL 2.0 or later
  - OpenMP 4.0 or later
+ - C++ support with clang based occa-transpiler
 
 ## Build, Test, Install
 
@@ -67,6 +68,14 @@ $ cmake --install build --prefix install
 
 If dependencies are installed in a non-standard location, set the corresponding [environment variable](INSTALL.md#dependency-paths) to this path. 
 
+For building with C++ support/occa-transpiler: 
+```shell
+$ mkdir build
+$ cd build
+$ cmake -DCMAKE_BUILD_TYPE=Release -DCLANG_BASED_TRANSPILER=ON ..
+$ cmake --build . --parallel <number-of-threads> 
+$ cmake --install . --prefix install
+```
 
 ## Use
 

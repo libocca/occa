@@ -22,6 +22,7 @@ namespace occa {
     extern const dtype_t short_;
     extern const dtype_t int_;
     extern const dtype_t long_;
+    extern const dtype_t ulong_;
     extern const dtype_t float_;
     extern const dtype_t double_;
 

@@ -11,6 +11,13 @@
 #include <occa/internal/modes/serial/streamTag.hpp>
 #include <occa/internal/lang/modes/serial.hpp>
 
+#ifdef BUILD_WITH_OCCA_TRANSPILER
+#include <occa/internal/utils/transpiler_utils.h>
+#include "oklt/pipeline/normalizer_and_transpiler.h"
+#include "oklt/core/error.h"
+#include "oklt/util/io_helper.h"
+#endif
+
 namespace occa {
   namespace serial {
     device::device(const occa::json &properties_) :
@@ -70,6 +77,61 @@ namespace occa {
 
       return (srEndTag->time - srStartTag->time);
     }
+
+#ifdef BUILD_WITH_OCCA_TRANSPILER
+    bool device::transpileFile(const std::string &filename,
+                               const std::string &outputFile,
+                               const occa::json &kernelProps,
+                               lang::sourceMetadata_t &metadata)
+    {
+      auto defines = transpiler::buildDefines(kernelProps);
+      auto includes = transpiler::buildIncludes(kernelProps);
+
+      std::filesystem::path sourcePath = io::expandFilename(filename);
+      auto sourceCode = oklt::util::readFileAsStr(sourcePath);
+      if(!sourceCode) {
+        std::string errorDescription = "Can't read file: ";
+        OCCA_FORCE_ERROR(errorDescription << sourcePath.string());
+        return false;
+      }
+      oklt::UserInput input {
+          .backend = oklt::TargetBackend::SERIAL,
+          .source = std::move(sourceCode.value()),
+          .headers = {},
+          .sourcePath = sourcePath,
+          .includeDirectories = std::move(includes),
+          .defines = std::move(defines),
+          .hash = "",
+      };
+      auto result = normalizeAndTranspile(std::move(input));
+      if(!result) {
+        if (!kernelProps.get("silent", false)) {
+            std::stringstream ss;
+            ss << "Unable to transform OKL kernel [" << filename << "]" << std::endl;
+            ss << "Transpilation errors occured: " << std::endl;
+            for(const auto &err: result.error()) {
+                ss << err.desc << std::endl;
+            }
+            OCCA_FORCE_ERROR(ss.str());
+        }
+        return false;
+      }
+
+      auto userOutput = result.value();
+
+      io::stageFile(
+          outputFile,
+          true,
+          [&](const std::string &tempFilename) -> bool {
+              std::filesystem::path transpiledSourcePath(tempFilename);
+              auto ret = oklt::util::writeFileAsStr(transpiledSourcePath, userOutput.kernel.source);
+              return ret.has_value();
+          });
+      transpiler::makeMetadata(metadata, userOutput.kernel.metadata);
+      return true;
+    }
+#endif
+
     //==================================
 
     //---[ Kernel ]---------------------
@@ -286,13 +348,36 @@ namespace occa {
 
         if (compilingOkl) {
           const std::string outputFile = hashDir + kc::cachedSourceFilename(filename);
-          bool valid = parseFile(sourceFilename,
+
+#ifdef BUILD_WITH_OCCA_TRANSPILER
+          int transpilerVersion = kernelProps.get("transpiler-version", 2);
+
+          bool valid = false;
+          if(transpilerVersion > 2) {
+              valid = transpileFile(sourceFilename,
+                                      outputFile,
+                                      kernelProps,
+                                      metadata);
+          } else {
+              valid = parseFile(sourceFilename,
                                  outputFile,
                                  kernelProps,
                                  metadata);
-          if (!valid) {
-            return NULL;
+
           }
+
+          if (!valid) {
+            return nullptr;
+          }
+#else
+          if(!parseFile(sourceFilename,
+                        outputFile,
+                        kernelProps,
+                         metadata))
+          {
+            return nullptr;
+          }
+#endif
           sourceFilename = outputFile;
 
           writeKernelBuildFile(hashDir + kc::buildFile,

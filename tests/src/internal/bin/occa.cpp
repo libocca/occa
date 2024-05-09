@@ -173,7 +173,7 @@ int main(const int argc, const char **argv) {
 
   //---[ Compile ]------------------
   const std::string compileOptions = (
-    "--define --device-props --help --include-path --kernel-props -D -I -d -h -k"
+    "--define --device-props --help --include-path --kernel-props --transpiler-version -D -I -d -h -k -t"
   );
 
   ASSERT_AUTOCOMPLETE_EQ(
@@ -203,7 +203,7 @@ int main(const int argc, const char **argv) {
 
   //---[ Translate ]------------------
   const std::string translateOptions = (
-    "--define --help --include-path --kernel-props --launcher --mode --verbose -D -I -h -k -l -m -v"
+    "--define --help --include-path --kernel-props --launcher --mode --transpiler-version --verbose -D -I -h -k -l -m -t -v"
   );
 
   ASSERT_AUTOCOMPLETE_EQ(
