@@ -69,7 +69,6 @@ namespace occa {
       const occa::json &kernelProps
     ) = 0;
     //==================================
-
   };
 }
 

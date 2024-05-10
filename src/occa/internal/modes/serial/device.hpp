@@ -75,7 +75,6 @@ namespace occa {
       //================================
 
       void* unwrap() override;
-
     };
   }
 }
