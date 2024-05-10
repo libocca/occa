@@ -37,7 +37,7 @@ option(OCCA_ENABLE_DPCPP "Build with SYCL/DPCPP if available" ON)
 option(OCCA_ENABLE_TESTS    "Build tests"               OFF)
 option(OCCA_ENABLE_EXAMPLES "Build simple examples"     OFF)
 option(OCCA_ENABLE_FORTRAN  "Enable Fortran interface"  OFF)
-option(OCCA_TRANSPILER      "Build with occa-transpiler dependecy" OFF)
+option(OCCA_CLANG_BASED_TRANSPILER      "Build with occa-transpiler dependecy" OFF)
 
 if(OCCA_ENABLE_FORTRAN)
   enable_language(Fortran)
@@ -69,7 +69,7 @@ else()
 endif()
 
 # INFO: order is important, deps should not apply compiler flags
-if (OCCA_TRANSPILER)
+if (OCCA_CLANG_BASED_TRANSPILER)
     include(cmake/CPM_0.38.6.cmake)
     include(cmake/GitSubmodules.cmake)
 
@@ -128,7 +128,7 @@ target_include_directories(libocca PRIVATE
   $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/src>)
 
 target_compile_definitions(libocca PRIVATE -DUSE_CMAKE)
-if (OCCA_TRANSPILER)
+if (OCCA_CLANG_BASED_TRANSPILER)
     target_link_libraries(libocca
         PRIVATE
             occa-transpiler

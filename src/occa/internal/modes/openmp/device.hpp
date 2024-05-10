@@ -12,13 +12,6 @@ namespace occa {
       std::string lastCompiler;
       std::string lastCompilerOpenMPFlag;
 
-#ifdef BUILD_WITH_CLANG_BASED_TRANSPILER
-      bool transpileFile(const std::string &filename,
-                         const std::string &outputFile,
-                         const occa::json &kernelProps,
-                         lang::sourceMetadata_t &metadata) override;
-#endif
-
     public:
       device(const occa::json &properties_);
       virtual ~device() = default;

@@ -17,91 +17,70 @@
 #include <memory>
 
 namespace occa {
-  launchedModeDevice_t::launchedModeDevice_t(const occa::json &properties_) :
-    modeDevice_t(properties_) {
-    needsLauncherKernel = true;
-  }
 
 #ifdef BUILD_WITH_CLANG_BASED_TRANSPILER
-  bool launchedModeDevice_t::transpileFile(const std::string &filename,
-                     const std::string &outputFile,
-                     const std::string &launcherOutputFile,
-                     const occa::json &kernelProps,
-                     lang::sourceMetadata_t &launcherMetadata,
-                     lang::sourceMetadata_t &deviceMetadata)
-  {
-    static const std::map<std::string, oklt::TargetBackend> targetBackends =
-        {
-         {"cuda", oklt::TargetBackend::CUDA},
-         {"hip", oklt::TargetBackend::HIP},
-         {"dpcpp", oklt::TargetBackend::DPCPP},
-    };
-
-    std::string normalized_mode = lowercase(mode);
-    auto targetIter = targetBackends.find(normalized_mode);
-    if(targetIter == targetBackends.end()) {
-        std::string errorDescription = "Can't find target backend: " + mode;
-        OCCA_FORCE_ERROR(errorDescription +
-                             ", unable to transform OKL kernel [" << filename << "]");
-        return false;
-    }
-
-    auto defines = transpiler::buildDefines(kernelProps);
-    auto includes = transpiler::buildIncludes(kernelProps);
-    auto hash = transpiler::getKernelHash(kernelProps);
-
-    std::filesystem::path sourcePath = io::expandFilename(filename);
-    auto sourceCode = oklt::util::readFileAsStr(sourcePath);
-    if(!sourceCode) {
+namespace v3 {
+bool transpileFile(const std::string &filename,
+                   const std::string &outputFile,
+                   const std::string &launcherOutputFile,
+                   const occa::json &kernelProps,
+                   lang::sourceMetadata_t &launcherMetadata,
+                   lang::sourceMetadata_t &deviceMetadata,
+                   const std::string &mode)
+{
+    auto onFileNotExists = [](const std::string &file) {
         std::string errorDescription = "Can't read file: ";
-        OCCA_FORCE_ERROR(errorDescription << sourcePath.string());
-        return false;
-    }
-    oklt::UserInput input {
-        .backend = targetIter->second,
-        .source = std::move(sourceCode.value()),
-        .headers = {},
-        .sourcePath = sourcePath,
-        .includeDirectories = std::move(includes),
-        .defines = std::move(defines),
-        .hash = std::move(hash),
+        OCCA_FORCE_ERROR(errorDescription << file);
     };
-    auto result = normalizeAndTranspile(std::move(input));
 
-    if(!result) {
-        if (!kernelProps.get("silent", false)) {
+    auto onWrongBackend = [&](const std::string &m) {
+        std::string errorDescription = "Unsupported target backend: " + m;
+        OCCA_FORCE_ERROR(errorDescription +
+                             ", for OKL kernel [" << filename << "]");
+    };
+
+    bool isSilent = kernelProps.get("silent", false);
+    auto onFail = [&](const std::vector<oklt::Error> &errors) {
+        if (!isSilent) {
             std::stringstream ss;
             ss << "Unable to transform OKL kernel [" << filename << "]" << std::endl;
             ss << "Transpilation errors occured: " << std::endl;
-            for(const auto &err: result.error()) {
+            for(const auto &err: errors) {
                 ss << err.desc << std::endl;
             }
             OCCA_FORCE_ERROR(ss.str());
         }
-        return false;
-    }
+    };
 
-    auto userOutput = result.value();
-    io::stageFiles(
-        { outputFile, launcherOutputFile },
-        true,
-        [&](const strVector &tempFilenames) -> bool {
+    auto onSuccess = [&](const oklt::UserOutput &output, bool hasLauncher) -> bool {
+        io::stageFiles(
+            { outputFile, launcherOutputFile },
+            true,
+            [&](const strVector &tempFilenames) -> bool {
 
 
-            std::filesystem::path transpiledSource(tempFilenames[0]);
-            std::filesystem::path launcherSource(tempFilenames[1]);
+                std::filesystem::path transpiledSource(tempFilenames[0]);
+                std::filesystem::path launcherSource(tempFilenames[1]);
 
-            auto ret1 = oklt::util::writeFileAsStr(transpiledSource, userOutput.kernel.source);
-            auto ret2 = oklt::util::writeFileAsStr(launcherSource, userOutput.launcher.source);
-            return ret1 && ret2;
-    });
+                auto ret1 = oklt::util::writeFileAsStr(transpiledSource, output.kernel.source);
+                auto ret2 = oklt::util::writeFileAsStr(launcherSource, output.launcher.source);
+                return ret1 && ret2;
+        });
 
-    transpiler::makeMetadata(launcherMetadata, userOutput.launcher.metadata);
-    transpiler::makeMetadata(deviceMetadata, userOutput.kernel.metadata);
-
-    return true;
-  }
+        transpiler::makeMetadata(launcherMetadata, output.launcher.metadata);
+        transpiler::makeMetadata(deviceMetadata, output.kernel.metadata);
+        return true;
+    };
+    transpiler::Transpiler transpiler(onSuccess, onFail, onFileNotExists, onWrongBackend);
+    return transpiler.run(filename, mode, kernelProps);
+}
+}
 #endif
+
+  launchedModeDevice_t::launchedModeDevice_t(const occa::json &properties_) :
+    modeDevice_t(properties_) {
+    needsLauncherKernel = true;
+  }
 
   bool launchedModeDevice_t::parseFile(const std::string &filename,
                                        const std::string &outputFile,
@@ -232,16 +211,17 @@ namespace occa {
       const std::string outputFile = hashDir + kc::cachedSourceFilename(filename);
       const std::string launcherOutputFile = hashDir + kc::launcherSourceFile;
 
-#ifdef BUILD_WITH_CLANG_BASED_TRANSPILER
       int transpilerVersion = kernelProps.get("transpiler-version", 2);
+#ifdef BUILD_WITH_CLANG_BASED_TRANSPILER
       bool isValid = false;
       if(transpilerVersion > 2) {
-        isValid = transpileFile(sourceFilename,
-                                outputFile,
-                                launcherOutputFile,
-                                kernelProps,
-                                launcherMetadata,
-                                deviceMetadata);
+        isValid = v3::transpileFile(sourceFilename,
+                                    outputFile,
+                                    launcherOutputFile,
+                                    kernelProps,
+                                    launcherMetadata,
+                                    deviceMetadata,
+                                    mode);
       } else {
           isValid = parseFile(sourceFilename,
                                  outputFile,
@@ -256,6 +236,10 @@ namespace occa {
           return nullptr;
       }
 #else
+      if(transpilerVersion > 2) {
+        OCCA_FORCE_ERROR("OCCA compiler is built without BUILD_WITH_CLANG_BASED_TRANSPILER support");
+        return nullptr;
+      }
       if(!parseFile(sourceFilename,
                     outputFile,
                     launcherOutputFile,

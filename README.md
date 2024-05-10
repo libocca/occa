@@ -72,7 +72,7 @@ For building with C++ support/occa-transpiler:
 ```shell
 $ mkdir build
 $ cd build
-$ cmake -DCMAKE_BUILD_TYPE=Release -DOCCA_TRANSPILER=ON ..
+$ cmake -DCMAKE_BUILD_TYPE=Release -DOCCA_CLANG_BASED_TRANSPILER=ON ..
 $ cmake --build . --parallel <number-of-threads> 
 $ cmake --install . --prefix install
 ```
