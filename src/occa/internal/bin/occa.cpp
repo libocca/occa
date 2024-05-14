@@ -18,10 +18,7 @@
 #include <occa/internal/modes.hpp>
 #include <occa/internal/modes.hpp>
 
-#if BUILD_WITH_CLANG_BASED_TRANSPILER
 #include <occa/internal/utils/transpiler_utils.h>
-#endif
-
 #include <memory>
 
 
@@ -226,6 +223,7 @@ namespace occa {
         }
     }
 
+#if BUILD_WITH_CLANG_BASED_TRANSPILER
     namespace v3 {
         bool runTranspiler(const json &options,
                            const json &arguments,
@@ -289,7 +287,7 @@ namespace occa {
           return transpiler.run(filename, mode, kernelProps);
         }
     }
-
+#endif
     bool runTranspiler(const json &options,
                        const json &arguments,
                        const json &kernelProps,
