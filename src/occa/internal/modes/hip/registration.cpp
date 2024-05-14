@@ -25,7 +25,7 @@ namespace occa {
           hipDeviceProp_t props;
           OCCA_HIP_ERROR("Getting device properties",
                          hipGetDeviceProperties(&props, deviceId));
-          if (props.name != NULL) {
+          if (std::strlen(props.name) != 0) {
             strcpy(deviceName, props.name);
           }
 
