@@ -1,0 +1,79 @@
+#include "constants.h"
+
+template<class T,
+         int THREADS,
+         int WINDOW>
+struct MovingAverage {
+    MovingAverage(int inputSize,
+                  int outputSize,
+                  T *shared_input,
+                  T *shared_output)
+        :_inputSize(inputSize)
+        ,_outputSize(outputSize)
+        ,_shared_data(shared_input)
+        ,_result_data(shared_output)
+    {}
+
+    void syncCopyFrom(const T *input, int block_idx, int thread_idx) {
+        int linearIdx = block_idx * THREADS + thread_idx;
+        //INFO: copy base chunk
+        if(linearIdx < _inputSize) {
+            _shared_data[thread_idx] = input[linearIdx];
+        }
+        //INFO: copy WINDOW chunk
+        int tailIdx = (block_idx + 1) * THREADS + thread_idx;
+        if(tailIdx < _inputSize && thread_idx < WINDOW) {
+            _shared_data[THREADS + thread_idx] = input[tailIdx];
+        }
+        @barrier;
+    }
+
+    void process(int thread_idx) {
+        T sum = T();
+        for(int i = 0; i < WINDOW; ++i) {
+            sum += _shared_data[thread_idx + i];
+        }
+        _result_data[thread_idx] = sum / WINDOW;
+        @barrier;
+    }
+
+    void syncCopyTo(T *output, int block_idx, int thread_idx) {
+        int linearIdx = block_idx * THREADS + thread_idx;
+        if(linearIdx < _outputSize) {
+            output[linearIdx] = _result_data[thread_idx];
+        }
+        @barrier;
+    }
+private:
+    int _inputSize;
+    int _outputSize;
+
+    //INFO: not supported
+    // @shared T _data[THREADS_PER_BLOCK + WINDOW_SIZE];
+    // @shared T _result[THREADS_PER_BLOCK];
+
+    T *_shared_data;
+    T *_result_data;
+};
+
+@kernel void movingAverage32f(@restrict const float *inputData,
+                              int inputSize,
+                              @restrict float *outputData,
+                              int outputSize)
+{
+    @outer(0) for (int block_idx = 0; block_idx < outputSize / THREADS_PER_BLOCK + 1; ++block_idx) {
+        @shared float blockInput[THREADS_PER_BLOCK + WINDOW_SIZE];
+        @shared float blockResult[THREADS_PER_BLOCK];
+        MovingAverage<float, THREADS_PER_BLOCK, WINDOW_SIZE> ma{
+                inputSize,
+                outputSize,
+                blockInput,
+                blockResult
+        };
+        @inner(0) for(int thread_idx = 0; thread_idx < THREADS_PER_BLOCK; ++thread_idx) {
+            ma.syncCopyFrom(inputData, block_idx, thread_idx);
+            ma.process(thread_idx);
+            ma.syncCopyTo(outputData, block_idx, thread_idx);
+        }
+    }
+}
