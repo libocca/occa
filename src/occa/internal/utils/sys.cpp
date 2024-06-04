@@ -402,11 +402,17 @@ namespace occa {
 
     int getTID() {
 #if (OCCA_OS & (OCCA_LINUX_OS | OCCA_MACOS_OS))
-#if OCCA_OS == OCCA_MACOS_OS & (MAC_OS_X_VERSION_MIN_REQUIRED >= 1070)
-      uint64_t tid64;
-      pthread_threadid_np(nullptr, &tid64);
-      pid_t tid = (pid_t)tid64;
-#else
+#if (OCCA_OS == OCCA_MACOS_OS)
+      // pthread_threadid_np is hidden for ppc in Libc of 10.6.8
+      #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1060 && !defined(__ppc__)
+            uint64_t tid64;
+            pthread_threadid_np(nullptr, &tid64);
+            pid_t tid = (pid_t)tid64;
+      #else
+            uint64_t tid;
+            tid = pthread_mach_thread_np(pthread_self());
+      #endif
+#else // Linux
       pid_t tid = syscall(SYS_gettid);
 #endif
       return tid;
