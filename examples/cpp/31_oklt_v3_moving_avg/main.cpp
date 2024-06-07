@@ -80,7 +80,7 @@ int main(int argc, const char **argv) {
 
   constexpr const float EPSILON = 0.001f;
   for(std::size_t i = 0; i < outputHostBuffer.size(); ++i) {
-        bool isValid = std::abs(std::abs(goldValue[i]) - std::abs(outputHostBuffer[i])) < EPSILON;
+        bool isValid = std::abs(goldValue[i] - outputHostBuffer[i]) < EPSILON;
         if(!isValid) {
             std::cout << "Comparison with gold values has failed" << std::endl;
             return 1;

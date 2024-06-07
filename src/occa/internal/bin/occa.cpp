@@ -18,7 +18,9 @@
 #include <occa/internal/modes.hpp>
 #include <occa/internal/modes.hpp>
 
+#if BUILD_WITH_CLANG_BASED_TRANSPILER
 #include <occa/internal/utils/transpiler_utils.h>
+#endif
 #include <memory>
 
 
@@ -130,6 +132,27 @@ namespace occa {
         io::stdout << OCCA_VERSION_STR << '\n';
       }
       return true;
+    }
+
+    int getTranspilerVersion(const json &options) {
+      json jsonTranspileVersion = options["transpiler-version"];
+      int transpilerVersion = 2;
+      //INFO: have no idea why json here has array type
+      if(!jsonTranspileVersion.isArray()) {
+        return transpilerVersion;
+      }
+      json elem = jsonTranspileVersion.asArray()[0];
+      if(!elem.isString()) {
+        return transpilerVersion;
+      }
+
+      try {
+        transpilerVersion = std::stoi(elem.string());
+      } catch(const std::exception &)
+      {
+        return transpilerVersion;
+      }
+      return transpilerVersion;
     }
 
     namespace v2 {
@@ -294,7 +317,7 @@ namespace occa {
                        const std::string &originalMode,
                        const std::string &mode)
     {
-        int transpilerVersion = transpiler::getTranspilerVersion(options);
+        int transpilerVersion = getTranspilerVersion(options);
     #ifdef BUILD_WITH_CLANG_BASED_TRANSPILER
         if(transpilerVersion > 2) {
             return v3::runTranspiler(options, arguments, kernelProps, originalMode, mode);
@@ -340,7 +363,7 @@ namespace occa {
       kernelProps["verbose"] = kernelProps.get("verbose", true);
       kernelProps["okl/include_paths"] = options["include-path"];
       kernelProps["defines"].asObject() += getOptionDefines(options["define"]);
-      kernelProps["transpiler-version"] = transpiler::getTranspilerVersion(options);
+      kernelProps["transpiler-version"] = getTranspilerVersion(options);
 
       device device(deviceProps);
       device.buildKernel(filename, kernelName, kernelProps);

@@ -1,5 +1,5 @@
 ####################################################################################################
-# This function recursivelly update git submodules.
+# This function recursively update git submodules.
 # Params: project base directory
 # Example:
 # init_submodules(${PROJECT_SOURCE_DIR})

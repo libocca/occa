@@ -14,27 +14,6 @@
 namespace occa {
 namespace transpiler {
 
-int getTranspilerVersion(const json &options) {
-    json jsonTranspileVersion = options["transpiler-version"];
-    int transpilerVersion = 2;
-    //INFO: have no idea why json here has array type
-    if(!jsonTranspileVersion.isArray()) {
-        return transpilerVersion;
-    }
-    json elem = jsonTranspileVersion.asArray()[0];
-    if(!elem.isString()) {
-        return transpilerVersion;
-    }
-
-    try {
-        transpilerVersion = std::stoi(elem.string());
-    } catch(const std::exception &)
-    {
-        return transpilerVersion;
-    }
-    return transpilerVersion;
-}
-
 std::string getKernelHash(const json &kernelProp) {
     auto hashStr = kernelProp.get<std::string>("hash");
     if(hashStr.empty()) {

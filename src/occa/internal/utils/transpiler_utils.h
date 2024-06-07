@@ -13,7 +13,6 @@
 namespace occa {
 namespace transpiler {
 
-int getTranspilerVersion(const json &options);
 void makeMetadata(lang::sourceMetadata_t &sourceMetadata,
                   const std::string &jsonStr);
 
