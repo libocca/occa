@@ -68,15 +68,6 @@ $ cmake --install build --prefix install
 
 If dependencies are installed in a non-standard location, set the corresponding [environment variable](INSTALL.md#dependency-paths) to this path. 
 
-For building with C++ support/occa-transpiler: 
-```shell
-$ mkdir build
-$ cd build
-$ cmake -DCMAKE_BUILD_TYPE=Release -DOCCA_CLANG_BASED_TRANSPILER=ON ..
-$ cmake --build . --parallel <number-of-threads> 
-$ cmake --install . --prefix install
-```
-
 ## Use
 
 ### Environment
