@@ -2,9 +2,11 @@
 #include <occa/internal/utils/testing.hpp>
 
 void testReserve();
+void testVoid();
 
 int main(const int argc, const char **argv) {
   testReserve();
+  testVoid();
 
   return 0;
 }
@@ -164,4 +166,16 @@ void testReserve() {
 
   delete[] test;
   delete[] data;
+}
+
+void testVoid() {
+#define ASSERT_SAME_SIZE(a, b) \
+  ASSERT_EQ((size_t) (a), (size_t) (b))
+
+  occa::device device({{"mode", "Serial"}});
+  occa::memoryPool memory_pool = device.createMemoryPool();
+
+  const int size = 10;
+  occa::memory memory = memory_pool.reserve(10);
+  ASSERT_SAME_SIZE(memory.size(), size);
 }
