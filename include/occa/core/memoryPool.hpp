@@ -215,12 +215,6 @@ namespace occa {
     template <class T = void>
     occa::memory reserve(const dim_t entries);
 
-
-    // Need to declare this function template specialization
-    // in the header so it is available in other translation units.
-    template <>
-    occa::memory reserve<void>(const dim_t entries);
-
     /**
      * @startDoc{reserve[1]}
      *
@@ -257,6 +251,10 @@ namespace occa {
     void setAlignment(const udim_t alignment);
   };
 
+  // Need to declare this function template specialization
+  // in the header so it is available in other translation units.
+  template <>
+  occa::memory memoryPool::reserve<void>(const dim_t entries);
 }
 
 #include "memoryPool.tpp"
