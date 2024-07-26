@@ -215,6 +215,12 @@ namespace occa {
     template <class T = void>
     occa::memory reserve(const dim_t entries);
 
+
+    // Need to declare this function template specialization
+    // in the header so it is available in other translation units.
+    template <>
+    occa::memory reserve<void>(const dim_t entries);
+
     /**
      * @startDoc{reserve[1]}
      *
@@ -233,7 +239,7 @@ namespace occa {
      * @endDoc
      */
     occa::memory reserve(const dim_t entries,
-                         const dtype_t &dtype);\
+                         const dtype_t &dtype);
 
     /**
      * @startDoc{setAlignment}
