@@ -75,11 +75,19 @@ if (OCCA_CLANG_BASED_TRANSPILER)
 
     init_submodules(${PROJECT_SOURCE_DIR})
 
-    CPMAddPackage(
-        NAME occa-transpiler
-        SOURCE_DIR ${CMAKE_SOURCE_DIR}/deps/occa-transpiler
-        OPTIONS "TRANSPILER_TESTS OFF"
-    )
+    if (NOT OCCA_LOCAL_CLANG_PATH)
+        CPMAddPackage(
+            NAME occa-transpiler
+            SOURCE_DIR ${CMAKE_SOURCE_DIR}/deps/occa-transpiler
+            OPTIONS "TRANSPILER_TESTS OFF"
+        )
+    else()
+        CPMAddPackage(
+            NAME occa-transpiler
+            SOURCE_DIR ${CMAKE_SOURCE_DIR}/deps/occa-transpiler
+            OPTIONS "TRANSPILER_TESTS OFF" "OCCA_LOCAL_CLANG_PATH ${OCCA_LOCAL_CLANG_PATH}"
+        )
+    endif()
 endif()
 
 include(SetCompilerFlags)
@@ -254,7 +262,7 @@ if(OCCA_ENABLE_METAL AND APPLE)
   endif()
 endif()
 #=======================================
-  
+
 if(NOT OCCA_IS_TOP_LEVEL)
 # OCCA is being built as a subdirectory in another project
   set(OCCA_OPENMP_ENABLED ${OCCA_OPENMP_ENABLED} PARENT_SCOPE)

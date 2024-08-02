@@ -47,6 +47,8 @@ $ CC=clang CXX=clang++ OCCA_ENABLE_OPENMP="OFF" ./configure-cmake.sh
 | OCCA_ENABLE_TESTS | Build OCCA's test harness | `ON` |
 | OCCA_ENABLE_EXAMPLES | Build OCCA examples | `ON` |
 | OCCA_ENABLE_FORTRAN | Build the Fortran language bindings | `OFF`|
+| OCCA_CLANG_BASED_TRANSPILER | Build clang based transpiler that support C++ in OKL | `OFF`|
+| OCCA_LOCAL_CLANG_PATH | Set path to local clang dir for clang based transpiler | `STRING`|
 | FC | Fortran 90 compiler | `gfortran` |
 | FFLAGS | Fortran compiler flags | *empty* |
 
@@ -75,12 +77,12 @@ When cross compiling for a different platform, the targeted hardware doesn't nee
 #### Building with Clang transplier option
 
 
-Hard dependecy is clang-17. How to install it please refer to the original 
+Hard dependency is clang-17 exactly. So far clang based transpiler does not have compatibility layer to support differences of C++ API in clang tooling in newer versions. How to install it please refer to the original 
 [clang occa-transpiler](https://github.com/libocca/occa-transpiler/blob/main/README.md)
 
-The rest dependecies are represented as git submodules and are fetched automatically by cmake script.
+The rest dependencies are represented as git submodules and are fetched automatically by cmake script.
 Building the project with clang based transpiler now is supported only by *CMake* build system.
-All options must be provided directly. Here is the following example:
+All options must be provided directly. The following example shows how to build the new transpiler with system Clang:
 
 ```shell
 $ mkdir build
@@ -90,6 +92,14 @@ $ cmake --build . --parallel <number-of-threads>
 $ cmake --install . --prefix install
 ```
 
+For Clang that is built locally the install prefix should be specified:
+```shell
+$ mkdir build
+$ cd build
+$ cmake -DCMAKE_BUILD_TYPE=Release -DOCCA_CLANG_BASED_TRANSPILER=ON  -DOCCA_LOCAL_CLANG_PATH=/home/ikobein/rnd/projects/shell/okl-transpiler/clang-17-rel-instal..
+$ cmake --build . --parallel <number-of-threads> 
+$ cmake --install . --prefix install
+```
 ### Testing
 
 CTest is used for the OCCA test harness and can be run using the command
