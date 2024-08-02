@@ -37,6 +37,7 @@ option(OCCA_ENABLE_DPCPP "Build with SYCL/DPCPP if available" ON)
 option(OCCA_ENABLE_TESTS    "Build tests"               OFF)
 option(OCCA_ENABLE_EXAMPLES "Build simple examples"     OFF)
 option(OCCA_ENABLE_FORTRAN  "Enable Fortran interface"  OFF)
+option(OCCA_CLANG_BASED_TRANSPILER      "Build with occa-transpiler dependecy" OFF)
 
 if(OCCA_ENABLE_FORTRAN)
   enable_language(Fortran)
@@ -65,6 +66,28 @@ elseif(UNIX)
   set(OCCA_OS "OCCA_LINUX_OS")
 else()
   set(OCCA_OS "OCCA_WINDOWS_OS")
+endif()
+
+# INFO: order is important, deps should not apply compiler flags
+if (OCCA_CLANG_BASED_TRANSPILER)
+    include(cmake/CPM_0.38.6.cmake)
+    include(cmake/GitSubmodules.cmake)
+
+    init_submodules(${PROJECT_SOURCE_DIR})
+
+    if (NOT OCCA_LOCAL_CLANG_PATH)
+        CPMAddPackage(
+            NAME occa-transpiler
+            SOURCE_DIR ${CMAKE_SOURCE_DIR}/deps/occa-transpiler
+            OPTIONS "TRANSPILER_TESTS OFF"
+        )
+    else()
+        CPMAddPackage(
+            NAME occa-transpiler
+            SOURCE_DIR ${CMAKE_SOURCE_DIR}/deps/occa-transpiler
+            OPTIONS "TRANSPILER_TESTS OFF" "OCCA_LOCAL_CLANG_PATH ${OCCA_LOCAL_CLANG_PATH}"
+        )
+    endif()
 endif()
 
 include(SetCompilerFlags)
@@ -113,6 +136,14 @@ target_include_directories(libocca PRIVATE
   $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/src>)
 
 target_compile_definitions(libocca PRIVATE -DUSE_CMAKE)
+if (OCCA_CLANG_BASED_TRANSPILER)
+    target_link_libraries(libocca
+        PRIVATE
+            occa-transpiler
+    )
+    target_compile_definitions(libocca PRIVATE -DBUILD_WITH_CLANG_BASED_TRANSPILER)
+endif()
+
 #=======================================
 
 #---[ OpenMP ]--------------------------
@@ -231,7 +262,7 @@ if(OCCA_ENABLE_METAL AND APPLE)
   endif()
 endif()
 #=======================================
-  
+
 if(NOT OCCA_IS_TOP_LEVEL)
 # OCCA is being built as a subdirectory in another project
   set(OCCA_OPENMP_ENABLED ${OCCA_OPENMP_ENABLED} PARENT_SCOPE)

@@ -11,8 +11,66 @@
 #include <occa/internal/modes/serial/streamTag.hpp>
 #include <occa/internal/lang/modes/serial.hpp>
 
+#ifdef BUILD_WITH_CLANG_BASED_TRANSPILER
+#include <occa/internal/utils/transpiler_utils.h>
+#include <oklt/pipeline/normalizer_and_transpiler.h>
+#include <oklt/core/error.h>
+#include <oklt/util/io_helper.h>
+#endif
+
 namespace occa {
   namespace serial {
+
+#ifdef BUILD_WITH_CLANG_BASED_TRANSPILER
+  namespace v3 {
+  bool transpileFile(const std::string &filename,
+                     const std::string &outputFile,
+                     const occa::json &kernelProps,
+                     lang::sourceMetadata_t &metadata,
+                     const std::string &mode)
+  {
+      auto onFileNotExists = [](const std::string &file) {
+          std::string errorDescription = "Can't read file: ";
+          OCCA_FORCE_ERROR(errorDescription << file);
+      };
+
+      auto onWrongBackend = [=](const std::string &) {
+          std::string errorDescription = "Should translate to Serial backend";
+          OCCA_FORCE_ERROR(errorDescription +
+                               ", for OKL kernel [" << filename << "]");
+      };
+
+      bool isSilent = kernelProps.get("silent", false);
+      auto onFail = [=](const std::vector<oklt::Error> &errors) {
+          if (!isSilent) {
+              std::stringstream ss;
+              ss << "Unable to transform OKL kernel [" << filename << "]" << std::endl;
+              ss << "Transpilation errors occured: " << std::endl;
+              for(const auto &err: errors) {
+                  ss << err.desc << std::endl;
+              }
+              OCCA_FORCE_ERROR(ss.str());
+          }
+      };
+
+      auto onSuccess = [&](const oklt::UserOutput &output, bool hasLauncher) -> bool {
+          io::stageFile(
+              outputFile,
+              true,
+              [&](const std::string &tempFilename) -> bool {
+                  std::filesystem::path transpiledSource(tempFilename);
+                  auto ret = oklt::util::writeFileAsStr(tempFilename, output.kernel.source);
+                  return ret.has_value();
+              });
+          transpiler::makeMetadata(metadata, output.kernel.metadata);
+          return true;
+      };
+      transpiler::Transpiler transpiler(onSuccess, onFail, onFileNotExists, onWrongBackend);
+      return transpiler.run(filename, mode, kernelProps);
+  }
+  }
+#endif
+
     device::device(const occa::json &properties_) :
       occa::modeDevice_t(properties_) {
       // TODO: Maybe theres something more descriptive we can populate here
@@ -70,6 +128,7 @@ namespace occa {
 
       return (srEndTag->time - srStartTag->time);
     }
+
     //==================================
 
     //---[ Kernel ]---------------------
@@ -286,13 +345,41 @@ namespace occa {
 
         if (compilingOkl) {
           const std::string outputFile = hashDir + kc::cachedSourceFilename(filename);
-          bool valid = parseFile(sourceFilename,
+
+          int transpilerVersion = kernelProps.get("transpiler-version", 2);
+#ifdef BUILD_WITH_CLANG_BASED_TRANSPILER
+          bool valid = false;
+          if(transpilerVersion > 2) {
+              valid = v3::transpileFile(sourceFilename,
+                                        outputFile,
+                                        kernelProps,
+                                        metadata,
+                                        mode);
+          } else {
+              valid = parseFile(sourceFilename,
                                  outputFile,
                                  kernelProps,
                                  metadata);
-          if (!valid) {
-            return NULL;
+
           }
+
+          if (!valid) {
+            return nullptr;
+          }
+#else
+          if(transpilerVersion > 2) {
+              OCCA_FORCE_ERROR("OCCA compiler is built without BUILD_WITH_CLANG_BASED_TRANSPILER support");
+              return nullptr;
+          }
+
+          if(!parseFile(sourceFilename,
+                        outputFile,
+                        kernelProps,
+                         metadata))
+          {
+            return nullptr;
+          }
+#endif
           sourceFilename = outputFile;
 
           writeKernelBuildFile(hashDir + kc::buildFile,

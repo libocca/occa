@@ -6,8 +6,66 @@
 #include <occa/internal/modes/openmp/device.hpp>
 #include <occa/internal/modes/openmp/utils.hpp>
 
+#ifdef BUILD_WITH_CLANG_BASED_TRANSPILER
+#include <occa/internal/utils/transpiler_utils.h>
+#include <oklt/pipeline/normalizer_and_transpiler.h>
+#include <oklt/core/error.h>
+#include <oklt/util/io_helper.h>
+#endif
+
 namespace occa {
   namespace openmp {
+
+#ifdef BUILD_WITH_CLANG_BASED_TRANSPILER
+  namespace v3 {
+      bool transpileFile(const std::string &filename,
+                         const std::string &outputFile,
+                         const occa::json &kernelProps,
+                         lang::sourceMetadata_t &metadata,
+                         const std::string &mode)
+      {
+          auto onFileNotExists = [](const std::string &file) {
+              std::string errorDescription = "Can't read file: ";
+              OCCA_FORCE_ERROR(errorDescription << file);
+          };
+
+          auto onWrongBackend = [&](const std::string &) {
+              std::string errorDescription = "Should translate to OpenMP backend";
+              OCCA_FORCE_ERROR(errorDescription +
+                                   ", unable to transform OKL kernel [" << filename << "]");
+          };
+
+          bool isSilent = kernelProps.get("silent", false);
+          auto onFail = [&](const std::vector<oklt::Error> &errors) {
+              if (!isSilent) {
+                  std::stringstream ss;
+                  ss << "Unable to transform OKL kernel [" << filename << "]" << std::endl;
+                  ss << "Transpilation errors occured: " << std::endl;
+                  for(const auto &err: errors) {
+                      ss << err.desc << std::endl;
+                  }
+                  OCCA_FORCE_ERROR(ss.str());
+              }
+          };
+
+          auto onSuccess = [&](const oklt::UserOutput &output, bool hasLauncher) -> bool {
+              io::stageFile(
+                  outputFile,
+                  true,
+                  [&](const std::string &tempFilename) -> bool {
+                      std::filesystem::path transpiledSource(tempFilename);
+                      auto ret = oklt::util::writeFileAsStr(tempFilename, output.kernel.source);
+                      return ret.has_value();
+                  });
+              transpiler::makeMetadata(metadata, output.kernel.metadata);
+              return true;
+          };
+          transpiler::Transpiler transpiler(onSuccess, onFail, onFileNotExists, onWrongBackend);
+          return transpiler.run(filename, mode, kernelProps);
+      }
+  }
+#endif
+
     device::device(const occa::json &properties_) :
       serial::device(properties_) {}
 
@@ -29,6 +87,14 @@ namespace occa {
                            const std::string &outputFile,
                            const occa::json &kernelProps,
                            lang::sourceMetadata_t &metadata) {
+
+#ifdef BUILD_WITH_CLANG_BASED_TRANSPILER
+      int transpilerVersion = kernelProps.get("transpiler-version", 2);
+      if(transpilerVersion > 2) {
+          return v3::transpileFile(filename, outputFile, kernelProps, metadata, mode);
+      }
+#endif
+
       lang::okl::openmpParser parser(kernelProps);
       parser.parseFile(filename);
 

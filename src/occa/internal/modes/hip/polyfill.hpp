@@ -34,7 +34,8 @@ namespace occa {
 
   class hipDeviceProp_t {
    public:
-    char *name;
+    //INFO: original HIP has exact this definition of name field
+    char name[256];
     size_t totalGlobalMem;
     int maxThreadsPerBlock;
     char gcnArchName[256];
@@ -42,7 +43,7 @@ namespace occa {
     int minor;
 
     inline hipDeviceProp_t() :
-        name(NULL),
+        name{0},
         totalGlobalMem(0),
         maxThreadsPerBlock(-1),
         major(-1),

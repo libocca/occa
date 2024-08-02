@@ -16,6 +16,7 @@
  - SYCL 2020 or later
  - OpenCL 2.0 or later
  - OpenMP 4.0 or later
+ - Support Clang based transpiler
 
 ## Linux
 
@@ -46,10 +47,13 @@ $ CC=clang CXX=clang++ OCCA_ENABLE_OPENMP="OFF" ./configure-cmake.sh
 | OCCA_ENABLE_TESTS | Build OCCA's test harness | `ON` |
 | OCCA_ENABLE_EXAMPLES | Build OCCA examples | `ON` |
 | OCCA_ENABLE_FORTRAN | Build the Fortran language bindings | `OFF`|
+| OCCA_CLANG_BASED_TRANSPILER | Build clang based transpiler that support C++ in OKL | `OFF`|
+| OCCA_LOCAL_CLANG_PATH | Set path to local clang dir for clang based transpiler | `STRING`|
 | FC | Fortran 90 compiler | `gfortran` |
 | FFLAGS | Fortran compiler flags | *empty* |
 
 #### Dependency Paths
+
 
 The following environment variables can be used to specify the path to third-party dependencies needed by different OCCA backends. The value assigned should be an absolute path to the parent directory, which typically contains subdirectories `bin`, `include`, and `lib`.
 
@@ -67,8 +71,35 @@ After CMake configuration is complete, OCCA can be built with the command
 $ cmake --build build --parallel <number-of-threads>
 ```
 
-When cross compiling for a different platform, the targeted hardware doesn't need to be available; however all dependencies&mdash;e.g., headers, libraries&mdash;must be present. Commonly this is the case for large HPC systems, where code is compiled on login nodes and run on compute nodes.  
+When cross compiling for a different platform, the targeted hardware doesn't need to be available; however all dependencies&mdash;e.g., headers, libraries&mdash;must be present. Commonly this is the case for large HPC systems, where code is compiled on login nodes and run on compute nodes.
 
+
+#### Building with Clang transplier option
+
+
+Hard dependency is clang-17 exactly. So far clang based transpiler does not have compatibility layer to support differences of C++ API in clang tooling in newer versions. How to install it please refer to the original 
+[clang occa-transpiler](https://github.com/libocca/occa-transpiler/blob/main/README.md)
+
+The rest dependencies are represented as git submodules and are fetched automatically by cmake script.
+Building the project with clang based transpiler now is supported only by *CMake* build system.
+All options must be provided directly. The following example shows how to build the new transpiler with system Clang:
+
+```shell
+$ mkdir build
+$ cd build
+$ cmake -DCMAKE_BUILD_TYPE=Release -DOCCA_CLANG_BASED_TRANSPILER=ON ..
+$ cmake --build . --parallel <number-of-threads> 
+$ cmake --install . --prefix install
+```
+
+For Clang that is built locally the install prefix should be specified:
+```shell
+$ mkdir build
+$ cd build
+$ cmake -DCMAKE_BUILD_TYPE=Release -DOCCA_CLANG_BASED_TRANSPILER=ON  -DOCCA_LOCAL_CLANG_PATH=/home/ikobein/rnd/projects/shell/okl-transpiler/clang-17-rel-instal..
+$ cmake --build . --parallel <number-of-threads> 
+$ cmake --install . --prefix install
+```
 ### Testing
 
 CTest is used for the OCCA test harness and can be run using the command
