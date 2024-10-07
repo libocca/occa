@@ -37,6 +37,7 @@ option(OCCA_ENABLE_DPCPP "Build with SYCL/DPCPP if available" ON)
 option(OCCA_ENABLE_TESTS    "Build tests"               OFF)
 option(OCCA_ENABLE_EXAMPLES "Build simple examples"     OFF)
 option(OCCA_ENABLE_FORTRAN  "Enable Fortran interface"  OFF)
+option(NO_RUNTIME_EXCEPTION "Hide warnings and errors in runtime"  OFF)
 
 if(OCCA_ENABLE_FORTRAN)
   enable_language(Fortran)
@@ -282,6 +283,9 @@ set(OCCA_SRC
   ${OCCA_SRC_metal})
 
 target_sources(libocca PRIVATE ${OCCA_SRC})
+if (NO_RUNTIME_EXCEPTION)
+  target_compile_definitions(libocca PRIVATE NO_RUNTIME_EXCEPTION)
+endif()
 
 install(TARGETS libocca EXPORT occaExport DESTINATION lib)
 install(DIRECTORY include/ DESTINATION include)

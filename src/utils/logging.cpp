@@ -22,7 +22,9 @@ namespace occa {
     if (exitInFailure) {
       throw exp;
     }
+#ifndef NO_RUNTIME_EXCEPTION
     io::stderr << exp;
+#endif  // NO_RUNTIME_EXCEPTION
   }
 
   void warn(const std::string &filename,

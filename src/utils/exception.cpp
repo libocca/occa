@@ -26,6 +26,7 @@ namespace occa {
   std::string exception::toString(const int stackTraceStart) const {
     std::stringstream ss;
 
+  #ifndef NO_RUNTIME_EXCEPTION
     // Pad message lines
     strVector lines = split(message, '\n');
     const int lineCount = (int) lines.size();
@@ -47,6 +48,7 @@ namespace occa {
        << "    Stack\n"
        << sys::stacktrace(stackTraceStart, "      ")
        << std::string(80, '=') << '\n';
+#endif  // NO_RUNTIME_EXCEPTION
 
     return ss.str();
   }
