@@ -74,6 +74,7 @@ When cross compiling for a different platform, the targeted hardware doesn't nee
 
 #### Building with Clang transpiler
 
+occa-transpiler repository can be found in [libocca/occa-transpiler](https://github.com/libocca/occa-transpiler/).
 Please refer [occa-transpiler README](https://github.com/libocca/occa-transpiler/blob/main/README.md) for instructions on how to
 build and install the occa-transpiler.
 Then you can use the following commands to install OCCA with occa-transpiler enabled.
