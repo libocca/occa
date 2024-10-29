@@ -8,9 +8,9 @@
 #FFLAGS=
 
 # Default build parameters
-: ${BUILD_DIR:=`pwd`/build}
-: ${INSTALL_DIR:=`pwd`/install}
-: ${BUILD_TYPE:="RelWithDebInfo"}
+: ${OCCA_BUILD_DIR:=`pwd`/build}
+: ${OCCA_INSTALL_DIR:=`pwd`/install}
+: ${OCCA_BUILD_TYPE:="RelWithDebInfo"}
 
 : ${CC:="gcc"}
 : ${CXX:="g++"}
@@ -26,9 +26,9 @@
 : ${OCCA_ENABLE_TESTS="ON"}
 : ${OCCA_ENABLE_EXAMPLES="ON"}
 
-cmake -S . -B ${BUILD_DIR} \
-  -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-  -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
+cmake -S . -B ${OCCA_BUILD_DIR} \
+  -DCMAKE_BUILD_TYPE=${OCCA_BUILD_TYPE} \
+  -DCMAKE_INSTALL_PREFIX=${OCCA_INSTALL_DIR} \
   -DCMAKE_C_COMPILER=${CC} \
   -DCMAKE_CXX_COMPILER=${CXX} \
   -DCMAKE_Fortran_COMPILER=${FC} \
