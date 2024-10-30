@@ -120,6 +120,8 @@ namespace occa {
     };
     //==================================
 
+    class command;
+
     //---[ Parser ]---------------------
     class parser : public printable {
     public:
@@ -157,6 +159,7 @@ namespace occa {
 
       occa::json parseArgs(const int argc, const char **argv);
       occa::json parseArgs(const strVector &args_,
+                           const std::vector<command> &commands = {},
                            const bool supressErrors = false);
 
       bool hasCustomHelpOption();

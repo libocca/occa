@@ -405,6 +405,7 @@ namespace occa {
     }
 
     occa::json parser::parseArgs(const strVector &args_,
+                                 const std::vector<command> &commands,
                                  const bool supressErrors) {
       strVector args = splitShortOptionArgs(args_);
       const int argc = (int) args.size();
@@ -445,7 +446,12 @@ namespace occa {
 
         // No option
         if (!opt) {
-          checkOptions = (arg == "==");
+          for (auto cmd : commands) {
+            if (arg == cmd.name) {
+              checkOptions = 0;
+              break;
+            }
+          }
           jArguments += arg;
           continue;
         }
@@ -779,7 +785,7 @@ namespace occa {
 
       const bool hasCommands = commands.size();
 
-      json parsedArgs = parseArgs(shellArgs, supressErrors);
+      json parsedArgs = parseArgs(shellArgs, commands, supressErrors);
       lastCommandArgs = parsedArgs;
 
       json &jArguments = parsedArgs["arguments"];
