@@ -6,6 +6,7 @@
 namespace occa {
   namespace bin {
     cli::command buildOccaCommand();
+    bool runTranslate(const json &args);
   }
 }
 

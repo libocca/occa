@@ -3,6 +3,8 @@
 #include <occa/defines.hpp>
 #include <occa/internal/utils/cli.hpp>
 #include <occa/internal/utils/testing.hpp>
+#include <occa/internal/bin/occa.hpp>
+#include <occa/internal/modes.hpp>
 
 void testPretty();
 void testOption();
@@ -231,4 +233,33 @@ void testParser() {
 }
 
 void testCommand() {
+  occa::cli::command translateCommand;
+  translateCommand
+      .withName("translate")
+      .withCallback(occa::bin::runTranslate)
+      .withDescription("Translate kernels")
+      .addOption(occa::cli::option('m', "mode",
+                             "Output mode (Default: Serial)")
+                 .withArg()
+                 .expandsFunction([&](const occa::json &args) {
+                   occa::strVector suggestions;
+                     for (auto &it : occa::getModeMap()) {
+                       suggestions.push_back(it.second->name());
+                     }
+                     return suggestions;
+                   }))
+      .addOption(occa::cli::option('v', "verbose",
+                             "Verbose output"))
+      .addArgument(occa::cli::argument("FILE",
+                                 "An .okl file")
+                   .isRequired()
+                   .expandsFiles());
+
+  const auto &options =  translateCommand.options;
+  ASSERT_EQ(options.size(), (unsigned long)2);
+
+  const int argc = 4;
+  const char *argv[] = {"translate", "addVectors.okl", "-m", "cuda"};
+  const auto json = translateCommand.parseArgs(argc, (const char **)&argv);
+  ASSERT_EQ(json["options"]["mode"], "cuda");
 }
