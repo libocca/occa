@@ -70,24 +70,7 @@ endif()
 
 # INFO: order is important, deps should not apply compiler flags
 if (OCCA_CLANG_BASED_TRANSPILER)
-    include(cmake/CPM_0.38.6.cmake)
-    include(cmake/GitSubmodules.cmake)
-
-    init_submodules(${PROJECT_SOURCE_DIR})
-
-    if (NOT OCCA_LOCAL_CLANG_PATH)
-        CPMAddPackage(
-            NAME occa-transpiler
-            SOURCE_DIR ${CMAKE_SOURCE_DIR}/deps/occa-transpiler
-            OPTIONS "TRANSPILER_TESTS OFF"
-        )
-    else()
-        CPMAddPackage(
-            NAME occa-transpiler
-            SOURCE_DIR ${CMAKE_SOURCE_DIR}/deps/occa-transpiler
-            OPTIONS "TRANSPILER_TESTS OFF" "OCCA_LOCAL_CLANG_PATH ${OCCA_LOCAL_CLANG_PATH}"
-        )
-    endif()
+  find_package(oklt REQUIRED)
 endif()
 
 include(SetCompilerFlags)
@@ -137,11 +120,8 @@ target_include_directories(libocca PRIVATE
 
 target_compile_definitions(libocca PRIVATE -DUSE_CMAKE)
 if (OCCA_CLANG_BASED_TRANSPILER)
-    target_link_libraries(libocca
-        PRIVATE
-            occa-transpiler
-    )
-    target_compile_definitions(libocca PRIVATE -DBUILD_WITH_CLANG_BASED_TRANSPILER)
+  target_link_libraries(libocca PRIVATE occa::occa-transpiler)
+  target_compile_definitions(libocca PRIVATE -DBUILD_WITH_CLANG_BASED_TRANSPILER)
 endif()
 
 #=======================================
