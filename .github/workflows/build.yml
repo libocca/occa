@@ -27,7 +27,7 @@ jobs:
             OCCA_COVERAGE: 1
             OCCA_FORTRAN_ENABLED: 1
 
-          - name: "[Ubuntu] CMake"
+          - name: "[Ubuntu] CMake + gcc"
             os: ubuntu-latest
             CC: gcc
             CXX: g++
@@ -36,12 +36,12 @@ jobs:
             OCCA_FORTRAN_ENABLED: 1
             useCMake: true
 
-          - name: "[Ubuntu] clang"
+          - name: "[Ubuntu] CMake + clang"
             os: ubuntu-latest
             CC: clang
             CXX: clang++
             CXXFLAGS: -Wno-uninitialized
-            OCCA_COVERAGE: 0
+            useCMake: true
 
           - name: "[Ubuntu] CMake + Intel/LLVM"
             os: ubuntu-latest
