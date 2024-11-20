@@ -121,6 +121,13 @@ $ occa info
 ========+======================+=================================
 ```
 
+## Debug
+
+### GitHub CI failures
+
+We use [tmate action](https://github.com/mxschmitt/action-tmate) for debugging GitHub CI workflows with a [manually triggered debug](https://github.com/mxschmitt/action-tmate?tab=readme-ov-file#manually-triggered-debug) event.
+See [GitHub docs](https://docs.github.com/en/actions/managing-workflow-runs-and-deployments/managing-workflow-runs/manually-running-a-workflow) on how to initiate a manual debug run (make sure to check the `Run the build with tmate debugging enabled` box).
+
 ## Community
 
 ### Support

@@ -2,15 +2,24 @@ name: Build
 
 on: 
   push:
+    branches: [development, main]
     paths-ignore:
       - 'README.md'
       - 'INSTALL.md'
       - 'docs/**'
   pull_request:
+    branches: [development, main]
     paths-ignore:
       - 'README.md'
       - 'INSTALL.md'
       - 'docs/**'
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled'
+        required: false
+        default: true
 
 jobs:
   run:
@@ -70,6 +79,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3.13
+      if: ${{ inputs.debug_enabled }}
 
     - name: add oneAPI to apt
       if: ${{ matrix.useoneAPI }}
@@ -172,3 +185,7 @@ jobs:
     - name: Upload code coverage
       if: ${{ matrix.OCCA_COVERAGE }}
       run: bash <(curl --no-buffer -s https://codecov.io/bash) -x "${GCOV}"
+
+    - name: Block to allow inspecting failures
+      run: sleep 1800
+      if: ${{ failure() && inputs.debug_enabled }}
