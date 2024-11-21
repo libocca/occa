@@ -9,7 +9,7 @@ unset(missingDpcppComponents)
 find_path(
   SYCL_INCLUDE_DIRS
   NAMES
-    sycl.hpp
+    sycl/sycl.hpp
   PATHS
     ENV SYCL_ROOT
     /opt/intel/oneapi/compiler/latest/linux
@@ -56,7 +56,7 @@ if(DPCPP_FOUND AND NOT TARGET OCCA::depends::DPCPP)
   separate_arguments(SYCL_FLAGS UNIX_COMMAND "${SYCL_FLAGS}")
   target_compile_options(OCCA::depends::DPCPP INTERFACE ${SYCL_FLAGS})
   set_target_properties(OCCA::depends::DPCPP PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${SYCL_INCLUDE_DIRS}"
+    INTERFACE_INCLUDE_DIRECTORIES "${SYCL_INCLUDE_DIRS};${SYCL_INCLUDE_DIRS}/sycl"
     INTERFACE_LINK_LIBRARIES "${SYCL_LIBRARIES}"
   )
 endif()
