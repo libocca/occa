@@ -107,14 +107,14 @@ jobs:
 
     - name: Compiler info
       if: ${{ !matrix.useCMake }}
-      run: make PREFIX=${{ env.OCCA_INSTALL_DIR }} -j 16 info
+      run: make PREFIX=${OCCA_INSTALL_DIR} -j 16 info
 
     - name: CMake configure
       if: ${{ matrix.useCMake && !matrix.useoneAPI}}
       run: |
         cmake -S . -B build \
         -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
-        -DCMAKE_INSTALL_PREFIX=${{ env.OCCA_INSTALL_DIR }} \
+        -DCMAKE_INSTALL_PREFIX=${OCCA_INSTALL_DIR} \
         -DCMAKE_C_COMPILER=${CC} \
         -DCMAKE_CXX_COMPILER=${CXX} \
         -DCMAKE_Fortran_COMPILER=${FC} \
@@ -131,7 +131,7 @@ jobs:
         source /opt/intel/oneapi/setvars.sh
         cmake -S . -B build \
         -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
-        -DCMAKE_INSTALL_PREFIX=${{ env.OCCA_INSTALL_DIR }} \
+        -DCMAKE_INSTALL_PREFIX=${OCCA_INSTALL_DIR} \
         -DCMAKE_C_COMPILER=${CC} \
         -DCMAKE_CXX_COMPILER=${CXX} \
         -DCMAKE_Fortran_COMPILER=${FC} \
