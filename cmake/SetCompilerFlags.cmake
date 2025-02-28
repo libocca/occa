@@ -87,3 +87,8 @@ if (OCCA_ENABLE_FORTRAN)
   set_optional_fortran_flag(SUPPORTED_WNO_INTEGER_DIVISION_Fortran_FLAGS "-Wno-integer-division")
 
 endif()
+
+check_cxx_compiler_flag("-fno-strict-aliasing" COMPILER_SUPPORTS_NO_STRICT_ALIASING)
+if(COMPILER_SUPPORTS_NO_STRICT_ALIASING)
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-strict-aliasing")
+endif()
