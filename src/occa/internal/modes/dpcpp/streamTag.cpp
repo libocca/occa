@@ -26,7 +26,7 @@ namespace occa
 
     double streamTag::submitTime()
     {
-      double submit_time;
+      double submit_time = 0;
       OCCA_DPCPP_ERROR(
           "streamTag: startTime",
           submit_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_submit>())
@@ -35,7 +35,7 @@ namespace occa
 
     double streamTag::startTime()
     {
-      double start_time;
+      double start_time = 0;
       OCCA_DPCPP_ERROR(
           "streamTag: startTime",
           start_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_start>())
@@ -44,7 +44,7 @@ namespace occa
 
     double streamTag::endTime()
     {
-     double end_time;
+     double end_time = 0;
       OCCA_DPCPP_ERROR(
           "streamTag: endTime",
           end_time = dpcppEvent.template get_profiling_info<sycl::info::event_profiling::command_end>())
