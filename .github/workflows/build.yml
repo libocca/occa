@@ -62,7 +62,7 @@ jobs:
             useoneAPI: true
 
           - name: "[MacOS] clang"
-            os: macos-12
+            os: macos-latest
             CC: clang
             CXX: clang++
             CXXFLAGS: -Wno-uninitialized
