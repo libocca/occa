@@ -61,13 +61,6 @@ jobs:
             useCMake: true
             useoneAPI: true
 
-          - name: "[MacOS] clang"
-            os: macos-latest
-            CC: clang
-            CXX: clang++
-            CXXFLAGS: -Wno-uninitialized
-            OCCA_OPENCL_ENABLED: 0
-
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.name }}
 
