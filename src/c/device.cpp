@@ -39,8 +39,7 @@ const char* occaDeviceMode(occaDevice device) {
 }
 
 occaJson occaDeviceGetProperties(occaDevice device) {
-  const occa::json &props = occa::c::device(device).properties();
-  return occa::c::newOccaType(props, false);
+  return occa::c::newOccaType(occa::c::device(device).properties(), false);
 }
 
 const char* occaDeviceArch(occaDevice device) {
@@ -48,18 +47,15 @@ const char* occaDeviceArch(occaDevice device) {
 }
 
 occaJson occaDeviceGetKernelProperties(occaDevice device) {
-  const occa::json &props = occa::c::device(device).kernelProperties();
-  return occa::c::newOccaType(props, false);
+  return occa::c::newOccaType(occa::c::device(device).kernelProperties(), false);
 }
 
 occaJson occaDeviceGetMemoryProperties(occaDevice device) {
-  const occa::json &props = occa::c::device(device).memoryProperties();
-  return occa::c::newOccaType(props, false);
+  return occa::c::newOccaType(occa::c::device(device).memoryProperties(), false);
 }
 
 occaJson occaDeviceGetStreamProperties(occaDevice device) {
-  const occa::json &props = occa::c::device(device).streamProperties();
-  return occa::c::newOccaType(props, false);
+  return occa::c::newOccaType(occa::c::device(device).streamProperties(), false);
 }
 
 occaUDim_t occaDeviceMemorySize(occaDevice device) {
