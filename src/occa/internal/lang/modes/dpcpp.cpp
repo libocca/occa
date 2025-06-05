@@ -420,7 +420,7 @@ namespace occa
       {
         expressionStatement &atomicSmnt = dynamic_cast<expressionStatement &>(exprSmnt.clone());
 
-        const opType_t &opType = expr(atomicSmnt.expr).opType();
+        const opType_t opType = expr(atomicSmnt.expr).opType();
 
         exprNode *variable_node{nullptr};
         if (opType & operatorType::unary)

@@ -105,7 +105,7 @@ namespace occa {
       }
 
       bool atomic::isBasicExpression(expressionStatement &exprSmnt) {
-        const opType_t &opType = expr(exprSmnt.expr).opType();
+        const opType_t opType = expr(exprSmnt.expr).opType();
         return opType & (
           operatorType::addEq
           | operatorType::subEq

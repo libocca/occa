@@ -177,7 +177,7 @@ namespace occa {
 
       bool cudaParser::transformAtomicBasicExpressionStatement(expressionStatement &exprSmnt) {
         // TODO: Create actual statements + expressions, don't just shove strings in
-        const opType_t &opType = expr(exprSmnt.expr).opType();
+        const opType_t opType = expr(exprSmnt.expr).opType();
 
         printer pout;
         if (opType & operatorType::unary) {
