@@ -16,7 +16,7 @@ namespace occa {
       }
 
       device_t getDevice(const int deviceId) {
-        NSArray <id<MTLDevice>> *devices = MTLCopyAllDevices();
+        NSArray<id<MTLDevice>> *devices = MTLCopyAllDevices();
 
         id<MTLDevice> device = devices[deviceId];
         void *deviceObj = (__bridge void*) device;
