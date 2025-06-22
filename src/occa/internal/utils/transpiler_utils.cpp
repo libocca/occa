@@ -123,15 +123,15 @@ bool Transpiler::run(const std::string &filename,
     auto includes = transpiler::buildIncludes(kernelProps);
     auto hash = transpiler::getKernelHash(kernelProps);
 
-    oklt::UserInput input {
-        .backend = backend->second,
-        .source = std::move(sourceCode.value()),
-        .headers = {},
-        .sourcePath = expandedFile,
-        .includeDirectories = std::move(includes),
-        .defines = std::move(defines),
-        .hash = std::move(hash)
-    };
+    oklt::UserInput input;
+    input.backend = backend->second;
+    input.source = std::move(sourceCode.value());
+    input.headers = {};
+    input.sourcePath = expandedFile;
+    input.includeDirectories = std::move(includes);
+    input.defines = std::move(defines);
+    input.hash = std::move(hash);
+
     auto result = normalizeAndTranspile(std::move(input));
     if(!result) {
         _fail(result.error());
