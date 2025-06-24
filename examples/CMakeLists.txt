@@ -34,6 +34,12 @@ macro(compile_example target file mode)
   add_executable(${target} ${file})
   target_link_libraries(${target} libocca)
   target_include_directories(${target} PRIVATE $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/src>)
+
+  file(RELATIVE_PATH install_dir ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_LIST_DIR})
+  file(GLOB_RECURSE OKLS "${CMAKE_CURRENT_LIST_DIR}/*.okl")
+  install(TARGETS ${target} DESTINATION ${install_dir})
+  install(FILES ${OKLS} DESTINATION ${install_dir})
+
   if (NOT DEFINED OCCA_ENABLE_TESTS)
     return()
   endif()
