@@ -263,15 +263,7 @@ install(
   FILES ${OCCA_BUILD_DIR}/include/occa/defines/compiledDefines.hpp
   DESTINATION include/occa/defines)
 
-# Find source files
-file(
-  GLOB_RECURSE OCCA_SRC_cpp
-  RELATIVE ${OCCA_SOURCE_DIR} "src/*.cpp")
-
 if(OCCA_ENABLE_FORTRAN)
-  file(GLOB_RECURSE OCCA_SRC_f90
-    RELATIVE ${OCCA_SOURCE_DIR} "src/*.f90")
-
   install(CODE
     "file(GLOB public-modules ${CMAKE_Fortran_MODULE_DIRECTORY}/*.mod)\n
      file(INSTALL DESTINATION
@@ -283,31 +275,18 @@ if(OCCA_ENABLE_FORTRAN)
     LINKER_LANGUAGE C)
 endif()
 
-if(OCCA_METAL_ENABLED)
-  file(GLOB_RECURSE OCCA_SRC_metal
-    RELATIVE ${OCCA_SOURCE_DIR} "src/*.mm")
+add_subdirectory(src)
+add_subdirectory(bin)
+if(OCCA_ENABLE_EXAMPLES)
+  add_subdirectory(examples)
 endif()
-
-set(OCCA_SRC
-  ${OCCA_SRC_cpp}
-  ${OCCA_SRC_f90}
-  ${OCCA_SRC_metal})
-
-target_sources(libocca PRIVATE ${OCCA_SRC})
-
-install(TARGETS libocca EXPORT occaExport DESTINATION lib)
-install(DIRECTORY include/ DESTINATION include)
-
 if(OCCA_ENABLE_TESTS)
   include(CTest)
   add_subdirectory(tests)
 endif()
 
-if(OCCA_ENABLE_EXAMPLES)
-  add_subdirectory(examples)
-endif()
-
-add_subdirectory(bin)
+install(TARGETS libocca EXPORT occaExport DESTINATION lib)
+install(DIRECTORY include/ DESTINATION include)
 
 # Create a package config and associated files.
 include(ExportAndPackageConfig)

@@ -1,0 +1,7 @@
+add_subdirectory(cuda)
+add_subdirectory(dpcpp)
+add_subdirectory(hip)
+add_subdirectory(metal)
+add_subdirectory(opencl)
+add_subdirectory(openmp)
+add_subdirectory(serial)
