@@ -220,10 +220,15 @@ namespace occa {
 
         std::string archString = kernelProps.get<std::string>("arch", arch);
 
+        // Override the arch if the users requests it
+        if (env::var("OCCA_HIP_OVERRIDE_COMPILE_ARCH").size()) {
+          archString = env::var("OCCA_HIP_OVERRIDE_COMPILE_ARCH");
+        }
+
         std::string archFlag;
         if (startsWith(archString, "sm_")) {
           archFlag = " -arch=" + archString;
-        } else if (startsWith(archString, "gfx")) {
+        } else if (startsWith(archString, "gfx") || startsWith(archString, "amd")) {
           archFlag = " --offload-arch=" + archString;
         } else {
           OCCA_FORCE_ERROR("Unknown HIP arch");
