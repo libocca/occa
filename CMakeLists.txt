@@ -92,10 +92,13 @@ endif()
 if(OCCA_ENABLE_FORTRAN)
   set(CMAKE_Fortran_MODULE_DIRECTORY ${OCCA_BUILD_DIR}/mod)
 endif()
+
+set(namespace "${PROJECT_NAME}::")
 #=======================================
 
 #---[ libocca.so ]----------------------
 add_library(libocca SHARED)
+add_library(${namespace}libocca ALIAS libocca)
 
 # Without this, CMake will create liblibocca.so
 set_target_properties(libocca PROPERTIES
