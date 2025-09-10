@@ -1,3 +1,14 @@
+cmake_minimum_required (VERSION 3.21 FATAL_ERROR)
+project(OCCAExamples
+  VERSION 2.0.0
+  DESCRIPTION  "OCCA Examples"
+  HOMEPAGE_URL "https://github.com/libocca/occa"
+  LANGUAGES C CXX)
+
+if (NOT TARGET OCCA::libocca)
+  find_package(OCCA REQUIRED)
+endif()
+
 macro(add_test_with_mode exe mode device)
   add_test(NAME ${exe}-${mode} COMMAND ./${exe} --verbose --device "${device}")
   set_property(TEST ${exe}-${mode} APPEND PROPERTY ENVIRONMENT OCCA_CACHE_DIR=${OCCA_BUILD_DIR}/occa)
@@ -32,7 +43,7 @@ endmacro()
 
 macro(compile_example target file mode)
   add_executable(${target} ${file})
-  target_link_libraries(${target} libocca)
+  target_link_libraries(${target} OCCA::libocca)
   target_include_directories(${target} PRIVATE $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/src>)
 
   file(RELATIVE_PATH install_dir ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_LIST_DIR})

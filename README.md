@@ -58,7 +58,7 @@ OCCA uses the [CMake] build system. Checkout the [installation guide](INSTALL.md
 
 For convenience, the shell script `configure-cmake.sh` has been provided to drive the CMake build. Compilers, flags, and other build parameters can be adjusted there. By default, this script uses `./build` and `./install` for the build and install directories.
 
-The following demonstrates a typical sequence of shell commands to build, test, and install occa:
+The following demonstrates a typical sequence of shell commands to build, test, and install OCCA:
 ```shell
 $ ./configure-cmake.sh
 $ cmake --build build --parallel <number-of-threads>
@@ -77,11 +77,18 @@ During installation, the [Env Modules](Env_Modules) file `<install-prefix>/modul
 ### Building an OCCA application
 
 For convenience, OCCA provides CMake package files which are configured during installation. These package files define an imported target, `OCCA::libocca`, and look for all required dependencies.
-
-For example, the CMakeLists.txt of downstream projects using OCCA would include
+For example, downstream projects using OCCA would either have
 ```cmake
 find_package(OCCA REQUIRED)
+```
+or
+```cmake
+add_subdirectory(3rd_party/occa)
+```
+in the project `CMakeLists.txt`.
 
+Then OCCA can be linked to other targets as follows:
+```cmake
 add_executable(downstream-app ...)
 target_link_libraries(downstream-app PRIVATE OCCA::libocca)
 

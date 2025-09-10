@@ -5,7 +5,6 @@
 
 # Install in subdirectory lib/cmake/PACKAGENAME, which is where cmake expects package config files
 set(PackageConfigInstallLocation lib/cmake/OCCA)
-set(ExportNamespace "OCCA::")
 
 # Set the exportPackageDependencies variable, for use in configuring occaConfig.cmake.in
 # Do this for all our dependencies. In theory, could skip some if they are
@@ -35,8 +34,8 @@ endif()
 # List of what targets are exported, for use in configuring occaConfig.cmake.in
 # Explicit list because unfortunately no easy way to retrieve it through cmake, even though they all are part of the EXPORT occaExport
 set(exportTargets "")
-string(APPEND exportTargets "# ${ExportNamespace}libocca Target to link to for using occa\n")
-string(APPEND exportTargets "# ${ExportNamespace}occa The occa executable, e.g. can be called to get information on supported backends\n")
+string(APPEND exportTargets "# ${namespace}libocca Target to link to for using occa\n")
+string(APPEND exportTargets "# ${namespace}occa The occa executable, e.g. can be called to get information on supported backends\n")
 
 include(CMakePackageConfigHelpers)
 # Create the PackageConfig file, based on the template
@@ -63,7 +62,7 @@ write_basic_package_version_file(
 # Will be used by the PackageConfig to generate the imported targets
 install(
   EXPORT occaExport
-  NAMESPACE ${ExportNamespace}
+  NAMESPACE ${namespace}
   FILE OCCATargets.cmake
   DESTINATION ${PackageConfigInstallLocation}
 )

@@ -1,3 +1,14 @@
+cmake_minimum_required (VERSION 3.21 FATAL_ERROR)
+project(OCCATests
+  VERSION 2.0.0
+  DESCRIPTION  "OCCA Tests"
+  HOMEPAGE_URL "https://github.com/libocca/occa"
+  LANGUAGES C CXX)
+
+if (NOT TARGET OCCA::libocca)
+  find_package(OCCA REQUIRED)
+endif()
+
 function(add_occa_test test_source)
   # Metadata
   get_filename_component(source_directory ${test_source} DIRECTORY)
@@ -17,7 +28,7 @@ function(add_occa_test test_source)
     RUNTIME_OUTPUT_DIRECTORY ${test_directory})
 
   # Build config
-  target_link_libraries(${cmake_test_target} libocca ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+  target_link_libraries(${cmake_test_target} OCCA::libocca ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
   target_include_directories(${cmake_test_target} PRIVATE
     $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/src>)
 
@@ -50,7 +61,7 @@ if (OCCA_ENABLE_FORTRAN)
     EXCLUDE REGEX "src/fortran/typedefs_helper.cpp")
 
   add_library(libtypedefs_helper SHARED "src/fortran/typedefs_helper.cpp")
-  target_link_libraries(libtypedefs_helper libocca)
+  target_link_libraries(libtypedefs_helper OCCA::libocca)
 else()
   list(FILTER occa_tests
     EXCLUDE REGEX "src/fortran")
