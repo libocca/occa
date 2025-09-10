@@ -144,6 +144,20 @@ jobs:
       run: |
         cmake --build build --target install --parallel 16
 
+    - name: CMake build examples as an independent project
+      if: ${{ matrix.useCMake && !matrix.useoneAPI}}
+      run: |
+        export OCCA_DIR=${OCCA_INSTALL_DIR}
+        cd examples
+        cmake -S . -B build
+
+    - name: CMake build tests as an independent project
+      if: ${{ matrix.useCMake && !matrix.useoneAPI}}
+      run: |
+        export OCCA_DIR=${OCCA_INSTALL_DIR}
+        cd tests
+        cmake -S . -B build
+
     - name: CMake build and install
       if: ${{ matrix.useCMake && matrix.useoneAPI}}
       env:
