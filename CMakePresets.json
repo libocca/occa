@@ -1,0 +1,163 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "description": "OCCA configure base",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/install",
+        "OCCA_ENABLE_OPENMP": "ON",
+        "OCCA_ENABLE_OPENCL": "ON",
+        "OCCA_ENABLE_DPCPP": "OFF",
+        "OCCA_ENABLE_CUDA": "ON",
+        "OCCA_ENABLE_HIP": "ON",
+        "OCCA_ENABLE_METAL": "OFF",
+        "OCCA_ENABLE_FORTRAN": "ON",
+        "OCCA_ENABLE_TESTS": "ON",
+        "OCCA_ENABLE_EXAMPLES": "ON",
+        "CMAKE_CXX_FLAGS": "-O3 -Wall -pedantic -Wshadow -Wsign-compare -Wuninitialized -Wtype-limits -Wignored-qualifiers -Wempty-body -Wextra -Wno-unused-parameter -Werror -Wno-strict-aliasing $env{CMAKE_CXX_FLAGS}"
+      }
+    },
+    {
+      "name": "system-default",
+      "description": "OCCA configure with system default compilers",
+      "inherits": "base",
+      "environment": {
+        "CMAKE_C_COMPILER": "$penv{CC}",
+        "CMAKE_CXX_COMPILER": "$penv{CXX}",
+        "CMAKE_Fortran_COMPILER": "$penv{FC}"
+      }
+    },
+    {
+      "name": "gnu-default",
+      "description": "OCCA configure with GNU compilers",
+      "inherits": "base",
+      "environment": {
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_Fortran_COMPILER": "gfortran",
+        "CMAKE_CXX_FLAGS": "-Wno-maybe-uninitialized -Wno-cpp"
+      }
+    },
+    {
+      "name": "clang-default",
+      "description": "OCCA configure with LLVM/Clang compilers",
+      "inherits": "system-default",
+      "cacheVariables": {
+        "OCCA_ENABLE_FORTRAN": "OFF"
+      },
+      "environment": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_CXX_FLAGS": "-Wno-uninitialized"
+      }
+    },
+    {
+      "name": "oneapi-default",
+      "description": "OCCA configure with oneAPI compilers",
+      "inherits": "base",
+      "cacheVariables": {
+        "OCCA_ENABLE_DPCPP": "ON"
+      },
+      "environment": {
+        "CMAKE_C_COMPILER": "icx",
+        "CMAKE_CXX_COMPILER": "icpx",
+        "CMAKE_Fortran_COMPILER": "ifx",
+        "CMAKE_CXX_FLAGS": "-Wno-uninitialized"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "system-default",
+      "description": "OCCA build with system default compilers",
+      "configurePreset": "system-default",
+      "targets": ["install"]
+    },
+    {
+      "name": "gnu-default",
+      "description": "OCCA build with GNU compilers",
+      "configurePreset": "gnu-default",
+      "targets": ["install"]
+    },
+    {
+      "name": "clang-default",
+      "description": "OCCA build with LLVM/Clang compilers",
+      "configurePreset": "clang-default",
+      "targets": ["install"]
+    },
+    {
+      "name": "oneapi-default",
+      "description": "OCCA build with oneAPI compilers",
+      "configurePreset": "oneapi-default",
+      "targets": ["install"]
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "system-default",
+      "displayName": "Configure and build with system default compilers",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "system-default"
+        },
+        {
+          "type": "build",
+          "name": "system-default"
+        }
+      ]
+    },
+    {
+      "name": "gnu-default",
+      "displayName": "Configure and build with GNU compilers",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "gnu-default"
+        },
+        {
+          "type": "build",
+          "name": "gnu-default"
+        }
+      ]
+    },
+    {
+      "name": "clang-default",
+      "displayName": "Configure and build with LLVM/Clang compilers",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "clang-default"
+        },
+        {
+          "type": "build",
+          "name": "clang-default"
+        }
+      ]
+    },
+    {
+      "name": "oneapi-default",
+      "displayName": "Configure and build with oneAPI compilers",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "oneapi-default"
+        },
+        {
+          "type": "build",
+          "name": "oneapi-default"
+        }
+      ]
+    }
+  ]
+}
