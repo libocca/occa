@@ -84,25 +84,26 @@
       "name": "system-default",
       "description": "OCCA build with system default compilers",
       "configurePreset": "system-default",
-      "targets": ["install"]
+      "targets": ["install"],
+      "jobs": 8
     },
     {
       "name": "gnu-default",
       "description": "OCCA build with GNU compilers",
-      "configurePreset": "gnu-default",
-      "targets": ["install"]
+      "inherits": "system-default",
+      "configurePreset": "gnu-default"
     },
     {
       "name": "clang-default",
       "description": "OCCA build with LLVM/Clang compilers",
-      "configurePreset": "clang-default",
-      "targets": ["install"]
+      "inherits": "system-default",
+      "configurePreset": "clang-default"
     },
     {
       "name": "oneapi-default",
       "description": "OCCA build with oneAPI compilers",
-      "configurePreset": "oneapi-default",
-      "targets": ["install"]
+      "inherits": "system-default",
+      "configurePreset": "oneapi-default"
     }
   ],
   "workflowPresets": [
