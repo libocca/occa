@@ -26,7 +26,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: "[Ubuntu] gcc"
+          - name: "[Ubuntu] Make + gcc"
             os: ubuntu-latest
             CC: gcc
             CXX: g++
@@ -83,7 +83,7 @@ jobs:
       if: ${{ !matrix.cmakeWorkflowPreset }}
       run: make PREFIX=${OCCA_INSTALL_DIR} -j 16 info
 
-    - name: CMake configure, build and install
+    - name: CMake configure, build, install and test
       if: ${{ matrix.cmakeWorkflowPreset }}
       run: |
         if [[ "${{ matrix.cmakeWorkflowPreset }}" == "oneapi-default" ]]; then
