@@ -106,10 +106,51 @@
       "configurePreset": "oneapi-default"
     }
   ],
+  "testPresets": [
+    {
+      "name": "system-default",
+      "displayName": "Run tests with system default compilers",
+      "configurePreset": "system-default",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "stopOnFailure": false
+      },
+      "filter": {
+        "exclude": {
+          "name": "examples_cpp_arrays-opencl|examples_cpp_for_loops-opencl|examples_cpp_generic_inline_kernel-opencl|examples_cpp_shared_memory-opencl|examples_cpp_nonblocking_streams-opencl|examples_cpp_for_loops-dpcpp|examples_cpp_arrays-dpcpp|examples_cpp_generic_inline_kernel-dpcpp|examples_cpp_nonblocking_streams-dpcpp"
+        }
+      }
+    },
+    {
+      "name": "clang-default",
+      "displayName": "Run tests with LLVM/Clang compilers",
+      "inherits": "system-default",
+      "configurePreset": "clang-default"
+    },
+    {
+      "name": "gnu-default",
+      "displayName": "Run tests with GNU compilers",
+      "inherits": "system-default",
+      "configurePreset": "gnu-default"
+    },
+    {
+      "name": "oneapi-default",
+      "displayName": "Run tests with oneAPI compilers",
+      "inherits": "system-default",
+      "configurePreset": "oneapi-default",
+      "filter": {
+        "exclude": {
+          "name": "opencl-*|dpcpp-*"
+        }
+      }
+    }
+  ],
   "workflowPresets": [
     {
       "name": "system-default",
-      "displayName": "Configure and build with system default compilers",
+      "displayName": "Configure, build and install with system default compilers",
       "steps": [
         {
           "type": "configure",
@@ -117,13 +158,17 @@
         },
         {
           "type": "build",
+          "name": "system-default"
+        },
+        {
+          "type": "test",
           "name": "system-default"
         }
       ]
     },
     {
       "name": "gnu-default",
-      "displayName": "Configure and build with GNU compilers",
+      "displayName": "Configure, build and install with GNU compilers",
       "steps": [
         {
           "type": "configure",
@@ -131,13 +176,17 @@
         },
         {
           "type": "build",
+          "name": "gnu-default"
+        },
+        {
+          "type": "test",
           "name": "gnu-default"
         }
       ]
     },
     {
       "name": "clang-default",
-      "displayName": "Configure and build with LLVM/Clang compilers",
+      "displayName": "Configure, build and install with LLVM/Clang compilers",
       "steps": [
         {
           "type": "configure",
@@ -146,12 +195,16 @@
         {
           "type": "build",
           "name": "clang-default"
+        },
+        {
+          "type": "test",
+          "name": "clang-default"
         }
       ]
     },
     {
       "name": "oneapi-default",
-      "displayName": "Configure and build with oneAPI compilers",
+      "displayName": "Configure, build and install with oneAPI compilers",
       "steps": [
         {
           "type": "configure",
@@ -159,6 +212,10 @@
         },
         {
           "type": "build",
+          "name": "oneapi-default"
+        },
+        {
+          "type": "test",
           "name": "oneapi-default"
         }
       ]
