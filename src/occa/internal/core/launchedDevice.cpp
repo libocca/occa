@@ -156,8 +156,9 @@ bool transpileFile(const std::string &filename,
                                                   const bool usingOkl,
                                                   const occa::json &kernelProps) {
     const std::string hashDir = io::hashDir(filename, kernelHash);
+    const std::string binaryHashDir = io::hashDir(filename, kernelHash, true);
     std::string sourceFilename = hashDir + kc::cachedSourceFilename(filename);
-    const std::string binaryFilename = hashDir + kc::binaryFile;
+    const std::string binaryFilename = binaryHashDir + kc::binaryFile;
 
     // Check if binary exists and is finished
     const bool foundBinary = io::isFile(binaryFilename);

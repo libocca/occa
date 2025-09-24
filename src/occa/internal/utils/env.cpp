@@ -32,7 +32,7 @@ namespace occa {
     std::string HOME, CWD;
     std::string PATH, LD_LIBRARY_PATH;
 
-    std::string OCCA_DIR, OCCA_INSTALL_DIR, OCCA_CACHE_DIR;
+    std::string OCCA_DIR, OCCA_INSTALL_DIR, OCCA_CACHE_DIR, OCCA_SOURCE_CACHE_DIR;
     size_t      OCCA_MEM_BYTE_ALIGN;
     strVector   OCCA_INCLUDE_PATH;
     strVector   OCCA_LIBRARY_PATH;
@@ -58,12 +58,13 @@ namespace occa {
       envInitializer_t::setupCachePath();
     }
 
-    envInitializer_t::envInitializer_t() :
-      isInitialized(false) {
-      if (isInitialized) {
-        return;
-      }
+    void setOccaSourceCacheDir(const std::string &path) {
+      OCCA_SOURCE_CACHE_DIR = path;
+      envInitializer_t::setupCachePath();
+    }
 
+
+    void envInitializer_t::init() {
       initSettings();
       initEnvironment();
       loadConfig();
@@ -71,6 +72,14 @@ namespace occa {
       setupCachePath();
 
       isInitialized = true;
+    }
+
+    envInitializer_t::envInitializer_t() :
+      isInitialized(false) {
+      if (isInitialized) {
+        return;
+      }
+      init();
     }
 
     void envInitializer_t::initSettings() {
@@ -94,8 +103,9 @@ namespace occa {
       PATH               = env::var("PATH");
       LD_LIBRARY_PATH    = env::var("LD_LIBRARY_PATH");
 
-      OCCA_CACHE_DIR     = env::var("OCCA_CACHE_DIR");
-      OCCA_COLOR_ENABLED = env::get<bool>("OCCA_COLOR_ENABLED", true);
+      OCCA_CACHE_DIR            = env::var("OCCA_CACHE_DIR");
+      OCCA_SOURCE_CACHE_DIR     = env::var("OCCA_SOURCE_CACHE_DIR");
+      OCCA_COLOR_ENABLED        = env::get<bool>("OCCA_COLOR_ENABLED", true);
 
       OCCA_INCLUDE_PATH = split(env::var("OCCA_INCLUDE_PATH"), ':', '\\');
       OCCA_LIBRARY_PATH = split(env::var("OCCA_LIBRARY_PATH"), ':', '\\');
@@ -124,6 +134,7 @@ namespace occa {
       io::endWithSlash(OCCA_DIR);
       io::endWithSlash(OCCA_INSTALL_DIR);
       io::endWithSlash(OCCA_CACHE_DIR);
+      io::endWithSlash(OCCA_SOURCE_CACHE_DIR);
 
       OCCA_MEM_BYTE_ALIGN = OCCA_DEFAULT_MEM_BYTE_ALIGN;
       if (env::var("OCCA_MEM_BYTE_ALIGN").size() > 0) {
@@ -142,7 +153,7 @@ namespace occa {
     void envInitializer_t::loadConfig() {
       const std::string configFile = (
         env::get("OCCA_CONFIG",
-                 OCCA_CACHE_DIR + "config.json")
+                 OCCA_SOURCE_CACHE_DIR + "config.json")
       );
 
       if (!io::exists(configFile)) {
@@ -179,10 +190,18 @@ namespace occa {
       if (!io::isDir(env::OCCA_CACHE_DIR)) {
         sys::mkpath(env::OCCA_CACHE_DIR);
       }
+
+      if (env::OCCA_SOURCE_CACHE_DIR.size() == 0) {
+        env::OCCA_SOURCE_CACHE_DIR = env::OCCA_CACHE_DIR;
+      }
     }
 
     envInitializer_t::~envInitializer_t() {}
 
     envInitializer_t envInitializer;
+
+    void init() {
+      envInitializer.init();
+    }
   }
 }

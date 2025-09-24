@@ -9,12 +9,12 @@ namespace occa {
   class json;
 
   namespace io {
-    bool isCached(const std::string &filename);
+    bool isCached(const std::string &filename, bool binary=false);
 
-    std::string hashDir(const hash_t &hash);
+    std::string hashDir(const hash_t &hash, bool binary=false);
 
     std::string hashDir(const std::string &filename,
-                        const hash_t &hash = hash_t());
+                        const hash_t &hash = hash_t(), bool binary=false);
 
     std::string cacheFile(const std::string &filename,
                           const std::string &cachedName,

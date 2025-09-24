@@ -65,6 +65,10 @@ namespace occa {
       return env::OCCA_CACHE_DIR + "cache/";
     }
 
+    std::string sourceCachePath() {
+      return env::OCCA_SOURCE_CACHE_DIR + "cache/";
+    }
+
     std::string libraryPath() {
       return env::OCCA_CACHE_DIR + "libraries/";
     }
@@ -290,12 +294,11 @@ namespace occa {
     std::string shortname(const std::string &filename) {
       std::string expFilename = io::expandFilename(filename);
 
-      if (!startsWith(expFilename, env::OCCA_CACHE_DIR)) {
-        return filename;
+      if (startsWith(expFilename, env::OCCA_CACHE_DIR) || startsWith(expFilename, env::OCCA_SOURCE_CACHE_DIR)) {
+          const std::string &cPath = startsWith(expFilename, env::OCCA_CACHE_DIR) ? cachePath() : sourceCachePath();
+          return expFilename.substr(cPath.size());
       }
-
-      const std::string &cPath = cachePath();
-      return expFilename.substr(cPath.size());
+      return filename;
     }
 
     std::string findInPaths(const std::string &filename, const strVector &paths) {

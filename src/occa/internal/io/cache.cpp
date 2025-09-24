@@ -9,7 +9,7 @@
 
 namespace occa {
   namespace io {
-    bool isCached(const std::string &filename) {
+    bool isCached(const std::string &filename, bool binary) {
       // Directory, not file
       if (filename.size() == 0) {
         return false;
@@ -18,19 +18,20 @@ namespace occa {
       std::string expFilename = io::expandFilename(filename);
 
       // File is already cached
-      const std::string &cPath = cachePath();
+      const std::string &cPath = binary ? cachePath() : sourceCachePath();
       return startsWith(expFilename, cPath);
     }
 
-    std::string hashDir(const hash_t &hash) {
-      return hashDir("", hash);
+    std::string hashDir(const hash_t &hash, bool binary) {
+      return hashDir("", hash, binary);
     }
 
     std::string hashDir(const std::string &filename,
-                        const hash_t &hash) {
-      bool fileIsCached = isCached(filename);
+                        const hash_t &hash, 
+                        bool binary) {
+      bool fileIsCached = isCached(filename, binary);
 
-      const std::string &cPath = cachePath();
+      const std::string &cPath = binary ? cachePath() : sourceCachePath();
       std::string cacheDir = cPath;
 
       const bool useHash = !filename.size() || !fileIsCached;

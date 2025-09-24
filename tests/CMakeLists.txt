@@ -43,6 +43,9 @@ function(add_occa_test test_source)
   # Expected defines
   set_property(TEST ${cmake_test_target} APPEND PROPERTY
     ENVIRONMENT OCCA_CACHE_DIR=${OCCA_BUILD_DIR}/occa)
+
+  set_property(TEST ${cmake_test_target} APPEND PROPERTY
+    ENVIRONMENT OCCA_SOURCE_CACHE_DIR=${OCCA_BUILD_DIR}/occa)
 endfunction()
 
 #---[ Setup Tests ]---------------------

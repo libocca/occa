@@ -180,13 +180,14 @@ namespace occa {
                                       const occa::json &kernelProps,
                                       const bool isLauncherKernel) {
       const std::string hashDir = io::hashDir(filename, kernelHash);
+      const std::string binaryHashDir = io::hashDir(filename, kernelHash, true);
 
       const std::string &kcBinaryFile = (
         isLauncherKernel
         ? kc::launcherBinaryFile
         : kc::binaryFile
       );
-      std::string binaryFilename = hashDir + kcBinaryFile;
+      std::string binaryFilename = binaryHashDir + kcBinaryFile;
 
       // Check if binary exists and is finished
       const bool foundBinary = io::isFile(binaryFilename);

@@ -12,6 +12,7 @@ void testBuild();
 int main(const int argc, const char **argv) {
 #ifndef USE_CMAKE
   occa::env::OCCA_CACHE_DIR = occa::io::dirname(__FILE__);
+  occa::env::OCCA_SOURCE_CACHE_DIR = occa::env::OCCA_CACHE_DIR;
 #endif
   srand(time(NULL));
 

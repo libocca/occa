@@ -7,9 +7,11 @@ namespace occa {
   json& settings();
 
   namespace env {
-    extern std::string OCCA_DIR, OCCA_INSTALL_DIR, OCCA_CACHE_DIR;
+    extern std::string OCCA_DIR, OCCA_INSTALL_DIR, OCCA_CACHE_DIR, OCCA_SOURCE_CACHE_DIR;
 
     void setOccaCacheDir(const std::string &path);
+    void setOccaBinaryCacheDir(const std::string &path);
+    void init();
   }
 }
 

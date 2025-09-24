@@ -24,6 +24,7 @@ namespace occa {
     typedef std::map<std::string, std::string> libraryPathMap_t;
 
     std::string cachePath();
+    std::string sourceCachePath();
     std::string libraryPath();
 
     std::string currentWorkingDirectory();
