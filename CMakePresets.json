@@ -21,6 +21,21 @@
         "CMAKE_Fortran_FLAGS": "$env{FFLAGS}",
         "CMAKE_C_COMPILER": "$env{CC}",
         "CMAKE_C_FLAGS": "$env{CFLAGS}",
+        "OCCA_ENABLE_OPENMP": "$env{OCCA_ENABLE_OPENMP}",
+        "OCCA_ENABLE_OPENCL": "$env{OCCA_ENABLE_OPENCL}",
+        "OCCA_ENABLE_DPCPP": "$env{OCCA_ENABLE_DPCPP}",
+        "OCCA_ENABLE_CUDA": "$env{OCCA_ENABLE_CUDA}",
+        "OCCA_ENABLE_HIP": "$env{OCCA_ENABLE_HIP}",
+        "OCCA_ENABLE_METAL": "$env{OCCA_ENABLE_METAL}",
+        "OCCA_ENABLE_FORTRAN": "$env{OCCA_ENABLE_FORTRAN}",
+        "OCCA_ENABLE_TESTS": "$env{OCCA_ENABLE_TESTS}",
+        "OCCA_ENABLE_EXAMPLES": "$env{OCCA_ENABLE_EXAMPLES}",
+        "OCCA_ENABLE_CLANG_TRANSPILER": "$env{OCCA_ENABLE_CLANG_TRANSPILER}"
+      },
+      "environment": {
+        "BUILD_DIR": "${sourceDir}/build",
+        "BUILD_TYPE": "RelWithDebInfo",
+        "INSTALL_DIR": "${sourceDir}/install",
         "OCCA_ENABLE_OPENMP": "ON",
         "OCCA_ENABLE_OPENCL": "ON",
         "OCCA_ENABLE_DPCPP": "OFF",
@@ -29,12 +44,8 @@
         "OCCA_ENABLE_METAL": "OFF",
         "OCCA_ENABLE_FORTRAN": "ON",
         "OCCA_ENABLE_TESTS": "ON",
-        "OCCA_ENABLE_EXAMPLES": "ON"
-      },
-      "environment": {
-        "BUILD_DIR": "${sourceDir}/build",
-        "BUILD_TYPE": "RelWithDebInfo",
-        "INSTALL_DIR": "${sourceDir}/install"
+        "OCCA_ENABLE_EXAMPLES": "ON",
+        "OCCA_ENABLE_CLANG_TRANSPILER": "OFF"
       }
     },
     {
@@ -62,27 +73,23 @@
       "name": "clang-default",
       "description": "OCCA configure with LLVM/Clang compilers",
       "inherits": "base",
-      "cacheVariables": {
-        "OCCA_ENABLE_FORTRAN": "OFF"
-      },
       "environment": {
         "CC": "clang",
         "CXX": "clang++",
-        "CXXFLAGS": "-Wno-uninitialized"
+        "CXXFLAGS": "-Wno-uninitialized",
+        "OCCA_ENABLE_FORTRAN": "OFF"
       }
     },
     {
       "name": "oneapi-default",
       "description": "OCCA configure with oneAPI compilers",
       "inherits": "base",
-      "cacheVariables": {
-        "OCCA_ENABLE_DPCPP": "ON"
-      },
       "environment": {
         "CC": "icx",
         "CXX": "icpx",
         "FC": "ifx",
-        "CXXFLAGS": "-Wno-uninitialized"
+        "CXXFLAGS": "-Wno-uninitialized",
+        "OCCA_ENABLE_DPCPP": "ON"
       }
     }
   ],
