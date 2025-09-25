@@ -11,10 +11,10 @@
       "hidden": true,
       "description": "OCCA configure base",
       "generator": "Unix Makefiles",
-      "binaryDir": "$env{BUILD_DIR}",
-      "installDir": "$env{INSTALL_DIR}",
+      "binaryDir": "$env{OCCA_BUILD_DIR}",
+      "installDir": "$env{OCCA_INSTALL_DIR}",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "$env{BUILD_TYPE}",
+        "CMAKE_BUILD_TYPE": "$env{OCCA_BUILD_TYPE}",
         "CMAKE_CXX_COMPILER": "$env{CXX}",
         "CMAKE_CXX_FLAGS": "-O3 -Wall -pedantic -Wshadow -Wsign-compare -Wuninitialized -Wtype-limits -Wignored-qualifiers -Wempty-body -Wextra -Wno-unused-parameter -Werror -Wno-strict-aliasing $env{CXXFLAGS}",
         "CMAKE_Fortran_COMPILER": "$env{FC}",
@@ -33,9 +33,9 @@
         "OCCA_ENABLE_CLANG_TRANSPILER": "$env{OCCA_ENABLE_CLANG_TRANSPILER}"
       },
       "environment": {
-        "BUILD_DIR": "${sourceDir}/build",
-        "BUILD_TYPE": "RelWithDebInfo",
-        "INSTALL_DIR": "${sourceDir}/install",
+        "OCCA_BUILD_DIR": "${sourceDir}/build",
+        "OCCA_BUILD_TYPE": "RelWithDebInfo",
+        "OCCA_INSTALL_DIR": "${sourceDir}/install",
         "OCCA_ENABLE_OPENMP": "ON",
         "OCCA_ENABLE_OPENCL": "ON",
         "OCCA_ENABLE_DPCPP": "OFF",

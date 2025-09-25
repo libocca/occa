@@ -63,12 +63,12 @@ second step will build and install OCCA. Finally, the third step will run the te
 You will rarely has to run these steps in isolation. We recommend using the workflow presets in either
 `CMakePresets.json` or creating a custom workflow as described in [Create Custom Presets](#create-custom-presets).
 
-During installation, the [Env Modules](Env_Modules) file `INSTALL_DIR/modulefiles/occa` is generated.
+During installation, the [Env Modules](Env_Modules) file `OCCA_INSTALL_DIR/modulefiles/occa` is generated.
 When this module is loaded, paths to the installed `bin`, `lib`, and `include` directories are appended to
 environment variables such as `PATH` and `LD_LIBRARY_PATH`. 
 To make use of this module, add the following to your `.modulerc` file
 ```bash
-module use -a INSTALL_DIR/modulefiles
+module use -a OCCA_INSTALL_DIR/modulefiles
 ```
  then at the commandline call
 ```bash
@@ -78,7 +78,7 @@ module load occa
 **Note**: Before running CTest, it may be necessary to set the environment variables `OCCA_CXX` and `OCCA_CC`
 since OCCA defaults to using gcc and g++. Tests for some backends may return a false negative otherwise.
 
-**Note**: During testing, `BUILD_DIR/occa` is used for kernel caching. This directory may need to be cleared
+**Note**: During testing, `OCCA_BUILD_DIR/occa` is used for kernel caching. This directory may need to be cleared
 when rerunning tests after recompiling with an existing build directory.
 
 ### Create Custom Presets
@@ -89,9 +89,9 @@ The following table list the build configurations which can be changed in the `e
 
 | Environment variable | Description | Default |
 | --------- | ----------- | ------- |
-| BUILD_DIR | Directory used by CMake to build OCCA | `./build` |
-| BUILD_TYPE | Optimization and debug level | `RelWithDebInfo` |
-| INSTALL_DIR | Directory where OCCA should be installed | `./install` |
+| OCCA_BUILD_DIR | Directory used by CMake to build OCCA | `./build` |
+| OCCA_BUILD_TYPE | Optimization and debug level | `RelWithDebInfo` |
+| OCCA_INSTALL_DIR | Directory where OCCA should be installed | `./install` |
 | CXX | C++11 compiler | *Depends on the preset* |
 | CXXFLAGS | C++ compiler flags | *Depend on the preset* |
 | CC | C11 compiler| *Depends on the preset* |
