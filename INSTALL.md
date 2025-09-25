@@ -107,7 +107,7 @@ The following table list the build configurations which can be changed in the `e
 | OCCA_ENABLE_FORTRAN | Build the Fortran language bindings | `ON`(`OFF` for `clang-default`) |
 | OCCA_ENABLE_TESTS | Build OCCA test harness | `ON` |
 | OCCA_ENABLE_EXAMPLES | Build OCCA examples | `ON` |
-| OCCA_ENABLE_CLANG_TRANSPILER | Build clang based transpiler that support C++ in OKL | `OFF`|
+| OCCA_CLANG_BASED_TRANSPILER | Build clang based transpiler that support C++ in OKL | `OFF`|
 
 Users can inherit the default presets in `CMakePresets.json` and then extend/change them based on their requirements.
 In order to do so, edit `CMakeUserPresets.json` file to match your needs.
@@ -216,7 +216,7 @@ occa-transpiler repository can be found in [libocca/occa-transpiler](https://git
 Please refer [occa-transpiler README](https://github.com/libocca/occa-transpiler/blob/main/README.md) for instructions on
 how to build and install the occa-transpiler.
 Then you can modify the preset as following to install OCCA with occa-transpiler enabled.
-Please replace `<occa-transpiler-install dir>` by the root directory of your occa-transpiler installation.
+Please replace `<occa-transpiler-install-dir>` by the root directory of your occa-transpiler installation.
 
 ```json
 {
@@ -231,10 +231,10 @@ Please replace `<occa-transpiler-install dir>` by the root directory of your occ
       "name": "my-local-config",
       "inherits": "gnu-default",
       "environment": {
-        "OCCA_ENABLE_CLANG_TRANSPILER": "ON"
+        "OCCA_CLANG_BASED_TRANSPILER": "ON"
       },
       "cacheVariables": {
-        "CMAKE_PREFIX_PATH": "<occa-transpiler-install dir>"
+        "CMAKE_PREFIX_PATH": "<occa-transpiler-install-dir>"
       }
     }
   ]
