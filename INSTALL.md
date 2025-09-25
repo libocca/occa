@@ -47,7 +47,7 @@ $ CC=clang CXX=clang++ OCCA_ENABLE_OPENMP="OFF" ./configure-cmake.sh
 | OCCA_ENABLE_TESTS | Build OCCA's test harness | `ON` |
 | OCCA_ENABLE_EXAMPLES | Build OCCA examples | `ON` |
 | OCCA_ENABLE_FORTRAN | Build the Fortran language bindings | `OFF`|
-| OCCA_CLANG_BASED_TRANSPILER | Build clang based transpiler that support C++ in OKL | `OFF`|
+| OCCA_ENABLE_CLANG_BASED_TRANSPILER | Build clang based transpiler that support C++ in OKL | `OFF`|
 | FC | Fortran 90 compiler | `gfortran` |
 | FFLAGS | Fortran compiler flags | *empty* |
 
@@ -84,7 +84,7 @@ occa-transpiler installation.
 ```shell
 $ mkdir build
 $ cd build
-$ cmake -DCMAKE_BUILD_TYPE=Release -DOCCA_CLANG_BASED_TRANSPILER=ON -DCMAKE_PREFIX_PATH=<occa-transpiler install dir>/lib/cmake ..
+$ cmake -DCMAKE_BUILD_TYPE=Release -DOCCA_ENABLE_CLANG_BASED_TRANSPILER=ON -DCMAKE_PREFIX_PATH=<occa-transpiler install dir>/lib/cmake ..
 $ cmake --build . --parallel <number-of-threads> 
 $ cmake --install . --prefix install
 ```
