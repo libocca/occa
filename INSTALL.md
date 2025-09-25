@@ -63,6 +63,13 @@ second step will build and install OCCA. Finally, the third step will run the te
 You will rarely has to run these steps in isolation. We recommend using the workflow presets in either
 `CMakePresets.json` or creating a custom workflow as described in [Create Custom Presets](#create-custom-presets).
 
+`system-default` preset is different to others in that it reads in `CC`, `CFLAGS, `CXX`, `CXXFLAGS`, `FC`,
+and `FFLAGS` from the user environment. You can use this preset when you want to specify the compilers
+and flags manually if they are not set by the default programming environment. An example usage could be:
+```bash
+CC=cc CXX=CC FC=ftn CXXFLAGS="-Wno-maybe-uninitialized" cmake --workflow --preset system-default
+```
+
 During installation, the [Env Modules](Env_Modules) file `OCCA_INSTALL_DIR/modulefiles/occa` is generated.
 When this module is loaded, paths to the installed `bin`, `lib`, and `include` directories are appended to
 environment variables such as `PATH` and `LD_LIBRARY_PATH`. 
