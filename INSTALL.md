@@ -175,10 +175,9 @@ Then you can run this custom preset using the following command:
 cmake --workflow --preset my-local-workflow
 ```
 
-#### Backend Dependency Paths
+### Backend Dependency Paths
 
-The following environment variables can be used to specify the path to third-party dependencies needed by different
-OCCA backends.
+The following variables can be used to specify the path to third-party dependencies needed by different OCCA backends.
 The value assigned should be an absolute path to the parent directory, which typically contains subdirectories `bin`,
 `include`, and `lib`.
 
