@@ -135,7 +135,7 @@ In order to do so, edit `CMakeUserPresets.json` file to match your needs.
       "name": "my-local-build",
       "inherits": "gnu-default",
       "configurePreset": "my-local-config",
-      "jobs": 8
+      "jobs": 16
     }
   ],
   "testPresets": [

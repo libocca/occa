@@ -44,8 +44,7 @@
         "OCCA_ENABLE_METAL": "OFF",
         "OCCA_ENABLE_FORTRAN": "ON",
         "OCCA_ENABLE_TESTS": "ON",
-        "OCCA_ENABLE_EXAMPLES": "ON",
-        "OCCA_ENABLE_CLANG_TRANSPILER": "OFF"
+        "OCCA_ENABLE_EXAMPLES": "ON"
       }
     },
     {
@@ -54,8 +53,11 @@
       "inherits": "base",
       "environment": {
         "CC": "$penv{CC}",
+        "CFLAGS": "$penv{CFLAGS}",
         "CXX": "$penv{CXX}",
-        "FC": "$penv{FC}"
+        "CXXFLAGS": "$penv{CXXFLAGS}",
+        "FC": "$penv{FC}",
+        "FFLAGS": "$penv{FFLAGS}"
       }
     },
     {
@@ -98,7 +100,8 @@
       "name": "system-default",
       "description": "OCCA build with system default compilers",
       "configurePreset": "system-default",
-      "targets": ["install"]
+      "targets": ["install"],
+      "jobs": 8
     },
     {
       "name": "gnu-default",

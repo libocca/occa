@@ -21,7 +21,7 @@
       "name": "my-local-build",
       "inherits": "gnu-default",
       "configurePreset": "my-local-config",
-      "jobs": 8
+      "jobs": 16
     }
   ],
   "testPresets": [
