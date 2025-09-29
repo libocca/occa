@@ -70,18 +70,6 @@ and flags manually if they are not set by the default programming environment. A
 CC=cc CXX=CC FC=ftn CXXFLAGS="-Wno-maybe-uninitialized" cmake --workflow --preset system-default
 ```
 
-During installation, the [Env Modules](Env_Modules) file `OCCA_INSTALL_DIR/modulefiles/occa` is generated.
-When this module is loaded, paths to the installed `bin`, `lib`, and `include` directories are appended to
-environment variables such as `PATH` and `LD_LIBRARY_PATH`. 
-To make use of this module, add the following to your `.modulerc` file
-```bash
-module use -a OCCA_INSTALL_DIR/modulefiles
-```
- then at the commandline call
-```bash
-module load occa
-```
-
 **Note**: Before running [CTest], it may be necessary to set the environment variables `OCCA_CXX` and `OCCA_CC`
 since OCCA defaults to using gcc and g++. Tests for some backends may return a false negative otherwise.
 
@@ -248,6 +236,19 @@ Please replace `<occa-transpiler-install-dir>` by the root directory of your occ
 }
 ```
 
+## Environment Modules
+
+During installation, the [Env Modules] file `OCCA_INSTALL_DIR/modulefiles/occa` is generated. When this module is
+loaded, paths to the installed `bin`, `lib`, and `include` directories are appended to environment variables such
+as `PATH` and `LD_LIBRARY_PATH`. To make use of this module, add the following to your `.modulerc` file:
+```bash
+module use -a OCCA_INSTALL_DIR/modulefiles
+```
+ then at the commandline call
+```bash
+module load occa
+```
+
 ## Building an OCCA application
 
 For convenience, OCCA provides [CMake] package files which are configured during installation. These package files define
@@ -278,4 +279,4 @@ forward OCCA's dependencies to applications which use the library.
 
 [CTest]: https://cmake.org/cmake/help/latest/manual/ctest.1.html
 
-[Env_Modules]: https://modules.readthedocs.io/en/latest/index.html
+[Env Modules]: https://modules.readthedocs.io/en/latest/index.html

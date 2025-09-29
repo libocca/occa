@@ -73,9 +73,9 @@ Users can extend these workflows and customize them if necessary based on their 
 
 ### Environment
 
-During installation, the [Env Modules](Env_Modules) file `<install-prefix>/modulefiles/occa` is generated. When this
-module is loaded, paths to the installed `bin`, `lib`, and `include` directories are appended to environment variables
-such as `PATH` and `LD_LIBRARY_PATH`.
+During installation, the [Env Modules] file `<install-prefix>/modulefiles/occa` is generated. When this module is
+loaded, paths to the installed `bin`, `lib`, and `include` directories are appended to environment variables such as
+`PATH` and `LD_LIBRARY_PATH`.
 
 ### Building an OCCA application
 
@@ -173,6 +173,6 @@ OCCA is available under a [MIT license](LICENSE.MD).
 
 [CMake]: https://cmake.org/
 
-[Env_Modules]: https://modules.readthedocs.io/en/latest/index.html
+[Env Modules]: https://modules.readthedocs.io/en/latest/index.html
 
 [Installation Guide]: INSTALL.md
