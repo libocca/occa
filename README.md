@@ -54,21 +54,20 @@ Notable users include the U.S. Department of Energy and Shell.
  - OpenMP 4.0 or later
  - C++ support for OKL with clang based transpiler [new-okl-transpiler](https://github.com/libocca/occa-transpiler)
 
-## Build, Test, and Install
+## Build, Install, and Test
 
-OCCA uses the [CMake] build system. Checkout the [installation guide](INSTALL.md) for a comprehensive overview of all
-build settings and instructions.
+OCCA uses the [CMake] build system. Checkout the [Installation Guide] for a comprehensive overview of all build
+settings and instructions.
 
-### Linux
-
-For convenience, a `CMakePresets.json` file is provided with several default workflows that perform configure, build
-and test steps in a single go. For example, to configure, build and test OCCA with GNU compilers, do the following:
+For convenience, a `CMakePresets.json` file is provided with several default workflows that perform configure, build,
+install and test steps in a single go. For example, to configure, build and test OCCA with GNU compilers, do the
+following:
 ```shell
 cmake --workflow --preset gnu-default
 ```
 
 Users can extend these workflows and customize them if necessary based on their requirements using a
-`CMakeUserPresets.json` file.
+`CMakeUserPresets.json` file. Please refer to [Installation Guide] for more information.
 
 ## Use
 
@@ -80,7 +79,7 @@ such as `PATH` and `LD_LIBRARY_PATH`.
 
 ### Building an OCCA application
 
-For convenience, OCCA provides CMake package files which are configured during installation. These package files define
+For convenience, OCCA provides [CMake] package files which are configured during installation. These package files define
 an imported target, `OCCA::libocca`, and look for all required dependencies.
 For example, downstream projects using OCCA would either have
 ```cmake
@@ -166,7 +165,7 @@ This work was supported in part by
 
 ## License
 
-OCCA is available under a [MIT license](LICENSE.MD)
+OCCA is available under a [MIT license](LICENSE.MD).
 
 [OCCA_WEBSITE]: https://libocca.org
 
@@ -175,3 +174,5 @@ OCCA is available under a [MIT license](LICENSE.MD)
 [CMake]: https://cmake.org/
 
 [Env_Modules]: https://modules.readthedocs.io/en/latest/index.html
+
+[Installation Guide]: INSTALL.md
