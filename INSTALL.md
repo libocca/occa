@@ -4,7 +4,7 @@
 
 ### Minimum
 
- - CMake v3.21 or newer
+ - [CMake] v3.21 or newer
  - C++17 compiler
  - C11 compiler
 
@@ -20,7 +20,7 @@
 
 ## Configure, Build/Install and Test
 
-OCCA uses CMake as the build system. For convenience, we also provide a few default
+OCCA uses [CMake] as the build system. For convenience, we also provide a few default
 [cmake-presets](https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html) in `CMakePresets.json` that users
 can use and/or extend in order to customize the configure, build and test phases of OCCA.
 OCCA provides default presets for each of the `build`, `configure` and `test` phases categorized by the most common
@@ -59,7 +59,7 @@ cmake --build --preset gnu-default
 ctest --preset gnu-default
 ```
 The first command will configure the OCCA build based on the parameters defined in the preset. The
-second step will build and install OCCA. Finally, the third step will run the test harness using `CTest`.
+second step will build and install OCCA. Finally, the third step will run the test harness using [CTest].
 You will rarely has to run these steps in isolation. We recommend using the workflow presets in either
 `CMakePresets.json` or creating a custom workflow as described in [Create Custom Presets](#create-custom-presets).
 
@@ -82,7 +82,7 @@ module use -a OCCA_INSTALL_DIR/modulefiles
 module load occa
 ```
 
-**Note**: Before running CTest, it may be necessary to set the environment variables `OCCA_CXX` and `OCCA_CC`
+**Note**: Before running [CTest], it may be necessary to set the environment variables `OCCA_CXX` and `OCCA_CC`
 since OCCA defaults to using gcc and g++. Tests for some backends may return a false negative otherwise.
 
 **Note**: During testing, `OCCA_BUILD_DIR/occa` is used for kernel caching. This directory may need to be cleared
@@ -96,7 +96,7 @@ The following table list the build configurations which can be changed in the `e
 
 | Environment variable | Description | Default |
 | --------- | ----------- | ------- |
-| OCCA_BUILD_DIR | Directory used by CMake to build OCCA | `./build` |
+| OCCA_BUILD_DIR | Directory used by [CMake] to build OCCA | `./build` |
 | OCCA_BUILD_TYPE | Optimization and debug level | `RelWithDebInfo` |
 | OCCA_INSTALL_DIR | Directory where OCCA should be installed | `./install` |
 | CXX | C++11 compiler | *Depends on the preset* |
@@ -250,7 +250,7 @@ Please replace `<occa-transpiler-install-dir>` by the root directory of your occ
 
 ## Building an OCCA application
 
-For convenience, OCCA provides CMake package files which are configured during installation. These package files define
+For convenience, OCCA provides [CMake] package files which are configured during installation. These package files define
 an imported target, `OCCA::libocca`, and look for all required dependencies.
 
 For example, the CMakeLists.txt of downstream projects using OCCA would include
@@ -263,7 +263,7 @@ target_link_libraries(downstream-app PRIVATE OCCA::libocca)
 add_library(downstream-lib ...)
 target_link_libraries(downstream-lib PRIVATE OCCA::libocca)
 ```
-In the case of a downstream library, linking OCCA using the  `PUBLIC` specifier ensures that CMake will automatically
+In the case of a downstream library, linking OCCA using the  `PUBLIC` specifier ensures that [CMake] will automatically
 forward OCCA's dependencies to applications which use the library.
 
 ## Mac OS
@@ -275,4 +275,7 @@ forward OCCA's dependencies to applications which use the library.
 > Do you use OCCA on Windows? Help other Windows users by contributing to the documentation here!
 
 [CMake]: https://cmake.org/
+
+[CTest]: https://cmake.org/cmake/help/latest/manual/ctest.1.html
+
 [Env_Modules]: https://modules.readthedocs.io/en/latest/index.html
