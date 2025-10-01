@@ -1,0 +1,54 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "my-local-config",
+      "inherits": "gnu-default",
+      "environment": {
+        "CXXFLAGS": "-D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS",
+        "OCCA_ENABLE_METAL": "OFF",
+        "OCCA_ENABLE_OPENMP": "OFF"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "my-local-build",
+      "inherits": "gnu-default",
+      "configurePreset": "my-local-config",
+      "jobs": 16
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "my-local-test",
+      "inherits": "gnu-default",
+      "configurePreset": "my-local-config"
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "my-local-workflow",
+      "displayName": "Configure, build, install and test on my local machine",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "my-local-config"
+        },
+        {
+          "type": "build",
+          "name": "my-local-build"
+        },
+        {
+          "type": "test",
+          "name": "my-local-test"
+        }
+      ]
+    }
+  ]
+}

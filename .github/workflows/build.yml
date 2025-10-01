@@ -26,11 +26,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: "[Ubuntu] gcc"
+          - name: "[Ubuntu] Make + gcc"
             os: ubuntu-latest
             CC: gcc
             CXX: g++
-            CXXFLAGS: -Wno-maybe-uninitialized
+            CXXFLAGS: -O3 -Wall -pedantic -Wshadow -Wsign-compare -Wuninitialized -Wtype-limits -Wignored-qualifiers -Wempty-body -Wextra -Wno-unused-parameter -Werror -Wno-strict-aliasing -Wno-maybe-uninitialized
             FC: gfortran
             GCOV: gcov
             OCCA_COVERAGE: 1
@@ -38,44 +38,18 @@ jobs:
 
           - name: "[Ubuntu] CMake + gcc"
             os: ubuntu-latest
-            CC: gcc
-            CXX: g++
-            CXXFLAGS: -Wno-maybe-uninitialized -Wno-cpp
-            FC: gfortran
-            OCCA_FORTRAN_ENABLED: 1
-            useCMake: true
+            cmakeWorkflowPreset: gnu-default
 
           - name: "[Ubuntu] CMake + clang"
             os: ubuntu-latest
-            CC: clang
-            CXX: clang++
-            CXXFLAGS: -Wno-uninitialized
-            useCMake: true
+            cmakeWorkflowPreset: clang-default
 
           - name: "[Ubuntu] CMake + Intel/LLVM"
             os: ubuntu-latest
-            CC: icx
-            CXX: icpx
-            CXXFLAGS: -Wno-uninitialized
-            FC: ifx
-            OCCA_COVERAGE: 0
-            OCCA_FORTRAN_ENABLED: 1
-            useCMake: true
-            useoneAPI: true
+            cmakeWorkflowPreset: oneapi-default
 
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.name }}
-
-    env:
-      CC: ${{ matrix.CC }}
-      CXX: ${{ matrix.CXX }}
-      FC: ${{ matrix.FC }}
-      CXXFLAGS: -O3 -Wall -pedantic -Wshadow -Wsign-compare -Wuninitialized -Wtype-limits -Wignored-qualifiers -Wempty-body -Wextra -Wno-unused-parameter -Werror -Wno-strict-aliasing ${{ matrix.CXXFLAGS }}
-      OCCA_CXXFLAGS: -O3
-      GCOV: ${{ matrix.GCOV }}
-      OCCA_COVERAGE: ${{ matrix.OCCA_COVERAGE }}
-      OCCA_FORTRAN_ENABLED: ${{ matrix.OCCA_FORTRAN_ENABLED }}
-      FORTRAN_EXAMPLES: ${{ matrix.OCCA_FORTRAN_ENABLED }}
 
     steps:
     - uses: actions/checkout@v4
@@ -88,7 +62,7 @@ jobs:
       run: echo "OCCA_INSTALL_DIR=${PWD}/install" >> ${GITHUB_ENV}
 
     - name: add oneAPI to apt
-      if: ${{ matrix.useoneAPI }}
+      if: ${{ matrix.cmakeWorkflowPreset == 'oneapi-default' }}
       shell: bash
       run: |
         cd /tmp
@@ -98,7 +72,7 @@ jobs:
         sudo add-apt-repository "deb https://apt.repos.intel.com/oneapi all main"
       
     - name: install oneAPI dpcpp compiler
-      if: ${{ matrix.useoneAPI }}
+      if: ${{ matrix.cmakeWorkflowPreset == 'oneapi-default' }}
       shell: bash
       run: |
         sudo apt update
@@ -106,43 +80,16 @@ jobs:
         sudo apt install intel-oneapi-compiler-fortran
 
     - name: Compiler info
-      if: ${{ !matrix.useCMake }}
+      if: ${{ !matrix.cmakeWorkflowPreset }}
       run: make PREFIX=${OCCA_INSTALL_DIR} -j 16 info
 
-    - name: CMake configure
-      if: ${{ matrix.useCMake && !matrix.useoneAPI}}
+    - name: CMake configure, build, install and test
+      if: ${{ matrix.cmakeWorkflowPreset }}
       run: |
-        cmake -S . -B build \
-        -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
-        -DCMAKE_INSTALL_PREFIX=${OCCA_INSTALL_DIR} \
-        -DCMAKE_C_COMPILER=${CC} \
-        -DCMAKE_CXX_COMPILER=${CXX} \
-        -DCMAKE_Fortran_COMPILER=${FC} \
-        -DOCCA_ENABLE_TESTS=ON \
-        -DOCCA_ENABLE_EXAMPLES=ON \
-        -DOCCA_ENABLE_FORTRAN=${OCCA_FORTRAN_ENABLED}
-
-    - name: CMake configure
-      if: ${{ matrix.useCMake && matrix.useoneAPI}}
-      env:
-        OCCA_CC: ${{ matrix.CC }}
-        OCCA_CXX: ${{ matrix.CXX }}
-      run: |
-        source /opt/intel/oneapi/setvars.sh
-        cmake -S . -B build \
-        -DCMAKE_BUILD_TYPE="RelWithDebInfo" \
-        -DCMAKE_INSTALL_PREFIX=${OCCA_INSTALL_DIR} \
-        -DCMAKE_C_COMPILER=${CC} \
-        -DCMAKE_CXX_COMPILER=${CXX} \
-        -DCMAKE_Fortran_COMPILER=${FC} \
-        -DOCCA_ENABLE_TESTS=ON \
-        -DOCCA_ENABLE_EXAMPLES=ON \
-        -DOCCA_ENABLE_FORTRAN=${OCCA_FORTRAN_ENABLED}
-    
-    - name: CMake build and install
-      if: ${{ matrix.useCMake && !matrix.useoneAPI}}
-      run: |
-        cmake --build build --target install --parallel 16
+        if [[ "${{ matrix.cmakeWorkflowPreset }}" == "oneapi-default" ]]; then
+          source /opt/intel/oneapi/setvars.sh
+        fi
+        cmake --workflow --preset ${{ matrix.cmakeWorkflowPreset }}
 
     - name: CMake build examples as an independent project
       if: ${{ matrix.useCMake && !matrix.useoneAPI}}
@@ -158,46 +105,21 @@ jobs:
         cd tests
         cmake -S . -B build
 
-    - name: CMake build and install
-      if: ${{ matrix.useCMake && matrix.useoneAPI}}
-      env:
-        OCCA_CC: ${{ matrix.CC }}
-        OCCA_CXX: ${{ matrix.CXX }}
-      run: |
-        source /opt/intel/oneapi/setvars.sh
-        cmake --build build --target install --parallel 16
-
     - name: Compile library and install
-      if: ${{ !matrix.useCMake }}
+      if: ${{ !matrix.cmakeWorkflowPreset }}
       run: make -j 16
 
     - name: Compile tests
-      if: ${{ !matrix.useCMake }}
+      if: ${{ !matrix.cmakeWorkflowPreset }}
       run: make -j 16 tests
 
     - name: Run unit tests
-      if: ${{ !matrix.useCMake }}
+      if: ${{ !matrix.cmakeWorkflowPreset }}
       run: ./tests/run_tests
 
     - name: Run examples
-      if: ${{ !matrix.useCMake }}
+      if: ${{ !matrix.cmakeWorkflowPreset }}
       run: ./tests/run_examples
-
-    - name: Run CTests
-      if: ${{ matrix.useCMake && !matrix.useoneAPI }}
-      run: |
-        ctest --test-dir build --progress --output-on-failure --parallel 8 --schedule-random -E "examples_cpp_arrays-opencl|examples_cpp_for_loops-opencl|examples_cpp_generic_inline_kernel-opencl|examples_cpp_shared_memory-opencl|examples_cpp_nonblocking_streams-opencl|examples_cpp_for_loops-dpcpp|examples_cpp_arrays-dpcpp|examples_cpp_generic_inline_kernel-dpcpp|examples_cpp_nonblocking_streams-dpcpp"
-
-    - name: Run CTests
-      if: ${{ matrix.useCMake && matrix.useoneAPI }}
-      env:
-        OCCA_CC: ${{ matrix.CC }}
-        OCCA_CXX: ${{ matrix.CXX }}
-        OCCA_DPCPP_COMPILER: icpx
-      run: |
-        source /opt/intel/oneapi/setvars.sh
-        export ONEAPI_DEVICE_SELECTOR=*:cpu
-        ctest --test-dir build --progress --output-on-failure --parallel 8 --schedule-random -E "opencl-*|dpcpp-*"
 
     - name: Upload code coverage
       if: ${{ matrix.OCCA_COVERAGE }}
