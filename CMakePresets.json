@@ -9,7 +9,7 @@
     {
       "name": "base",
       "hidden": true,
-      "description": "OCCA configure base",
+      "displayName": "Configure base",
       "generator": "Unix Makefiles",
       "binaryDir": "$env{OCCA_BUILD_DIR}",
       "installDir": "$env{OCCA_INSTALL_DIR}",
@@ -52,7 +52,7 @@
     },
     {
       "name": "system-default",
-      "description": "OCCA configure with system default compilers",
+      "displayName": "Configure with system default compilers",
       "inherits": "base",
       "environment": {
         "CC": "$penv{CC}",
@@ -65,7 +65,7 @@
     },
     {
       "name": "gnu-default",
-      "description": "OCCA configure with GNU compilers",
+      "displayName": "Configure with GNU compilers",
       "inherits": "base",
       "environment": {
         "CC": "gcc",
@@ -76,7 +76,7 @@
     },
     {
       "name": "clang-default",
-      "description": "OCCA configure with LLVM/Clang compilers",
+      "displayName": "Configure with LLVM/Clang compilers",
       "inherits": "base",
       "environment": {
         "CC": "clang",
@@ -87,7 +87,7 @@
     },
     {
       "name" : "clang-sycl-nvidia",
-      "description": "OCCA configure with LLVM/Clang compilers for SYCL",
+      "displayName": "Configure with SYCL using LLVM/Clang compilers on Nvidia hardware",
       "inherits": "clang-default",
       "environment": {
         "OCCA_ENABLE_DPCPP": "ON",
@@ -97,7 +97,7 @@
     },
     {
       "name": "oneapi-default",
-      "description": "OCCA configure with oneAPI compilers",
+      "displayName": "Configure with oneAPI compilers",
       "inherits": "base",
       "environment": {
         "CC": "icx",
@@ -111,32 +111,32 @@
   "buildPresets": [
     {
       "name": "system-default",
-      "description": "OCCA build with system default compilers",
+      "displayName": "Build with system default compilers",
       "configurePreset": "system-default",
       "targets": ["install"],
       "jobs": 8
     },
     {
       "name": "gnu-default",
-      "description": "OCCA build with GNU compilers",
+      "displayName": "Build with GNU compilers",
       "inherits": "system-default",
       "configurePreset": "gnu-default"
     },
     {
       "name": "clang-default",
-      "description": "OCCA build with LLVM/Clang compilers",
+      "displayName": "Build with LLVM/Clang compilers",
       "inherits": "system-default",
       "configurePreset": "clang-default"
     },
     {
       "name": "clang-sycl-nvidia",
-      "description": "OCCA build with LLVM/Clang compilers",
+      "displayName": "Build with SYCL using LLVM/Clang compilers on Nvidia hardware",
       "inherits": "clang-default",
       "configurePreset": "clang-sycl-nvidia"
     },
     {
       "name": "oneapi-default",
-      "description": "OCCA build with oneAPI compilers",
+      "displayName": "Build with oneAPI compilers",
       "inherits": "system-default",
       "configurePreset": "oneapi-default"
     }
@@ -166,7 +166,7 @@
     },
     {
       "name": "clang-sycl-nvidia",
-      "displayName": "Run tests with LLVM/Clang compilers and DPCPP",
+      "displayName": "Run tests with SYCL using LLVM/Clang compilers on Nvidia hardware",
       "inherits": "clang-default",
       "configurePreset": "clang-sycl-nvidia"
     },
@@ -191,7 +191,7 @@
   "workflowPresets": [
     {
       "name": "system-default",
-      "displayName": "Configure, build and install with system default compilers",
+      "displayName": "Configure, build, install and test with system default compilers",
       "steps": [
         {
           "type": "configure",
@@ -209,7 +209,7 @@
     },
     {
       "name": "gnu-default",
-      "displayName": "Configure, build and install with GNU compilers",
+      "displayName": "Configure, build, install and test with GNU compilers",
       "steps": [
         {
           "type": "configure",
@@ -227,7 +227,7 @@
     },
     {
       "name": "clang-default",
-      "displayName": "Configure, build and install with LLVM/Clang compilers",
+      "displayName": "Configure, build, install and test with LLVM/Clang compilers",
       "steps": [
         {
           "type": "configure",
@@ -245,7 +245,7 @@
     },
     {
       "name": "clang-sycl-nvidia",
-      "displayName": "Configure, build and install with LLVM/Clang compilers",
+      "displayName": "Configure, build, install and test with SYCL using LLVM/Clang compilers on Nvidia hardware",
       "steps": [
         {
           "type": "configure",
@@ -263,7 +263,7 @@
     },
     {
       "name": "oneapi-default",
-      "displayName": "Configure, build and install with oneAPI compilers",
+      "displayName": "Configure, build, install and test with oneAPI compilers",
       "steps": [
         {
           "type": "configure",
