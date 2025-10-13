@@ -114,7 +114,7 @@
       "displayName": "Build with system default compilers",
       "configurePreset": "system-default",
       "targets": ["install"],
-      "jobs": 8
+      "jobs": 16
     },
     {
       "name": "gnu-default",

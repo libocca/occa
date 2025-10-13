@@ -20,8 +20,7 @@
     {
       "name": "my-local-build",
       "inherits": "gnu-default",
-      "configurePreset": "my-local-config",
-      "jobs": 16
+      "configurePreset": "my-local-config"
     }
   ],
   "testPresets": [
