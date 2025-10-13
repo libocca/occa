@@ -30,7 +30,10 @@
         "OCCA_ENABLE_FORTRAN": "$env{OCCA_ENABLE_FORTRAN}",
         "OCCA_ENABLE_TESTS": "$env{OCCA_ENABLE_TESTS}",
         "OCCA_ENABLE_EXAMPLES": "$env{OCCA_ENABLE_EXAMPLES}",
-        "OCCA_ENABLE_CLANG_TRANSPILER": "$env{OCCA_ENABLE_CLANG_TRANSPILER}"
+        "OCCA_ENABLE_CLANG_TRANSPILER": "$env{OCCA_ENABLE_CLANG_TRANSPILER}",
+        "OCCA_DPCPP_COMPILER": "$env{OCCA_DPCPP_COMPILER}",
+        "OCCA_DPCPP_COMPILER_FLAGS": "$env{OCCA_DPCPP_COMPILER_FLAGS}",
+        "SYCL_FLAGS": "$env{OCCA_DPCPP_COMPILER_FLAGS}"
       },
       "environment": {
         "OCCA_BUILD_DIR": "${sourceDir}/build",
@@ -83,6 +86,16 @@
       }
     },
     {
+      "name" : "clang-sycl-nvidia",
+      "description": "OCCA configure with LLVM/Clang compilers for SYCL",
+      "inherits": "clang-default",
+      "environment": {
+        "OCCA_ENABLE_DPCPP": "ON",
+        "OCCA_DPCPP_COMPILER": "clang++",
+        "OCCA_DPCPP_COMPILER_FLAGS": "-fsycl -fsycl-targets=nvptx64-nvidia-cuda"
+      }
+    },
+    {
       "name": "oneapi-default",
       "description": "OCCA configure with oneAPI compilers",
       "inherits": "base",
@@ -116,6 +129,12 @@
       "configurePreset": "clang-default"
     },
     {
+      "name": "clang-sycl-nvidia",
+      "description": "OCCA build with LLVM/Clang compilers",
+      "inherits": "clang-default",
+      "configurePreset": "clang-sycl-nvidia"
+    },
+    {
       "name": "oneapi-default",
       "description": "OCCA build with oneAPI compilers",
       "inherits": "system-default",
@@ -144,6 +163,12 @@
       "displayName": "Run tests with LLVM/Clang compilers",
       "inherits": "system-default",
       "configurePreset": "clang-default"
+    },
+    {
+      "name": "clang-sycl-nvidia",
+      "displayName": "Run tests with LLVM/Clang compilers and DPCPP",
+      "inherits": "clang-default",
+      "configurePreset": "clang-sycl-nvidia"
     },
     {
       "name": "gnu-default",
@@ -215,6 +240,24 @@
         {
           "type": "test",
           "name": "clang-default"
+        }
+      ]
+    },
+    {
+      "name": "clang-sycl-nvidia",
+      "displayName": "Configure, build and install with LLVM/Clang compilers",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "clang-sycl-nvidia"
+        },
+        {
+          "type": "build",
+          "name": "clang-sycl-nvidia"
+        },
+        {
+          "type": "test",
+          "name": "clang-sycl-nvidia"
         }
       ]
     },
