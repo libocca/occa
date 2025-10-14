@@ -6,6 +6,10 @@
 message(CHECK_START "Looking for DPC++")
 unset(missingDpcppComponents)
 
+cmake_path(CONVERT "${CMAKE_CXX_COMPILER}" TO_CMAKE_PATH_LIST compiler_path)
+cmake_path(GET compiler_path PARENT_PATH compiler_bin_dir)
+cmake_path(GET compiler_bin_dir PARENT_PATH compiler_root_dir)
+
 find_path(
   SYCL_INCLUDE_DIRS
   NAMES
@@ -14,7 +18,9 @@ find_path(
     ENV SYCL_ROOT
     /opt/intel/oneapi/compiler/latest/linux
     ${SYCL_ROOT}
+    ${compiler_root_dir}
   PATH_SUFFIXES
+    include
     include/sycl
     include/CL
     include/sycl/CL
@@ -28,6 +34,7 @@ find_library(
     ENV SYCL_ROOT
     /opt/intel/oneapi/compiler/latest/linux
     ${SYCL_ROOT}
+    ${compiler_root_dir}
   PATH_SUFFIXES
     lib
 )
