@@ -104,7 +104,9 @@
         "CXX": "icpx",
         "FC": "ifx",
         "CXXFLAGS": "-Wno-uninitialized",
-        "OCCA_ENABLE_DPCPP": "ON"
+        "OCCA_ENABLE_DPCPP": "ON",
+        "OCCA_DPCPP_COMPILER": "icpx",
+        "OCCA_DPCPP_COMPILER_FLAGS": "-fsycl"
       }
     }
   ],
