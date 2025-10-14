@@ -51,7 +51,7 @@ macro(compile_example target file mode)
   install(TARGETS ${target} DESTINATION ${install_dir})
   install(FILES ${OKLS} DESTINATION ${install_dir})
 
-  if (NOT DEFINED OCCA_ENABLE_TESTS)
+  if (NOT OCCA_ENABLE_TESTS)
     return()
   endif()
   if (${mode})
