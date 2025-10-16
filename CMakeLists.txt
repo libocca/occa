@@ -191,9 +191,9 @@ if(OCCA_ENABLE_DPCPP)
   if(DPCPP_FOUND)
     set(OCCA_DPCPP_ENABLED 1)
 
-    message("-- DPCPP flags: ${SYCL_FLAGS}")
-    message("-- DPCPP include dirs: ${SYCL_INCLUDE_DIRS}")
-    message("-- DPCPP libraries:    ${SYCL_LIBRARIES}")
+    message("-- DPCPP flags: ${DPCPP_FLAGS}")
+    message("-- DPCPP include dirs: ${DPCPP_INCLUDE_DIRS}")
+    message("-- DPCPP libraries:    ${DPCPP_LIBRARIES}")
 
     # Use our wrapper imported target OCCA::depends::DPCPP,
     # (which wraps the _INCLUDE_DIRS and _LIBRARIES,) to make our package relocatable
