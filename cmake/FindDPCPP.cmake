@@ -6,9 +6,9 @@
 message(CHECK_START "Looking for DPC++")
 unset(missingDpcppComponents)
 
-cmake_path(CONVERT "${CMAKE_CXX_COMPILER}" TO_CMAKE_PATH_LIST compiler_path)
-cmake_path(GET compiler_path PARENT_PATH compiler_bin_dir)
-cmake_path(GET compiler_bin_dir PARENT_PATH compiler_root_dir)
+cmake_path(CONVERT "${CMAKE_CXX_COMPILER}" TO_CMAKE_PATH_LIST cxx_path)
+cmake_path(GET cxx_path PARENT_PATH cxx_bin_dir)
+cmake_path(GET cxx_bin_dir PARENT_PATH cxx_root_dir)
 
 find_path(
   SYCL_INCLUDE_DIRS
@@ -17,8 +17,8 @@ find_path(
   PATHS
     ENV SYCL_ROOT
     ${SYCL_ROOT}
-    ${compiler_root_dir}
     ENV CMPLR_ROOT
+    ${cxx_root_dir}
   PATH_SUFFIXES
     include
     include/sycl
@@ -33,8 +33,8 @@ find_library(
   PATHS
     ENV SYCL_ROOT
     ${SYCL_ROOT}
-    ${compiler_root_dir}
     ENV CMPLR_ROOT
+    ${cxx_root_dir}
   PATH_SUFFIXES
     lib
 )
