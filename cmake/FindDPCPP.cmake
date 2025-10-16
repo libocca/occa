@@ -6,64 +6,73 @@
 message(CHECK_START "Looking for DPC++")
 unset(missingDpcppComponents)
 
-cmake_path(CONVERT "${CMAKE_CXX_COMPILER}" TO_CMAKE_PATH_LIST cxx_path)
-cmake_path(GET cxx_path PARENT_PATH cxx_bin_dir)
-cmake_path(GET cxx_bin_dir PARENT_PATH cxx_root_dir)
+find_package(IntelSYCL QUIET)
+if (IntelSYCL_FOUND)
+  set(DPCPP_FOUND TRUE)
+  set(DPCPP_FLAGS "${SYCL_FLAGS}")
+  set(DPCPP_INCLUDE_DIRS "${SYCL_INCLUDE_DIR};${SYCL_INCLUDE_SYCL_DIR}")
+  set(DPCPP_LIBRARIES "${SYCL_LIBRARY}")
+else()
+  cmake_path(CONVERT "${CMAKE_CXX_COMPILER}" TO_CMAKE_PATH_LIST cxx_path)
+  cmake_path(GET cxx_path PARENT_PATH cxx_bin_dir)
+  cmake_path(GET cxx_bin_dir PARENT_PATH cxx_root_dir)
 
-find_path(
-  SYCL_INCLUDE_DIRS
-  NAMES
-    sycl/sycl.hpp
-  PATHS
-    ENV SYCL_ROOT
-    ${SYCL_ROOT}
-    ENV CMPLR_ROOT
-    ${cxx_root_dir}
-  PATH_SUFFIXES
-    include
-    include/sycl
-    include/CL
-    include/sycl/CL
-)
+  find_path(
+    DPCPP_INCLUDE_DIRS
+    NAMES
+      sycl/sycl.hpp
+    PATHS
+      ENV SYCL_ROOT
+      ${SYCL_ROOT}
+      ENV CMPLR_ROOT
+      ${cxx_root_dir}
+    PATH_SUFFIXES
+      include
+      include/sycl
+      include/CL
+      include/sycl/CL
+  )
+  set(DPCPP_INCLUDE_DIRS "${DPCPP_INCLUDE_DIRS};${DPCPP_INCLUDE_DIRS}/sycl")
 
-find_library(
-  SYCL_LIBRARIES
-  NAMES
-    sycl libsycl
-  PATHS
-    ENV SYCL_ROOT
-    ${SYCL_ROOT}
-    ENV CMPLR_ROOT
-    ${cxx_root_dir}
-  PATH_SUFFIXES
-    lib
-)
+  find_library(
+    DPCPP_LIBRARIES
+    NAMES
+      sycl libsycl
+    PATHS
+      ENV SYCL_ROOT
+      ${SYCL_ROOT}
+      ENV CMPLR_ROOT
+      ${cxx_root_dir}
+    PATH_SUFFIXES
+      lib
+  )
 
-if(NOT OCCA_DPCPP_COMPILER_FLAGS)
-  if(DEFINED ENV{OCCA_DPCPP_COMPILER_FLAGS})
-    set(SYCL_FLAGS $ENV{OCCA_DPCPP_COMPILER_FLAGS})
-  else()
-    set(SYCL_FLAGS -fsycl)
+  if(NOT OCCA_DPCPP_COMPILER_FLAGS)
+    if(DEFINED ENV{OCCA_DPCPP_COMPILER_FLAGS})
+      set(DPCPP_FLAGS $ENV{OCCA_DPCPP_COMPILER_FLAGS})
+    else()
+      set(DPCPP_FLAGS -fsycl)
+    endif()
   endif()
 endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
-    DPCPP
-    REQUIRED_VARS
-    SYCL_INCLUDE_DIRS
-    SYCL_LIBRARIES
-    SYCL_FLAGS
-    )
+  DPCPP
+  REQUIRED_VARS
+  DPCPP_INCLUDE_DIRS
+  DPCPP_LIBRARIES
+  DPCPP_FLAGS
+)
 
-if(DPCPP_FOUND AND NOT TARGET OCCA::depends::DPCPP)
+if (DPCPP_FOUND AND NOT TARGET OCCA::depends::DPCPP)
   # Create our wrapper imported target
   # Put it in the OCCA namespace to make it clear that we created it.
   add_library(OCCA::depends::DPCPP INTERFACE IMPORTED)
-  separate_arguments(SYCL_FLAGS UNIX_COMMAND "${SYCL_FLAGS}")
-  target_compile_options(OCCA::depends::DPCPP INTERFACE ${SYCL_FLAGS})
+  separate_arguments(DPCPP_FLAGS UNIX_COMMAND "${DPCPP_FLAGS}")
+  target_compile_options(OCCA::depends::DPCPP INTERFACE ${DPCPP_FLAGS})
   set_target_properties(OCCA::depends::DPCPP PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${SYCL_INCLUDE_DIRS};${SYCL_INCLUDE_DIRS}/sycl"
-    INTERFACE_LINK_LIBRARIES "${SYCL_LIBRARIES}"
+    INTERFACE_INCLUDE_DIRECTORIES "${DPCPP_INCLUDE_DIRS}"
+    INTERFACE_LINK_LIBRARIES "${DPCPP_LIBRARIES}"
   )
 endif()
