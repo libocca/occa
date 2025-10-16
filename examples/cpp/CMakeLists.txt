@@ -20,6 +20,6 @@ add_subdirectory(19_stream_tags)
 add_subdirectory(20_native_dpcpp_kernel)
 add_subdirectory(30_device_function)
 
-if (NOT DEFINED OCCA_CLANG_BASED_TRANSPILER)
+if (NOT OCCA_CLANG_BASED_TRANSPILER)
   add_subdirectory(31_oklt_v3_moving_avg)
 endif()
