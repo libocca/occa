@@ -16,9 +16,9 @@ find_path(
     sycl/sycl.hpp
   PATHS
     ENV SYCL_ROOT
-    /opt/intel/oneapi/compiler/latest/linux
     ${SYCL_ROOT}
     ${compiler_root_dir}
+    ENV CMPLR_ROOT
   PATH_SUFFIXES
     include
     include/sycl
@@ -32,9 +32,9 @@ find_library(
     sycl libsycl
   PATHS
     ENV SYCL_ROOT
-    /opt/intel/oneapi/compiler/latest/linux
     ${SYCL_ROOT}
     ${compiler_root_dir}
+    ENV CMPLR_ROOT
   PATH_SUFFIXES
     lib
 )
