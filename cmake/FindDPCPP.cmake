@@ -47,14 +47,13 @@ else()
       lib
   )
 
-  if(NOT OCCA_DPCPP_COMPILER_FLAGS)
-    if(DEFINED ENV{OCCA_DPCPP_COMPILER_FLAGS})
-      set(DPCPP_FLAGS $ENV{OCCA_DPCPP_COMPILER_FLAGS})
-    else()
-      set(DPCPP_FLAGS -fsycl)
-    endif()
-  endif()
+  set(DPCPP_FLAGS -fsycl)
 endif()
+
+if (NOT SYCL_FLAGS)
+  set(DPCPP_FLAGS SYCL_FLAGS)
+endif()
+# TODO: Check if the backend compiler supports DPCPP_FLAGS
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
