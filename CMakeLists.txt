@@ -120,7 +120,6 @@ target_include_directories(libocca PUBLIC
 target_include_directories(libocca PRIVATE
   $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/src>)
 
-target_compile_definitions(libocca PRIVATE -DUSE_CMAKE)
 if (OCCA_CLANG_BASED_TRANSPILER)
   target_link_libraries(libocca PRIVATE occa::occa-transpiler)
   target_compile_definitions(libocca PRIVATE -DBUILD_WITH_CLANG_BASED_TRANSPILER)
