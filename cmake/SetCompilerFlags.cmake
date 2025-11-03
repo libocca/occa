@@ -86,6 +86,11 @@ if (OCCA_ENABLE_FORTRAN)
 
   set_optional_fortran_flag(SUPPORTED_WNO_INTEGER_DIVISION_Fortran_FLAGS "-Wno-integer-division")
 
+  # Fix for:
+  # https://community.intel.com/t5/Intel-Fortran-Compiler/ifx-2025-warning-5472/td-p/1643667
+  if (CMAKE_Fortran_COMPILER_ID STREQUAL "IntelLLVM")
+    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fpscomp logicals")
+  endif()
 endif()
 
 check_cxx_compiler_flag("-fno-strict-aliasing" COMPILER_SUPPORTS_NO_STRICT_ALIASING)
