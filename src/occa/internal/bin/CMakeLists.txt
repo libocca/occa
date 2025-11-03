@@ -1,1 +1,4 @@
-target_sources(libocca PRIVATE occa.cpp)
+target_sources(libocca
+  PRIVATE
+  occa.cpp
+)
