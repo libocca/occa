@@ -31,7 +31,6 @@
         "OCCA_ENABLE_TESTS": "$env{OCCA_ENABLE_TESTS}",
         "OCCA_ENABLE_EXAMPLES": "$env{OCCA_ENABLE_EXAMPLES}",
         "OCCA_ENABLE_CLANG_TRANSPILER": "$env{OCCA_ENABLE_CLANG_TRANSPILER}",
-        "OCCA_DPCPP_COMPILER": "$env{OCCA_DPCPP_COMPILER}",
         "SYCL_FLAGS": "$env{SYCL_FLAGS}"
       },
       "environment": {
@@ -90,7 +89,6 @@
       "inherits": "clang-default",
       "environment": {
         "OCCA_ENABLE_DPCPP": "ON",
-        "OCCA_DPCPP_COMPILER": "clang++",
         "SYCL_FLAGS": "-fsycl -fsycl-targets=nvptx64-nvidia-cuda"
       }
     },
@@ -103,8 +101,7 @@
         "CXX": "icpx",
         "FC": "ifx",
         "CXXFLAGS": "-Wno-uninitialized",
-        "OCCA_ENABLE_DPCPP": "ON",
-        "OCCA_DPCPP_COMPILER": "icpx"
+        "OCCA_ENABLE_DPCPP": "ON"
       }
     }
   ],
