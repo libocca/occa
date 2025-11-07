@@ -28,12 +28,29 @@ function(add_occa_test test_source)
     RUNTIME_OUTPUT_DIRECTORY ${test_directory})
 
   # Build config
-  target_link_libraries(${cmake_test_target} OCCA::libocca ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
-  target_include_directories(${cmake_test_target} PRIVATE
-    $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/src>)
+  target_link_libraries(${cmake_test_target}
+    PRIVATE
+    OCCA::c_api
+    OCCA::libocca
+    ${CMAKE_THREAD_LIBS_INIT}
+    ${CMAKE_DL_LIBS}
+  )
+  if (OCCA_ENABLE_FORTRAN)
+    target_link_libraries(${cmake_test_target}
+      PRIVATE
+      OCCA::fortran_api
+    )
+  endif()
+
+  target_include_directories(${cmake_test_target}
+    PRIVATE
+    $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/src>
+  )
 
   if (${test_source} MATCHES "typedefs.f90")
-    target_link_libraries(${cmake_test_target} libtypedefs_helper)
+    target_link_libraries(${cmake_test_target}
+      PRIVATE
+      libtypedefs_helper)
   endif()
 
   add_test(

@@ -1,1 +1,6 @@
-target_sources(libocca PRIVATE cache.cpp output.cpp utils.cpp)
+target_sources(libocca
+  PRIVATE
+  cache.cpp
+  output.cpp
+  utils.cpp
+)

@@ -43,8 +43,23 @@ endmacro()
 
 macro(compile_example target file mode)
   add_executable(${target} ${file})
-  target_link_libraries(${target} OCCA::libocca)
-  target_include_directories(${target} PRIVATE $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/src>)
+
+  target_link_libraries(${target}
+    PRIVATE
+    OCCA::c_api
+    OCCA::libocca
+  )
+  if (OCCA_ENABLE_FORTRAN)
+    target_link_libraries(${target}
+      PRIVATE
+      OCCA::fortran_api
+    )
+  endif()
+
+  target_include_directories(${target}
+    PRIVATE
+    $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/src>
+  )
 
   file(RELATIVE_PATH install_dir ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_LIST_DIR})
   file(GLOB_RECURSE OKLS "${CMAKE_CURRENT_LIST_DIR}/*.okl")
@@ -63,6 +78,10 @@ endmacro()
 
 macro(compile_c_example target file)
   compile_example(examples_c_${target} ${file} TRUE)
+  target_link_libraries(examples_c_${target}
+    PRIVATE
+    OCCA::c_api
+  )
 endmacro()
 
 macro(compile_cpp_example target file)

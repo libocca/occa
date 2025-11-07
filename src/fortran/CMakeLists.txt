@@ -1,5 +1,25 @@
-target_sources(libocca PRIVATE fc_string_m.f90 occa_base_m.f90
-  occa_device_m.f90 occa_dtype_m.f90 occa_json_m.f90
-  occa_kernelBuilder_m.f90 occa_kernel_m.f90 occa_memory_m.f90
-  occa_m.f90 occa_scope_m.f90 occa_stream_m.f90 occa_typedefs_m.f90
-  occa_types_m.f90)
+add_library(fortran_api SHARED)
+add_library(${namespace}fortran_api ALIAS fortran_api)
+target_sources(fortran_api
+  PRIVATE
+  fc_string_m.f90
+  occa_base_m.f90
+  occa_device_m.f90
+  occa_dtype_m.f90
+  occa_json_m.f90
+  occa_kernelBuilder_m.f90
+  occa_kernel_m.f90
+  occa_memory_m.f90
+  occa_m.f90
+  occa_scope_m.f90
+  occa_stream_m.f90
+  occa_typedefs_m.f90
+  occa_types_m.f90
+  kernel_fortran_interface.cpp
+)
+
+target_link_libraries(fortran_api
+  PRIVATE
+  c_api
+  libocca
+)

@@ -1,1 +1,4 @@
-target_sources(libocca PRIVATE functionStore.cpp)
+target_sources(libocca
+  PRIVATE
+  functionStore.cpp
+)
