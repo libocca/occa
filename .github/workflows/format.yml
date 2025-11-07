@@ -1,0 +1,30 @@
+# Based on https://dev.to/10xlearner/formatting-cmake-4dle
+name: Check formatting
+
+on:
+  push:
+    branches: [development, main]
+    paths-ignore:
+      - 'README.md'
+      - 'INSTALL.md'
+      - 'docs/**'
+  pull_request:
+    branches: [development, main]
+    paths-ignore:
+      - 'README.md'
+      - 'INSTALL.md'
+      - 'docs/**'
+jobs:
+  cmake-format:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install cmake-format
+      run: |
+        python -m pip install --upgrade pip
+        pip install cmake_format
+    - name: Run cmake-format
+      run: |
+        find . \( -name '*.cmake' -o -name 'CMakeLists.txt' \) -exec cmake-format -i {} \;
+    - name: Check format
+      run: git diff --exit-code

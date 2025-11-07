@@ -1,5 +1,1 @@
-target_sources(libocca
-  PRIVATE
-  cli.cpp
-  types.cpp
-)
+target_sources(libocca PRIVATE cli.cpp types.cpp)

@@ -1,7 +1,4 @@
-target_sources(libocca
-  PRIVATE
-  modes.cpp
-)
+target_sources(libocca PRIVATE modes.cpp)
 
 add_subdirectory(api)
 add_subdirectory(bin)
@@ -10,5 +7,5 @@ add_subdirectory(core)
 add_subdirectory(functional)
 add_subdirectory(io)
 add_subdirectory(lang)
-add_subdirectory(modes )
+add_subdirectory(modes)
 add_subdirectory(utils)

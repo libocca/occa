@@ -3,6 +3,9 @@ on:
   push:
     paths:
       - CITATION.cff
+  pull_request:
+    paths:
+      - CITATION.cff
 jobs:
   validate-citation-cff:
     name: Validate CITATION.cff
