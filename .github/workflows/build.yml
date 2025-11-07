@@ -20,7 +20,6 @@ on:
         description: 'Run the build with tmate debugging enabled'
         required: false
         default: true
-
 jobs:
   run:
     strategy:
