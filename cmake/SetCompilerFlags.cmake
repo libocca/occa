@@ -22,16 +22,11 @@ set_optional_cxx_flag(SUPPORTED_WARN_CXX_FLAGS "-Wwrite-strings -Wfloat-equal"
 # set_optional_cxx_flag(SUPPORTED_WARN_CXX_FLAGS "-Wstrict-prototypes
 # -Wmissing-prototypes" "-Wundef") Disable warnings
 set_optional_cxx_flag(SUPPORTED_WARN_CXX_FLAGS "-Wno-unused-parameter")
-set_optional_cxx_flag(
-  SUPPORTED_WARN_CXX_FLAGS "-diag-disable 11074 -diag-disable 11076") # Intel:
-                                                                      # Disable
-                                                                      # warnings
-                                                                      # about
-                                                                      # inline
-                                                                      # limits
-                                                                      # reached
-set_optional_cxx_flag(SUPPORTED_WARN_CXX_FLAGS "--display_error_number"
-)# Show PGI error numbers
+# Intel: Disable warnings about inline limits reached
+set_optional_cxx_flag(SUPPORTED_WARN_CXX_FLAGS
+                      "-diag-disable 11074 -diag-disable 11076")
+# Show PGI error numbers
+set_optional_cxx_flag(SUPPORTED_WARN_CXX_FLAGS "--display_error_number")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
   # Workaround for CMakeFiles/tools-trie.dir/trie.cpp.o: in function
@@ -72,15 +67,11 @@ set_optional_c_flag(SUPPORTED_WARN_C_FLAGS "-Wwrite-strings -Wfloat-equal"
 # set_optional_c_flag(SUPPORTED_WARN_C_FLAGS "-Wstrict-prototypes
 # -Wmissing-prototypes" "-Wundef") Disble warnings
 set_optional_c_flag(SUPPORTED_WARN_C_FLAGS "-Wno-c++11-long-long")
-set_optional_c_flag(
-  SUPPORTED_WARN_C_FLAGS "-diag-disable 11074 -diag-disable 11076") # Disable
-                                                                    # warnings
-                                                                    # about
-                                                                    # inline
-                                                                    # limits
-                                                                    # reached
-set_optional_c_flag(
-  SUPPORTED_WARN_C_FLAGS "--display_error_number") # Show PGI error numbers
+# Disable warnings about inline limits reached
+set_optional_c_flag(SUPPORTED_WARN_C_FLAGS
+                    "-diag-disable 11074 -diag-disable 11076")
+# Show PGI error numbers
+set_optional_c_flag(SUPPORTED_WARN_C_FLAGS "--display_error_number")
 
 set(CMAKE_C_FLAGS "${SUPPORTED_WARN_C_FLAGS} ${CMAKE_C_FLAGS}")
 
