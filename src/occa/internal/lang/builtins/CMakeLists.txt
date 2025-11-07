@@ -1,6 +1,3 @@
-target_sources(libocca
-  PRIVATE
-  types.cpp
-)
+target_sources(libocca PRIVATE types.cpp)
 
 add_subdirectory(attributes)

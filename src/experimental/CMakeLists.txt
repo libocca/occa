@@ -1,4 +1,1 @@
-target_sources(libocca
-  PRIVATE
-  kernelBuilder.cpp
-)
+target_sources(libocca PRIVATE kernelBuilder.cpp)

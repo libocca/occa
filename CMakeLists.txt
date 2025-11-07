@@ -1,48 +1,53 @@
-cmake_minimum_required (VERSION 3.21 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
 
-#---[ CMake Config ]--------------------
+# ---[ CMake Config ]--------------------
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-# See here: https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling
-set(CMAKE_SKIP_BUILD_RPATH            FALSE)
-set(CMAKE_BUILD_WITH_INSTALL_RPATH    FALSE)
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE )
+# See here:
+# https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling
+set(CMAKE_SKIP_BUILD_RPATH FALSE)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib"      )
-set (CMAKE_MODULE_PATH  "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 message(STATUS "Using CMake version ${CMAKE_VERSION}")
 cmake_policy(SET CMP0054 NEW)
 cmake_policy(SET CMP0056 NEW)
-#=======================================
+# =======================================
 
-#---[ Build Config ]--------------------
-project(OCCA
-  VERSION      2.0.0
-  DESCRIPTION  "JIT Compilation for Multiple Architectures: C++, OpenMP, CUDA, HIP, OpenCL, Metal"
+# ---[ Build Config ]--------------------
+project(
+  OCCA
+  VERSION 2.0.0
+  DESCRIPTION
+    "JIT Compilation for Multiple Architectures: C++, OpenMP, CUDA, HIP, OpenCL, Metal"
   HOMEPAGE_URL "https://github.com/libocca/occa"
-  LANGUAGES    C CXX
-)
+  LANGUAGES C CXX)
 
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
+  set(CMAKE_BUILD_TYPE
+      "Release"
+      CACHE STRING "Build type" FORCE)
 endif()
 
-# CMake will decay to a previous C++ standard if a compiler does not support C++17
-set(CMAKE_CXX_STANDARD              17)
-set(CMAKE_CXX_STANDARD_REQUIRED     ON)
-set(CMAKE_CXX_EXTENSIONS            OFF)
+# CMake will decay to a previous C++ standard if a compiler does not support
+# C++17
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-option(OCCA_ENABLE_OPENMP "Build with OpenMP if available"     ON)
-option(OCCA_ENABLE_CUDA   "Build with CUDA if available"       ON)
-option(OCCA_ENABLE_OPENCL "Build with OpenCL if available"     ON)
-option(OCCA_ENABLE_HIP    "Build with HIP if available"        ON)
-option(OCCA_ENABLE_METAL  "Build with Metal if available"      ON)
-option(OCCA_ENABLE_DPCPP  "Build with SYCL/DPCPP if available" ON)
+option(OCCA_ENABLE_OPENMP "Build with OpenMP if available" ON)
+option(OCCA_ENABLE_CUDA "Build with CUDA if available" ON)
+option(OCCA_ENABLE_OPENCL "Build with OpenCL if available" ON)
+option(OCCA_ENABLE_HIP "Build with HIP if available" ON)
+option(OCCA_ENABLE_METAL "Build with Metal if available" ON)
+option(OCCA_ENABLE_DPCPP "Build with SYCL/DPCPP if available" ON)
 
-option(OCCA_ENABLE_TESTS           "Build tests"                          OFF)
-option(OCCA_ENABLE_EXAMPLES        "Build simple examples"                OFF)
-option(OCCA_ENABLE_FORTRAN         "Enable Fortran interface"             OFF)
+option(OCCA_ENABLE_TESTS "Build tests" OFF)
+option(OCCA_ENABLE_EXAMPLES "Build simple examples" OFF)
+option(OCCA_ENABLE_FORTRAN "Enable Fortran interface" OFF)
 option(OCCA_CLANG_BASED_TRANSPILER "Build with occa-transpiler dependecy" OFF)
 
 if(OCCA_ENABLE_FORTRAN)
@@ -50,7 +55,7 @@ if(OCCA_ENABLE_FORTRAN)
 endif()
 
 option(ENABLE_SHARABLE_DEVICE "Enable sharable device by multiple threads" OFF)
-if (ENABLE_SHARABLE_DEVICE)
+if(ENABLE_SHARABLE_DEVICE)
   set(OCCA_THREAD_SHARABLE_ENABLED 1)
   message("-- OCCA sharable by multi-threads     : Enabled")
 else()
@@ -58,12 +63,12 @@ else()
 endif()
 
 set(OCCA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(OCCA_BUILD_DIR  ${CMAKE_BINARY_DIR})
+set(OCCA_BUILD_DIR ${CMAKE_BINARY_DIR})
 
 include(CodeGen)
 
 set(OCCA_USING_VS OFF)
-set(OCCA_UNSAFE   OFF)
+set(OCCA_UNSAFE OFF)
 
 # Test Apple first because UNIX==true for Apple and Linux.
 if(APPLE)
@@ -79,10 +84,15 @@ include(SetCompilerFlags)
 string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPER)
 message("-- System     : ${CMAKE_SYSTEM}")
 message("-- Build type : ${CMAKE_BUILD_TYPE}")
-message("-- C flags    : ${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
-message("-- CXX flags  : ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
+message(
+  "-- C flags    : ${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
+message(
+  "-- CXX flags  : ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}"
+)
 if(OCCA_ENABLE_FORTRAN)
-  message("-- F90 flags  : ${CMAKE_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
+  message(
+    "-- F90 flags  : ${CMAKE_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}"
+  )
 endif()
 
 if(OCCA_ENABLE_FORTRAN)
@@ -90,40 +100,32 @@ if(OCCA_ENABLE_FORTRAN)
 endif()
 
 set(namespace "${PROJECT_NAME}::")
-#=======================================
+# =======================================
 
-#---[ libocca.so ]----------------------
+# ---[ libocca.so ]----------------------
 add_library(libocca SHARED)
 add_library(${namespace}libocca ALIAS libocca)
-target_include_directories(libocca
-  PUBLIC
-  $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/include>
-  $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/src>
-  $<BUILD_INTERFACE:${OCCA_BUILD_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
+target_include_directories(
+  libocca
+  PUBLIC $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/include>
+         $<BUILD_INTERFACE:${OCCA_SOURCE_DIR}/src>
+         $<BUILD_INTERFACE:${OCCA_BUILD_DIR}/include>
+         $<INSTALL_INTERFACE:include>)
 
 # Without this, CMake will create liblibocca.so
-set_target_properties(libocca
-  PROPERTIES
-  OUTPUT_NAME
-  occa
-  LIBRARY_OUTPUT_DIRECTORY
-  ${OCCA_BUILD_DIR}/lib
-)
+set_target_properties(
+  libocca PROPERTIES OUTPUT_NAME occa LIBRARY_OUTPUT_DIRECTORY
+                                      ${OCCA_BUILD_DIR}/lib)
 
 # Find needed and requested packages
 find_package(Threads REQUIRED)
 
-# Use the provided imported target Threads::Threads, to make our package relocatable
-target_link_libraries(libocca
-  PRIVATE
-  Threads::Threads
-  ${CMAKE_DL_LIBS}
-)
-#=======================================
+# Use the provided imported target Threads::Threads, to make our package
+# relocatable
+target_link_libraries(libocca PRIVATE Threads::Threads ${CMAKE_DL_LIBS})
+# =======================================
 
-#---[ OpenMP ]--------------------------
+# ---[ OpenMP ]--------------------------
 if(OCCA_ENABLE_OPENMP)
   find_package(OpenMP)
 
@@ -133,16 +135,16 @@ if(OCCA_ENABLE_OPENMP)
     message("-- OpenMP include dirs: ${OpenMP_CXX_INCLUDE_DIRS}")
     message("-- OpenMP libraries:    ${OpenMP_CXX_LIBRARIES}")
 
-    # Use the provided imported target OpenMP::OpenMP_CXX,
-    # (which wraps the CXX_INCLUDE_DIRS and CXX_LIBRARIES,) to make our package relocatable
+    # Use the provided imported target OpenMP::OpenMP_CXX, (which wraps the
+    # CXX_INCLUDE_DIRS and CXX_LIBRARIES,) to make our package relocatable
     target_link_libraries(libocca PRIVATE OpenMP::OpenMP_CXX)
   else()
     set(OCCA_OPENMP_ENABLED 0)
   endif()
 endif()
-#=======================================
+# =======================================
 
-#---[ CUDA ]----------------------------
+# ---[ CUDA ]----------------------------
 if(OCCA_ENABLE_CUDA)
   find_package(CUDAToolkit)
 
@@ -152,15 +154,16 @@ if(OCCA_ENABLE_CUDA)
     message("-- CUDA include dirs: ${CUDAToolkit_INCLUDE_DIRS}")
     message("-- CUDA driver library: ${CUDAToolkit_LIBRARY_DIR}")
 
-    # Use the provided imported target CUDA::cuda_driver, to make our package relocatable
+    # Use the provided imported target CUDA::cuda_driver, to make our package
+    # relocatable
     target_link_libraries(libocca PRIVATE CUDA::cuda_driver)
   else()
     set(OCCA_CUDA_ENABLED 0)
   endif()
 endif()
-#=======================================
+# =======================================
 
-#---[ OpenCL ]--------------------------
+# ---[ OpenCL ]--------------------------
 if(OCCA_ENABLE_OPENCL)
   find_package(OpenCLWrapper)
 
@@ -170,16 +173,16 @@ if(OCCA_ENABLE_OPENCL)
     message("-- OpenCL include dirs: ${OpenCL_INCLUDE_DIRS}")
     message("-- OpenCL libraries:    ${OpenCL_LIBRARIES}")
 
-    # Use the provided imported target OpenCL::OpenCL,
-    # (which wraps the _INCLUDE_DIRS and _LIBRARIES,) to make our package relocatable
+    # Use the provided imported target OpenCL::OpenCL, (which wraps the
+    # _INCLUDE_DIRS and _LIBRARIES,) to make our package relocatable
     target_link_libraries(libocca PRIVATE OpenCL::OpenCL)
   else()
     set(OCCA_OPENCL_ENABLED 0)
   endif()
 endif()
-#=======================================
+# =======================================
 
-#---[ SYCL/DPCPP ]-----------------------
+# ---[ SYCL/DPCPP ]-----------------------
 if(OCCA_ENABLE_DPCPP)
   find_package(DPCPP)
 
@@ -190,16 +193,16 @@ if(OCCA_ENABLE_DPCPP)
     message("-- DPCPP include dirs: ${DPCPP_INCLUDE_DIRS}")
     message("-- DPCPP libraries:    ${DPCPP_LIBRARIES}")
 
-    # Use our wrapper imported target OCCA::depends::DPCPP,
-    # (which wraps the _INCLUDE_DIRS and _LIBRARIES,) to make our package relocatable
+    # Use our wrapper imported target OCCA::depends::DPCPP, (which wraps the
+    # _INCLUDE_DIRS and _LIBRARIES,) to make our package relocatable
     target_link_libraries(libocca PRIVATE OCCA::depends::DPCPP)
   else()
     set(OCCA_DPCPP_ENABLED 0)
   endif()
 endif()
-#=======================================
+# =======================================
 
-#---[ HIP ]-----------------------------
+# ---[ HIP ]-----------------------------
 if(OCCA_ENABLE_HIP)
   find_package(HIP)
 
@@ -211,16 +214,17 @@ if(OCCA_ENABLE_HIP)
     message("-- HIP include dirs: ${HIP_INCLUDE_DIRS}")
     message("-- HIP libraries:    ${HIP_LIBRARIES}")
 
-    # Use our wrapper imported target OCCA::depends::HIP,
-    # (which wraps the _COMPILE_DEFINITIONS, _INCLUDE_DIRS and _LIBRARIES,) to make our package relocatable
+    # Use our wrapper imported target OCCA::depends::HIP, (which wraps the
+    # _COMPILE_DEFINITIONS, _INCLUDE_DIRS and _LIBRARIES,) to make our package
+    # relocatable
     target_link_libraries(libocca PRIVATE OCCA::depends::HIP)
-  else (HIP_FOUND)
+  else(HIP_FOUND)
     set(OCCA_HIP_ENABLED 0)
   endif(HIP_FOUND)
 endif()
-#=======================================
+# =======================================
 
-#---[ Metal ]---------------------------
+# ---[ Metal ]---------------------------
 if(OCCA_ENABLE_METAL AND APPLE)
   find_package(METAL)
 
@@ -231,54 +235,64 @@ if(OCCA_ENABLE_METAL AND APPLE)
     message("-- METAL core services: ${CORE_SERVICES}")
     message("-- METAL app kit:       ${APP_KIT}")
 
-    # Use our wrapper imported target OCCA::depends::METAL,
-    # (which wraps the three libraries variables,) to make our package relocatable
+    # Use our wrapper imported target OCCA::depends::METAL, (which wraps the
+    # three libraries variables,) to make our package relocatable
     target_link_libraries(libocca PRIVATE OCCA::depends::METAL)
   else()
     set(OCCA_METAL_ENABLED 0)
   endif()
 endif()
-#=======================================
+# =======================================
 
-#---[ Clang Transpiler ]---------------------------
+# ---[ Clang Transpiler ]---------------------------
 # INFO: order is important, deps should not apply compiler flags
-if (OCCA_CLANG_BASED_TRANSPILER)
+if(OCCA_CLANG_BASED_TRANSPILER)
   find_package(oklt REQUIRED)
   target_link_libraries(libocca PRIVATE occa::occa-transpiler)
-  target_compile_definitions(libocca PRIVATE -DBUILD_WITH_CLANG_BASED_TRANSPILER)
+  target_compile_definitions(libocca
+                             PRIVATE -DBUILD_WITH_CLANG_BASED_TRANSPILER)
 endif()
 
 include(CheckRequiredCompilerFeatures)
-  
+
 if(NOT OCCA_IS_TOP_LEVEL)
   # OCCA is being built as a subdirectory in another project
-  set(OCCA_OPENMP_ENABLED ${OCCA_OPENMP_ENABLED} PARENT_SCOPE)
-  set(OCCA_CUDA_ENABLED ${OCCA_CUDA_ENABLED} PARENT_SCOPE)
-  set(OCCA_HIP_ENABLED ${OCCA_HIP_ENABLED} PARENT_SCOPE)
-  set(OCCA_DPCPP_ENABLED ${OCCA_DPCPP_ENABLED} PARENT_SCOPE)
-  set(OCCA_OPENCL_ENABLED ${OCCA_OPENCL_ENABLED} PARENT_SCOPE)
-  set(OCCA_METAL_ENABLED ${OCCA_METAL_ENABLED} PARENT_SCOPE)
+  set(OCCA_OPENMP_ENABLED
+      ${OCCA_OPENMP_ENABLED}
+      PARENT_SCOPE)
+  set(OCCA_CUDA_ENABLED
+      ${OCCA_CUDA_ENABLED}
+      PARENT_SCOPE)
+  set(OCCA_HIP_ENABLED
+      ${OCCA_HIP_ENABLED}
+      PARENT_SCOPE)
+  set(OCCA_DPCPP_ENABLED
+      ${OCCA_DPCPP_ENABLED}
+      PARENT_SCOPE)
+  set(OCCA_OPENCL_ENABLED
+      ${OCCA_OPENCL_ENABLED}
+      PARENT_SCOPE)
+  set(OCCA_METAL_ENABLED
+      ${OCCA_METAL_ENABLED}
+      PARENT_SCOPE)
 endif()
 
 # Generate CompiledDefines from libraries we found
-configure_file(
-  scripts/build/compiledDefinesTemplate.hpp.in
-  ${OCCA_BUILD_DIR}/include/occa/defines/compiledDefines.hpp)
+configure_file(scripts/build/compiledDefinesTemplate.hpp.in
+               ${OCCA_BUILD_DIR}/include/occa/defines/compiledDefines.hpp)
 
-install(
-  FILES ${OCCA_BUILD_DIR}/include/occa/defines/compiledDefines.hpp
-  DESTINATION include/occa/defines)
+install(FILES ${OCCA_BUILD_DIR}/include/occa/defines/compiledDefines.hpp
+        DESTINATION include/occa/defines)
 
 if(OCCA_ENABLE_FORTRAN)
-  install(CODE
-    "file(GLOB public-modules ${CMAKE_Fortran_MODULE_DIRECTORY}/*.mod)\n
+  install(
+    CODE "file(GLOB public-modules ${CMAKE_Fortran_MODULE_DIRECTORY}/*.mod)\n
      file(INSTALL DESTINATION
        ${CMAKE_INSTALL_PREFIX}/include
        TYPE FILE
        FILES \${public-modules})")
 
-  set_target_properties(libocca PROPERTIES
-    LINKER_LANGUAGE C)
+  set_target_properties(libocca PROPERTIES LINKER_LANGUAGE C)
 endif()
 
 add_subdirectory(src)
@@ -291,35 +305,25 @@ if(OCCA_ENABLE_TESTS)
   add_subdirectory(tests)
 endif()
 
-if (OCCA_ENABLE_FORTRAN)
-  install(TARGETS
-    libocca
-    c_api
-    fortran_api
-    EXPORT
-    occaExport
-    DESTINATION
-    lib
-  )
+if(OCCA_ENABLE_FORTRAN)
+  install(
+    TARGETS libocca c_api fortran_api
+    EXPORT occaExport
+    DESTINATION lib)
 else()
-  install(TARGETS
-    libocca
-    c_api
-    EXPORT
-    occaExport
-    DESTINATION
-    lib
-  )
+  install(
+    TARGETS libocca c_api
+    EXPORT occaExport
+    DESTINATION lib)
 endif()
 install(DIRECTORY include/ DESTINATION include)
 
 # Create a package config and associated files.
 include(ExportAndPackageConfig)
 
-install(CODE
-  "configure_file(
+install(
+  CODE "configure_file(
     ${OCCA_SOURCE_DIR}/modulefiles/occa
     ${CMAKE_INSTALL_PREFIX}/modulefiles/occa
     @ONLY
-  )"
-)
+  )")

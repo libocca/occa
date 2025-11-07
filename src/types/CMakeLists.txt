@@ -1,7 +1,1 @@
-target_sources(libocca
-  PRIVATE
-  dim.cpp
-  json.cpp
-  primitive.cpp
-  typeinfo.cpp
-)
+target_sources(libocca PRIVATE dim.cpp json.cpp primitive.cpp typeinfo.cpp)
