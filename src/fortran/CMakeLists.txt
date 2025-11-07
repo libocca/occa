@@ -15,6 +15,7 @@ target_sources(fortran_api
   occa_stream_m.f90
   occa_typedefs_m.f90
   occa_types_m.f90
+  kernel_fortran_interface.cpp
 )
 
 target_link_libraries(fortran_api

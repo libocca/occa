@@ -8,7 +8,6 @@ target_sources(c_api
   io.cpp
   json.cpp
   kernel.cpp
-  kernel_fortran_interface.cpp
   memory.cpp
   memoryPool.cpp
   scope.cpp
