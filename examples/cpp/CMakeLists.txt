@@ -18,6 +18,7 @@ add_subdirectory(18_nonblocking_streams)
 add_subdirectory(19_stream_tags)
 add_subdirectory(20_native_dpcpp_kernel)
 add_subdirectory(30_device_function)
+add_subdirectory(32_native_cuda_kernels_reduction)
 
 if(NOT OCCA_CLANG_BASED_TRANSPILER)
   add_subdirectory(31_oklt_v3_moving_avg)

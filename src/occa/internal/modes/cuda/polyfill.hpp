@@ -21,7 +21,6 @@ namespace occa {
   typedef struct _CUdeviceptr*          CUdeviceptr;
   typedef struct _CUevent*              CUevent;
   typedef struct _CUfunction*           CUfunction;
-  typedef struct _CUfunction_attribute* CUfunction_attribute;
   typedef struct _CUmodule*             CUmodule;
   typedef struct _CUstream*             CUstream;
 
@@ -34,8 +33,6 @@ namespace occa {
   static const int CU_STREAM_NON_BLOCKING = 0;
   static const int CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR = 0;
   static const int CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MINOR = 0;
-
-  static const CUfunction_attribute CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK = NULL;
 
   enum CUresult {
     CUDA_SUCCESS = 0,
@@ -98,12 +95,30 @@ namespace occa {
     OCCA_CUDA_IS_NOT_ENABLED
   };
 
+  enum CUfunction_attribute {
+      CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK = 0,
+      CU_FUNC_ATTRIBUTE_SHARED_SIZE_BYTES = 1,
+      CU_FUNC_ATTRIBUTE_CONST_SIZE_BYTES = 2,
+      CU_FUNC_ATTRIBUTE_LOCAL_SIZE_BYTES = 3,
+      CU_FUNC_ATTRIBUTE_NUM_REGS = 4,
+      CU_FUNC_ATTRIBUTE_PTX_VERSION = 5,
+      CU_FUNC_ATTRIBUTE_BINARY_VERSION = 6,
+      CU_FUNC_ATTRIBUTE_CACHE_MODE_CA = 7,
+      CU_FUNC_ATTRIBUTE_MAX_DYNAMIC_SHARED_SIZE_BYTES = 8,
+      CU_FUNC_ATTRIBUTE_PREFERRED_SHARED_MEMORY_CARVEOUT = 9,
+      CU_FUNC_ATTRIBUTE_MAX
+  };
+
   //---[ Methods ]----------------------
   inline CUresult cuInit(unsigned int Flags) {
     return OCCA_CUDA_IS_NOT_ENABLED;
   }
 
   inline CUresult cuFuncGetAttribute(int *pi, CUfunction_attribute attrib, CUfunction hfunc) {
+    return OCCA_CUDA_IS_NOT_ENABLED;
+  }
+
+  inline CUresult cuFuncSetAttribute(CUfunction hfunc, CUfunction_attribute attrib, int value) {
     return OCCA_CUDA_IS_NOT_ENABLED;
   }
 

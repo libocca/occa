@@ -14,7 +14,9 @@ namespace occa {
                    const occa::json &properties_) :
       occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       cuModule(cuModule_),
-      cuFunction(NULL) {}
+      cuFunction(NULL) {
+        sharedMemBytes = properties_.get("sharedMemBytes", 0);
+      }
 
     kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
@@ -23,7 +25,9 @@ namespace occa {
                    const occa::json &properties_) :
       occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       cuModule(NULL),
-      cuFunction(cuFunction_) {}
+      cuFunction(cuFunction_) {
+        sharedMemBytes = properties_.get("sharedMemBytes", 0);
+      }
 
     kernel::kernel(modeDevice_t *modeDevice_,
                    const std::string &name_,
@@ -33,7 +37,9 @@ namespace occa {
                    const occa::json &properties_) :
       occa::launchedModeKernel_t(modeDevice_, name_, sourceFilename_, properties_),
       cuModule(cuModule_),
-      cuFunction(cuFunction_) {}
+      cuFunction(cuFunction_) {
+        sharedMemBytes = properties_.get("sharedMemBytes", 0);
+      }
 
     kernel::~kernel() {
       if (cuModule) {
@@ -92,12 +98,13 @@ namespace occa {
 
       devicePtr->setCudaContext();
 
+      OCCA_CUDA_ERROR("Set max dynamic shm", cuFuncSetAttribute(cuFunction, CU_FUNC_ATTRIBUTE_MAX_DYNAMIC_SHARED_SIZE_BYTES, sharedMemBytes));
       OCCA_CUDA_ERROR("Launching Kernel",
                       cuLaunchKernel(cuFunction,
                                      outerDims.x, outerDims.y, outerDims.z,
                                      innerDims.x, innerDims.y, innerDims.z,
-                                     0, getCuStream(),
-                                     &(vArgs[0]), 0));
+                                     sharedMemBytes, getCuStream(),
+                                     &(vArgs[0]), NULL));
     }
   }
 }

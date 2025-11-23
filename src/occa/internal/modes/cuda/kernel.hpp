@@ -19,6 +19,9 @@ namespace occa {
 
       mutable std::vector<void*> vArgs;
 
+      // Dynamic shared memory size
+      int sharedMemBytes = 0;
+
     public:
       kernel(modeDevice_t *modeDevice_,
              const std::string &name_,
