@@ -215,21 +215,21 @@ namespace occa {
         kernelProps.get<std::string>("hipcc_compiler_flags")
       );
 
-      if (hipccCompilerFlags.find("-arch=sm") == std::string::npos &&
-          hipccCompilerFlags.find("--offload-arch=gfx") == std::string::npos) {
-
+#if defined(__HIP_PLATFORM_AMD__)
+      if (hipccCompilerFlags.find("--offload-arch=") == std::string::npos) {
         std::string archString = kernelProps.get<std::string>("arch", arch);
-
-        std::string archFlag;
-        if (startsWith(archString, "sm_")) {
-          archFlag = " -arch=" + archString;
-        } else if (startsWith(archString, "gfx")) {
-          archFlag = " --offload-arch=" + archString;
-        } else {
-          OCCA_FORCE_ERROR("Unknown HIP arch");
-        }
-        kernelProps["hipcc_compiler_flags"] += archFlag;
+        kernelProps["hipcc_compiler_flags"] += " --offload-arch=" + archString;
       }
+#elif defined(__HIP_PLATFORM_NVIDIA__)
+      if (hipccCompilerFlags.find("-arch=") == std::string::npos) {
+        std::string archString = kernelProps.get<std::string>("arch", arch);
+        kernelProps["hipcc_compiler_flags"] += " -arch=" + archString;
+      }
+#elif defined(__HIP_PLATFORM_SPIRV__)
+      // SPIR-V is architecture-agnostic; no arch flag needed
+#else
+      OCCA_FORCE_ERROR("Unknown HIP platform");
+#endif
     }
 
     void device::compileKernel(const std::string &hashDir,
