@@ -221,8 +221,8 @@ namespace occa {
         std::string archString = kernelProps.get<std::string>("arch", arch);
 
         // Override the arch if the users requests it
-        if (env::var("OCCA_HIP_OVERRIDE_COMPILE_ARCH").size()) {
-          archString = env::var("OCCA_HIP_OVERRIDE_COMPILE_ARCH");
+        if (env::var("OCCA_OVERRIDE_COMPILE_ARCH").size()) {
+          archString = env::var("OCCA_OVERRIDE_COMPILE_ARCH");
         }
 
         std::string archFlag;
