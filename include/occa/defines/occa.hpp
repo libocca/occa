@@ -17,4 +17,7 @@
 
 #define OCCA_DEFAULT_MEM_BYTE_ALIGN 32
 
+// Defined in this fork to signal availability of device.name() and device.memoryFree()
+#define OCCA_FORK_EXTENSIONS 1
+
 #endif
