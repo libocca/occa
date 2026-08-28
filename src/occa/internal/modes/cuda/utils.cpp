@@ -193,11 +193,26 @@ namespace occa {
                            ? ((cuda::device*) device.getModeDevice())->cuDevice
                            : CU_DEVICE_CPU);
 
+#if CUDA_VERSION >= 11020
+      // CUDA 11.2+ replaced the CUdevice argument with a CUmemLocation
+      CUmemLocation location;
+      location.type = (device.mode() == "CUDA")
+        ? CU_MEM_LOCATION_TYPE_DEVICE
+        : CU_MEM_LOCATION_TYPE_HOST;
+      location.id   = cuDevice;
+
+      OCCA_CUDA_ERROR("Advising about unified memory",
+                      cuMemAdvise(((cuda::memory*) mem.getModeMemory())->cuPtr,
+                                  (size_t) bytes_,
+                                  advice,
+                                  location));
+#else
       OCCA_CUDA_ERROR("Advising about unified memory",
                       cuMemAdvise(((cuda::memory*) mem.getModeMemory())->cuPtr,
                                   (size_t) bytes_,
                                   advice,
                                   cuDevice));
+#endif
 #else
       OCCA_FORCE_ERROR("CUDA version ["
                        << cuda::getVersion()
@@ -223,11 +238,27 @@ namespace occa {
                            ? ((cuda::device*) device.getModeDevice())->cuDevice
                            : CU_DEVICE_CPU);
       occa::stream stream = device.getStream();
+#if CUDA_VERSION >= 11020
+      // CUDA 11.2+ replaced the CUdevice argument with a CUmemLocation plus flags
+      CUmemLocation location;
+      location.type = (device.mode() == "CUDA")
+        ? CU_MEM_LOCATION_TYPE_DEVICE
+        : CU_MEM_LOCATION_TYPE_HOST;
+      location.id   = cuDevice;
+
+      OCCA_CUDA_ERROR("Prefetching unified memory",
+                      cuMemPrefetchAsync(((cuda::memory*) mem.getModeMemory())->cuPtr,
+                                         (size_t) bytes_,
+                                         location,
+                                         0,
+                                         *((CUstream*) stream.getModeStream())) );
+#else
       OCCA_CUDA_ERROR("Prefetching unified memory",
                       cuMemPrefetchAsync(((cuda::memory*) mem.getModeMemory())->cuPtr,
                                          (size_t) bytes_,
                                          cuDevice,
                                          *((CUstream*) stream.getModeStream())) );
+#endif
 #else
       OCCA_FORCE_ERROR("CUDA version ["
                        << cuda::getVersion()
