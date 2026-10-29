@@ -211,6 +211,9 @@ namespace occa {
     }
 
     void device::setArchCompilerFlags(occa::json &kernelProps) {
+#if defined(__HIP_PLATFORM_SPIRV__)
+      return;  // SPIR-V is architecture-agnostic; no arch flag
+#endif
       const std::string hipccCompilerFlags = (
         kernelProps.get<std::string>("hipcc_compiler_flags")
       );
