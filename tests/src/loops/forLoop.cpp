@@ -1,9 +1,6 @@
 #include <occa.hpp>
 #include <occa/internal/utils/testing.hpp>
 
-// TODO: Handle occa:: types in OKL
-using int2 = occa::int2;
-using int3 = occa::int3;
 
 void testOuterForLoops(occa::device device);
 void testFullForLoops(occa::device device);
@@ -66,7 +63,7 @@ void testOuterForLoops(occa::device device) {
 
   occa::forLoop()
     .outer(length, occa::range(length))
-    .run(OCCA_FUNCTION(scope, [=](const int2 outerIndex) -> void {
+    .run(OCCA_FUNCTION(scope, [=](const occa::int2 outerIndex) -> void {
       OKL("@inner");
       for (int i = 0; i < 2; ++i) {
         const int globalIndex = (
@@ -84,7 +81,7 @@ void testOuterForLoops(occa::device device) {
 
   occa::forLoop()
     .outer(length, occa::range(length), indexArray)
-    .run(OCCA_FUNCTION(scope, [=](const int3 outerIndex) -> void {
+    .run(OCCA_FUNCTION(scope, [=](const occa::int3 outerIndex) -> void {
       OKL("@inner");
       for (size_t i = 0; i < 2; ++i) {
         const int globalIndex = (
@@ -148,7 +145,7 @@ void testFullForLoops(occa::device device) {
   occa::forLoop()
     .outer(2)
     .inner(length, occa::range(length))
-    .run(OCCA_FUNCTION(scope, [=](const int outerIndex, const int2 innerIndex) -> void {
+    .run(OCCA_FUNCTION(scope, [=](const int outerIndex, const occa::int2 innerIndex) -> void {
       const int globalIndex = (
         outerIndex + (2 * (innerIndex.y + length * innerIndex.x))
       );
@@ -164,7 +161,7 @@ void testFullForLoops(occa::device device) {
   occa::forLoop()
     .outer(2)
     .inner(length, occa::range(length), indexArray)
-    .run(OCCA_FUNCTION(scope, [=](const int outerIndex, const int3 innerIndex) -> void {
+    .run(OCCA_FUNCTION(scope, [=](const int outerIndex, const occa::int3 innerIndex) -> void {
       const int globalIndex = (
         outerIndex + (2 * (innerIndex.z + length * (innerIndex.y + length * innerIndex.x)))
       );
@@ -203,7 +200,7 @@ void testTileForLoops(occa::device device) {
 
   occa::forLoop()
     .tile({length, 2}, {occa::range(length), 2})
-    .run(OCCA_FUNCTION(scope, [=](const int2 index) -> void {
+    .run(OCCA_FUNCTION(scope, [=](const occa::int2 index) -> void {
       const int globalIndex = (
         index.x + (length * index.y)
       );
@@ -222,7 +219,7 @@ void testTileForLoops(occa::device device) {
       {occa::range(length), 2},
       {indexArray, 2}
     )
-    .run(OCCA_FUNCTION(scope, [=](const int3 index) -> void {
+    .run(OCCA_FUNCTION(scope, [=](const occa::int3 index) -> void {
       const int globalIndex = (
         index.x + (length * (index.y + length * index.z))
       );
