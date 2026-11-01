@@ -9,15 +9,13 @@ unset(missingDpcppComponents)
 find_path(
   SYCL_INCLUDE_DIRS
   NAMES
-    sycl.hpp
+    sycl/sycl.hpp
   PATHS
     ENV SYCL_ROOT
     /opt/intel/oneapi/compiler/latest/linux
     ${SYCL_ROOT}
   PATH_SUFFIXES
-    include/sycl
-    include/CL
-    include/sycl/CL
+    include
 )
 
 find_library(
